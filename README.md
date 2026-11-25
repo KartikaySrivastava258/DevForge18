@@ -38,10 +38,11 @@ DevForge 18 is an interactive developer engineering academy. It teaches 18 indus
 | Search across tracks, curriculum topics, lessons and paths, with typo tolerance and abbreviations (`k8s`, `pg`, `otel`) | Working |
 | Lesson reader with objectives, table of contents, copyable code blocks, expected output and a server-graded self-check | Working (21 lessons; their commands are run by the test suite and in CI) |
 | Figures in every lesson, and step-through diagrams (Previous/Next, arrow keys, Play) for processes in every track with lessons; both themes, reduced motion respected | Working (22 figures, 10 step-throughs) |
+| Interactive simulations with challenges, verified by the server and saved to progress: Git commit graph, Kubernetes reconciliation loop | Working (2 of the planned 18) |
 | Accounts, sign-in, progress tracking (a lesson completes only when its self-check is passed), bookmarks, dashboard | Working |
 | Roles (student, faculty, admin), admin user management with an audit log, faculty aggregate statistics | API working; admin/faculty screens not built yet |
 | Dark and light themes, keyboard navigation, mobile layout | Working |
-| Labs, browser simulations, capstone projects, quizzes, architecture studio, case studies, cohorts | Planned (see roadmap) |
+| Labs, simulations for the other 16 tracks, capstone projects, quizzes, architecture studio, case studies, cohorts | Planned (see roadmap) |
 
 ## The 18 tracks
 
@@ -131,8 +132,11 @@ content/              Learning content (YAML + Markdown) — reviewed like code
   tracks/<slug>/track.yaml   one file per track (18)
   paths/<slug>.yaml          learning paths (8)
   lessons/<track>/<id>.md    lessons with front matter and self-check questions
+  media/<track>/             SVG figures (+ .yaml sidecars) and step-throughs
+  simulations/<track>/       simulation scenarios and challenges
 shared/               Code used by both server and browser
   content-schema.ts          zod schemas: the single definition of valid content
+  simulations/               pure simulation models (browser and server)
   search.ts                  search engine (synonyms, prefix, typo tolerance)
 server/
   src/                Node.js HTTP API (TypeScript, run directly by Node 22)
@@ -172,7 +176,7 @@ Details and the reasoning behind each choice: [`docs/architecture.md`](docs/arch
 npm run typecheck       # strict TypeScript: server, shared code, scripts, tests
 npm run typecheck:web   # strict TypeScript: React frontend
 npm test                # unit, API, checker and executable-lesson tests
-npm run test:e2e        # 20 browser journeys in headless Chromium (builds first)
+npm run test:e2e        # 24 browser journeys in headless Chromium (builds first)
 npm run verify          # everything above, in order
 ```
 

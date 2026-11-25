@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **2 — visual learning system** (REMAINING_WORK.md §7) · Next: **Milestone 3 — simulation framework (Git and Kubernetes)**
+Last updated: 2026-11-25 · Milestone: **3 — simulation framework** (REMAINING_WORK.md §7) · Next: **Milestone 4 — complete Path 2 (Prometheus + Grafana, OpenTelemetry)**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -15,7 +15,8 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
 | Figures and step-through diagrams | ✅ 22 figures in all 21 lessons (no ASCII diagrams left), a step-through in each of the 10 tracks with lessons; tested |
-| Labs, simulations, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
+| Simulations | 🟡 Framework done and tested; 2 of 18 tracks have one (Git, Kubernetes), with server-verified challenges |
+| Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
 
@@ -26,7 +27,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | `npm run typecheck` | ✅ 0 errors (strict; server, shared, scripts, tests) |
 | `npm run build` | ✅ 18 tracks, 8 paths, 1 lesson validated; JS 254.5 KB, CSS 25.6 KB (minified, before gzip) |
 | `npm test` | ✅ 131 passing, 8 skipped, 0 failing (139 tests). The 8 skips are the PostgreSQL, Redis, Nginx and Docker lessons: none of these tools exists in the build environment; they run in CI. |
-| `npm run test:e2e` | ✅ 20 / 20 passing (headless Chromium 1243) |
+| `npm run test:e2e` | ✅ 24 / 24 passing (headless Chromium 1243) |
 | `npm run lessons:record` | ✅ No-op on matching lessons; repaired a deliberately corrupted output block to a byte-identical file; wildcard lines preserved |
 | SQL lesson plumbing (`sql run` → psql in a throwaway database) | ✅ Tested with stub `psql`/`createdb`/`dropdb`; ⚠️ never run against a real PostgreSQL server yet |
 | `npm start` + curl smoke test | ✅ health, SPA routes with CSP, 18 tracks via API, CSRF rejection, `/metrics` |
@@ -150,9 +151,23 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Sizes:** JS 257.2 KB (+2.4 KB), CSS 29.0 KB (+3.0 KB); `content.json` 559 KB with the inline SVGs.
 - **Not done in this milestone (still planned):** moving-element animations with the Web Animations API (§4.2 level 3) — step-throughs with Play cover the "watch the process" goal for now; photographs and screenshots (`<img>` pipeline) until there is a real screenshot to add.
 
+### Milestone 3 — simulation framework, Git and Kubernetes (2026-11-25)
+
+- **Framework** (REMAINING_WORK.md §4.3): `shared/simulations/types.ts` defines the model contract — pure and deterministic (`next = step(state, action)`), with `init`, invariants, named challenge checks and a text description — plus `replay()`. Model logic has no dependencies; each model's zod schemas live in `schema.ts` (server and build only) with compile-time checks that they match the model's types (proved to catch a deliberate mismatch).
+- **Git commit graph** (§5.1): commit, branch, switch, merge (default / `--no-ff` / `--ff-only`), rebase, `reset --hard`, revert, with origin/main for pushed history and a warning when a reset rewrites it. Real Git 2.43 behaviour was observed first (merge messages, `--ff-only` refusal, revert message, rebase); **seven command sequences are run through real Git in the tests and must produce the same graph**, including `Merge branch 'main' into feature`.
+- **Kubernetes reconciliation** (§5.3): kubelet, Deployment controller (maxSurge rounds up, maxUnavailable rounds down, both 0 refused or resolved to 1 unavailable, unhealthy old Pods removed first), ReplicaSet controller and scheduler; delete Pod, drain/uncordon, scale, set image, strategy, rollout undo (reuses the old ReplicaSet with a new revision). A property test checks every strategy combination at 1–8 replicas (availability never below `replicas − maxUnavailable`, never more than `replicas + maxSurge` Pods, completes). **A broken image with 5 replicas stalls at 4 available, matching the real kind cluster's output in CI for the lesson.** A first draft of the surge invariant was wrong (it fired right after a manual scale-down, which Kubernetes also allows until the controller's next pass); it was narrowed to rolling updates, which the property test covers.
+- **Content:** `content/simulations/` with scenarios, challenges, simplifications (each saying what the real tool does) and text alternatives; 3 challenges each. The build replays every challenge's reference solution and fails unless it passes, and unless the check fails at the start.
+- **Server-verified progress (ADR 0008):** migration `0002_simulation_progress`; `GET /api/simulations/:id` (no solutions); `POST …/challenges/:challenge/verify` validates each action with the model's strict schema, limits a run to 400 actions and 3,000 ticks, replays it and saves only passing runs for signed-in learners, once.
+- **UI:** `SimulationShell` (Simulation badge, simplifications, scenario picker, Reset, Step, Play/Pause and speed for time-based models — no Play under reduced motion; paused off-screen and in background tabs — text mode, event log, challenges with hints and live status), the Git graph view (lanes, branch/HEAD/origin labels, unreachable commits dimmed, commit list, command form with the exact `git` command) and the cluster view (nodes, Pod chips with written phases, drain/uncordon, ReplicaSets, controls with the exact `kubectl` command). Simulation pages at `/tracks/<track>/simulations/<id>`, a **Simulations** section on every track page, and embeds in 3 lessons (`git-first-commits`, both Kubernetes lessons).
+- **Code splitting** (§6.2): simulations load as separate chunks (Git 15 KB, Kubernetes 17 KB, shared 9 KB); the main bundle is 259.6 KB (+2.4 KB). The first build put zod with all its locales (454 KB) into the simulation chunk; separating model logic from schemas removed it.
+- **Accessibility found while testing:** form fields that wrapped a `<select>` in its `<label>` gave the select an accessible name including every option's text; they now use a `Field` component with `htmlFor`. The Git form showed a branch-naming error when no other branch existed; it now says so.
+- **Tests:** 20 Git model tests (7 against real Git), 13 Kubernetes model tests, 6 loader tests, 2 renderer tests, 10 API tests, 4 browser tests (keyboard-only challenge saved through the server and shown as Done after reload; Step, self-healing and text mode in the light theme; reduced motion; lesson embed and track-page link). Mobile overflow sweep includes both simulation pages.
+- **Looked at:** both simulations in dark, light and on a 390 px phone; the Git graph now keeps its natural size and scrolls in its frame on phones (a global `svg { max-width: 100% }` was shrinking it to unreadable size).
+- All 21 lessons' `content_version` incremented (new figures in milestone 2; simulation embeds in three).
+
 ## Current work
 
-Milestone 3 of REMAINING_WORK.md §7: the simulation framework (§4.3) with the Git commit-graph and Kubernetes reconciliation simulations.
+Milestone 4 of REMAINING_WORK.md §7: complete Path 2 — Prometheus + Grafana and OpenTelemetry beginner lessons (executed in CI) and their simulations.
 
 ## Pending work (ordered)
 
@@ -229,7 +244,7 @@ npm run db:backup -- ./backups/manual.db
 
 The full plan for all remaining work is in [`REMAINING_WORK.md`](REMAINING_WORK.md); [`MASTER_PROMPT.md`](MASTER_PROMPT.md) is a ready-made prompt for continuing with a coding agent.
 
-1. Milestone 3 — simulation framework (§4.3) with the Git commit-graph and Kubernetes reconciliation simulations (§5.1, §5.3).
-2. Milestone 4 — complete Path 2: Prometheus + Grafana, then OpenTelemetry.
+1. Milestone 4 — complete Path 2: Prometheus + Grafana (a real Prometheus scraping DevForge's `/metrics` in CI), then OpenTelemetry; one simulation each (§5.7, §5.15).
+2. Milestone 5 — beginner lessons and a simulation for Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira.
 3. Re-run the *Link check* workflow monthly; a person re-confirms each page before updating `checked_on`.
 4. Update this file after each milestone.

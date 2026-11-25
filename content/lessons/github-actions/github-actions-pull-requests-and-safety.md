@@ -58,7 +58,7 @@ verification:
   details: The local commands — the check script, Git commits, branches and pushes to the practice remote from the Git lessons — run in the test suite and their output is compared with this lesson. Every workflow file shown or created here is validated by DevForge's workflow checker. How the workflows behave on GitHub was checked against GitHub Docs and the actions' release notes (2026-11-25), but is not run, because it needs github.com.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

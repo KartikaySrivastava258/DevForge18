@@ -58,7 +58,7 @@ verification:
   details: Every SQL block is run by the test suite against a fresh PostgreSQL database and its output is compared with this lesson. Confirmed in CI against PostgreSQL 16.16 with the psql 16 client on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 2
+content_version: 3
 ---
 
 ## The idea in one sentence

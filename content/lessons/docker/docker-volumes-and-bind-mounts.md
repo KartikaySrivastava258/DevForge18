@@ -50,7 +50,7 @@ verification:
   details: Every command is run by the test suite on a disposable Docker engine, after the previous lesson, and its output is compared with this lesson. Confirmed in CI (GitHub-hosted Ubuntu 24.04 runner, Docker API 1.48) on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

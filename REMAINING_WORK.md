@@ -53,7 +53,7 @@ These rules are why the existing work can be trusted. Every new feature must fol
 |---|---|---|
 | Comprehensive beginner → advanced lessons for all 18 tracks | 21 beginner lessons on 10 tracks | P1 |
 | Pictures, diagrams and animations that explain each concept | ✅ SVG figures in every lesson and a step-through per track with lessons (2026-11-25); moving-element animations still to come | P1 |
-| Interactive simulations for every track | None | P1 |
+| Interactive simulations for every track | Framework done (2026-11-25); Git and Kubernetes simulations with server-verified challenges; 16 tracks to go | P1 |
 | Hands-on labs with verification | Lesson "Try it yourself" sections only; lab pages do not exist | P1 |
 | Quizzes (more question types, per-track assessments) | Per-lesson multiple-choice self-checks | P2 |
 | Real-world usage and case studies with sources | Only "Where this fits in a real system" sections | P1 |
@@ -353,7 +353,7 @@ Add browser tests that walk every section of at least one complete track and ass
 - **Notes per lesson:** the blueprint's notes feature (table `notes`, private to the learner).
 - **Recommendations:** "next best lesson" from the learner's progress and chosen learning path.
 - **Per-lesson cheat sheet:** a printable summary of commands and key ideas, generated from tagged blocks in the lesson.
-- **Code splitting:** load simulations and heavy diagrams on demand (esbuild `splitting: true` with ESM output and dynamic `import()` in `scripts/build-web.ts`) so the initial JavaScript stays near today's ~255 KB.
+- ✅ **Code splitting:** load simulations and heavy diagrams on demand (esbuild `splitting: true` with ESM output and dynamic `import()` in `scripts/build-web.ts`) so the initial JavaScript stays near today's ~255 KB. *Done 2026-11-25: simulations are separate chunks; keep simulation models free of runtime dependencies (zod lives in each model's `schema.ts`).*
 - **Optional translations:** Hindi (and other languages) later, through a content-translation layer with the same validation rules; the UI text first, then lessons.
 
 ### 6.3 Institutional features (blueprint Phase 5)

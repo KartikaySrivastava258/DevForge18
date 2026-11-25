@@ -58,7 +58,7 @@ verification:
   details: Every command is run by the test suite with Nginx as an unprivileged process in front of a real DevForge server, and its output is compared with this lesson. Confirmed in CI with Nginx 1.24.0 (Ubuntu 24.04) on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

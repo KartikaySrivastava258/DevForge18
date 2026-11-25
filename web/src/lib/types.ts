@@ -50,6 +50,7 @@ export interface TrackResponse {
   track: Track;
   summary: TrackSummary;
   lessons: LessonSummary[];
+  simulations: SimulationSummary[];
   prerequisites: TrackSummary[];
   related: { why: string; track: TrackSummary }[];
   paths: { slug: string; title: string; number: number }[];
@@ -137,4 +138,38 @@ export interface SearchResult {
   snippet: string;
   context: string;
   score: number;
+}
+
+export interface SimulationSummary {
+  id: string;
+  track: string;
+  title: string;
+  concept: string;
+  challengeCount: number;
+  scenarioCount: number;
+}
+
+export interface PublicSimulation {
+  id: string;
+  track: string;
+  title: string;
+  concept: string;
+  learningObjectives: string[];
+  simplifications: string[];
+  textAlternative: string;
+  scenarios: { id: string; title: string; description: string; params: unknown }[];
+  challenges: { id: string; title: string; goal: string; scenario: string; check: string; hint: string }[];
+  lastReviewed: string;
+}
+
+export interface SimulationResponse {
+  simulation: PublicSimulation;
+  track: TrackSummary | null;
+  completed: string[];
+}
+
+export interface VerifyResponse {
+  passed: boolean;
+  saved: boolean;
+  completed: string[];
 }

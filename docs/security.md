@@ -11,6 +11,7 @@
 | Database | SQL injection | Parameterised statements only; zod validation of every body |
 | Files | Path traversal | Route params restricted to identifier characters; static paths resolved and confined to the web root |
 | Quiz integrity | Reading answers from the client | Answers and explanations never sent before grading; grading on the server |
+| Simulation progress | Forging "challenge completed" | The server replays the submitted actions through the same pure model and runs the check itself (ADR 0008); actions must match the model's strict schema; at most 400 actions and 3,000 ticks per request; reference solutions are never sent to browsers |
 | Admin functions | Privilege escalation | Role checks on every route; self-registration is always `student`; first admin via CLI only; last admin cannot be demoted; role changes audited |
 | Redirects | Open redirect after login | `next` must be a same-site path (`/…`, not `//…`) |
 | Metrics | Information disclosure | `/metrics` served only to private addresses; blocked by Nginx |

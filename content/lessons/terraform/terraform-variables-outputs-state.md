@@ -58,7 +58,7 @@ verification:
   details: Every command is run by the test suite with Terraform 1.15.6 (checksum-verified) and the hashicorp/local provider, after the previous lesson; the documented output was confirmed in CI run 45643638519 on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

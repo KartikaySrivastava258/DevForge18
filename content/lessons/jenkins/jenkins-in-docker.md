@@ -58,7 +58,7 @@ verification:
   details: Every command is run by the test suite on a disposable Docker engine, where a real Jenkins 2.580.2 server (jenkins/jenkins:2.580.2-lts-jdk21) is started and checked; the documented output was confirmed in CI run 45643638519 on 2026-11-25. The setup-wizard steps in the browser are not executed.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

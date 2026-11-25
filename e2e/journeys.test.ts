@@ -279,7 +279,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -388,6 +388,112 @@ describe("figures and step-through diagrams", () => {
     assert.ok(await box.evaluate((el) => el.scrollWidth > el.clientWidth), "the figure keeps a readable minimum width");
     assert.equal(await box.getAttribute("tabindex"), "0", "the scrolling area is keyboard-focusable");
     await fig.screenshot({ path: join(SHOTS, "step-diagram-mobile.png") });
+    noProblems(problems);
+  });
+});
+
+describe("simulations", () => {
+  it("Git: a signed-in learner solves a challenge with the keyboard; the server verifies and saves it", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/register?next=/tracks/git-github/simulations/git-commit-graph");
+    await page.getByLabel("Name").fill("Arjun");
+    await page.getByLabel("Email").fill("arjun@example.edu");
+    await page.getByLabel("Password").fill("orbit lantern cobalt river");
+    await page.getByRole("button", { name: "Create account" }).click();
+    await page.waitForURL("**/simulations/git-commit-graph");
+    const sim = page.locator(".sim");
+    await sim.waitFor();
+    assert.ok(await sim.locator(".tag--sim", { hasText: "Simulation" }).isVisible(), "labelled as a simulation");
+    await sim.getByText("A teaching model, not the real tool").click();
+    assert.match(await sim.locator(".sim__limits").innerText(), /no files/);
+
+    // Keyboard only: choose the challenge, pick the command, run it.
+    await sim.getByRole("button", { name: "Undo a pushed commit safely" }).focus();
+    await page.keyboard.press("Enter");
+    assert.equal(await sim.getByLabel("Scenario").inputValue(), "pushed-mistake");
+    await sim.getByLabel("Command", { exact: true }).focus();
+    await sim.getByLabel("Command", { exact: true }).selectOption("revert");
+    assert.equal(await sim.locator(".git-sim__preview").innerText(), "git revert HEAD");
+    await sim.getByRole("button", { name: "Run" }).focus();
+    await page.keyboard.press("Enter");
+    await sim.locator(".sim__status", { hasText: "Solved and saved to your progress." }).waitFor();
+    assert.match(await sim.locator(".sim__log li").first().innerText(), /Revert "Add broken link"/);
+    assert.match(await sim.locator(".git-sim__list").innerText(), /Revert "Add broken link"/);
+
+    // Commands that cannot work are explained: in the form before running, or in the log when Git would refuse.
+    await sim.getByLabel("Command", { exact: true }).selectOption("merge");
+    assert.match(await sim.locator(".sim__problem").innerText(), /no other branch yet/);
+    await sim.getByLabel("Command", { exact: true }).selectOption("branch");
+    await sim.getByLabel("New branch name").fill("main");
+    await sim.getByRole("button", { name: "Run" }).click();
+    assert.match(await sim.locator('.sim__log li[data-refused="true"]').first().innerText(), /A branch named main already exists/);
+
+    await page.reload();
+    await sim.getByRole("button", { name: /Undo a pushed commit safely/ }).locator(".tag", { hasText: "Done" }).waitFor();
+    await page.screenshot({ path: join(SHOTS, "simulation-git.png"), fullPage: true });
+    noProblems(problems);
+  });
+
+  it("Kubernetes: Step, text mode and self-healing complete a challenge", async () => {
+    const { page, problems } = await h.newPage({ colorScheme: "light" });
+    await page.goto("/tracks/kubernetes/simulations/kubernetes-reconciliation");
+    const sim = page.locator(".sim");
+    await sim.locator(".k8s-sim").waitFor();
+    assert.equal(await sim.locator(".k8s-pod").count(), 3);
+    assert.match(await sim.locator(".k8s-sim__summary").innerText(), /3 of 3/);
+    await sim.locator(".k8s-pod__delete").first().click();
+    assert.match(await sim.locator(".k8s-sim__summary").innerText(), /2 of 3/);
+    for (let i = 0; i < 4; i++) await sim.getByRole("button", { name: "Step" }).click();
+    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    assert.match(await sim.locator(".k8s-sim__summary").innerText(), /3 of 3/);
+    assert.match(await sim.locator(".sim__log").innerText(), /ReplicaSet .* wants 3: created/);
+
+    await sim.getByRole("button", { name: "Text mode" }).click();
+    assert.equal(await sim.getByRole("button", { name: "Text mode" }).getAttribute("aria-pressed"), "true");
+    assert.match(await sim.locator(".sim__text").innerText(), /Deployment web wants 3 replica\(s\)/);
+    await page.screenshot({ path: join(SHOTS, "simulation-kubernetes-light.png"), fullPage: true });
+    noProblems(problems);
+  });
+
+  it("offers Step but not Play under reduced motion, and Play pauses", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/kubernetes/simulations/kubernetes-reconciliation");
+    const sim = page.locator(".sim");
+    await sim.locator(".k8s-sim").waitFor();
+    await sim.getByRole("button", { name: "Play" }).click();
+    await sim.getByRole("button", { name: "Pause" }).click();
+    assert.ok(await sim.getByRole("button", { name: "Play" }).isVisible());
+
+    const reduced = await h.newPage();
+    await reduced.page.emulateMedia({ reducedMotion: "reduce" });
+    await reduced.page.goto("/tracks/kubernetes/simulations/kubernetes-reconciliation");
+    const rsim = reduced.page.locator(".sim");
+    await rsim.locator(".k8s-sim").waitFor();
+    assert.equal(await rsim.getByRole("button", { name: "Play" }).count(), 0);
+    assert.ok(await rsim.getByRole("button", { name: "Step" }).isVisible());
+    const duration = await rsim.locator(".k8s-pod").first().evaluate((el) => parseFloat(getComputedStyle(el).transitionDuration));
+    assert.ok(duration < 0.01, `no transitions under reduced motion, got ${duration}s`);
+    noProblems(problems);
+    noProblems(reduced.problems);
+  });
+
+  it("is embedded in its lessons and listed on the track page with a working link", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/kubernetes/lessons/kubernetes-services-and-rollouts");
+    const embed = page.locator(".sim-embed .sim");
+    await embed.locator(".k8s-sim").waitFor();
+    assert.equal(await embed.getByRole("heading", { level: 3, name: "The reconciliation loop" }).count(), 1);
+    assert.equal(await embed.getByLabel("Scenario").inputValue(), "broken-release");
+    assert.match(await embed.locator(".k8s-sim__summary").innerText(), /4 of 5/, "same stalled state as the real cluster in the lesson");
+    assert.equal(await page.locator(".sim-embed__fallback").isVisible(), false);
+
+    await page.goto("/tracks/kubernetes");
+    await page.getByRole("heading", { level: 2, name: "Simulations" }).waitFor();
+    await page.locator("#simulations").getByRole("link", { name: "The reconciliation loop" }).click();
+    await page.waitForURL("**/tracks/kubernetes/simulations/kubernetes-reconciliation");
+    await page.getByRole("heading", { level: 1, name: "The reconciliation loop" }).waitFor();
+    await page.goto("/tracks/kafka");
+    assert.match(await page.locator("#simulations").innerText(), /No simulation is published for this track yet/);
     noProblems(problems);
   });
 });

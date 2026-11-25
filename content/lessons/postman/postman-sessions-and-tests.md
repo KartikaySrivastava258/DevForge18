@@ -66,7 +66,7 @@ verification:
   details: Every curl and shell command is run by the test suite against a real DevForge server, and its output is compared with what this lesson shows; values that change on every request are shown as "…". The Postman steps and pm.test scripts were written from Postman's documentation and are not executed, because Postman is a desktop application.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

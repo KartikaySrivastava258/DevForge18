@@ -109,7 +109,8 @@ export class ContentStore {
       simplifications: s.simplifications,
       textAlternative: s.text_alternative,
       scenarios: s.scenarios,
-      challenges: s.challenges.map((c) => ({ id: c.id, title: c.title, goal: c.goal, scenario: c.scenario, hint: c.hint })),
+      // The check's name is public (the model runs in the browser anyway); the reference solution is not.
+      challenges: s.challenges.map((c) => ({ id: c.id, title: c.title, goal: c.goal, scenario: c.scenario, check: c.check, hint: c.hint })),
       lastReviewed: s.last_reviewed,
     };
   }

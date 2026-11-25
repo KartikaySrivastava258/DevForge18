@@ -66,7 +66,7 @@ verification:
   details: Every command is run by the test suite on a disposable Docker engine with a real kind 0.32.0 cluster running Kubernetes 1.36.1, after the previous lesson; the documented output was confirmed in CI run 45643638519 on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -195,6 +195,13 @@ kind delete cluster --name devforge
 ```text output
 Deleting cluster "devforge" ...
 …
+```
+
+## Try it in the simulation
+
+Replay this lesson's broken release in the simulation, then try the other challenges: change the rollout strategy and see how many Pods stay available. It is a labelled teaching model of the reconciliation loop, not a real cluster.
+
+```simulation kubernetes-reconciliation scenario=broken-release
 ```
 
 ## Common mistakes

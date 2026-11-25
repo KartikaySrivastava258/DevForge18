@@ -295,3 +295,95 @@
 .auth .card { border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--panel); padding: var(--space-6); box-shadow: var(--shadow); }
 .auth h1 { font-size: var(--step-3); }
 .toast { position: fixed; bottom: var(--space-5); left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: var(--space-2) var(--space-4); border-radius: var(--radius-m); font-size: 0.9375rem; z-index: 50; }
+
+/* Simulations (REMAINING_WORK.md §4.3; ADR 0008). Always labelled; status is written, never colour alone. */
+.sim { margin: var(--space-6) 0; padding: var(--space-5); border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--panel); }
+.sim__title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.sim__title h2, .sim__title h3 { margin: 0; }
+.sim__head > p { margin: var(--space-2) 0; }
+.sim__limits { margin: var(--space-2) 0; font-size: var(--step--1); color: var(--muted); }
+.sim__limits summary { cursor: pointer; color: var(--warn); }
+.sim__limits ul { margin: var(--space-2) 0 0; padding-left: 1.2rem; }
+.sim__bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--line); }
+.sim__field { display: inline-flex; flex-direction: column; gap: 2px; font-size: var(--step--1); color: var(--muted); }
+.sim__field label { font-size: var(--step--1); color: var(--muted); }
+.sim__field--grow { flex: 1 1 14rem; }
+.sim__field select, .sim__field input { font: inherit; font-size: 0.9375rem; color: var(--text); background: var(--bg); border: 1px solid var(--line-strong); border-radius: var(--radius-s); padding: 0.35rem 0.5rem; min-height: 2rem; }
+.sim__scenario { margin: var(--space-2) 0 var(--space-4); }
+.sim__body { display: grid; grid-template-columns: minmax(0, 1fr) 19rem; gap: var(--space-5); align-items: start; }
+.sim__stage { min-width: 0; }
+.sim__side { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
+.sim__side-title { margin: 0 0 var(--space-2); font-size: var(--step-0); }
+.sim__challenge-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.sim__challenge { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: var(--space-2); text-align: left; font: inherit; font-size: 0.9375rem; color: var(--text); background: transparent; border: 1px solid var(--line); border-radius: var(--radius-s); padding: var(--space-2) var(--space-3); cursor: pointer; }
+.sim__challenge[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.sim__goal { margin-top: var(--space-3); font-size: 0.9375rem; }
+.sim__goal details summary { cursor: pointer; color: var(--accent); }
+.sim__status { margin: var(--space-2) 0 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-s); background: var(--panel-2); }
+.sim__status[data-state="saved"], .sim__status[data-state="solved"] { background: var(--ok-soft); color: var(--ok); font-weight: 600; }
+.sim__problem { color: var(--danger); margin: var(--space-1) 0 0; }
+.sim__log ol { list-style: none; margin: 0; padding: 0; max-height: 22rem; overflow-y: auto; font-size: var(--step--1); border-top: 1px solid var(--line); }
+.sim__log li { padding: var(--space-2) 0; border-bottom: 1px solid var(--line); }
+.sim__log li p { margin: var(--space-1) 0 0; color: var(--muted); }
+.sim__log li[data-refused="true"] p { color: var(--danger); }
+.sim__log li[data-refused="true"] p::before { content: "Refused: "; font-weight: 600; }
+.sim__log code { font-size: 0.8125rem; color: var(--text); word-break: break-word; }
+.sim__text { margin: 0; padding-left: 1.2rem; line-height: 1.6; }
+.sim-embed[data-enhanced] > .sim-embed__fallback { display: none; }
+.sim-card__concept { display: block; margin-top: 2px; }
+.sim-page__head { max-width: var(--measure); }
+@media (max-width: 60rem) { .sim__body { grid-template-columns: 1fr; } .sim { padding: var(--space-4); } }
+
+.git-sim__scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg); padding: var(--space-2); }
+.git-sim__svg { display: block; max-width: none; font-family: var(--font-sans); } /* natural size: the frame scrolls */
+.git-sim__lane { fill: var(--faint); font-size: 12px; font-style: italic; }
+.git-sim__edge { fill: none; stroke: var(--line-strong); stroke-width: 2; }
+.git-sim__edge[data-live="false"] { stroke-dasharray: 4 4; opacity: 0.6; }
+.git-sim__commit circle { fill: var(--panel-2); stroke: var(--accent); stroke-width: 2; }
+.git-sim__commit[data-merge="true"] circle { stroke-width: 4; }
+.git-sim__commit[data-live="false"] circle { stroke: var(--line-strong); stroke-dasharray: 3 3; }
+.git-sim__commit[data-live="false"] .git-sim__id { fill: var(--faint); }
+.git-sim__id { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+.git-sim__label text { fill: var(--text); font-size: 12px; font-weight: 600; }
+.git-sim__label[data-head="true"] text { fill: var(--accent); }
+.git-sim__label[data-remote="true"] text { fill: var(--warn); font-weight: 400; }
+.git-sim__empty { margin: var(--space-4); color: var(--muted); }
+.git-sim__form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); margin: var(--space-4) 0; }
+.git-sim__run { display: flex; flex: 1 1 100%; align-items: center; gap: var(--space-3); }
+.git-sim__preview { flex: 1; padding: var(--space-2) var(--space-3); background: var(--code-bg); border: 1px solid var(--line); border-radius: var(--radius-s); font-size: 0.875rem; overflow-x: auto; white-space: nowrap; }
+.git-sim__list ol { margin: var(--space-2) 0 0; padding-left: 1.4rem; font-size: 0.9375rem; }
+.git-sim__list li[data-live="false"] { color: var(--faint); }
+.git-sim__list summary { cursor: pointer; color: var(--accent); }
+.git-sim__refs { color: var(--accent); }
+.git-sim__list .tag { margin-left: var(--space-2); }
+
+.k8s-sim__summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: var(--space-3); margin: 0 0 var(--space-4); }
+.k8s-sim__summary dt { font-size: var(--step--1); color: var(--muted); }
+.k8s-sim__summary dd { margin: 0; font-weight: 500; }
+.k8s-sim__nodes { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: var(--space-3); }
+.k8s-node { border: 1px solid var(--line-strong); border-radius: var(--radius-s); padding: var(--space-3); background: var(--bg); }
+.k8s-node[data-cordoned="true"] { border-style: dashed; }
+.k8s-node__head { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
+.k8s-node__head .btn { margin-left: auto; }
+.k8s-node__pods { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.k8s-pod { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name del" "image del" "phase del"; gap: 0 var(--space-2); align-items: center; padding: var(--space-1) var(--space-2); border: 1px solid var(--line); border-left: 4px solid var(--line-strong); border-radius: var(--radius-s); font-size: var(--step--1); transition: opacity 250ms var(--ease), border-color 250ms var(--ease); }
+.k8s-pod__name { grid-area: name; font-family: var(--font-mono); }
+.k8s-pod__image { grid-area: image; color: var(--muted); font-family: var(--font-mono); overflow-wrap: anywhere; }
+.k8s-pod__phase { grid-area: phase; color: var(--muted); }
+.k8s-pod__delete { grid-area: del; font: inherit; font-size: 0.75rem; color: var(--muted); background: transparent; border: 1px solid var(--line-strong); border-radius: var(--radius-s); padding: 2px 6px; cursor: pointer; }
+.k8s-pod__delete:hover { color: var(--danger); border-color: var(--danger); }
+.k8s-pod[data-ready="true"] { border-left-color: var(--ok); }
+.k8s-pod[data-ready="true"] .k8s-pod__phase { color: var(--ok); }
+.k8s-pod[data-phase="ErrImagePull"], .k8s-pod[data-phase="ImagePullBackOff"] { border-left-color: var(--danger); }
+.k8s-pod[data-phase="ErrImagePull"] .k8s-pod__phase, .k8s-pod[data-phase="ImagePullBackOff"] .k8s-pod__phase { color: var(--danger); }
+.k8s-pod[data-phase="Terminating"] { opacity: 0.55; border-left-style: dashed; }
+.k8s-pod[data-phase="Pending"], .k8s-pod[data-phase="ContainerCreating"] { border-left-color: var(--warn); }
+.k8s-sim__pending { margin-top: var(--space-3); padding: var(--space-3); border: 1px dashed var(--warn); border-radius: var(--radius-s); }
+.k8s-sim__pending ul { margin-top: var(--space-2); }
+.k8s-sim__rs { margin: var(--space-4) 0; }
+.k8s-sim__rs summary { cursor: pointer; color: var(--accent); }
+.k8s-sim__rs table { width: 100%; border-collapse: collapse; margin-top: var(--space-2); font-size: var(--step--1); }
+.k8s-sim__rs th, .k8s-sim__rs td { text-align: left; padding: var(--space-1) var(--space-2); border-bottom: 1px solid var(--line); }
+.k8s-sim__controls { display: flex; flex-direction: column; gap: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--line); }
+.k8s-sim__controls form, .k8s-sim__controls > div { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); }
+.k8s-sim__cmd { font-size: 0.8125rem; color: var(--muted); align-self: center; word-break: break-all; }

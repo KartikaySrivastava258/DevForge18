@@ -58,7 +58,7 @@ verification:
   details: Creating and committing the Jenkinsfile in the practice repository is run by the test suite and its output is compared with this lesson; every Jenkinsfile shown here is checked by DevForge's Jenkinsfile checker. Running the pipeline in the Jenkins web interface was written from the Jenkins documentation and is not executed.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

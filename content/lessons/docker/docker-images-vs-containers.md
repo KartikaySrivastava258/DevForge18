@@ -59,7 +59,7 @@ verification:
   details: Every command is run by the test suite on a disposable Docker engine and its output is compared with this lesson. Confirmed in CI (GitHub-hosted Ubuntu 24.04 runner, Docker API 1.48) on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-24
-content_version: 2
+content_version: 3
 ---
 
 ## The idea in one sentence

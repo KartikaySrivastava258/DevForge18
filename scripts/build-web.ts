@@ -26,6 +26,9 @@ const result = await build({
   entryNames: "[name]-[hash]",
   bundle: true,
   format: "esm",
+  // Simulations are loaded with import() only when one is on screen (REMAINING_WORK.md §6.2).
+  splitting: true,
+  chunkNames: "chunks/[name]-[hash]",
   target: ["es2022", "chrome110", "firefox115", "safari16"],
   jsx: "automatic",
   minify: !dev,

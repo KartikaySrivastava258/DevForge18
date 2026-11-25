@@ -66,7 +66,7 @@ verification:
   details: Every command marked runnable is executed by the test suite with Git 2.43 (and in CI), after the setup from the previous lesson, with fixed commit dates so the commit IDs shown here are reproduced exactly.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -264,6 +264,13 @@ Date:   Thu Jan 15 10:00:00 2026 +0000
 ```
 
 Keep this `student-notes` folder: the next lesson shares it with a teammate.
+
+## Try it in the simulation
+
+The commit graph explorer shows what your commands do to the history. Start a branch here, then try the other scenarios when you reach branches and merging. It is a labelled teaching model: it has no files, so it never shows a conflict.
+
+```simulation git-commit-graph scenario=first-commits
+```
 
 ## Common mistakes
 

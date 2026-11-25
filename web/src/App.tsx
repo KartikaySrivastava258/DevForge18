@@ -10,6 +10,7 @@ import { HomePage } from "./pages/Home.tsx";
 import { LessonPage } from "./pages/Lesson.tsx";
 import { PathPage, PathsPage } from "./pages/Paths.tsx";
 import { SearchPage } from "./pages/Search.tsx";
+import { SimulationPage } from "./pages/Simulation.tsx";
 import { TrackPage } from "./pages/Track.tsx";
 import { TracksPage } from "./pages/Tracks.tsx";
 
@@ -28,6 +29,7 @@ function Routes({ pathname }: { pathname: string }) {
   if (pathname === "/tracks") return <TracksPage />;
   if ((m = matchPath("/tracks/:slug", pathname))) return <TrackPage key={m.slug} slug={m.slug ?? ""} />;
   if ((m = matchPath("/tracks/:slug/lessons/:id", pathname))) return <LessonPage key={m.id} trackSlug={m.slug ?? ""} lessonId={m.id ?? ""} />;
+  if ((m = matchPath("/tracks/:slug/simulations/:id", pathname))) return <SimulationPage key={m.id} trackSlug={m.slug ?? ""} id={m.id ?? ""} />;
   if (pathname === "/paths") return <PathsPage />;
   if ((m = matchPath("/paths/:slug", pathname))) return <PathPage key={m.slug} slug={m.slug ?? ""} />;
   if (pathname === "/search") return <SearchPage />;

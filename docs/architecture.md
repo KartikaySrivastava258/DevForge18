@@ -80,6 +80,14 @@ erDiagram
     text item_type PK "track | lesson | path"
     text item_id PK
   }
+  users ||--o{ simulation_progress : verifies
+  simulation_progress {
+    text user_id PK
+    text simulation_id PK "content id"
+    text challenge_id PK
+    int actions
+    text completed_at
+  }
   audit_events {
     text id PK
     text actor_user_id FK
@@ -92,12 +100,17 @@ Tables are `STRICT`, use foreign keys with `ON DELETE CASCADE` where the child h
 
 The blueprint's content entities (tracks, lessons, quizzes, resources…) are deliberately **not** tables: see [ADR 0003](adr/0003-content-as-code.md). Tables for labs, submissions, cohorts and certificates will be added by new migrations in the phases that need them.
 
+## Simulations
+
+Simulations (REMAINING_WORK.md §4.3, [ADR 0008](adr/0008-simulations-verified-by-replay.md)) are pure, deterministic models in `shared/simulations/` that run in the browser and on the server. The browser loads a simulation's model and view as a separate JavaScript chunk only when one is on screen (esbuild code splitting), so the main bundle does not grow with each simulation. When a learner solves a challenge, the page sends the list of actions they took; the server validates each one with the model's schema, replays them through the same model, runs the challenge's check and only then records it in `simulation_progress`.
+
 ## Learning progress rules
 
 - Opening a lesson while signed in records `in_progress` (used for "continue learning").
 - A lesson becomes `completed` only when its self-check is submitted with every answer correct. Grading happens on the server; answers and explanations are never sent to the browser beforehand.
 - Explanations are returned only for correctly answered questions, so a failed attempt does not reveal the answers.
 - A later failed attempt never un-completes a lesson; `best_score` keeps the best result.
+- A simulation challenge is recorded only after the server has replayed the learner's actions and the check passed; it is saved once per learner and challenge.
 
 ## Frontend
 

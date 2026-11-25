@@ -58,7 +58,7 @@ verification:
   details: Every Redis command block is run by the test suite with redis-cli against a throwaway Redis server and its output is compared with this lesson. Confirmed in CI against Redis 7.4.12 (redis-cli 7.0.15) on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

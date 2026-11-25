@@ -58,7 +58,7 @@ verification:
   details: Every command is run by the test suite with Nginx as an unprivileged process in a throwaway folder, and its output is compared with this lesson. First confirmed against a real Nginx installation on Ubuntu on 2026-11-25; it also runs in CI.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

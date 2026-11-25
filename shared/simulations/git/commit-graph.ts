@@ -9,7 +9,6 @@
  * and rebases never conflict; commit IDs are short simulated hashes; HEAD is
  * always on a branch; reset behaves like reset --hard on the graph.
  */
-import { z } from "zod/v4";
 import type { SimulationModel, StepResult } from "../types.ts";
 
 export interface Commit {
@@ -32,32 +31,39 @@ export interface GitState {
   remote: Record<string, string>;
 }
 
-const branchName = z
-  .string()
-  .regex(/^[a-z][a-z0-9-]{0,29}$/, "Branch names here use lowercase letters, digits and hyphens.");
-const message = z.string().trim().min(1, "A commit needs a message.").max(72, "Keep the message under 72 characters.");
-const ref = z.string().min(1).max(40);
+/** Rules shared by the browser form and the server's schema (schema.ts). */
+export const RULES = {
+  branchName: /^[a-z][a-z0-9-]{0,29}$/,
+  branchNameMessage: "Branch names here use lowercase letters, digits and hyphens (up to 30 characters).",
+  messageMax: 72,
+  refMax: 40,
+} as const;
 
-export const GitActionSchema = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("commit"), message }).strict(),
-  z.object({ type: z.literal("branch"), name: branchName }).strict(),
-  z.object({ type: z.literal("switch"), branch: branchName }).strict(),
-  z.object({ type: z.literal("merge"), branch: branchName, mode: z.enum(["default", "no-ff", "ff-only"]) }).strict(),
-  z.object({ type: z.literal("rebase"), onto: branchName }).strict(),
-  z.object({ type: z.literal("reset"), to: ref }).strict(),
-  z.object({ type: z.literal("revert"), commit: ref }).strict(),
-]);
-export type GitAction = z.infer<typeof GitActionSchema>;
+export type MergeMode = "default" | "no-ff" | "ff-only";
+export type GitAction =
+  | { type: "commit"; message: string }
+  | { type: "branch"; name: string }
+  | { type: "switch"; branch: string }
+  | { type: "merge"; branch: string; mode: MergeMode }
+  | { type: "rebase"; onto: string }
+  | { type: "reset"; to: string }
+  | { type: "revert"; commit: string };
 
-export const GitScenarioSchema = z
-  .object({
-    /** Commands that build the starting history, run on a fresh repository with one branch, main. */
-    setup: z.array(GitActionSchema).max(40),
-    /** Record origin/main at the end of setup: main has been pushed and others may have it. */
-    pushed: z.boolean().default(false),
-  })
-  .strict();
-export type GitScenario = z.infer<typeof GitScenarioSchema>;
+export interface GitScenario {
+  /** Commands that build the starting history, run on a fresh repository with one branch, main. */
+  setup: GitAction[];
+  /** Record origin/main at the end of setup: main has been pushed and others may have it. */
+  pushed: boolean;
+}
+
+/** The browser's check of a command's fields before running it (the server validates with schema.ts). */
+export function validateGitAction(a: GitAction): string | null {
+  const branch = "name" in a ? a.name : "branch" in a ? a.branch : "onto" in a ? a.onto : null;
+  if (branch !== null && !RULES.branchName.test(branch)) return RULES.branchNameMessage;
+  if (a.type === "commit" && !a.message.trim()) return "A commit needs a message.";
+  if (a.type === "commit" && a.message.length > RULES.messageMax) return `Keep the message under ${RULES.messageMax} characters.`;
+  return null;
+}
 
 /** The command a learner would type, shown next to each action in the UI and log. */
 export function gitCommand(a: GitAction): string {
@@ -247,8 +253,6 @@ const describe = (state: GitState): string[] => {
 export const commitGraph: SimulationModel<GitState, GitAction, GitScenario> = {
   id: "git-commit-graph",
   track: "git-github",
-  scenarioSchema: GitScenarioSchema,
-  actionSchema: GitActionSchema,
   init,
   step,
   invariants: [

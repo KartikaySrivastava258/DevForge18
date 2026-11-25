@@ -66,7 +66,7 @@ verification:
   details: Every command marked runnable is executed by the test suite with Git 2.43 (and in CI), continuing from the previous lesson's repository, with fixed commit dates so the commit IDs shown here are reproduced exactly.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

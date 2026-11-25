@@ -6,8 +6,11 @@
  * browser can run it interactively and the server can replay a learner's
  * actions to verify a challenge before recording progress. Models never use
  * Math.random, Date or I/O.
+ *
+ * Model logic has no dependencies, so the browser bundle stays small; the zod
+ * schemas that validate scenarios and actions live next to each model in
+ * schema.ts and are attached by the server-side registry (index.ts).
  */
-import type { z } from "zod/v4";
 
 export interface StepResult<S> {
   state: S;
@@ -26,10 +29,6 @@ export interface Invariant<S> {
 export interface SimulationModel<S, A, P> {
   id: string;
   track: string;
-  /** Validates a scenario's params from content/simulations/<track>/<id>.yaml. */
-  scenarioSchema: z.ZodType<P>;
-  /** Validates one action, in the browser and again on the server. */
-  actionSchema: z.ZodType<A>;
   init: (params: P) => StepResult<S>;
   step: (state: S, action: A) => StepResult<S>;
   /** Present for models where time passes (Play advances by this action). */

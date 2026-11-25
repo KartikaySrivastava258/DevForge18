@@ -58,7 +58,7 @@ verification:
   details: Every command marked runnable is executed by the test suite with Git 2.43 (and in CI) in an isolated home directory, and its output is compared with the output shown here.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence

@@ -68,6 +68,24 @@ content/media/<track>/<name>.steps.yaml   optional: a step-through over one figu
 - Keep text in the SVG short (labels, not sentences); explanations belong in the caption and the lesson.
 - Check the result in both themes and on mobile (`npm run test:e2e` writes screenshots to `build/screenshots/`).
 
+## Simulations
+
+A simulation is an interactive teaching model in the browser (REMAINING_WORK.md §4.3, [ADR 0008](adr/0008-simulations-verified-by-replay.md)). It always says it is a simulation and what it simplifies. One per track at least:
+
+```text
+shared/simulations/<track>/<model>.ts        pure model: types, init(), step(), invariants, checks, describe()
+shared/simulations/<track>/schema.ts         zod schemas for scenarios and actions (server and build only)
+shared/simulations/<track>/<model>.test.ts   every action, every invariant, every check; compare with the real tool where possible
+shared/simulations/index.ts                  register the model with its schemas
+web/src/simulations/<View>.tsx + registry.ts the React view that draws the state and offers the actions
+content/simulations/<track>/<id>.yaml        concept, objectives, simplifications, text alternative, scenarios, challenges
+```
+
+- **Models are pure and deterministic**: no `Math.random`, dates or I/O, so the server can replay a learner's actions and verify a challenge. Keep model files free of dependencies (they ship to browsers); put zod in `schema.ts`, whose compile-time checks fail if the schema and the model's types differ.
+- **Every simplification is listed** in `simplifications`; each one says what the real tool does instead. Where the model's behaviour can be compared with the real tool, test it (the Git model is compared with real Git; the Kubernetes model reproduces the real cluster's stalled rollout from the lessons).
+- **Challenges** name a `check` from the model and carry a `solution` (a list of actions). The build replays every solution and fails unless it passes the check, and unless the check fails at the start. Solutions are never sent to browsers.
+- **Embed** a simulation in a lesson with an empty fence ```` ```simulation <id> scenario=<scenario-id> ````, usually in a "Try it in the simulation" section before "Common mistakes". It appears on the track page automatically.
+
 ## Lesson structure
 
 File: `content/lessons/<track>/<lesson-id>.md`; the id must equal the file name. Use the exemplar `content/lessons/docker/docker-images-vs-containers.md` as the model. A lesson should include, as `##` sections where they apply:

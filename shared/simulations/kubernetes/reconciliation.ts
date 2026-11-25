@@ -17,13 +17,14 @@
  * pulls either work at once or fail forever; the scheduler only looks at how
  * many Pods each node runs; there is one container per Pod.
  */
-import { z } from "zod/v4";
 import type { SimulationModel, StepResult } from "../types.ts";
 
 export const IMAGES = ["nginx:1.27-alpine", "nginx:1.28-alpine", "nginx:does-not-exist"] as const;
 /** Images that exist in the simulated registry. */
 const PULLABLE = new Set<string>(["nginx:1.27-alpine", "nginx:1.28-alpine"]);
-const STRATEGY_VALUES = ["0", "1", "2", "25%", "50%"] as const;
+export const STRATEGY_VALUES = ["0", "1", "2", "25%", "50%"] as const;
+export type StrategyValue = (typeof STRATEGY_VALUES)[number];
+export type Image = (typeof IMAGES)[number];
 
 export type Phase = "Pending" | "ContainerCreating" | "Running" | "ErrImagePull" | "ImagePullBackOff" | "Terminating";
 
@@ -64,31 +65,25 @@ export interface K8sState {
   rollout: { image: string; minAvailable: number; disrupted: boolean; done: boolean } | null;
 }
 
-const strategyValue = z.enum(STRATEGY_VALUES);
-export const K8sActionSchema = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("tick"), count: z.number().int().min(1).max(60).optional() }).strict(),
-  z.object({ type: z.literal("deletePod"), pod: z.string().min(1).max(40) }).strict(),
-  z.object({ type: z.literal("drainNode"), node: z.string().min(1).max(20) }).strict(),
-  z.object({ type: z.literal("uncordonNode"), node: z.string().min(1).max(20) }).strict(),
-  z.object({ type: z.literal("scale"), replicas: z.number().int().min(0).max(10) }).strict(),
-  z.object({ type: z.literal("setImage"), image: z.enum(IMAGES) }).strict(),
-  z.object({ type: z.literal("setStrategy"), maxSurge: strategyValue, maxUnavailable: strategyValue }).strict(),
-  z.object({ type: z.literal("undo") }).strict(),
-]);
-export type K8sAction = z.infer<typeof K8sActionSchema>;
+export type K8sAction =
+  | { type: "tick"; count?: number | undefined }
+  | { type: "deletePod"; pod: string }
+  | { type: "drainNode"; node: string }
+  | { type: "uncordonNode"; node: string }
+  | { type: "scale"; replicas: number }
+  | { type: "setImage"; image: Image }
+  | { type: "setStrategy"; maxSurge: StrategyValue; maxUnavailable: StrategyValue }
+  | { type: "undo" };
 
-export const K8sScenarioSchema = z
-  .object({
-    nodes: z.number().int().min(1).max(4),
-    replicas: z.number().int().min(1).max(8),
-    image: z.enum(IMAGES).default("nginx:1.27-alpine"),
-    maxSurge: strategyValue.default("25%"),
-    maxUnavailable: strategyValue.default("25%"),
-    /** Actions applied after the Deployment has settled (for example, a broken release). */
-    setup: z.array(K8sActionSchema).max(20).default([]),
-  })
-  .strict();
-export type K8sScenario = z.infer<typeof K8sScenarioSchema>;
+export interface K8sScenario {
+  nodes: number;
+  replicas: number;
+  image: Image;
+  maxSurge: StrategyValue;
+  maxUnavailable: StrategyValue;
+  /** Actions applied after the Deployment has settled (for example, a broken release). */
+  setup: K8sAction[];
+}
 
 /** The kubectl command for an action, shown next to the controls and in the log. */
 export function kubectlCommand(a: K8sAction): string {
@@ -384,8 +379,6 @@ function describe(s: K8sState): string[] {
 export const reconciliation: SimulationModel<K8sState, K8sAction, K8sScenario> = {
   id: "kubernetes-reconciliation",
   track: "kubernetes",
-  scenarioSchema: K8sScenarioSchema,
-  actionSchema: K8sActionSchema,
   init,
   step,
   tick: { type: "tick" },

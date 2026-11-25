@@ -4,6 +4,7 @@ import { BookmarkButton } from "../components/BookmarkButton.tsx";
 import { Crumbs } from "../components/Crumbs.tsx";
 import { SelfCheck } from "../components/SelfCheck.tsx";
 import { StepDiagram } from "../components/StepDiagram.tsx";
+import { LazySimulation } from "../simulations/LazySimulation.tsx";
 import { ErrorState, Loading, NotFoundState } from "../components/States.tsx";
 import { LevelTag } from "../components/Tags.tsx";
 import { api } from "../lib/api.ts";
@@ -42,6 +43,7 @@ export function LessonPage({ trackSlug, lessonId }: { trackSlug: string; lessonI
   const started = useRef<string | null>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const [diagrams, setDiagrams] = useState<HTMLElement[]>([]);
+  const [simulations, setSimulations] = useState<HTMLElement[]>([]);
   useTitle(data?.lesson.title);
   const tocIds = data?.lesson.toc.map((t) => t.id) ?? [];
   const active = useScrollSpy(tocIds, Boolean(data));
@@ -57,6 +59,9 @@ export function LessonPage({ trackSlug, lessonId }: { trackSlug: string; lessonI
   const loadedLessonId = data?.lesson.id;
   useEffect(() => {
     setDiagrams(Array.from(bodyRef.current?.querySelectorAll<HTMLElement>("[data-step-diagram]") ?? []));
+    const sims = Array.from(bodyRef.current?.querySelectorAll<HTMLElement>("[data-simulation]") ?? []);
+    for (const el of sims) el.dataset.enhanced = "true";
+    setSimulations(sims);
   }, [loadedLessonId]);
 
   const onArticleClick = useCallback(async (e: MouseEvent<HTMLElement>) => {
@@ -145,6 +150,9 @@ export function LessonPage({ trackSlug, lessonId }: { trackSlug: string; lessonI
             const slot = root.querySelector("[data-controls]");
             return slot ? createPortal(<StepDiagram root={root} />, slot, root.id) : null;
           })}
+          {simulations.map((el) =>
+            createPortal(<LazySimulation id={el.dataset.simulation ?? ""} scenario={el.dataset.scenario ?? null} headingLevel={3} embedded />, el, `sim-${el.dataset.simulation}`),
+          )}
           <p className="sr-only" aria-live="polite">
             {announce}
           </p>

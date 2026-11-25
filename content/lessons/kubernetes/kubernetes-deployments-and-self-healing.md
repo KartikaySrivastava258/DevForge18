@@ -66,7 +66,7 @@ verification:
   details: Every command is run by the test suite on a disposable Docker engine, creating a real kind 0.32.0 cluster with Kubernetes 1.36.1 (node image pinned by digest) and kubectl 1.36.1; the documented output was confirmed in CI run 45643638519 on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -177,6 +177,13 @@ deployment "web" successfully rolled out
 ```
 
 Keep the cluster running for the next lesson. To stop for now and remove everything, run `kind delete cluster --name devforge`.
+
+## Try it in the simulation
+
+Watch the controllers at work: delete a Pod or drain a node, then step through time and read the event log. It is a labelled teaching model of the reconciliation loop, not a real cluster.
+
+```simulation kubernetes-reconciliation scenario=steady
+```
 
 ## Common mistakes
 

@@ -29,6 +29,10 @@ Lesson figures are inline SVG ([ADR 0007](adr/0007-inline-svg-figures.md)) and m
 
 Status colours always come with a word or symbol in the figure or caption, never colour alone. In step-throughs the current step's boxes and arrows switch to the accent colour.
 
+## Simulations
+
+Every simulation shows the amber **Simulation** tag (`tag--sim`) next to its title and a "what it simplifies" disclosure. State is always written as well as coloured (a Pod says `ImagePullBackOff`, a commit says `not on any branch`). Controls are labelled with `Field` (label linked by `htmlFor`, so a select's name is not its options' text). Play is offered only without `prefers-reduced-motion`; Step always works.
+
 ## Rules
 
 - **One accent.** Colour means interaction or status. Categories are shown by grouping and position.

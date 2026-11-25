@@ -14,6 +14,7 @@ const SECTIONS = [
   { id: "connections", label: "How it connects" },
   { id: "curriculum", label: "Curriculum" },
   { id: "lessons", label: "Lessons" },
+  { id: "simulations", label: "Simulations" },
   { id: "practice", label: "Labs" },
   { id: "projects", label: "Projects" },
   { id: "resources", label: "Official resources" },
@@ -55,7 +56,7 @@ export function TrackPage({ slug }: { slug: string }) {
 
   if (error) return <div className="page"><ErrorState error={error} onRetry={reload} /></div>;
   if (loading || !data) return <div className="page"><Loading label="Loading track" /></div>;
-  const { track, summary, lessons, prerequisites, related, paths } = data;
+  const { track, summary, lessons, simulations, prerequisites, related, paths } = data;
 
   return (
     <div className="page">
@@ -229,6 +230,33 @@ export function TrackPage({ slug }: { slug: string }) {
               </ol>
             ) : (
               <p className="muted">No lessons are published for this track yet. The curriculum above shows what they will cover.</p>
+            )}
+          </section>
+
+          <section id="simulations" className="section" aria-labelledby="simulations-h">
+            <h2 id="simulations-h">Simulations</h2>
+            {simulations.length ? (
+              <>
+                <p className="muted">Interactive teaching models of the concept. They are labelled as simulations, say what they simplify, and run nothing real.</p>
+                <ul className="plan-list">
+                  {simulations.map((s) => (
+                    <li key={s.id}>
+                      <span>
+                        <Link to={`/tracks/${track.slug}/simulations/${s.id}`}>{s.title}</Link>
+                        <span className="muted small sim-card__concept">{s.concept}</span>
+                      </span>
+                      <span className="tags">
+                        <span className="tag tag--sim">Simulation</span>
+                        <span className="tag">
+                          {s.challengeCount} challenge{s.challengeCount === 1 ? "" : "s"}
+                        </span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="muted">No simulation is published for this track yet.</p>
             )}
           </section>
 
