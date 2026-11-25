@@ -138,6 +138,8 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 
 ### Milestone 2 — visual learning system (2026-11-25)
 
+- **CI run 45650635699: ✅ green** — 171/171 unit, API, checker and lesson tests with 0 skipped (every lesson against its real tool), 20/20 browser tests.
+
 - **Media pipeline** (REMAINING_WORK.md §4.2): `content/media/<track>/<name>.svg` with a `.yaml` sidecar (alt text, caption, credit, licence; third-party media need `source_url`), referenced as `![](media:<track>/<name>.svg)`; step-throughs as `<name>.steps.yaml`, embedded with an empty ```` ```diagram steps=<track>/<name> ```` fence. `data-step` reveals and highlights elements; `data-until` hides them.
 - **Design change, recorded in ADR 0007:** SVGs are validated against a strict allowlist and **inlined**, not shown with `<img>`, because an `<img>` SVG cannot follow the app's theme toggle or be stepped through. The validator rejects scripts, `foreignObject`, `style` elements and attributes, event handlers, external references, DOCTYPE/CDATA/unknown entities and hard-coded colours, and re-serialises only what it parsed. No CSP change, no new dependency.
 - **`StepDiagram`** (`web/src/components/StepDiagram.tsx`): Previous/Next, arrow keys, user-started Play and Pause (Play is not offered under `prefers-reduced-motion`, and transitions are disabled), a live caption, and the full step list as the text alternative. `aria-disabled` instead of `disabled` keeps keyboard focus at the first and last steps (a disabled button would drop focus to the page).
