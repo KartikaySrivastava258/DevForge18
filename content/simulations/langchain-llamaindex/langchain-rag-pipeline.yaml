@@ -1,0 +1,59 @@
+id: langchain-rag-pipeline
+track: langchain-llamaindex
+title: A RAG pipeline, end to end
+concept: Retrieval-augmented generation splits documents into chunks, finds the chunks most similar to a question, and puts them into the prompt. Chunk size and k decide whether the sentence that answers the question reaches the model — and how long the prompt gets.
+learning_objectives:
+  - See how chunk size changes each chunk's vector and which chunks are retrieved.
+  - Choose a chunk size and k so the sentence that answers the question is retrieved within a prompt budget.
+  - Read the prompt that retrieval builds, with the source of every chunk.
+simplifications:
+  - The vectors are hand-made over four topics (containers, databases, caching, messaging); a real embedding model learns hundreds of dimensions.
+  - A chunk's vector is the sum of its sentences' vectors, which makes dilution easy to see; real models embed the chunk's text directly.
+  - Chunks are whole sentences without overlap, prompt length is counted in words rather than tokens, and no answer is generated.
+text_alternative: The question and its vector; every chunk with its file, its similarity to the question and whether it was retrieved; the assembled prompt with its word count against the budget; whether the sentence that answers the question is in it. Every change is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: ttl-question
+    title: When a TTL runs out
+    description: The answer is one sentence in operations.md, a document that mixes Kafka, caching and Docker. The prompt may have at most 70 words.
+    params:
+      question: { text: "What happens to a cache entry when its TTL runs out?", vec: [0, 0, 2, 0], support: o3 }
+      chunkSize: 4
+      k: 1
+      budget: 70
+  - id: why-cache
+    title: Why add a cache
+    description: The answer is a sentence in postgresql.md. The prompt may have at most 45 words.
+    params:
+      question: { text: "Why add a cache in front of a database?", vec: [0, 1, 1, 0], support: p3 }
+      chunkSize: 1
+      k: 1
+      budget: 45
+  - id: kafka-question
+    title: How long Kafka keeps events
+    description: An easy one, to explore freely. The prompt may have at most 80 words.
+    params:
+      question: { text: "How long does Kafka keep events?", vec: [0, 0, 0, 2], support: o1 }
+      chunkSize: 2
+      k: 2
+      budget: 80
+challenges:
+  - id: ttl-question
+    title: Find the TTL answer
+    goal: Choose a chunk size and k so the sentence that answers the question is in the prompt, and the prompt has at most 70 words.
+    scenario: ttl-question
+    check: support-within-budget
+    hint: In big chunks, the answer is mixed with Kafka and Docker sentences, so its chunk points the wrong way. Make chunks small — then count how many caching sentences rank above it.
+    solution:
+      - { type: setChunkSize, size: 1 }
+      - { type: setK, k: 3 }
+  - id: why-cache
+    title: Keep the answer's context
+    goal: Get the sentence that answers "why add a cache in front of a database?" into a prompt of at most 45 words.
+    scenario: why-cache
+    check: support-within-budget
+    hint: On its own, the answer sentence ties with a Redis sentence. With the sentence before it in the same chunk, its chunk leans towards databases — like the question.
+    solution:
+      - { type: setChunkSize, size: 2 }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

@@ -1,0 +1,4 @@
+alt: 'Variables (course and question) go into a prompt template, which produces messages. The messages go to a chat model, which is either a fake one for tests or a real one that needs an API key. The reply goes to an output parser that turns it into a string or JSON, and a Pydantic model checks the values. A note says prompt | model | parser forms one Runnable chain. Below, the example messages: system: You are a teaching assistant for DevForge. Answer in one sentence. human: What does Docker do?'
+caption: 'A chain fills a prompt, calls a model and checks the reply; only the model part changes when you switch from a fake model to a real one.'
+credit: DevForge 18 content team
+licence: project-content

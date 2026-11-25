@@ -469,3 +469,15 @@
 .mlflow-sim__key[data-kind="forest"]::before { background: var(--ok); }
 .mlflow-sim__key[data-kind="boosting"]::before { background: var(--warn); }
 @media (max-width: 48rem) { .mlflow-sim__layout { grid-template-columns: 1fr; } }
+.rag-sim__chunks { list-style: none; margin: 0 0 var(--space-2); padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.rag-sim__chunk { padding: var(--space-2) var(--space-3); border: 1px dashed var(--line); border-radius: var(--radius-s); background: var(--bg); }
+.rag-sim__chunk[data-retrieved="true"] { border: 1px solid var(--accent); background: var(--accent-soft); }
+.rag-sim__chunk p { margin: var(--space-1) 0 0; font-size: 0.9375rem; }
+.rag-sim__meta { display: flex; flex-wrap: wrap; gap: 2px var(--space-3); font-size: var(--step--1); color: var(--muted); }
+.rag-sim__meta strong { color: var(--text); font-family: var(--font-mono); }
+.rag-sim__support { background: var(--warn-soft); outline: 1px solid var(--warn); border-radius: 2px; }
+.rag-sim__ok { color: var(--ok); font-weight: 600; }
+.rag-sim__bad { color: var(--danger); font-weight: 600; }
+.rag-sim__prompt { margin: var(--space-3) 0; }
+.rag-sim__prompt summary { cursor: pointer; font-weight: 600; }
+.rag-sim__prompt pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.8125rem; padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg); }

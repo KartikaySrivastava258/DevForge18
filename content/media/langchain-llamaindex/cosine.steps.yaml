@@ -1,0 +1,8 @@
+figure: cosine.svg
+title: 'Comparing directions'
+steps:
+  - caption: 'The keyword embedding gives each text four numbers; these three only use two topics, caching and databases (A: [0, 0, 5, 0]; B: [0, 4, 0, 0]; C: [0, 1, 2, 0]), so they can be drawn as arrows.'
+  - caption: 'The question becomes an arrow too: [0, 0, 2, 0] — two caching words.'
+  - caption: 'A points the same way as the question: cosine 1.00, although A is longer. Length does not matter, only direction.'
+  - caption: 'B is at a right angle to the question — about databases only: cosine 0.00.'
+  - caption: 'C is partly about both: cosine 0.89. Ranked by similarity: A, C, B.'

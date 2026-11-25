@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **5 in progress — Kafka, Airflow and MLflow done** (REMAINING_WORK.md §7) · Next: **LangChain + LlamaIndex**
+Last updated: 2026-11-25 · Milestone: **5 in progress — Kafka, Airflow, MLflow and LangChain + LlamaIndex done** (REMAINING_WORK.md §7) · Next: **n8n**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 36 published across 15 tracks, **all executed** (Airflow confirmed in CI; the 3 MLflow lessons recorded against a real MLflow server locally, CI confirmation in progress) |
+| Lessons | ✅ 39 published across 16 tracks, **all executed** (the 3 LangChain + LlamaIndex lessons recorded locally, CI confirmation in progress) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 37 figures across all 36 lessons (no ASCII diagrams left), 15 of them step-throughs — one in each of the 15 tracks with lessons; tested |
-| Simulations | 🟡 Framework done and tested; 7 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow), with server-verified challenges |
+| Figures and step-through diagrams | ✅ 40 figures across all 39 lessons (no ASCII diagrams left), 16 of them step-throughs — one in each of the 16 tracks with lessons; tested |
+| Simulations | 🟡 Framework done and tested; 8 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex), with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -231,9 +231,19 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Tests made stricter:** Playwright's `hasText: "Solved"` matches "Not solved yet" too (case-insensitive substring), so the simulation browser tests waited for nothing. They now match `/^Solved/`; all ten still pass, so every earlier "solved" was real.
 - Figures: what tracking records and where, searching runs (a step-through built from the recorded sweep), versions and an alias.
 
+### Milestone 5 — LangChain + LlamaIndex (2026-11-25)
+
+- **No real model is called, anywhere.** As REMAINING_WORK.md §5.8 requires, the lessons use deterministic stand-ins: LangChain's `FakeListChatModel` (its docstring: "Fake chat model for testing purposes"), a hand-made keyword embedding labelled as a teaching model, and LlamaIndex's `MockLLM`, which returns the prompt it receives — so the third lesson shows the exact prompt a RAG query builds. Using a real model is described (a provider package and the learner's own key, which costs money) but never run.
+- **Versions:** `python:3.12-slim` pinned by digest `sha256:191083cd…`; langchain-core **1.8.4** (2026-11-19), numpy **2.5.5** (2026-11-15, needed by `InMemoryVectorStore` — found when the first recording failed), llama-index-core **0.14.26** (2026-11-13), all exact versions from PyPI. Only the top-level packages are pinned; their own dependencies are resolved by pip at install time (see risks).
+- **Lessons:** *Prompts, models and output parsers* (a prompt template, `prompt | model | parser` as a RunnableSequence, JSON output validated with Pydantic — accepted, not JSON, and valid JSON with a disallowed value); *Embeddings and similarity, with small vectors* (a four-topic keyword embedding, cosine similarity by hand, `InMemoryVectorStore`, and a question with no known words whose zero vector makes the search fail — the case for learned embeddings); *Chunking, retrieval and the prompt a RAG system builds* (LlamaIndex `SentenceSplitter` at two chunk sizes, retrieval with sources, the assembled prompt, clean-up).
+- **Found by running it:** with 60-token chunks, the best match for "What happens when the TTL of a cache entry runs out?" is a 13-word chunk that mentions TTLs but does not answer; the answering sentence is in the second hit. The first draft claimed the opposite. Lesson 3 now teaches exactly this (similarity is "about the same thing", not "answers the question") and retrieves with k=2.
+- **Facts:** checked against the langchain-core 1.8.4 and llama-index-core 0.14.26 source and docstrings (Runnable, fake chat models, the Embeddings interface, `InMemoryVectorStore` using cosine similarity, `chunk_size` in tokens, the default text-QA prompt) and the LangChain and LlamaIndex embeddings pages (both verbatim). Not verified from an official source, so not stated: when and by whom the two projects were started.
+- **Simulation** *A RAG pipeline, end to end* (§5.8): three documents of four sentences with hand-made vectors; chunk size 1–4 and k 1–6; every chunk ranked by cosine similarity, the retrieved ones highlighted, the answering sentence marked, and the assembled prompt with its length against a budget. 9 model tests, including that each challenge has exactly one solution: the TTL question needs one-sentence chunks and k=3 (big chunks bury the answer among Kafka and Docker sentences), the why-cache question needs two-sentence chunks (the answer needs its neighbour's context). A browser test; embedded in lesson 3.
+- Figures: the parts of a chain, cosine similarity (a step-through whose vectors are computed from the lesson's own sentences), the RAG pipeline.
+
 ## Current work
 
-Milestone 5 of REMAINING_WORK.md §7: Kafka, Airflow and MLflow are done; next LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
+Milestone 5 of REMAINING_WORK.md §7: Kafka, Airflow, MLflow and LangChain + LlamaIndex are done; next n8n, then Jira, LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
 
 ## Pending work (ordered)
 
@@ -275,8 +285,9 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 36 lessons across 15 tracks | 3 tracks show outline only | Milestone 5 |
+| 39 lessons across 16 tracks | 2 tracks show outline only (n8n, Jira) | Milestone 5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
+| Python packages for the LangChain + LlamaIndex lessons | Only the top-level packages are pinned; a new release of one of their dependencies could change behaviour or break the install in CI | If it happens: pin the full set with a constraints file generated by `pip freeze` in the lesson container |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka`, `apache/airflow` and (from GitHub's registry) `ghcr.io/mlflow/mlflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
 | No lesson currently uses `pending` or `docs-checked`, and no resource is unverified | Those UI states ("Automated test pending.", "Link not yet verified") are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such content exists, or test the states with fixture content |
 

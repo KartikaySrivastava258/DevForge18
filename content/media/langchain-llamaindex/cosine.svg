@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260">
+  <!-- Cosine similarity in two of the four topics, from Embeddings and similarity, with small vectors. -->
+  <line class="f-line" x1="70" y1="220" x2="260.4" y2="220"/>
+  <line class="f-line" x1="70" y1="220" x2="70" y2="29.6"/>
+  <text class="f-small f-muted" x="260.4" y="238" text-anchor="end">caching →</text>
+  <text class="f-small f-muted" x="62" y="33.6" text-anchor="end">databases</text>
+  <text class="f-small f-muted" x="62" y="47.6" text-anchor="end">↑</text>
+  <g data-step="1">
+    <path class="f-arrow" d="M70 220 L232 220"/>
+    <polygon class="f-head" points="240,220 232,224.5 232,215.5"/>
+  </g>
+  <text class="f-small f-strong" x="246" y="216" data-step="1">A</text>
+  <g data-step="1">
+    <path class="f-arrow" d="M70 220 L70 92"/>
+    <polygon class="f-head" points="70,84 74.5,92 65.5,92"/>
+  </g>
+  <text class="f-small f-strong" x="78" y="90" data-step="1">B</text>
+  <g data-step="1">
+    <path class="f-arrow" d="M70 220 L130.8 189.6"/>
+    <polygon class="f-head" points="138,186 132.8,193.6 128.8,185.6"/>
+  </g>
+  <text class="f-small f-strong" x="144" y="182" data-step="1">C</text>
+  <g data-step="2">
+    <path class="f-arrow-accent" d="M70 220 L130 220"/>
+    <polygon class="f-head-accent" points="138,220 130,224.5 130,215.5"/>
+  </g>
+  <text class="f-small f-strong" x="108" y="238" data-step="2">question</text>
+  <text class="f-small" x="330" y="40">A = [0, 0, 5, 0]  Redis, cache, TTL</text>
+  <text class="f-small" x="330" y="62">B = [0, 4, 0, 0]  PostgreSQL, table, index</text>
+  <text class="f-small" x="330" y="84">C = [0, 1, 2, 0]  Redis cache for PostgreSQL</text>
+  <text class="f-small f-accent" x="330" y="112" data-step="2">question = [0, 0, 2, 0]  Redis cache entry</text>
+  <g data-step="3">
+    <text class="f-mono" x="330" y="150">cos(question, A) = 1.00</text>
+  </g>
+  <g data-step="4">
+    <text class="f-mono" x="330" y="174">cos(question, B) = 0.00</text>
+  </g>
+  <g data-step="5">
+    <text class="f-mono" x="330" y="198">cos(question, C) = 0.89</text>
+  </g>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250">
+  <!-- Retrieval-augmented generation with LlamaIndex, from Chunking, retrieval and the prompt a RAG system builds. -->
+  <rect class="f-box-faint" x="16" y="20" width="136" height="84" rx="8"/>
+  <text class="f-strong" x="84" y="42" text-anchor="middle">documents</text>
+  <text class="f-small f-muted" x="84" y="60" text-anchor="middle">redis.md, kafka.md,</text>
+  <text class="f-small f-muted" x="84" y="75" text-anchor="middle">docker.md</text>
+  <rect class="f-box" x="174" y="20" width="136" height="84" rx="8"/>
+  <text class="f-strong" x="242" y="42" text-anchor="middle">SentenceSplitter</text>
+  <text class="f-small f-muted" x="242" y="60" text-anchor="middle">chunks (nodes)</text>
+  <text class="f-small f-muted" x="242" y="75" text-anchor="middle">+ file metadata</text>
+  <rect class="f-box" x="332" y="20" width="136" height="84" rx="8"/>
+  <text class="f-strong" x="400" y="42" text-anchor="middle">VectorStoreIndex</text>
+  <text class="f-small f-muted" x="400" y="60" text-anchor="middle">embeds every</text>
+  <text class="f-small f-muted" x="400" y="75" text-anchor="middle">chunk</text>
+  <rect class="f-box-accent" x="490" y="20" width="134" height="84" rx="8"/>
+  <text class="f-strong" x="557" y="42" text-anchor="middle">retriever</text>
+  <text class="f-small f-muted" x="557" y="60" text-anchor="middle">question → vector</text>
+  <text class="f-small f-muted" x="557" y="75" text-anchor="middle">→ top-k chunks</text>
+  <g>
+    <path class="f-arrow" d="M154 62 L164 62"/>
+    <polygon class="f-head" points="172,62 164,66.5 164,57.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M312 62 L322 62"/>
+    <polygon class="f-head" points="330,62 322,66.5 322,57.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M470 62 L480 62"/>
+    <polygon class="f-head" points="488,62 480,66.5 480,57.5"/>
+  </g>
+  <rect class="f-box-faint" x="16" y="140" width="230" height="96" rx="8"/>
+  <text class="f-small f-strong" x="26" y="160">question</text>
+  <text class="f-small" x="26" y="180">What happens when the TTL</text>
+  <text class="f-small" x="26" y="196">of a cache entry runs out?</text>
+  <g>
+    <path class="f-arrow" d="M246 158 L520 158 L520 114"/>
+    <polygon class="f-head" points="520,106 524.5,114 515.5,114"/>
+  </g>
+  <rect class="f-box" x="276" y="176" width="220" height="60" rx="8"/>
+  <text class="f-small f-strong" x="386" y="198" text-anchor="middle">prompt: context chunks</text>
+  <text class="f-small f-strong" x="386" y="216" text-anchor="middle">+ question → model</text>
+  <g>
+    <path class="f-arrow" d="M590 106 L590 206 L506 206"/>
+    <polygon class="f-head" points="498,206 506,201.5 506,210.5"/>
+  </g>
+  <text class="f-small f-muted" x="596" y="128">chunks</text>
+</svg>

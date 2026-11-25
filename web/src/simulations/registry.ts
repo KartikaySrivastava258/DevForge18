@@ -26,4 +26,5 @@ export const SIMULATIONS: Record<string, () => Promise<{ default: SimulationEntr
   "kafka-consumer-groups": () => import("./KafkaGroups.tsx"),
   "airflow-scheduler-timeline": () => import("./AirflowTimeline.tsx"),
   "mlflow-experiment-explorer": () => import("./MlflowExplorer.tsx"),
+  "langchain-rag-pipeline": () => import("./RagPipeline.tsx"),
 };

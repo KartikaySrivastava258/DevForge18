@@ -4,7 +4,7 @@
 
 DevForge 18 is an interactive developer engineering academy. It teaches 18 industry technology tracks — from Git and Docker to Kafka, OpenTelemetry and MLflow — the way they are actually used: as parts of one system. Every track starts with a plain-language explanation, shows where the tool sits in an architecture and how it connects to the others, and leads into lessons with graded self-checks, labs and projects.
 
-> **Project status: Phase 1 in progress.** The platform, all 18 track curricula and 8 learning paths are in place, and 36 beginner lessons are published across 15 tracks (all of Learning Paths 1 and 2 — Git, PostgreSQL, Postman, Redis, Nginx, Docker, GitHub Actions, Jenkins, Terraform, Kubernetes, Prometheus + Grafana, OpenTelemetry — plus Kafka, Airflow and MLflow). Every command in every published lesson is run by the test suite against the real tool, and CI confirms the output matches. Labs and projects are still being written; the app labels everything that is planned rather than available. See [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) for exactly what works today.
+> **Project status: Phase 1 in progress.** The platform, all 18 track curricula and 8 learning paths are in place, and 39 beginner lessons are published across 16 tracks (all of Learning Paths 1 and 2 — Git, PostgreSQL, Postman, Redis, Nginx, Docker, GitHub Actions, Jenkins, Terraform, Kubernetes, Prometheus + Grafana, OpenTelemetry — plus Kafka, Airflow, MLflow and LangChain + LlamaIndex). Every command in every published lesson is run by the test suite against the real tool, and CI confirms the output matches. Labs and projects are still being written; the app labels everything that is planned rather than available. See [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) for exactly what works today.
 
 ![DevForge 18 home page with the interactive system map](docs/screenshots/home-dark.jpg)
 
@@ -36,9 +36,9 @@ DevForge 18 is an interactive developer engineering academy. It teaches 18 indus
 | Interactive system map showing how the tracks connect, with an explanation behind every connection | Working |
 | 8 learning paths with ordered modules, prerequisites, alternate routes and time estimates | Working |
 | Search across tracks, curriculum topics, lessons and paths, with typo tolerance and abbreviations (`k8s`, `pg`, `otel`) | Working |
-| Lesson reader with objectives, table of contents, copyable code blocks, expected output and a server-graded self-check | Working (36 lessons; their commands are run by the test suite and in CI) |
-| Figures in every lesson, and step-through diagrams (Previous/Next, arrow keys, Play) for processes in every track with lessons; both themes, reduced motion respected | Working (37 figures, 15 of them step-throughs) |
-| Interactive simulations with challenges, verified by the server and saved to progress: Git commit graph, Kubernetes reconciliation loop, Prometheus scrape and rate, OpenTelemetry trace waterfall, Kafka consumer groups, Airflow scheduler timeline, MLflow experiment explorer | Working (7 of the planned 18) |
+| Lesson reader with objectives, table of contents, copyable code blocks, expected output and a server-graded self-check | Working (39 lessons; their commands are run by the test suite and in CI) |
+| Figures in every lesson, and step-through diagrams (Previous/Next, arrow keys, Play) for processes in every track with lessons; both themes, reduced motion respected | Working (40 figures, 16 of them step-throughs) |
+| Interactive simulations with challenges, verified by the server and saved to progress: Git commit graph, Kubernetes reconciliation loop, Prometheus scrape and rate, OpenTelemetry trace waterfall, Kafka consumer groups, Airflow scheduler timeline, MLflow experiment explorer, a RAG pipeline | Working (8 of the planned 18) |
 | Accounts, sign-in, progress tracking (a lesson completes only when its self-check is passed), bookmarks, dashboard | Working |
 | Roles (student, faculty, admin), admin user management with an audit log, faculty aggregate statistics | API working; admin/faculty screens not built yet |
 | Dark and light themes, keyboard navigation, mobile layout | Working |
@@ -176,7 +176,7 @@ Details and the reasoning behind each choice: [`docs/architecture.md`](docs/arch
 npm run typecheck       # strict TypeScript: server, shared code, scripts, tests
 npm run typecheck:web   # strict TypeScript: React frontend
 npm test                # unit, API, checker and executable-lesson tests
-npm run test:e2e        # 29 browser journeys in headless Chromium (builds first)
+npm run test:e2e        # 30 browser journeys in headless Chromium (builds first)
 npm run verify          # everything above, in order
 ```
 
@@ -231,7 +231,7 @@ Found a vulnerability? Please report it privately to the maintainers rather than
 
 ## Known limitations
 
-- 36 lessons are published across 15 tracks; the other 3 tracks show their reviewed curriculum outline. Labs and projects are listed as planned.
+- 39 lessons are published across 16 tracks; the other 2 tracks show their reviewed curriculum outline. Labs and projects are listed as planned.
 - External resource links were all checked and reviewed on 2026-11-25. The weekly *Link check* workflow reports reachability; a person re-confirms each page before its date is updated.
 - Admin and faculty features exist in the API but have no screens yet.
 - Rate limits are kept in memory, so they apply per server process. See [ADR 0004](docs/adr/0004-auth-sessions.md).

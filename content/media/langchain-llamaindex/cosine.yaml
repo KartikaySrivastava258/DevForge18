@@ -1,0 +1,4 @@
+alt: 'Vectors drawn on two axes, caching and databases. Text A, ''Redis is a cache; each cache entry can expire after a TTL.'', points along caching; text B, ''PostgreSQL stores rows in a table; an index makes a query faster.'', points along databases; text C, ''Redis can sit in front of PostgreSQL as a cache for slow queries.'', points between them, mostly caching. The question, ''How long does a Redis cache entry live?'', points along caching. Its cosine similarity is 1.00 with A, 0.00 with B and 0.89 with C.'
+caption: 'Cosine similarity compares directions: same direction 1, right angles 0.'
+credit: DevForge 18 content team
+licence: project-content

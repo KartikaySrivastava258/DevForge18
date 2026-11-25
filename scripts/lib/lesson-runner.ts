@@ -140,7 +140,7 @@ export function usesDocker(blocks: RunBlock[]): boolean {
  */
 export function lessonNeeds(track: string, order: number): { api: boolean; apiPort: number; timeoutMs: number } {
   const nginxProxy = track === "nginx" && order > 1;
-  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 180_000, opentelemetry: 180_000, kafka: 300_000, airflow: 420_000, mlflow: 300_000 };
+  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 180_000, opentelemetry: 180_000, kafka: 300_000, airflow: 420_000, mlflow: 300_000, "langchain-llamaindex": 300_000 };
   return {
     api: track === "postman" || track === "prometheus-grafana" || nginxProxy,
     apiPort: nginxProxy ? 8080 : 0,

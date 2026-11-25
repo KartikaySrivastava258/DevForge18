@@ -1,0 +1,4 @@
+alt: 'Documents (redis.md, kafka.md, docker.md) are split by SentenceSplitter into chunks that keep their file name. VectorStoreIndex embeds every chunk. For the question ''What happens when the TTL of a cache entry runs out?'', the retriever turns the question into a vector and finds the top-k closest chunks. The chunks and the question are put into a prompt that goes to the model; the answer lists the chunks'' files as sources.'
+caption: 'RAG: split, embed, retrieve the closest chunks, and send only those — with their sources — to the model.'
+credit: DevForge 18 content team
+licence: project-content

@@ -20,6 +20,8 @@ import { AirflowActionSchema, AirflowScenarioSchema } from "./airflow/schema.ts"
 import { schedulerTimeline } from "./airflow/scheduler-timeline.ts";
 import { experimentExplorer } from "./mlflow/experiment-explorer.ts";
 import { ExplorerActionSchema, ExplorerScenarioSchema } from "./mlflow/schema.ts";
+import { ragPipeline } from "./langchain/rag-pipeline.ts";
+import { RagActionSchema, RagScenarioSchema } from "./langchain/schema.ts";
 import type { SimulationModel } from "./types.ts";
 
 // Each model has its own state, action and scenario types; callers validate
@@ -34,4 +36,5 @@ export const MODELS: Readonly<Record<string, AnyModel>> = {
   [consumerGroups.id]: { ...consumerGroups, scenarioSchema: KafkaScenarioSchema, actionSchema: KafkaActionSchema },
   [schedulerTimeline.id]: { ...schedulerTimeline, scenarioSchema: AirflowScenarioSchema, actionSchema: AirflowActionSchema },
   [experimentExplorer.id]: { ...experimentExplorer, scenarioSchema: ExplorerScenarioSchema, actionSchema: ExplorerActionSchema },
+  [ragPipeline.id]: { ...ragPipeline, scenarioSchema: RagScenarioSchema, actionSchema: RagActionSchema },
 };

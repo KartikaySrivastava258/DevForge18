@@ -262,7 +262,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("every page has exactly one h1 and every form control has a label", async () => {
     const { page } = await h.newPage();
-    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer"]) {
+    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       await page.waitForLoadState("networkidle");
@@ -279,7 +279,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -591,6 +591,25 @@ describe("simulations", () => {
     await sim.getByRole("button", { name: "Register boost-300" }).click();
     await sim.getByRole("button", { name: "Make version 1 champion" }).click();
     assert.match(await sim.locator(".k8s-sim__summary").innerText(), /version 1: boost-300/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("RAG: big chunks bury the answer; small chunks and k=3 retrieve it within the budget", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline");
+    const sim = page.locator(".sim");
+    await sim.locator(".rag-sim").waitFor();
+    const summary = sim.locator(".k8s-sim__summary");
+    assert.match(await summary.innerText(), /not retrieved/);
+    await sim.getByLabel("k (chunks retrieved)").selectOption("3");
+    assert.match(await summary.innerText(), /in the prompt/);
+    assert.match(await summary.innerText(), /133 \/ 70 words/, "found, but the prompt is far too long");
+    assert.doesNotMatch(await sim.locator(".sim__status").innerText(), /^Solved/);
+    await sim.getByLabel("Chunk size (sentences)").selectOption("1");
+    assert.match(await summary.innerText(), /65 \/ 70 words/);
+    assert.equal(await sim.locator('.rag-sim__chunk[data-retrieved="true"]').count(), 3);
+    assert.match(await sim.locator(".rag-sim__prompt pre").innerText(), /file: operations\.md\nA cache entry expires when its TTL runs out/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });

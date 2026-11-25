@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 210">
+  <!-- The parts of a LangChain chain, from Prompts, models and output parsers. -->
+  <rect class="f-box-faint" x="16" y="24" width="104" height="74" rx="8"/>
+  <text class="f-strong" x="68" y="46" text-anchor="middle">variables</text>
+  <text class="f-small f-muted" x="68" y="64" text-anchor="middle">course,</text>
+  <text class="f-small f-muted" x="68" y="79" text-anchor="middle">question</text>
+  <rect class="f-box" x="150" y="24" width="104" height="74" rx="8"/>
+  <text class="f-strong" x="202" y="46" text-anchor="middle">prompt</text>
+  <text class="f-small f-muted" x="202" y="64" text-anchor="middle">template →</text>
+  <text class="f-small f-muted" x="202" y="79" text-anchor="middle">messages</text>
+  <rect class="f-box-accent" x="284" y="24" width="104" height="74" rx="8"/>
+  <text class="f-strong" x="336" y="46" text-anchor="middle">chat model</text>
+  <text class="f-small f-muted" x="336" y="64" text-anchor="middle">fake or real</text>
+  <text class="f-small f-muted" x="336" y="79" text-anchor="middle">(API key)</text>
+  <rect class="f-box" x="418" y="24" width="104" height="74" rx="8"/>
+  <text class="f-strong" x="470" y="46" text-anchor="middle">parser</text>
+  <text class="f-small f-muted" x="470" y="64" text-anchor="middle">reply → str</text>
+  <text class="f-small f-muted" x="470" y="79" text-anchor="middle">or JSON</text>
+  <rect class="f-box-ok" x="552" y="24" width="72" height="74" rx="8"/>
+  <text class="f-strong" x="588" y="46" text-anchor="middle">check</text>
+  <text class="f-small f-muted" x="588" y="64" text-anchor="middle">Pydantic</text>
+  <g>
+    <path class="f-arrow" d="M122 61 L140 61"/>
+    <polygon class="f-head" points="148,61 140,65.5 140,56.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M256 61 L274 61"/>
+    <polygon class="f-head" points="282,61 274,65.5 274,56.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M390 61 L408 61"/>
+    <polygon class="f-head" points="416,61 408,65.5 408,56.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M524 61 L542 61"/>
+    <polygon class="f-head" points="550,61 542,65.5 542,56.5"/>
+  </g>
+  <text class="f-mono f-small" x="320" y="128" text-anchor="middle">prompt | model | parser  — one Runnable chain</text>
+  <rect class="f-box-faint" x="16" y="148" width="608" height="48" rx="8"/>
+  <text class="f-small f-mono" x="320" y="168" text-anchor="middle">system: You are a teaching assistant for DevForge. Answer in one sentence.</text>
+  <text class="f-small f-mono" x="320" y="186" text-anchor="middle">human: What does Docker do?</text>
+</svg>
