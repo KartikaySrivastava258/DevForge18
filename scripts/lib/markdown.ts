@@ -89,6 +89,8 @@ export interface RenderResult {
 export interface MediaResolver {
   figure(ref: string, alt: string, caption: string | null): string;
   stepDiagram(ref: string): string;
+  /** An embedded simulation: ```simulation <id> [scenario=<scenario-id>] */
+  simulation(id: string, scenario: string | null): string;
 }
 
 const isMediaImage = (t: Token) => t.type === "image" && (t as Tokens.Image).href.startsWith("media:");
@@ -138,6 +140,16 @@ export function renderMarkdown(source: string, options: { media?: MediaResolver 
       },
       code({ text, lang }: Tokens.Code): string {
         const words = (lang ?? "").trim().toLowerCase().split(/\s+/);
+        if (words[0] === "simulation") {
+          const [, id, opt] = (lang ?? "").trim().split(/\s+/);
+          const scenario = opt ? /^scenario=([a-z0-9-]+)$/.exec(opt)?.[1] : null;
+          if (!id || !/^[a-z0-9-]+$/.test(id) || scenario === undefined || words.length > 3) {
+            problems.push(`a simulation fence must be written \`\`\`simulation <id> [scenario=<scenario-id>], found "${lang}"`);
+            return "";
+          }
+          if (text.trim()) problems.push(`the simulation fence for ${id} must be empty`);
+          return media((m) => m.simulation(id, scenario), `simulation ${id}`);
+        }
         if (words[0] === "diagram") {
           const ref = /^steps=([a-z0-9-]+\/[a-z0-9-]+)$/.exec(words[1] ?? "")?.[1];
           if (!ref || words.length !== 2) {

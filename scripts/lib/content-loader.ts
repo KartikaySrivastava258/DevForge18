@@ -17,6 +17,7 @@ import {
 } from "../../shared/content-schema.ts";
 import { extractRunBlocks } from "./lesson-runner.ts";
 import { loadMedia, mediaResolver } from "./media.ts";
+import { loadSimulations } from "./simulations.ts";
 import { parseYaml } from "./yaml.ts";
 import { renderMarkdown, splitFrontMatter } from "./markdown.ts";
 
@@ -136,6 +137,10 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   const media = loadMedia(root, trackSlugs, errors);
   const usedMedia = new Set<string>();
 
+  // ---- Simulations ----------------------------------------------------------
+  const simulations = loadSimulations(root, trackSlugs, errors);
+  const simulationsById = new Map(simulations.map((s) => [s.id, s]));
+
   // ---- Lessons ------------------------------------------------------------
   const lessons: CompiledLesson[] = [];
   const lessonsDir = join(root, "lessons");
@@ -170,7 +175,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       if (meta.verification.method === "executed" && runBlocks === 0) errors.push(`${rel}: verification "executed" requires at least one \`\`\`bash run block`);
       if (meta.verification.method === "docs-checked" && runBlocks > 0) errors.push(`${rel}: has run blocks, so verification.method must be "executed" or "pending"`);
       if (meta.verification.method === "pending" && runBlocks === 0) errors.push(`${rel}: verification "pending" requires run blocks`);
-      const rendered = renderMarkdown(split.body, { media: mediaResolver(media, usedMedia) });
+      const rendered = renderMarkdown(split.body, { media: mediaResolver(media, usedMedia, simulationsById) });
       for (const problem of rendered.problems) errors.push(`${rel}: ${problem}`);
       // REMAINING_WORK.md §4.2: every explanation of how something works comes with a picture.
       if (rendered.toc.some((t) => t.text === "How it works") && rendered.figures === 0) {
@@ -199,7 +204,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   for (const key of media.diagrams.keys()) if (!usedMedia.has(`diagram:${key}`)) warnings.push(`media/${key}.steps.yaml is not used by any lesson`);
 
   return {
-    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons },
+    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations },
     errors,
     warnings,
   };

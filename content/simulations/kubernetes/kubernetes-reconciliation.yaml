@@ -1,0 +1,65 @@
+id: kubernetes-reconciliation
+track: kubernetes
+title: The reconciliation loop
+concept: You tell Kubernetes what you want — a Deployment with a number of replicas and an image — and controllers keep comparing that with what is running and fixing the difference. Deleted Pods come back, drained nodes empty out, and rolling updates replace Pods a few at a time.
+learning_objectives:
+  - Watch controllers notice a difference between desired and actual state and fix it.
+  - See how maxSurge and maxUnavailable limit a rolling update, and choose values that protect availability.
+  - Recognise a stalled rollout caused by a broken image, and recover with a rollback.
+simplifications:
+  - Time moves in ticks. A Pod is placed on a node, its container starts on the next tick, and it becomes ready on the tick after that; real timings vary and real readiness comes from probes.
+  - An image either pulls at once or never does. nginx:does-not-exist stands for any image that cannot be pulled.
+  - The scheduler only looks at how many Pods each node runs. The real scheduler also weighs CPU and memory requests, affinity rules and more.
+  - The rolling-update limits follow the Kubernetes Deployment documentation (maxSurge rounds up, maxUnavailable rounds down, both cannot be 0). A broken image with 5 replicas stalls with 4 Pods available, the same as a real kind cluster in the Kubernetes lessons.
+text_alternative: For every node, the list of Pods on it with their phase (Pending, ContainerCreating, Running, ErrImagePull, ImagePullBackOff or Terminating) and whether they are ready; the Deployment's desired replicas, image and strategy; and each ReplicaSet with its revision and desired count. After every tick, the event log explains which controller did what and why. Switch to text mode to read the whole cluster as a list.
+scenarios:
+  - id: steady
+    title: Three replicas on two nodes
+    description: A healthy Deployment, web, running three replicas of nginx:1.27-alpine on two nodes.
+    params: { nodes: 2, replicas: 3 }
+  - id: risky-strategy
+    title: Five replicas with a risky update strategy
+    description: Five replicas on three nodes. The strategy allows half of the Pods (maxUnavailable 50%) to be unavailable during an update.
+    params: { nodes: 3, replicas: 5, maxUnavailable: "50%" }
+  - id: broken-release
+    title: A release with a broken image
+    description: Five replicas of nginx:1.28-alpine. Someone has just deployed nginx:does-not-exist, and the rollout has stalled.
+    params:
+      nodes: 3
+      replicas: 5
+      image: nginx:1.28-alpine
+      setup:
+        - { type: setImage, image: nginx:does-not-exist }
+        - { type: tick, count: 8 }
+challenges:
+  - id: self-heal
+    title: Watch a Deployment heal itself
+    goal: Delete one of the Pods and let the controllers bring the Deployment back to three ready Pods.
+    scenario: steady
+    check: replace-deleted-pod
+    hint: Delete any Pod, then press Step a few times (or Play) and read the event log. Which controller notices first, and what does it do?
+    solution:
+      - { type: deletePod, pod: web-lr6jvq9r2-t755j }
+      - { type: tick, count: 4 }
+  - id: update-keeping-four
+    title: Update without dropping below four Pods
+    goal: Update web to nginx:1.28-alpine so that at least 4 of the 5 Pods stay available during the whole rollout.
+    scenario: risky-strategy
+    check: update-keeping-four-available
+    hint: With maxUnavailable 50%, two of five Pods may be taken away at once (50% of 5 rounds down to 2). Change the strategy so that at most one Pod may be unavailable before you change the image.
+    solution:
+      - { type: setStrategy, maxSurge: "25%", maxUnavailable: "1" }
+      - { type: setImage, image: nginx:1.28-alpine }
+      - { type: tick, count: 12 }
+  - id: recover-broken-release
+    title: Recover from a broken release
+    goal: Get every Pod running a working image and ready again.
+    scenario: broken-release
+    check: recover-from-broken-image
+    hint: Look at the new Pods' phase. The image cannot be pulled, so the rollout will never finish on its own. Roll back to the previous revision, or set a working image.
+    solution:
+      - { type: undo }
+      - { type: tick, count: 8 }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

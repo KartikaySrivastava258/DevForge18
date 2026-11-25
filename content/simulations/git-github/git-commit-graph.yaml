@@ -1,0 +1,75 @@
+id: git-commit-graph
+track: git-github
+title: Commit graph explorer
+concept: Git history is a graph. Each commit points back to its parent, branches are movable labels on commits, and HEAD says which branch you are on. Commands like merge, rebase, reset and revert are easiest to understand by watching what they do to that graph.
+learning_objectives:
+  - See that commit, branch and switch move pointers; they do not copy your files.
+  - Tell a fast-forward from a merge commit, and predict which one git merge will make.
+  - Choose between rebase, merge, reset and revert, and know which of them rewrite history.
+simplifications:
+  - There are no files in this model, so merges and rebases never conflict. In real projects they can, and you resolve conflicts by hand.
+  - Commit IDs are short simulated IDs, not real Git hashes, so yours will differ from a real repository's.
+  - HEAD is always on a branch (no detached HEAD), and reset works like git reset --hard on the history.
+  - The model's effect on the commit graph is tested against real Git 2.43 for every command it offers.
+text_alternative: A list of commits, newest first, each with its ID, message and parents, plus where each branch, HEAD and origin/main point. After every command, the event log explains in words what changed in the graph. Switch to text mode to read the whole graph as a list.
+scenarios:
+  - id: first-commits
+    title: A brand-new repository
+    description: An empty repository on main. Make commits, create a branch and switch between branches.
+    params: { setup: [] }
+  - id: diverged-feature
+    title: A feature branch while main moves on
+    description: You branched feature from main and made two commits. Meanwhile someone fixed a typo on main, so the branches have diverged.
+    params:
+      setup:
+        - { type: commit, message: Add README }
+        - { type: commit, message: Add notes }
+        - { type: branch, name: feature }
+        - { type: switch, branch: feature }
+        - { type: commit, message: Draft feature }
+        - { type: commit, message: Finish feature }
+        - { type: switch, branch: main }
+        - { type: commit, message: Fix typo on main }
+  - id: pushed-mistake
+    title: A bad commit that is already pushed
+    description: The last commit on main added a broken link, and main has already been pushed, so your teammates may have it.
+    params:
+      pushed: true
+      setup:
+        - { type: commit, message: Add README }
+        - { type: commit, message: Add notes }
+        - { type: commit, message: Add broken link }
+challenges:
+  - id: first-branch
+    title: Start a feature branch
+    goal: Create a branch called feature and give it a commit that main does not have.
+    scenario: first-commits
+    check: branch-with-own-commit
+    hint: A branch is a label on a commit, so you need a commit first. Commit on main, create feature, switch to it, then commit again and watch which label moves.
+    solution:
+      - { type: commit, message: Add README }
+      - { type: branch, name: feature }
+      - { type: switch, branch: feature }
+      - { type: commit, message: Start feature }
+  - id: merge-without-merge-commit
+    title: Bring feature into main without a merge commit
+    goal: Get both feature commits onto main, so that main's history is a straight line with no merge commit.
+    scenario: diverged-feature
+    check: feature-on-main-without-merge-commit
+    hint: Because main has moved on, git merge would have to create a merge commit. Switch to feature and rebase it onto main first; then main can simply fast-forward.
+    solution:
+      - { type: switch, branch: feature }
+      - { type: rebase, onto: main }
+      - { type: switch, branch: main }
+      - { type: merge, branch: feature, mode: ff-only }
+  - id: undo-pushed-commit
+    title: Undo a pushed commit safely
+    goal: Undo the change made by "Add broken link" without removing any commit that has already been pushed.
+    scenario: pushed-mistake
+    check: undo-pushed-commit-safely
+    hint: git reset would take the commit off main, and pushing that would need --force, rewriting your teammates' history. git revert adds a new commit that undoes the change instead.
+    solution:
+      - { type: revert, commit: HEAD }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

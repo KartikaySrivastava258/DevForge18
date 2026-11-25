@@ -60,6 +60,10 @@ describe("renderMarkdown media references", () => {
       calls.push(`steps ${ref}`);
       return '<figure class="figure step-diagram"></figure>\n';
     },
+    simulation: (id, scenario) => {
+      calls.push(`simulation ${id} ${scenario}`);
+      return '<div class="sim-embed"></div>\n';
+    },
   };
   it("renders a figure on its own line as a block, without a wrapping paragraph", () => {
     const { html, problems, figures } = renderMarkdown('Before.\n\n![Alt text](media:git-github/a.svg "Caption")\n\nAfter.', { media });
@@ -72,6 +76,14 @@ describe("renderMarkdown media references", () => {
     const { html, problems } = renderMarkdown("```diagram steps=git-github/commit-cycle\n```", { media });
     assert.deepEqual(problems, []);
     assert.ok(html.includes("step-diagram"));
+  });
+  it("renders a simulation fence, with an optional scenario", () => {
+    const { html, problems } = renderMarkdown("```simulation git-commit-graph scenario=first-commits\n```", { media });
+    assert.deepEqual(problems, []);
+    assert.ok(html.includes("sim-embed"));
+    assert.ok(calls.includes("simulation git-commit-graph first-commits"));
+    assert.match(renderMarkdown("```simulation Bad_Id\n```", { media }).problems[0] ?? "", /must be written/);
+    assert.match(renderMarkdown("```simulation x scenario=\n```", { media }).problems[0] ?? "", /must be written/);
   });
   it("reports bad references instead of rendering them", () => {
     const check = (md: string, pattern: RegExp) => {

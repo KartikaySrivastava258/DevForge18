@@ -227,6 +227,46 @@ export const StepDiagramSchema = z
   .strict();
 export type StepDiagram = z.infer<typeof StepDiagramSchema>;
 
+/**
+ * A simulation: content/simulations/<track>/<id>.yaml, backed by a model in
+ * shared/simulations/ with the same id. Scenario params and challenge
+ * solutions are validated against that model by the content loader.
+ */
+export const SimulationSchema = z
+  .object({
+    id: slug,
+    track: slug,
+    title: z.string().min(3),
+    concept: z.string().min(40, "explain the concept the simulation makes visible"),
+    learning_objectives: z.array(z.string().min(10)).min(1),
+    /** What the model leaves out or simplifies — shown next to the "Simulation" badge. */
+    simplifications: z.array(z.string().min(15)).min(1, "every simulation must say what it simplifies"),
+    text_alternative: z.string().min(80),
+    scenarios: z
+      .array(z.object({ id: slug, title: z.string().min(3), description: z.string().min(20), params: z.unknown() }).strict())
+      .min(1),
+    challenges: z.array(
+      z
+        .object({
+          id: slug,
+          title: z.string().min(3),
+          goal: z.string().min(20),
+          scenario: slug,
+          /** Name of a check function exported by the model. */
+          check: z.string().regex(/^[a-z][a-z0-9-]*$/),
+          hint: z.string().min(20),
+          /** A reference solution (list of actions); replayed at build time, never sent to browsers. */
+          solution: z.array(z.unknown()).min(1).max(100),
+        })
+        .strict(),
+    ),
+    owner: z.string().min(2),
+    last_reviewed: isoDate,
+    content_version: z.number().int().positive(),
+  })
+  .strict();
+export type Simulation = z.infer<typeof SimulationSchema>;
+
 /** A lesson after compilation: Markdown rendered to safe HTML plus a table of contents. */
 export interface CompiledLesson extends LessonMeta {
   html: string;
@@ -241,4 +281,6 @@ export interface ContentBundle {
   tracks: Track[];
   paths: LearningPath[];
   lessons: CompiledLesson[];
+  /** Scenario params are normalised by the model's schema; solutions stay server-side. */
+  simulations: Simulation[];
 }

@@ -159,3 +159,55 @@ describe("figures and step-throughs", () => {
     assert.ok(errors.some((e) => e.includes("third-party media need source_url")));
   });
 });
+
+describe("simulations", () => {
+  const gitSim = (dir: string) => join(dir, "simulations", "git-github", "git-commit-graph.yaml");
+  const edit = (file: string, from: string | RegExp, to: string | ((match: string) => string)) => {
+    const before = readFileSync(file, "utf8");
+    const after = typeof to === "string" ? before.replace(from, to) : before.replace(from, to);
+    assert.notEqual(after, before, `edit did not apply: ${String(from)}`);
+    writeFileSync(file, after);
+  };
+  it("load with normalised scenario params, and every challenge's solution is proven", () => {
+    const { bundle, errors } = loadContent(contentRoot);
+    assert.deepEqual(errors, []);
+    assert.deepEqual(bundle.simulations.map((s) => s.id).sort(), ["git-commit-graph", "kubernetes-reconciliation"]);
+    const k8s = bundle.simulations.find((s) => s.id === "kubernetes-reconciliation");
+    assert.deepEqual(k8s?.scenarios[0]?.params, { nodes: 2, replicas: 3, image: "nginx:1.27-alpine", maxSurge: "25%", maxUnavailable: "25%", setup: [] });
+  });
+  it("reject a simulation with no model", () => {
+    const dir = copyContent();
+    const file = gitSim(dir);
+    edit(file, "id: git-commit-graph", "id: git-time-machine");
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes('no simulation model with id "git-time-machine"')), errors.join("\n"));
+  });
+  it("reject scenario params the model does not accept", () => {
+    const dir = copyContent();
+    edit(join(dir, "simulations", "kubernetes", "kubernetes-reconciliation.yaml"), "params: { nodes: 2, replicas: 3 }", "params: { nodes: 9, replicas: 3 }");
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes("scenario steady: params.nodes")), errors.join("\n"));
+  });
+  it("reject a reference solution that does not solve the challenge", () => {
+    const dir = copyContent();
+    edit(gitSim(dir), /  - id: undo-pushed-commit[\s\S]*?solution:\n      - \{ type: revert, commit: HEAD \}/, (m) => m.replace("{ type: revert, commit: HEAD }", "{ type: reset, to: HEAD~1 }"));
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes('challenge undo-pushed-commit: the reference solution does not pass the check "undo-pushed-commit-safely"')), errors.join("\n"));
+  });
+  it("reject an unknown check, an invalid solution step and a missing simplifications list", () => {
+    const dir = copyContent();
+    edit(gitSim(dir), "check: branch-with-own-commit", "check: does-not-exist");
+    edit(gitSim(dir), "{ type: switch, branch: feature }\n      - { type: commit, message: Start feature }", "{ type: teleport }\n      - { type: commit, message: Start feature }");
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes('challenge first-branch: the model has no check "does-not-exist"')), errors.join("\n"));
+    const dir2 = copyContent();
+    edit(gitSim(dir2), /simplifications:\n(  - .*\n)+/, "simplifications: []\n");
+    assert.ok(loadContent(dir2).errors.some((e) => e.includes("every simulation must say what it simplifies")));
+  });
+  it("reject a challenge that is already solved at the start", () => {
+    const dir = copyContent();
+    edit(join(dir, "simulations", "kubernetes", "kubernetes-reconciliation.yaml"), "    scenario: broken-release\n    check: recover-from-broken-image", "    scenario: steady\n    check: recover-from-broken-image");
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes("challenge recover-broken-release: the check already passes before the learner does anything")), errors.join("\n"));
+  });
+});

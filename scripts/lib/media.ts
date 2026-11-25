@@ -12,7 +12,7 @@
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
-import { MediaMetaSchema, StepDiagramSchema, type MediaMeta, type StepDiagram } from "../../shared/content-schema.ts";
+import { MediaMetaSchema, StepDiagramSchema, type MediaMeta, type Simulation, type StepDiagram } from "../../shared/content-schema.ts";
 import { escapeHtml, type MediaResolver } from "./markdown.ts";
 import { sanitizeSvg, type SvgResult } from "./svg.ts";
 import { parseYaml } from "./yaml.ts";
@@ -148,7 +148,7 @@ function credit(meta: MediaMeta): string {
  * files can be reported) and refuses to put the same figure on a page twice,
  * which would duplicate its element ids.
  */
-export function mediaResolver(lib: MediaLibrary, used: Set<string>): MediaResolver {
+export function mediaResolver(lib: MediaLibrary, used: Set<string>, simulations: Map<string, Simulation> = new Map()): MediaResolver {
   const onPage = new Set<string>();
   const once = (figure: Figure) => {
     if (onPage.has(figure.key)) throw new Error(`figure ${figure.key} appears twice in this lesson (directly or through a step-through)`);
@@ -167,6 +167,20 @@ export function mediaResolver(lib: MediaLibrary, used: Set<string>): MediaResolv
       return (
         `<figure class="figure" id="figure-${id}">${scrollBox(svgElement(figure, `${id}-title`, alt || figure.meta.alt))}` +
         `<figcaption>${escapeHtml(caption || figure.meta.caption)}${credit(figure.meta)}</figcaption></figure>\n`
+      );
+    },
+    simulation(id, scenario) {
+      const sim = simulations.get(id);
+      if (!sim) throw new Error(`unknown simulation "${id}" (expected content/simulations/<track>/${id}.yaml)`);
+      if (scenario && !sim.scenarios.some((s) => s.id === scenario)) throw new Error(`simulation ${id} has no scenario "${scenario}"`);
+      if (onPage.has(`simulation:${id}`)) throw new Error(`simulation ${id} appears twice in this lesson`);
+      onPage.add(`simulation:${id}`);
+      used.add(`simulation:${id}`);
+      const href = `/tracks/${sim.track}/simulations/${sim.id}${scenario ? `?scenario=${scenario}` : ""}`;
+      // The lesson page replaces the link with the interactive simulation, loaded on demand.
+      return (
+        `<div class="sim-embed" data-simulation="${escapeHtml(sim.id)}"${scenario ? ` data-scenario="${escapeHtml(scenario)}"` : ""}>` +
+        `<p class="sim-embed__fallback"><a href="${escapeHtml(href)}">Open the simulation: ${escapeHtml(sim.title)}</a></p></div>\n`
       );
     },
     stepDiagram(ref) {
