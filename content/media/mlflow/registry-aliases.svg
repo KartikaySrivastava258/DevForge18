@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 230">
+  <!-- Versions and an alias in the Model Registry, from Models, signatures and the registry. -->
+  <rect class="f-box-faint" x="16" y="14" width="380" height="202" rx="8"/>
+  <text class="f-small f-strong" x="30" y="36">registered model diabetes-ridge</text>
+  <rect class="f-box" x="32" y="56" width="220" height="56" rx="8"/>
+  <text class="f-strong" x="48" y="80">version 1</text>
+  <text class="f-small f-muted" x="48" y="98">from run ridge-1.0</text>
+  <rect class="f-box-accent" x="32" y="132" width="220" height="56" rx="8"/>
+  <text class="f-strong" x="48" y="156">version 2</text>
+  <text class="f-small f-muted" x="48" y="174">from run ridge-0.1</text>
+  <g>
+    <rect class="f-box-ok" x="292" y="140" width="90" height="32" rx="16"/>
+    <text class="f-small f-strong" x="337" y="161" text-anchor="middle">@champion</text>
+  </g>
+  <g>
+    <path class="f-arrow-accent" d="M292 156 L262.0 159.2"/>
+    <polygon class="f-head-accent" points="254,160 261.5,154.7 262.4,163.6"/>
+  </g>
+  <line class="f-line f-dashed" x1="337" y1="138" x2="337" y2="84"/>
+  <g>
+    <path class="f-arrow" d="M337 84 L262 84"/>
+    <polygon class="f-head" points="254,84 262,79.5 262,88.5"/>
+  </g>
+  <text class="f-small f-faint" x="300" y="74" text-anchor="middle">before</text>
+  <rect class="f-box" x="440" y="72" width="184" height="92" rx="8"/>
+  <text class="f-strong f-mono" x="532" y="98" text-anchor="middle">predict.py</text>
+  <text class="f-small f-mono" x="532" y="120" text-anchor="middle">load_model(</text>
+  <text class="f-small f-mono" x="532" y="138" text-anchor="middle">"models:/diabetes-</text>
+  <text class="f-small f-mono" x="532" y="154" text-anchor="middle">ridge@champion")</text>
+  <g>
+    <path class="f-arrow" d="M438 156 L392 156"/>
+    <polygon class="f-head" points="384,156 392,151.5 392,160.5"/>
+  </g>
+</svg>

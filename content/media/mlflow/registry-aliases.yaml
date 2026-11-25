@@ -1,0 +1,4 @@
+alt: 'The registered model diabetes-ridge has version 1, from run ridge-1.0, and version 2, from run ridge-0.1. The alias champion points at version 2; a dashed line marked before shows it used to point at version 1. predict.py loads models:/diabetes-ridge@champion, so it gets whichever version the alias points at.'
+caption: 'Versions never change; promoting or rolling back is moving the alias that the serving code loads.'
+credit: DevForge 18 content team
+licence: project-content

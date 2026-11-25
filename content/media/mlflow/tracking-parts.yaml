@@ -1,0 +1,4 @@
+alt: 'train.py, your training code, calls log_param, log_metric and log_model. The calls go to the MLflow tracking server, which serves a REST API and web interface. The server keeps runs, parameters, metrics and tags in a backend store database and files such as models and plots in an artifact store. You search and compare runs through the server with a browser or curl. An example experiment called diabetes holds a run with alpha 1.0 and RMSE 55.73 and a run with alpha 0.1 and RMSE 53.01.'
+caption: 'Code logs runs to the tracking server; metadata goes to a database, files to an artifact store, and everyone reads them back through the same server.'
+credit: DevForge 18 content team
+licence: project-content

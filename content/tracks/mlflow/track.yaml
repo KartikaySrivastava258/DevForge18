@@ -76,7 +76,7 @@ resources:
     official: true
     why: Official getting-started material for tracking and model management in traditional ML.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: outline
+content_status: in-progress
 owner: content-team
-last_reviewed: 2026-11-24
-content_version: 1
+last_reviewed: 2026-11-25
+content_version: 2

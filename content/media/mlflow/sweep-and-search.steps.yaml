@@ -1,0 +1,7 @@
+figure: sweep-and-search.svg
+title: 'Searching an experiment''s runs'
+steps:
+  - caption: 'Every setting tried is a run with its parameters and metrics, in the order they were logged.'
+  - caption: 'order_by=["metrics.rmse ASC"]: the same runs, lowest error first.'
+  - caption: 'filter_string="params.model = ''lasso'' and metrics.r2 > 0.4": only the matching runs remain.'
+  - caption: 'max_results=1 returns the best run, lasso-0.1; a tag records why it was chosen.'

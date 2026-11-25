@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250">
+  <!-- What MLflow tracking records and where, from Experiments, runs, parameters and metrics. -->
+  <rect class="f-box-faint" x="16" y="20" width="180" height="92" rx="8"/>
+  <text class="f-strong" x="106" y="44" text-anchor="middle">train.py</text>
+  <text class="f-small f-muted" x="106" y="62" text-anchor="middle">your training code</text>
+  <text class="f-small f-mono" x="106" y="82" text-anchor="middle">log_param,</text>
+  <text class="f-small f-mono" x="106" y="98" text-anchor="middle">log_metric, log_model</text>
+  <rect class="f-box-accent" x="250" y="20" width="150" height="92" rx="8"/>
+  <text class="f-strong" x="325" y="44" text-anchor="middle">tracking server</text>
+  <text class="f-small f-muted" x="325" y="62" text-anchor="middle">REST API + web UI</text>
+  <text class="f-small f-mono" x="325" y="82" text-anchor="middle">mlflow server</text>
+  <rect class="f-box" x="456" y="14" width="168" height="64" rx="8"/>
+  <text class="f-strong" x="540" y="38" text-anchor="middle">backend store</text>
+  <text class="f-small f-muted" x="540" y="56" text-anchor="middle">database: runs, params,</text>
+  <text class="f-small f-muted" x="540" y="70" text-anchor="middle">metrics, tags</text>
+  <rect class="f-box" x="456" y="92" width="168" height="64" rx="8"/>
+  <text class="f-strong" x="540" y="116" text-anchor="middle">artifact store</text>
+  <text class="f-small f-muted" x="540" y="134" text-anchor="middle">files: models, plots</text>
+  <rect class="f-box-faint" x="250" y="168" width="150" height="64" rx="8"/>
+  <text class="f-strong" x="325" y="192" text-anchor="middle">you</text>
+  <text class="f-small f-muted" x="325" y="210" text-anchor="middle">browser or curl</text>
+  <g>
+    <path class="f-arrow" d="M198 66 L240 66"/>
+    <polygon class="f-head" points="248,66 240,70.5 240,61.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M402 50 L446.0 46.6"/>
+    <polygon class="f-head" points="454,46 446.4,51.1 445.7,42.1"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M402 86 L447.2 113.8"/>
+    <polygon class="f-head" points="454,118 444.8,117.6 449.5,110.0"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M325 166 L325 122"/>
+    <polygon class="f-head" points="325,114 329.5,122 320.5,122"/>
+  </g>
+  <text class="f-small f-muted" x="330" y="146">search, compare</text>
+  <rect class="f-box-faint" x="16" y="168" width="180" height="64" rx="8"/>
+  <text class="f-small f-strong" x="106" y="190" text-anchor="middle">experiment diabetes</text>
+  <text class="f-small" x="106" y="208" text-anchor="middle">alpha 1.0 → rmse 55.73</text>
+  <text class="f-small" x="106" y="224" text-anchor="middle">alpha 0.1 → rmse 53.01</text>
+</svg>

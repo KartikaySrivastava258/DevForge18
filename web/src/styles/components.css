@@ -451,3 +451,21 @@
 .airflow-sim__backfill { border: 1px solid var(--line); border-radius: var(--radius-s); padding: var(--space-2) var(--space-3) 0; margin: 0 0 var(--space-3); }
 .airflow-sim__backfill legend { font-weight: 600; padding: 0 var(--space-1); }
 @media (max-width: 40rem) { .airflow-sim__runs { font-size: 0.8125rem; } .airflow-sim__runs th, .airflow-sim__runs td { padding: 4px; } .airflow-sim__detail { display: block; } }
+.mlflow-sim__layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(14rem, 20rem); gap: var(--space-4); align-items: start; }
+.mlflow-sim__runs tr[data-champion="true"] th { color: var(--ok); }
+.mlflow-sim__runs .airflow-sim__detail { display: block; font-weight: 400; }
+.mlflow-sim__plot { width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg); }
+.mlflow-sim__axis { stroke: var(--line); stroke-width: 1; }
+.mlflow-sim__tick { fill: var(--muted); font-size: 10px; font-family: var(--font-sans); }
+.mlflow-sim__limit { stroke: var(--warn); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.mlflow-sim__dot { stroke: var(--bg); stroke-width: 1; fill: var(--accent); }
+.mlflow-sim__dot[data-kind="forest"] { fill: var(--ok); }
+.mlflow-sim__dot[data-kind="boosting"] { fill: var(--warn); }
+.mlflow-sim__dot[data-dim="true"] { opacity: 0.25; }
+.mlflow-sim__champ { fill: none; stroke: var(--text); stroke-width: 2; }
+.mlflow-sim__figure { margin: 0; }
+.mlflow-sim__figure figcaption { display: flex; flex-wrap: wrap; gap: 4px var(--space-3); margin-top: var(--space-1); }
+.mlflow-sim__key::before { content: ""; display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; margin-right: 4px; background: var(--accent); }
+.mlflow-sim__key[data-kind="forest"]::before { background: var(--ok); }
+.mlflow-sim__key[data-kind="boosting"]::before { background: var(--warn); }
+@media (max-width: 48rem) { .mlflow-sim__layout { grid-template-columns: 1fr; } }

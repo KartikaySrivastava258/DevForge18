@@ -262,7 +262,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("every page has exactly one h1 and every form control has a label", async () => {
     const { page } = await h.newPage();
-    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline"]) {
+    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       await page.waitForLoadState("networkidle");
@@ -279,7 +279,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -444,7 +444,7 @@ describe("simulations", () => {
     await sim.locator(".k8s-pod__delete").first().click();
     assert.match(await sim.locator(".k8s-sim__summary").innerText(), /2 of 3/);
     for (let i = 0; i < 4; i++) await sim.getByRole("button", { name: "Step" }).click();
-    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     assert.match(await sim.locator(".k8s-sim__summary").innerText(), /3 of 3/);
     assert.match(await sim.locator(".sim__log").innerText(), /ReplicaSet .* wants 3: created/);
 
@@ -487,7 +487,7 @@ describe("simulations", () => {
     const wrong = Number((await sim.locator(".prom-sim__result li").innerText()).match(/([\d.]+) per second/)?.[1]);
     assert.ok(wrong > 15, `rate(sum()) overestimates after a restart (got ${wrong})`);
     await sim.getByLabel("Query", { exact: true }).selectOption("sum-rate");
-    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     assert.match(await sim.locator(".prom-sim__result").innerText(), /\{\} 15 per second/);
     assert.equal(await sim.locator(".prom-sim__promql").innerText(), "sum(rate(devforge_http_requests_total[1m]))");
 
@@ -507,14 +507,14 @@ describe("simulations", () => {
     assert.match(await sim.locator(".sim__status").innerText(), /Not solved/);
     await sim.locator(".otel-sim__row", { hasText: "payment Server" }).focus();
     await page.keyboard.press("Enter");
-    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
 
     await sim.getByLabel("Scenario").selectOption("slow-database");
     assert.match(await sim.locator(".otel-sim__summary").innerText(), /209 ms/);
     await sim.getByLabel("Database and payment calls").selectOption("parallel");
     await sim.getByRole("button", { name: "Send a checkout request" }).click();
     assert.match(await sim.locator(".otel-sim__summary").innerText(), /: 145 ms/);
-    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     assert.equal(await sim.locator('.otel-sim__row[data-critical="true"]', { hasText: "SELECT cart (database)" }).count(), 1, "the slow database is now the critical path");
     noProblems(problems);
   });
@@ -532,12 +532,12 @@ describe("simulations", () => {
     assert.match(await sim.locator(".kafka-sim__members").innerText(), /consumer-2: P1/);
     await sim.getByRole("button", { name: "Add a consumer" }).click();
     for (let i = 0; i < 20 && (await lag()) > 0; i++) await sim.getByRole("button", { name: "Step" }).click();
-    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
 
     await sim.getByLabel("Scenario").selectOption("four-partitions");
     await sim.getByRole("button", { name: "Add a consumer" }).click();
     assert.match(await sim.locator(".kafka-sim__members").innerText(), /consumer-5: idle — no partition/);
-    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
 
@@ -551,7 +551,7 @@ describe("simulations", () => {
     for (let i = 0; i < 6; i++) await sim.getByRole("button", { name: "Step" }).click();
     assert.equal(await runs.count(), 7);
     assert.match(await runs.nth(2).innerText(), /success\s+scheduled · 2 tries/);
-    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
 
     await sim.getByLabel("Scenario").selectOption("broken-week");
     assert.match(await runs.nth(4).innerText(), /failed/);
@@ -566,7 +566,32 @@ describe("simulations", () => {
     await sim.getByLabel("Reprocess").selectOption("completed");
     await sim.getByRole("button", { name: "Create backfill" }).click();
     assert.equal(await sim.locator(".airflow-sim__rows--wrong").count(), 0);
-    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("MLflow: the most accurate run is too slow for the budget; filtering finds the best that fits", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/mlflow/simulations/mlflow-experiment-explorer");
+    const sim = page.locator(".sim");
+    await sim.locator(".mlflow-sim").waitFor();
+    const rows = sim.locator(".mlflow-sim__runs tbody tr");
+    assert.equal(await rows.count(), 10);
+    await sim.getByLabel("Sort by").selectOption("rmse asc");
+    assert.match(await rows.first().innerText(), /boost-1000/);
+    await sim.getByRole("button", { name: "Register boost-1000" }).click();
+    await sim.getByRole("button", { name: "Make version 1 champion" }).click();
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+
+    await sim.getByLabel("Scenario").selectOption("latency-budget");
+    await sim.getByLabel("Max latency").selectOption("5");
+    await sim.getByLabel("Sort by").selectOption("rmse asc");
+    assert.equal(await rows.count(), 7);
+    assert.match(await rows.first().innerText(), /boost-300/);
+    await sim.getByRole("button", { name: "Register boost-300" }).click();
+    await sim.getByRole("button", { name: "Make version 1 champion" }).click();
+    assert.match(await sim.locator(".k8s-sim__summary").innerText(), /version 1: boost-300/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
 

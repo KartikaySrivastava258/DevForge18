@@ -150,12 +150,18 @@ af "$AF/api/v2/dags/daily_report/dagRuns?order_by=logical_date" \
 ### 3. And without catchup
 
 ```bash run
+for i in $(seq 1 60); do af "$AF/api/v2/dags/daily_report_no_catchup" | grep -q '"dag_id"' && break; sleep 1; done
+af "$AF/api/v2/dags/daily_report_no_catchup" | grep -o '"next_dagrun_run_after":[a-z0-9"]*'
 af "$AF/api/v2/dags/daily_report_no_catchup/dagRuns" | grep -o '"total_entries":[0-9]*'
 ```
 
 ```text output
+"next_dagrun_run_after":null
 "total_entries":0
 ```
+
+- The loop waits until Airflow has parsed the second file (the two files are not always picked up at the same moment).
+- `next_dagrun_run_after` is `null`: Airflow has no future time at which to run this DAG.
 
 No runs at all. Without catchup, Airflow skips the missed times and would only run the most recent one — last midnight — but that is long after the DAG's `end_date`. With no `end_date`, this DAG would get one run for last midnight straight away and then one a day.
 

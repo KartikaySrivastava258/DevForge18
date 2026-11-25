@@ -25,4 +25,5 @@ export const SIMULATIONS: Record<string, () => Promise<{ default: SimulationEntr
   "opentelemetry-trace-waterfall": () => import("./TraceWaterfall.tsx"),
   "kafka-consumer-groups": () => import("./KafkaGroups.tsx"),
   "airflow-scheduler-timeline": () => import("./AirflowTimeline.tsx"),
+  "mlflow-experiment-explorer": () => import("./MlflowExplorer.tsx"),
 };

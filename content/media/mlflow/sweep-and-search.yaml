@@ -1,0 +1,4 @@
+alt: 'A table of 8 runs with their model, alpha, RMSE and R². First in the order they were logged; then sorted by RMSE, lowest first; then with only the Lasso runs with R² above 0.4 left bright; finally the best run, lasso-0.1 with RMSE 52.48, highlighted and tagged with the reason it was chosen.'
+caption: 'Searching runs: sort by a metric, filter by parameters, pick one and record why.'
+credit: DevForge 18 content team
+licence: project-content

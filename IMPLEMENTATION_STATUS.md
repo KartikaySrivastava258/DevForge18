@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **5 in progress — Kafka and Airflow done** (REMAINING_WORK.md §7) · Next: **MLflow**
+Last updated: 2026-11-25 · Milestone: **5 in progress — Kafka, Airflow and MLflow done** (REMAINING_WORK.md §7) · Next: **LangChain + LlamaIndex**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 33 published across 14 tracks, **all executed** (Kafka confirmed in CI; the 3 Airflow lessons recorded against a real Airflow locally, CI confirmation in progress) |
+| Lessons | ✅ 36 published across 15 tracks, **all executed** (Airflow confirmed in CI; the 3 MLflow lessons recorded against a real MLflow server locally, CI confirmation in progress) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 34 figures across all 33 lessons (no ASCII diagrams left), 14 of them step-throughs — one in each of the 14 tracks with lessons; tested |
-| Simulations | 🟡 Framework done and tested; 6 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow), with server-verified challenges |
+| Figures and step-through diagrams | ✅ 37 figures across all 36 lessons (no ASCII diagrams left), 15 of them step-throughs — one in each of the 15 tracks with lessons; tested |
+| Simulations | 🟡 Framework done and tested; 7 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow), with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -217,10 +217,23 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Runner:** an Airflow lesson may take up to 420 s (pull, start-up and catch-up; the three ran in 3 m 20 s from a cold image cache locally).
 - **Simulation** *Scheduler timeline and backfills* (§5.16): a daily DAG whose load task appends or replaces each day's rows; catchup on deployment, a flaky source, retries, clears and backfills with the three reprocess behaviours; the table shows each day's rows against the right number, so a successful run with duplicated data is visible. 17 model tests; three server-verified challenges (get through a flaky week; fill in missed days; backfill a broken week without duplicates — re-running failed dates while the task appends is shown to be wrong); a browser test; embedded in lessons 2 and 3. A browser test caught that the backfill range kept the first scenario's dates after switching scenarios; it now follows the scenario until the learner picks dates.
 - Figures: the parts of Airflow 3, catchup on and off, the payments run (step-through).
+- **CI:** confirmed in run 45686715121 (282 tests, 28 browser journeys; all three Airflow lessons executed).
+- **A race found later by a local run:** lesson 2 asked for the no-catchup DAG's runs as soon as the catch-up runs had finished; once, that DAG had not been parsed yet, so the API answered "not found". The step now waits for the DAG and also shows `next_dagrun_run_after: null` (no future schedule time), which is better evidence than an empty run list; it then passed twice in a row.
+
+### Milestone 5 — MLflow (2026-11-25)
+
+- **Version:** MLflow **3.18.0** (released 2026-11-04, the latest on GitHub), from the official `ghcr.io/mlflow/mlflow:v3.18.0` image pinned by digest `sha256:257204c7…`. The image also contains Python 3.11, scikit-learn 1.9.1 and pandas, so the lessons train real models without installing anything; scripts are fed to the container's Python with `docker exec -i … python -`, so no files are written into the learner's folder by the container.
+- **Lessons:** *Experiments, runs, parameters and metrics* (a tracking server, a Ridge model on scikit-learn's bundled diabetes data logged as runs, the runs read back through the REST API); *Comparing and searching runs* (a sweep of Ridge and Lasso settings, `search_runs` sorted and filtered, the best run tagged with the reason); *Models, signatures and the registry* (two registered versions, the `champion` alias moved between them with the serving script unchanged, a signature refusing input without `bmi`).
+- **Determinism:** the data ships with scikit-learn and the split uses a fixed seed, so the printed metrics (rounded to two decimals) are the same on every run; where the REST API returns full precision, the lesson shows the leading digits and `…`. Two settings documented in MLflow's environment-variable reference keep the output stable: `MLFLOW_SUPPRESS_PRINTING_URL_TO_STDOUT` (the run URL contains a random ID) and `MLFLOW_LOGGING_LEVEL=WARNING` (registration logs a timestamped line); `GIT_PYTHON_REFRESH=quiet` silences GitPython's warning that the container has no Git. A second recording on a fresh container changed nothing.
+- **Found by running it:** the best run of the sweep is a Lasso run (RMSE 52.48), not a Ridge one; the lessons say so, and lesson 3 explains why it registers Ridge models anyway (one setting differs between versions).
+- **Facts** checked against the MLflow documentation on 2026-11-25: runs and experiments, the tracking server's defaults and stores, aliases and `models:/<name>@<alias>`, signature enforcement when a model is loaded as pyfunc, `name=` in MLflow 3's `log_model`. Not stated on the pages read, so shown from real output instead of asserted: the filter syntax (`params.model = 'lasso'`), the REST `runs/search` endpoint, and the exact error for a missing input. The lessons avoid claiming that model stages are deprecated, which the pages read did not say.
+- **Simulation** *Experiment explorer and model registry* (§5.18): ten runs of three kinds with invented error and latency (labelled as invented), sorting and filtering, a scatter plot with the latency budget, registering versions and moving `@champion`, with the trade-off spelled out in the event log. 8 model tests; three server-verified challenges (the most accurate model; the best model within 5 ms; roll back a too-slow promotion by moving the alias); a browser test; embedded in lessons 2 and 3.
+- **Tests made stricter:** Playwright's `hasText: "Solved"` matches "Not solved yet" too (case-insensitive substring), so the simulation browser tests waited for nothing. They now match `/^Solved/`; all ten still pass, so every earlier "solved" was real.
+- Figures: what tracking records and where, searching runs (a step-through built from the recorded sweep), versions and an alias.
 
 ## Current work
 
-Milestone 5 of REMAINING_WORK.md §7: Kafka and Airflow are done; next MLflow, then LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
+Milestone 5 of REMAINING_WORK.md §7: Kafka, Airflow and MLflow are done; next LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
 
 ## Pending work (ordered)
 
@@ -262,9 +275,9 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 33 lessons across 14 tracks | 4 tracks show outline only | Milestone 5 |
+| 36 lessons across 15 tracks | 3 tracks show outline only | Milestone 5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
-| Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka` and `apache/airflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
+| Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka`, `apache/airflow` and (from GitHub's registry) `ghcr.io/mlflow/mlflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
 | No lesson currently uses `pending` or `docs-checked`, and no resource is unverified | Those UI states ("Automated test pending.", "Link not yet verified") are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such content exists, or test the states with fixture content |
 
 ## Decisions made

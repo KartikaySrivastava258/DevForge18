@@ -1,0 +1,237 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 304">
+  <!-- Sorting and filtering runs, from Comparing and searching runs. -->
+  <text class="f-small f-muted" x="24" y="30">run</text>
+  <text class="f-small f-muted" x="200" y="30">model</text>
+  <text class="f-small f-muted" x="300" y="30">alpha</text>
+  <text class="f-small f-muted" x="400" y="30">rmse</text>
+  <text class="f-small f-muted" x="500" y="30">r2</text>
+  <line class="f-line" x1="16" y1="40" x2="624" y2="40"/>
+  <g data-step="4">
+    <rect class="f-box-ok" x="16" y="44" width="608" height="28" rx="4"/>
+    <text class="f-small f-ok" x="620" y="62" text-anchor="end">tag: decision</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <text class="f-small f-mono " x="24" y="62">ridge-1.0</text>
+    <text class="f-small " x="200" y="62">ridge</text>
+    <text class="f-small " x="300" y="62">1.0</text>
+    <text class="f-small " x="400" y="62">55.73</text>
+    <text class="f-small " x="500" y="62">0.44</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <text class="f-small f-mono " x="24" y="92">ridge-0.1</text>
+    <text class="f-small " x="200" y="92">ridge</text>
+    <text class="f-small " x="300" y="92">0.1</text>
+    <text class="f-small " x="400" y="92">53.01</text>
+    <text class="f-small " x="500" y="92">0.49</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <text class="f-small f-mono " x="24" y="122">ridge-0.01</text>
+    <text class="f-small " x="200" y="122">ridge</text>
+    <text class="f-small " x="300" y="122">0.01</text>
+    <text class="f-small " x="400" y="122">53.26</text>
+    <text class="f-small " x="500" y="122">0.49</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <text class="f-small f-mono " x="24" y="152">ridge-0.5</text>
+    <text class="f-small " x="200" y="152">ridge</text>
+    <text class="f-small " x="300" y="152">0.5</text>
+    <text class="f-small " x="400" y="152">53.85</text>
+    <text class="f-small " x="500" y="152">0.48</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <text class="f-small f-mono " x="24" y="182">ridge-2.0</text>
+    <text class="f-small " x="200" y="182">ridge</text>
+    <text class="f-small " x="300" y="182">2.0</text>
+    <text class="f-small " x="400" y="182">58.95</text>
+    <text class="f-small " x="500" y="182">0.37</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <text class="f-small f-mono " x="24" y="212">lasso-0.1</text>
+    <text class="f-small " x="200" y="212">lasso</text>
+    <text class="f-small " x="300" y="212">0.1</text>
+    <text class="f-small " x="400" y="212">52.48</text>
+    <text class="f-small " x="500" y="212">0.50</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <text class="f-small f-mono " x="24" y="242">lasso-0.5</text>
+    <text class="f-small " x="200" y="242">lasso</text>
+    <text class="f-small " x="300" y="242">0.5</text>
+    <text class="f-small " x="400" y="242">53.80</text>
+    <text class="f-small " x="500" y="242">0.48</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <text class="f-small f-mono " x="24" y="272">lasso-1.0</text>
+    <text class="f-small " x="200" y="272">lasso</text>
+    <text class="f-small " x="300" y="272">1.0</text>
+    <text class="f-small " x="400" y="272">58.59</text>
+    <text class="f-small " x="500" y="272">0.38</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <text class="f-small f-mono " x="24" y="62">lasso-0.1</text>
+    <text class="f-small " x="200" y="62">lasso</text>
+    <text class="f-small " x="300" y="62">0.1</text>
+    <text class="f-small " x="400" y="62">52.48</text>
+    <text class="f-small " x="500" y="62">0.50</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <text class="f-small f-mono " x="24" y="92">ridge-0.1</text>
+    <text class="f-small " x="200" y="92">ridge</text>
+    <text class="f-small " x="300" y="92">0.1</text>
+    <text class="f-small " x="400" y="92">53.01</text>
+    <text class="f-small " x="500" y="92">0.49</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <text class="f-small f-mono " x="24" y="122">ridge-0.01</text>
+    <text class="f-small " x="200" y="122">ridge</text>
+    <text class="f-small " x="300" y="122">0.01</text>
+    <text class="f-small " x="400" y="122">53.26</text>
+    <text class="f-small " x="500" y="122">0.49</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <text class="f-small f-mono " x="24" y="152">lasso-0.5</text>
+    <text class="f-small " x="200" y="152">lasso</text>
+    <text class="f-small " x="300" y="152">0.5</text>
+    <text class="f-small " x="400" y="152">53.80</text>
+    <text class="f-small " x="500" y="152">0.48</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <text class="f-small f-mono " x="24" y="182">ridge-0.5</text>
+    <text class="f-small " x="200" y="182">ridge</text>
+    <text class="f-small " x="300" y="182">0.5</text>
+    <text class="f-small " x="400" y="182">53.85</text>
+    <text class="f-small " x="500" y="182">0.48</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <text class="f-small f-mono " x="24" y="212">ridge-1.0</text>
+    <text class="f-small " x="200" y="212">ridge</text>
+    <text class="f-small " x="300" y="212">1.0</text>
+    <text class="f-small " x="400" y="212">55.73</text>
+    <text class="f-small " x="500" y="212">0.44</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <text class="f-small f-mono " x="24" y="242">lasso-1.0</text>
+    <text class="f-small " x="200" y="242">lasso</text>
+    <text class="f-small " x="300" y="242">1.0</text>
+    <text class="f-small " x="400" y="242">58.59</text>
+    <text class="f-small " x="500" y="242">0.38</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <text class="f-small f-mono " x="24" y="272">ridge-2.0</text>
+    <text class="f-small " x="200" y="272">ridge</text>
+    <text class="f-small " x="300" y="272">2.0</text>
+    <text class="f-small " x="400" y="272">58.95</text>
+    <text class="f-small " x="500" y="272">0.37</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <text class="f-small f-mono " x="24" y="62">lasso-0.1</text>
+    <text class="f-small " x="200" y="62">lasso</text>
+    <text class="f-small " x="300" y="62">0.1</text>
+    <text class="f-small " x="400" y="62">52.48</text>
+    <text class="f-small " x="500" y="62">0.50</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <text class="f-small f-mono f-faint" x="24" y="92">ridge-0.1</text>
+    <text class="f-small f-faint" x="200" y="92">ridge</text>
+    <text class="f-small f-faint" x="300" y="92">0.1</text>
+    <text class="f-small f-faint" x="400" y="92">53.01</text>
+    <text class="f-small f-faint" x="500" y="92">0.49</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <text class="f-small f-mono f-faint" x="24" y="122">ridge-0.01</text>
+    <text class="f-small f-faint" x="200" y="122">ridge</text>
+    <text class="f-small f-faint" x="300" y="122">0.01</text>
+    <text class="f-small f-faint" x="400" y="122">53.26</text>
+    <text class="f-small f-faint" x="500" y="122">0.49</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <text class="f-small f-mono " x="24" y="152">lasso-0.5</text>
+    <text class="f-small " x="200" y="152">lasso</text>
+    <text class="f-small " x="300" y="152">0.5</text>
+    <text class="f-small " x="400" y="152">53.80</text>
+    <text class="f-small " x="500" y="152">0.48</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <text class="f-small f-mono f-faint" x="24" y="182">ridge-0.5</text>
+    <text class="f-small f-faint" x="200" y="182">ridge</text>
+    <text class="f-small f-faint" x="300" y="182">0.5</text>
+    <text class="f-small f-faint" x="400" y="182">53.85</text>
+    <text class="f-small f-faint" x="500" y="182">0.48</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <text class="f-small f-mono f-faint" x="24" y="212">ridge-1.0</text>
+    <text class="f-small f-faint" x="200" y="212">ridge</text>
+    <text class="f-small f-faint" x="300" y="212">1.0</text>
+    <text class="f-small f-faint" x="400" y="212">55.73</text>
+    <text class="f-small f-faint" x="500" y="212">0.44</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <text class="f-small f-mono f-faint" x="24" y="242">lasso-1.0</text>
+    <text class="f-small f-faint" x="200" y="242">lasso</text>
+    <text class="f-small f-faint" x="300" y="242">1.0</text>
+    <text class="f-small f-faint" x="400" y="242">58.59</text>
+    <text class="f-small f-faint" x="500" y="242">0.38</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <text class="f-small f-mono f-faint" x="24" y="272">ridge-2.0</text>
+    <text class="f-small f-faint" x="200" y="272">ridge</text>
+    <text class="f-small f-faint" x="300" y="272">2.0</text>
+    <text class="f-small f-faint" x="400" y="272">58.95</text>
+    <text class="f-small f-faint" x="500" y="272">0.37</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-mono f-strong" x="24" y="62">lasso-0.1</text>
+    <text class="f-small f-strong" x="200" y="62">lasso</text>
+    <text class="f-small f-strong" x="300" y="62">0.1</text>
+    <text class="f-small f-strong" x="400" y="62">52.48</text>
+    <text class="f-small f-strong" x="500" y="62">0.50</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-mono f-faint" x="24" y="92">ridge-0.1</text>
+    <text class="f-small f-faint" x="200" y="92">ridge</text>
+    <text class="f-small f-faint" x="300" y="92">0.1</text>
+    <text class="f-small f-faint" x="400" y="92">53.01</text>
+    <text class="f-small f-faint" x="500" y="92">0.49</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-mono f-faint" x="24" y="122">ridge-0.01</text>
+    <text class="f-small f-faint" x="200" y="122">ridge</text>
+    <text class="f-small f-faint" x="300" y="122">0.01</text>
+    <text class="f-small f-faint" x="400" y="122">53.26</text>
+    <text class="f-small f-faint" x="500" y="122">0.49</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-mono f-faint" x="24" y="152">lasso-0.5</text>
+    <text class="f-small f-faint" x="200" y="152">lasso</text>
+    <text class="f-small f-faint" x="300" y="152">0.5</text>
+    <text class="f-small f-faint" x="400" y="152">53.80</text>
+    <text class="f-small f-faint" x="500" y="152">0.48</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-mono f-faint" x="24" y="182">ridge-0.5</text>
+    <text class="f-small f-faint" x="200" y="182">ridge</text>
+    <text class="f-small f-faint" x="300" y="182">0.5</text>
+    <text class="f-small f-faint" x="400" y="182">53.85</text>
+    <text class="f-small f-faint" x="500" y="182">0.48</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-mono f-faint" x="24" y="212">ridge-1.0</text>
+    <text class="f-small f-faint" x="200" y="212">ridge</text>
+    <text class="f-small f-faint" x="300" y="212">1.0</text>
+    <text class="f-small f-faint" x="400" y="212">55.73</text>
+    <text class="f-small f-faint" x="500" y="212">0.44</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-mono f-faint" x="24" y="242">lasso-1.0</text>
+    <text class="f-small f-faint" x="200" y="242">lasso</text>
+    <text class="f-small f-faint" x="300" y="242">1.0</text>
+    <text class="f-small f-faint" x="400" y="242">58.59</text>
+    <text class="f-small f-faint" x="500" y="242">0.38</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-mono f-faint" x="24" y="272">ridge-2.0</text>
+    <text class="f-small f-faint" x="200" y="272">ridge</text>
+    <text class="f-small f-faint" x="300" y="272">2.0</text>
+    <text class="f-small f-faint" x="400" y="272">58.95</text>
+    <text class="f-small f-faint" x="500" y="272">0.37</text>
+  </g>
+</svg>

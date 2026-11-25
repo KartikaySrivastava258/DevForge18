@@ -1,0 +1,59 @@
+id: mlflow-experiment-explorer
+track: mlflow
+title: Experiment explorer and model registry
+concept: An experiment's runs are evidence for a decision. Sorting and filtering them shows the trade-offs — here, error against prediction latency — and the registry turns the chosen run into a model version that the serving code loads through an alias.
+learning_objectives:
+  - Sort and filter runs to find the best one by a metric, and the best one within a constraint.
+  - Register runs as model versions and move the champion alias between them.
+  - Explain a choice as a trade-off between error and latency, not as "the lowest number wins".
+simplifications:
+  - The runs and their numbers are invented to show a trade-off; they were not measured. On real data, a bigger model is not always better.
+  - There is one registered model, diabetes-model, and one alias, champion.
+  - Latency is one number per run; a real service would look at its distribution (for example the 99th percentile) under load.
+text_alternative: The runs as a table with their kind, parameters, RMSE and latency in the current order and filter; a scatter plot of RMSE against latency with the champion marked; the registered versions and which one the champion alias points to. Every sort, filter, registration and alias move is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: no-limit
+    title: Choose a champion
+    description: Ten runs of three kinds of model, nothing registered yet.
+    params: { limitMs: null }
+  - id: latency-budget
+    title: A 5 ms latency budget
+    description: The service that will load the champion must answer within 5 ms. Nothing is registered yet.
+    params: { limitMs: 5 }
+  - id: over-budget
+    title: A champion that is too slow
+    description: Three versions are registered and version 3 — the most accurate — was promoted. The service must answer within 5 ms.
+    params: { limitMs: 5, registered: [r04, r08, r10], champion: 3 }
+challenges:
+  - id: lowest-error
+    title: The most accurate model
+    goal: Make the champion the run with the lowest RMSE of all.
+    scenario: no-limit
+    check: champion-lowest-error
+    hint: Sort by RMSE, ascending. Register the top run, then point the champion alias at the new version.
+    solution:
+      - { type: sort, by: rmse, dir: asc }
+      - { type: register, runId: r10 }
+      - { type: setChampion, version: 1 }
+  - id: within-budget
+    title: The best model that is fast enough
+    goal: Make the champion the most accurate run that answers within 5 ms — and notice what it costs in error.
+    scenario: latency-budget
+    check: champion-best-within-limit
+    hint: Filter to a maximum latency of 5 ms first, then sort by RMSE. The event log tells you the trade-off when you compare with another champion.
+    solution:
+      - { type: filter, kind: all, maxLatencyMs: 5 }
+      - { type: sort, by: rmse, dir: asc }
+      - { type: register, runId: r08 }
+      - { type: setChampion, version: 1 }
+  - id: roll-back
+    title: Roll back a slow promotion
+    goal: The champion is over the 5 ms budget. Point it at the best version that fits, without retraining anything.
+    scenario: over-budget
+    check: champion-best-within-limit
+    hint: The versions are still there. Which registered version is the most accurate one within 5 ms? Moving the alias is the whole fix.
+    solution:
+      - { type: setChampion, version: 2 }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1
