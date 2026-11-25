@@ -62,13 +62,13 @@ projects:
   - { title: "Multi-service event application with health checks", level: advanced, status: planned }
 resources:
   - title: Docker — Get started
-    url: https://docs.docker.com/get-started/
+    url: https://docs.docker.com/learn/
     publisher: Docker
     type: tutorial
     level: beginner
     official: true
     why: Official guided introduction to images, containers and building your first image.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Docker documentation
     url: https://docs.docker.com/
     publisher: Docker
@@ -76,7 +76,7 @@ resources:
     level: all
     official: true
     why: Reference for the Docker CLI, Dockerfile instructions, networking and storage.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Docker Compose documentation
     url: https://docs.docker.com/compose/
     publisher: Docker
@@ -84,7 +84,7 @@ resources:
     level: intermediate
     official: true
     why: Official guide to defining multi-container applications with Compose files.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24

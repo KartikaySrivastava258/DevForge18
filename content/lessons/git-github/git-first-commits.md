@@ -27,7 +27,7 @@ resources:
     level: all
     official: true
     why: Every option of status, add, commit, diff, log and gitignore, from the Git project.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: untracked-vs-staged
     prompt: git status lists README.md under "Untracked files". What does that mean?

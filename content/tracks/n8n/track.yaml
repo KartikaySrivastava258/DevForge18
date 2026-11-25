@@ -66,15 +66,15 @@ resources:
     level: all
     official: true
     why: Official documentation for nodes, expressions, credentials, hosting and security.
-    verification: { status: unverified }
-  - title: n8n courses
-    url: https://docs.n8n.io/courses/
+    verification: { status: verified, checked_on: 2026-11-25 }
+  - title: n8n Academy courses
+    url: https://learn.n8n.io/
     publisher: n8n
     type: course
     level: beginner
     official: true
     why: Official text-based courses that build workflows step by step.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: outline
 owner: content-team
 last_reviewed: 2026-11-24

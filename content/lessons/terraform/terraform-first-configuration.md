@@ -19,7 +19,7 @@ resources:
     level: beginner
     official: true
     why: Official installers and package-manager instructions for Windows, macOS and Linux.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Terraform releases on GitHub
     url: https://github.com/hashicorp/terraform/releases
     publisher: HashiCorp
@@ -54,8 +54,8 @@ self_check:
     answer: a
     explanation: Terraform's core plans and tracks changes; providers translate resources into real API calls. terraform init downloads the providers a configuration needs, at versions allowed by required_providers.
 verification:
-  method: pending
-  details: Every command is run automatically in CI with Terraform 1.15.6 and the hashicorp/local provider. The expected output was written from the Terraform documentation and has not yet been confirmed by a test run.
+  method: executed
+  details: Every command is run by the test suite with Terraform 1.15.6 (checksum-verified) and the hashicorp/local provider; the documented output was confirmed in CI run 45643638519 on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 1

@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **Path 2 lessons for Jenkins, Terraform and Kubernetes added** · Next: **Prometheus + Grafana, OpenTelemetry (completing Path 2)**
+Last updated: 2026-11-25 · Milestone: **1 — open verification closed** (REMAINING_WORK.md §7) · Next: **Milestone 2 — visual learning system**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,7 +10,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | 🟡 21 published across 10 tracks. 16 executed and confirmed; 5 **pending** their first CI run: Jenkins 1 (real Jenkins 2.580.2), Terraform 1–2 (Terraform 1.15.6), Kubernetes 1–2 (real kind cluster, Kubernetes 1.36.1) |
+| Lessons | ✅ 21 published across 10 tracks, **all executed** and confirmed in CI (none pending) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
@@ -31,7 +31,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | `npm start` + curl smoke test | ✅ health, SPA routes with CSP, 18 tracks via API, CSRF rejection, `/metrics` |
 | `db:migrate` (twice), `user:create` (success + 3 rejection cases), `db:backup` + restore check | ✅ behave as documented |
 | `npm run typecheck:web` | ✅ **Passed with the real `@types/react`** on the owner's machine (Ubuntu, Node 22.23.2), 2026-11-25 — 0 errors. |
-| `npm run content:check-links` | ⚠️ Runs, but the build environment has no internet. Pro Git (`git-scm.com/book/en/v2`) was confirmed manually by web search on 2026-11-25 and marked verified; all other links remain unverified until the CI link check and a human review. |
+| `npm run content:check-links` | ✅ 55 unique links, 0 broken (CI *Link check* and locally, 2026-11-25); every resource reviewed and marked verified — see Milestone 1 below |
 | Docker build / Compose / Nginx config | ⚠️ **Untested.** YAML validated; Dockerfile and `nginx.conf` not executed. |
 | GitHub Actions workflows | ⚠️ **Untested.** YAML validated. |
 
@@ -123,9 +123,21 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
   - **markdown-it, smol-toml, katex** (inside the docs linter) → `markdownlint-cli2` `0.23.3`.
   - **To confirm on the owner's machine:** delete `node_modules` and `package-lock.json`, run `npm install`, then `npm audit` should report 0 vulnerabilities.
 
+### Milestone 1 — open verification closed (2026-11-25)
+
+- **Repository recovered first.** The working copy had been moved to the desktop Trash, and the Jenkins/Terraform/Kubernetes work existed only in an unpacked archive without `.git`. The repository was restored to `~/Desktop/devforge18`, the archive's files were applied on top (keeping the repository's `package.json` with the katex audit override, and `package-lock.json`), reviewed, and committed (`4b892a0`). `npm audit`: 0 vulnerabilities.
+- **Local baseline before any change:** `npm run verify` — typechecks 0 errors, docs lint 0 issues, build OK (JS 254.8 KB), `npm test` 154 tests (142 pass, 12 skipped for tools that run only in CI, 0 fail). The browser tests first failed in their setup hook because this machine's cached Playwright browser was build 1194 and the installed Playwright needs 1243; `npx playwright install chromium` fixed it (environment, not code) → 16/16.
+- **CI run 45643638519 (2026-11-25, 5 m 0 s): ✅ green, 154/154 tests with 0 skipped, 16/16 browser tests.** Jenkins 1 (jenkins/jenkins:2.580.2-lts-jdk21), Terraform 1–2 (Terraform v1.15.6) and Kubernetes 1–2 (kind v0.32.0, kubectl v1.36.1, Kubernetes 1.36.1) ran against the real tools and matched their documented output on the first run, so no output needed fixing. All checksum verifications (Terraform, kind `.sha256sum` asset, kubectl) passed. All five promoted to `executed` with the confirmed versions and run ID in `verification.details`.
+- **Link check workflow fixed.** Its first run (45643655123) reached every link but crashed writing `build/link-report.json`, because that workflow has no build step and `build/` did not exist. `scripts/check-links.ts` now creates the folder; reproduced and verified in a fresh checkout without `build/` (exit 0, report written).
+- **Every resource reviewed (55 unique URLs, 72 entries).** All returned HTTP 200. Each page's title was compared with the resource's title and purpose, then marked `verified` with `checked_on: 2026-11-25`. Corrected while reviewing:
+  - moved pages, updated to their destination: GitHub Skills → `learn.github.com/skills` (the old site now meta-refreshes there); Git downloads → `git-scm.com/install/`; Docker Get started → `docs.docker.com/learn/`; GitHub Actions quickstart → `/en/actions/get-started/quickstart`; LlamaIndex docs and examples → `developers.llamaindex.ai/python/…`; n8n courses → `learn.n8n.io` (n8n Academy); Postman overview → `/docs/getting-started/overview/`;
+  - wrong target: the PostgreSQL lesson's "Constraints" resource linked to the manual's front page → now `docs/current/ddl-constraints.html`; the MLflow "classic ML tutorials" link now opened the general platform landing page → now `ml/tutorials-and-examples/`.
+  - Kept as is after inspection: `kafka.apache.org/documentation/` (official entry point; redirects by script to the current versioned docs) and `university.redis.io` (Redis University, hosted on the Flockjay platform, hence its page title).
+- Browser test updated for the new honest state: the Docker track now shows three "Link checked" labels and no "Link not yet verified" label (was hard-coded to three unverified links).
+
 ## Current work
 
-Phase 1 lessons, following Path 1. Git branches/merge-conflict lessons are intermediate and scheduled for Phase 2.
+Milestone 2 of REMAINING_WORK.md §7: the visual learning system (media pipeline, figures, `StepDiagram`), then Milestone 3 (simulation framework with the Git and Kubernetes simulations).
 
 ## Pending work (ordered)
 
@@ -163,7 +175,6 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | Issue | Impact | Plan |
 |---|---|---|
 | No `package-lock.json` (generated offline environment) | Dependency versions not locked transitively | Commit lockfile after first `npm install` online |
-| Resource links unverified | App shows "Link not yet verified" | Phase 1 step 2 |
 | Rate limits in process memory | Limits are per process and reset on restart | Acceptable for one instance; Redis in Phase 6 if scaled out |
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
@@ -171,7 +182,7 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | 21 lessons across 10 tracks | 8 tracks show outline only | Phase 1 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine` and `alpine:3.20` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
-| No lesson currently uses `pending` or `docs-checked` | Those UI states are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such a lesson exists |
+| No lesson currently uses `pending` or `docs-checked`, and no resource is unverified | Those UI states ("Automated test pending.", "Link not yet verified") are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such content exists, or test the states with fixture content |
 
 ## Decisions made
 
@@ -203,7 +214,7 @@ npm run db:backup -- ./backups/manual.db
 
 The full plan for all remaining work is in [`REMAINING_WORK.md`](REMAINING_WORK.md); [`MASTER_PROMPT.md`](MASTER_PROMPT.md) is a ready-made prompt for continuing with a coding agent.
 
-1. (Owner) Apply the latest patch, push, and share the CI result. Five lessons run against real tools for the first time (Jenkins, Terraform ×2, Kubernetes ×2); any mismatch is fixed from the CI log, then they are promoted to `executed`.
-2. (Owner, optional) Run the *Link check* workflow from the Actions tab and share the report.
-3. Complete Path 2: Prometheus + Grafana (a real Prometheus scraping DevForge's own `/metrics`), then OpenTelemetry.
-4. Update this file after each track.
+1. Milestone 2 — visual learning system (REMAINING_WORK.md §4.2): `media:` image references with figures, captions and theme-aware SVGs; `StepDiagram`; convert the ASCII diagrams in all 21 lessons; at least one step-through per track; browser tests for keyboard and reduced motion.
+2. Milestone 3 — simulation framework (§4.3) with the Git commit-graph and Kubernetes reconciliation simulations (§5.1, §5.3).
+3. Re-run the *Link check* workflow monthly; a person re-confirms each page before updating `checked_on`.
+4. Update this file after each milestone.

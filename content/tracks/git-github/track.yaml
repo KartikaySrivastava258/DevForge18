@@ -77,15 +77,15 @@ resources:
     level: all
     official: true
     why: Authoritative documentation for every Git command and option.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: GitHub Skills
-    url: https://skills.github.com/
+    url: https://learn.github.com/skills
     publisher: GitHub
     type: course
     level: beginner
     official: true
     why: Free hands-on courses that run inside real GitHub repositories.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: GitHub Docs
     url: https://docs.github.com/
     publisher: GitHub
@@ -93,7 +93,7 @@ resources:
     level: all
     official: true
     why: Official documentation for pull requests, issues, permissions and repository settings.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24

@@ -19,7 +19,7 @@ resources:
     level: beginner
     official: true
     why: The official introduction to configuration structure, serving static content and setting up a simple proxy.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Nginx documentation
     url: https://nginx.org/en/docs/
     publisher: nginx.org
@@ -27,7 +27,7 @@ resources:
     level: all
     official: true
     why: Reference for proxy_pass, proxy_set_header and the upstream module used in this lesson.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: bad-gateway
     prompt: Users see "502 Bad Gateway" from Nginx. Where is the problem most likely to be?

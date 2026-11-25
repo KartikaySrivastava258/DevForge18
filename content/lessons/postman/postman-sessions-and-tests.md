@@ -27,7 +27,7 @@ resources:
     level: all
     official: true
     why: Covers variables, environments, cookies, writing test scripts and running collections from the command line.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: stateless
     prompt: HTTP is stateless. How, then, does /api/auth/me know who you are after you sign in?

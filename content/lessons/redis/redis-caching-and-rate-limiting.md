@@ -27,7 +27,7 @@ resources:
     level: all
     official: true
     why: Command reference for SET with EX, INCR, EXPIRE (including the NX option) and TTL.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: stale
     prompt: A course title is changed in PostgreSQL, but the site keeps showing the old title for a minute. Why?

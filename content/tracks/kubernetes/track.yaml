@@ -71,7 +71,7 @@ resources:
     level: beginner
     official: true
     why: Official step-by-step introduction to deploying, exposing, scaling and updating an app.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Kubernetes documentation
     url: https://kubernetes.io/docs/
     publisher: The Kubernetes Authors
@@ -79,7 +79,7 @@ resources:
     level: all
     official: true
     why: Concepts, task guides and API reference for every Kubernetes object.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Kubernetes tutorials
     url: https://kubernetes.io/docs/tutorials/
     publisher: The Kubernetes Authors
@@ -87,7 +87,7 @@ resources:
     level: intermediate
     official: true
     why: Official tutorials covering configuration, stateless and stateful applications, and security.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24

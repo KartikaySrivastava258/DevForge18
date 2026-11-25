@@ -26,7 +26,7 @@ Snapshot at the time of writing (2026-11-25):
 | Security: scrypt passwords, hashed session tokens, CSRF protection, strict CSP, per-account brute-force limits, build-time HTML escaping, audit log | Complete and tested |
 | 18 tracks with explanation, curriculum outline, planned labs and projects, official resources | Present (outline level) |
 | 8 learning paths | Complete |
-| Lessons | 21 across 10 tracks, beginner level only. 16 executed and confirmed in CI; 5 pending their first CI run (Jenkins 1, Terraform 1–2, Kubernetes 1–2) |
+| Lessons | 21 across 10 tracks, beginner level only. All 21 executed and confirmed in CI (the last 5 — Jenkins 1, Terraform 1–2, Kubernetes 1–2 — in CI run 45643638519, 2026-11-25) |
 | Executable-lesson system (commands run against real tools, output compared) | Complete: Git, PostgreSQL, Redis, Nginx, Docker, Jenkins, Terraform, Kubernetes, HTTP via a live DevForge API |
 | Checkers: workflow files, Jenkinsfiles, content schema, Markdown safety | Complete |
 | CI on GitHub | Green (run #2); installs pinned, checksum-verified tools |
@@ -66,7 +66,7 @@ These rules are why the existing work can be trusted. Every new feature must fol
 | Glossary and command explorer | None | P2 |
 | Admin and faculty screens, cohorts, assignments | API foundation only | P3 |
 | Portfolio and certificates | None | P3 |
-| Verified external links | 4 of 46 | P1 (run the Link check workflow) |
+| Verified external links | ✅ All 55 unique links reachable and reviewed (2026-11-25); 10 moved or mislabelled links corrected | Re-run monthly |
 
 ## 4. Architecture for the missing features
 
@@ -189,7 +189,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.3 Kubernetes
 
-- **Lessons:** ✅ Deployments and self-healing (pending CI) · ✅ Services, rolling updates and rollback (pending CI) · ConfigMaps and Secrets · Probes, requests and limits · Namespaces, labels and selectors in depth · Ingress/Gateway and how traffic enters a cluster · Persistent volumes (advanced) · RBAC and network policies (advanced).
+- **Lessons:** ✅ Deployments and self-healing · ✅ Services, rolling updates and rollback · ConfigMaps and Secrets · Probes, requests and limits · Namespaces, labels and selectors in depth · Ingress/Gateway and how traffic enters a cluster · Persistent volumes (advanced) · RBAC and network policies (advanced).
 - **Simulation — the reconciliation loop:** model nodes, a Deployment, ReplicaSets and Pods with states (Pending, Running, Ready, Failed); actions: kill a Pod, drain a node, scale, update image (good or broken), change maxSurge/maxUnavailable. Animate the controller "noticing" and acting. **Challenges:** "keep at least 4 Pods available during an update", "recover from a broken image". **Invariants:** available Pods never drop below `replicas − maxUnavailable` during a rolling update.
 - **Labs:** deploy a three-tier app on kind (executed in CI); break a Deployment and debug with `kubectl describe` and events (executed); add probes and observe behaviour (executed).
 - **Real world:** Kubernetes grew out of Google's experience running containers with Borg; Google published the Borg paper ("Large-scale cluster management at Google with Borg", EuroSys 2015) and donated Kubernetes to the CNCF. Sources: the paper, kubernetes.io history, CNCF case studies.
@@ -207,7 +207,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.5 Terraform
 
-- **Lessons:** ✅ First configuration (pending CI) · ✅ Variables, validation, outputs and state (pending CI) · Modules and reuse · Remote state, locking and workspaces · Importing existing resources and handling drift · Testing with `terraform test` and policy checks (advanced) · Terraform in CI with plan review (advanced).
+- **Lessons:** ✅ First configuration · ✅ Variables, validation, outputs and state · Modules and reuse · Remote state, locking and workspaces · Importing existing resources and handling drift · Testing with `terraform test` and policy checks (advanced) · Terraform in CI with plan review (advanced).
 - **Simulation — plan diff:** desired configuration, recorded state and the real world as three panels; edit any panel and see the plan symbols (`+`, `~`, `-/+`, `-`) recomputed; show drift when the real world changes. **Challenge:** produce a plan with zero destroys while renaming a resource (teaches `moved` blocks).
 - **Labs:** reusable module with the local provider (executed); drift detection by editing a managed file (executed); CI pipeline that posts a plan (read-through plus a workflow validated by the checker).
 - **Real world:** Terraform was released by HashiCorp in 2014; it has been under the Business Source License since 1.6, and the OpenTofu fork (Linux Foundation) began from 1.5 in 2023. Sources: HashiCorp's blog and releases, opentofu.org.
@@ -261,7 +261,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.11 Jenkins
 
-- **Lessons:** ✅ Jenkins in Docker (pending CI) · ✅ Pipeline as code with a Jenkinsfile · Agents and running builds in containers · Parallel stages, artefacts and test reports · Shared libraries · Configuration as Code (JCasC) and plugin management (advanced) · Securing Jenkins (advanced).
+- **Lessons:** ✅ Jenkins in Docker · ✅ Pipeline as code with a Jenkinsfile · Agents and running builds in containers · Parallel stages, artefacts and test reports · Shared libraries · Configuration as Code (JCasC) and plugin management (advanced) · Securing Jenkins (advanced).
 - **Simulation — controller, queue and executors:** jobs enter a queue, agents with labels and executors pick them up; show waiting time when executors are scarce. **Challenge:** cut queue time by adding an agent with the right label.
 - **Labs:** a Jenkins built from a pinned image with plugins installed by `jenkins-plugin-cli` and a job created by JCasC, then a pipeline run triggered and checked through the REST API (executed in CI).
 - **Real world:** Jenkins was forked from Hudson in 2011; Hudson was started by Kohsuke Kawaguchi at Sun Microsystems. Sources: jenkins.io history and blog.
@@ -377,7 +377,7 @@ Add browser tests that walk every section of at least one complete track and ass
 
 Each milestone ends with CI green and `IMPLEMENTATION_STATUS.md` updated.
 
-1. **Close open verification.** Push the latest patch; fix any mismatch in the five pending lessons from the CI log; promote them to `executed`. Run the *Link check* workflow and verify links. *Done when:* no `pending` lessons; every resource is verified or flagged.
+1. ✅ Done (verified in CI on 2026-11-25). **Close open verification.** Push the latest patch; fix any mismatch in the five pending lessons from the CI log; promote them to `executed`. Run the *Link check* workflow and verify links. *Done when:* no `pending` lessons; every resource is verified or flagged.
 2. **Visual learning system.** Media pipeline (`media:` paths, figures, captions, dark/light SVGs), `StepDiagram`, animation guidelines; convert the ASCII diagrams in the existing 21 lessons into SVG figures, and add a step-through to at least one lesson per track. *Done when:* every existing lesson has at least one real figure, and browser tests cover a step-through with keyboard and reduced motion.
 3. **Simulation framework plus two exemplars.** `SimulationShell`, the model/view split, challenges and progress; build the Git commit-graph and the Kubernetes reconciliation simulations first. *Done when:* both have unit-tested models with invariants, browser tests, and are embedded in their lessons.
 4. **Complete Path 2.** Prometheus + Grafana and OpenTelemetry beginner lessons (executed in CI) and their simulations.
@@ -414,8 +414,8 @@ For facts: every new external claim has a source URL and a `checked_on` date; ru
 
 | Issue | What to do |
 |---|---|
-| Five lessons pending their first CI run (Jenkins 1, Terraform 1–2, Kubernetes 1–2) | Push, read the log, fix mismatches with `lessons:record` or from the CI output, promote to `executed` |
-| Assumed download names in CI (kind `.sha256sum` asset, Jenkins image tag `2.580.2-lts-jdk21`) | If a download fails, check the release page and correct the step |
+| ~~Five lessons pending their first CI run (Jenkins 1, Terraform 1–2, Kubernetes 1–2)~~ | ✅ Done: all five matched on their first CI run (45643638519, 2026-11-25) and are `executed` |
+| ~~Assumed download names in CI (kind `.sha256sum` asset, Jenkins image tag `2.580.2-lts-jdk21`)~~ | ✅ Both exist: the kind checksum verified and the Jenkins image was pulled in CI run 45643638519 |
 | No licence chosen | Owner decision before the repository is public (for example MIT for code, CC BY-SA 4.0 for content) |
 | katex override for the docs linter | Only on the owner's machine if applied; add `overrides.katex` to `package.json` here if `npm audit` was clean with it |
 | Docker Compose and production Nginx untested | Milestone 11 (section 6.4) |

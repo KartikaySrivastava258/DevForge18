@@ -13,13 +13,13 @@ learning_objectives:
   - Explain why rebuilding an image does not change containers that are already running.
 resources:
   - title: Docker — Get started
-    url: https://docs.docker.com/get-started/
+    url: https://docs.docker.com/learn/
     publisher: Docker
     type: tutorial
     level: beginner
     official: true
     why: Official installation links and a guided first look at images and containers.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: shared-writes
     prompt: You start two containers, web1 and web2, from the same nginx:1.27-alpine image, then create a file inside web1. What does web2 see?

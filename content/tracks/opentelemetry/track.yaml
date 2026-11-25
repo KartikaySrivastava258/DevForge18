@@ -64,7 +64,7 @@ resources:
     level: all
     official: true
     why: Official concepts, language SDK guides and Collector documentation.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: OpenTelemetry Demo
     url: https://opentelemetry.io/docs/demo/
     publisher: OpenTelemetry Authors
@@ -72,7 +72,7 @@ resources:
     level: intermediate
     official: true
     why: A multi-service demo application instrumented with OpenTelemetry across several languages.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: outline
 owner: content-team
 last_reviewed: 2026-11-24

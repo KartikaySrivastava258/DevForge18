@@ -67,7 +67,7 @@ resources:
     level: all
     official: true
     why: Authoritative design, configuration and operations documentation for Kafka.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Apache Kafka quickstart
     url: https://kafka.apache.org/quickstart
     publisher: The Apache Software Foundation
@@ -75,7 +75,7 @@ resources:
     level: beginner
     official: true
     why: Official steps to start a local broker, create a topic and produce and consume events.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Confluent Developer
     url: https://developer.confluent.io/
     publisher: Confluent
@@ -83,7 +83,7 @@ resources:
     level: intermediate
     official: false
     why: Free courses and patterns from a company founded by Kafka's original creators; some material covers Confluent-specific products.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: outline
 owner: content-team
 last_reviewed: 2026-11-24

@@ -27,7 +27,7 @@ resources:
     level: beginner
     official: true
     why: Official guides to creating repositories and authenticating with GitHub over HTTPS or SSH.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: fetch-vs-pull
     prompt: What is the difference between git fetch and git pull?

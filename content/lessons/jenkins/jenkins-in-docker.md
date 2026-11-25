@@ -27,7 +27,7 @@ resources:
     level: all
     official: true
     why: Official installation, pipeline, security and administration documentation.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: controller-agent
     prompt: What is the difference between the Jenkins controller and an agent?
@@ -54,8 +54,8 @@ self_check:
     answer: b
     explanation: The same reasoning as the Docker track. A CI server is shared infrastructure, so upgrades should be planned — plugin compatibility and the required Java version change between releases.
 verification:
-  method: pending
-  details: Every command is run automatically in CI on a disposable Docker engine, where a real Jenkins 2.580.2 server is started and checked. The expected output was written from the Jenkins documentation and has not yet been confirmed by a test run. The setup-wizard steps in the browser are not executed.
+  method: executed
+  details: Every command is run by the test suite on a disposable Docker engine, where a real Jenkins 2.580.2 server (jenkins/jenkins:2.580.2-lts-jdk21) is started and checked; the documented output was confirmed in CI run 45643638519 on 2026-11-25. The setup-wizard steps in the browser are not executed.
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 1

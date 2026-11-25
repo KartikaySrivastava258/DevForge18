@@ -227,7 +227,7 @@ Found a vulnerability? Please report it privately to the maintainers rather than
 ## Known limitations
 
 - 21 lessons are published across 10 tracks; the other 8 tracks show their reviewed curriculum outline. Labs and projects are listed as planned.
-- External resource links have not yet been verified (the build environment had no internet access). The app shows "Link not yet verified" until the weekly link check and a human review confirm each one.
+- External resource links were all checked and reviewed on 2026-11-25. The weekly *Link check* workflow reports reachability; a person re-confirms each page before its date is updated.
 - Admin and faculty features exist in the API but have no screens yet.
 - Rate limits are kept in memory, so they apply per server process. See [ADR 0004](docs/adr/0004-auth-sessions.md).
 - The full list, with workarounds, is in [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md#known-issues-and-limitations).

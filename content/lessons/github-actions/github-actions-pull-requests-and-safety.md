@@ -19,7 +19,7 @@ resources:
     level: all
     official: true
     why: Workflow syntax, events, runners, permissions and security hardening, from GitHub.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: required-checks
     prompt: CI runs on every pull request, but someone merges one with a red cross anyway. What prevents this?

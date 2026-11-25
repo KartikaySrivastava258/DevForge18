@@ -66,15 +66,15 @@ resources:
     level: all
     official: true
     why: Official hub for Postman documentation, tutorials and guides.
-    verification: { status: unverified }
-  - title: Postman documentation overview
-    url: https://learning.postman.com/docs/introduction/overview/
+    verification: { status: verified, checked_on: 2026-11-25 }
+  - title: Get started in Postman
+    url: https://learning.postman.com/docs/getting-started/overview/
     publisher: Postman
     type: documentation
     level: beginner
     official: true
     why: Starting point for sending requests, collections, variables and tests.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24

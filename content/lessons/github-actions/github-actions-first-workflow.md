@@ -19,7 +19,7 @@ resources:
     level: all
     official: true
     why: Workflow syntax, events, runners, permissions and security hardening, from GitHub.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: actions/checkout v7.0.0 release
     url: https://github.com/actions/checkout/releases/tag/v7.0.0
     publisher: GitHub

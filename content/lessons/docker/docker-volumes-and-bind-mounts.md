@@ -19,7 +19,7 @@ resources:
     level: all
     official: true
     why: The storage section explains volumes, bind mounts and tmpfs mounts, and when to use each.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: database-container
     prompt: You run PostgreSQL in a container without any volume, then docker rm the container. What happens to the database?

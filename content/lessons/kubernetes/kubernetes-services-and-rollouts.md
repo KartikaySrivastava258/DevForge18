@@ -19,7 +19,7 @@ resources:
     level: beginner
     official: true
     why: Official installation and usage guide for kind (Kubernetes in Docker), the local cluster used here.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: kind releases
     url: https://github.com/kubernetes-sigs/kind/releases
     publisher: Kubernetes SIGs
@@ -35,7 +35,7 @@ resources:
     level: beginner
     official: true
     why: Official step-by-step introduction to deploying, exposing, scaling and updating an app.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: service
     prompt: Why connect to a Service rather than directly to a Pod's IP address?
@@ -62,8 +62,8 @@ self_check:
     answer: b
     explanation: Each change to the Pod template creates a revision. undo returns to the previous one (or a specific one with --to-revision), using the same safe rollout mechanism.
 verification:
-  method: pending
-  details: Every command is run automatically in CI on a disposable Docker engine with a real kind 0.32.0 cluster running Kubernetes 1.36.1, after the previous lesson. The expected output was written from the Kubernetes documentation and has not yet been confirmed by a test run.
+  method: executed
+  details: Every command is run by the test suite on a disposable Docker engine with a real kind 0.32.0 cluster running Kubernetes 1.36.1, after the previous lesson; the documented output was confirmed in CI run 45643638519 on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 1

@@ -61,7 +61,7 @@ resources:
     level: beginner
     official: true
     why: Official getting-started guides covering issues, boards, workflows and reports.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Jira Cloud support documentation
     url: https://support.atlassian.com/jira-software-cloud/
     publisher: Atlassian
@@ -69,7 +69,7 @@ resources:
     level: all
     official: true
     why: Detailed, current documentation for configuring and administering Jira Cloud.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: outline
 owner: content-team
 last_reviewed: 2026-11-24

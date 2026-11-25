@@ -64,7 +64,7 @@ resources:
     level: beginner
     official: true
     why: Official hands-on tutorials, including paths that use local providers and Docker.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Terraform documentation
     url: https://developer.hashicorp.com/terraform/docs
     publisher: HashiCorp
@@ -72,7 +72,7 @@ resources:
     level: all
     official: true
     why: Reference for the Terraform language, CLI commands and state management.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24

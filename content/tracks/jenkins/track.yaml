@@ -66,7 +66,7 @@ resources:
     level: all
     official: true
     why: Official installation, pipeline, security and administration documentation.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Jenkins Pipeline — getting started
     url: https://www.jenkins.io/doc/pipeline/tour/getting-started/
     publisher: Jenkins project
@@ -74,7 +74,7 @@ resources:
     level: beginner
     official: true
     why: Official guided tour from installing Jenkins to running a first Pipeline.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24

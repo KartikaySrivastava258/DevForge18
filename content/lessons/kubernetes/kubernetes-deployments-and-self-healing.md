@@ -19,7 +19,7 @@ resources:
     level: beginner
     official: true
     why: Official installation and usage guide for kind (Kubernetes in Docker), the local cluster used here.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: kind releases
     url: https://github.com/kubernetes-sigs/kind/releases
     publisher: Kubernetes SIGs
@@ -35,7 +35,7 @@ resources:
     level: beginner
     official: true
     why: Official step-by-step introduction to deploying, exposing, scaling and updating an app.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: desired-state
     prompt: You delete one of a Deployment's three Pods. Why does a new one appear?
@@ -62,8 +62,8 @@ self_check:
     answer: a
     explanation: A tag is a movable label; a digest is a content hash. kind's release notes publish the digest for each node image so that clusters can be recreated exactly.
 verification:
-  method: pending
-  details: Every command is run automatically in CI on a disposable Docker engine, creating a real kind 0.32.0 cluster with Kubernetes 1.36.1. The expected output was written from the Kubernetes and kind documentation and has not yet been confirmed by a test run.
+  method: executed
+  details: Every command is run by the test suite on a disposable Docker engine, creating a real kind 0.32.0 cluster with Kubernetes 1.36.1 (node image pinned by digest) and kubectl 1.36.1; the documented output was confirmed in CI run 45643638519 on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 1

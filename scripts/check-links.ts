@@ -8,7 +8,7 @@
  * updates `verification` in the YAML, so "verified" always means a human
  * also confirmed the page is the right, current resource.
  */
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadContent } from "./lib/content-loader.ts";
@@ -47,6 +47,8 @@ results.sort((a, b) => a.url.localeCompare(b.url));
 const broken = results.filter((r) => typeof r.status !== "number" || r.status >= 400);
 const redirected = results.filter((r) => typeof r.status === "number" && r.status < 400 && r.finalUrl.replace(/\/$/, "") !== r.url.replace(/\/$/, ""));
 for (const r of results) console.log(`${String(r.status).padEnd(6)} ${r.url}${r.finalUrl !== r.url ? `  → ${r.finalUrl}` : ""}`);
+// The scheduled workflow runs without a build step, so build/ may not exist yet.
+mkdirSync(join(root, "build"), { recursive: true });
 writeFileSync(join(root, "build", "link-report.json"), JSON.stringify({ checkedAt: new Date().toISOString(), results }, null, 2));
 console.log(`\n${results.length} links checked: ${broken.length} broken, ${redirected.length} redirected. Report: build/link-report.json`);
 process.exit(broken.length > 0 ? 1 : 0);

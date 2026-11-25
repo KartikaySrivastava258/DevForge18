@@ -69,7 +69,7 @@ resources:
     level: beginner
     official: true
     why: The official introductory tutorial on SQL concepts, queries and advanced features.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: PostgreSQL documentation
     url: https://www.postgresql.org/docs/
     publisher: The PostgreSQL Global Development Group
@@ -77,7 +77,7 @@ resources:
     level: all
     official: true
     why: The authoritative manual, versioned per release, covering SQL, administration and internals.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: PostgreSQL Exercises
     url: https://pgexercises.com/
     publisher: pgexercises.com
@@ -85,7 +85,7 @@ resources:
     level: beginner
     official: false
     why: Free, browser-based SQL practice against a sample schema, from simple queries to aggregates.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24

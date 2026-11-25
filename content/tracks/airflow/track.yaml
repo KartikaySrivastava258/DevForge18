@@ -66,7 +66,7 @@ resources:
     level: all
     official: true
     why: Official documentation for Airflow core concepts, operators, deployment and providers.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Airflow tutorials
     url: https://airflow.apache.org/docs/apache-airflow/stable/tutorial/
     publisher: The Apache Software Foundation
@@ -74,7 +74,7 @@ resources:
     level: beginner
     official: true
     why: Official walkthroughs from a first DAG to the TaskFlow API and a small data pipeline.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Airflow use cases
     url: https://airflow.apache.org/use-cases/
     publisher: The Apache Software Foundation
@@ -82,7 +82,7 @@ resources:
     level: all
     official: true
     why: Organisations' own descriptions of how they use Airflow, useful context for case studies.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: outline
 owner: content-team
 last_reviewed: 2026-11-24

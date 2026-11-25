@@ -71,7 +71,7 @@ resources:
     level: all
     official: true
     why: Official concepts, how-to guides and integration references for LangChain.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: LangChain Academy
     url: https://academy.langchain.com/
     publisher: LangChain
@@ -79,23 +79,23 @@ resources:
     level: intermediate
     official: true
     why: Free official courses from the LangChain team.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: LlamaIndex documentation
-    url: https://docs.llamaindex.ai/
+    url: https://developers.llamaindex.ai/python/framework/
     publisher: LlamaIndex
     type: documentation
     level: all
     official: true
     why: Official guides to loading, indexing, querying and evaluating data with LlamaIndex.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: LlamaIndex examples
-    url: https://docs.llamaindex.ai/en/stable/examples/
+    url: https://developers.llamaindex.ai/python/examples/
     publisher: LlamaIndex
     type: tutorial
     level: intermediate
     official: true
     why: Runnable notebooks demonstrating retrieval, agents and evaluation patterns.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: outline
 owner: content-team
 last_reviewed: 2026-11-24

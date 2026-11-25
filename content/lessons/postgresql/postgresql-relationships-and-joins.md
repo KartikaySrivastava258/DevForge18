@@ -19,7 +19,7 @@ resources:
     level: beginner
     official: true
     why: The official tutorial covers creating tables, populating them and querying, with the same concepts as this lesson.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: link-table
     prompt: A student can take many courses and a course has many students. How should this be stored?

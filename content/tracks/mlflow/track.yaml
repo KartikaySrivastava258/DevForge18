@@ -67,15 +67,15 @@ resources:
     level: all
     official: true
     why: Official documentation for tracking, models, the registry and deployment.
-    verification: { status: unverified }
-  - title: MLflow tutorials (classic ML)
-    url: https://mlflow.org/docs/latest/ml/
+    verification: { status: verified, checked_on: 2026-11-25 }
+  - title: MLflow tutorials and examples
+    url: https://mlflow.org/docs/latest/ml/tutorials-and-examples/
     publisher: MLflow Project
     type: tutorial
     level: beginner
     official: true
     why: Official getting-started material for tracking and model management in traditional ML.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: outline
 owner: content-team
 last_reviewed: 2026-11-24

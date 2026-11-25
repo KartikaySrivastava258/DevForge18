@@ -12,14 +12,14 @@ learning_objectives:
   - Send GET and POST requests with curl, including headers and a JSON body.
   - Send the same requests in Postman and read the status, headers and body it shows.
 resources:
-  - title: Postman documentation overview
-    url: https://learning.postman.com/docs/introduction/overview/
+  - title: Get started in Postman
+    url: https://learning.postman.com/docs/getting-started/overview/
     publisher: Postman
     type: documentation
     level: beginner
     official: true
     why: Official starting point for sending requests and reading responses in Postman.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Postman Learning Center
     url: https://learning.postman.com/
     publisher: Postman
@@ -27,7 +27,7 @@ resources:
     level: all
     official: true
     why: Postman changes its interface regularly; the Learning Center always describes the current version.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: unauthenticated-vs-forbidden
     prompt: A signed-in student calls an admin-only endpoint. Which status code fits best, and why?

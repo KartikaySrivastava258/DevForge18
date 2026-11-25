@@ -65,7 +65,7 @@ resources:
     level: beginner
     official: true
     why: Official introduction to starting Nginx, configuration structure, static content and proxying.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Nginx documentation
     url: https://nginx.org/en/docs/
     publisher: nginx.org
@@ -73,7 +73,7 @@ resources:
     level: all
     official: true
     why: Directive-level reference for every core and bundled Nginx module.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24

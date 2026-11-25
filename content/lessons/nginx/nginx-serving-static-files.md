@@ -19,7 +19,7 @@ resources:
     level: beginner
     official: true
     why: The official introduction to configuration structure, serving static content and setting up a simple proxy.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Nginx documentation
     url: https://nginx.org/en/docs/
     publisher: nginx.org
@@ -27,7 +27,7 @@ resources:
     level: all
     official: true
     why: The reference for every directive used here, such as root, try_files, types and server_tokens.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: test-first
     prompt: Why run nginx -t before starting or reloading Nginx?

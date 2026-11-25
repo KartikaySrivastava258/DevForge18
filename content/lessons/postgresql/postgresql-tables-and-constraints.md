@@ -19,15 +19,15 @@ resources:
     level: beginner
     official: true
     why: The official tutorial covers creating tables, populating them and querying, with the same concepts as this lesson.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: PostgreSQL documentation — Constraints
-    url: https://www.postgresql.org/docs/
+    url: https://www.postgresql.org/docs/current/ddl-constraints.html
     publisher: The PostgreSQL Global Development Group
     type: reference
     level: all
     official: true
     why: The manual's Data Definition chapter documents every constraint type and its exact behaviour.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: why-constraints
     prompt: Your application already checks that emails are unique before saving. Why still declare email UNIQUE in the database?

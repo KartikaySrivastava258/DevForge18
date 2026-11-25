@@ -20,14 +20,14 @@ resources:
     official: true
     why: Chapter 1 explains version control and Git's design in more depth, with diagrams.
     verification: { status: verified, checked_on: 2026-11-25 }
-  - title: Git downloads
-    url: https://git-scm.com/downloads
+  - title: Install Git
+    url: https://git-scm.com/install/
     publisher: git-scm.com
     type: documentation
     level: beginner
     official: true
     why: Official installers and package-manager instructions for Windows, macOS and Linux.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: git-vs-github
     prompt: A classmate says "I can't use Git today because GitHub is down." What is the best response?

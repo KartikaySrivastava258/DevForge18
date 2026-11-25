@@ -19,7 +19,7 @@ resources:
     level: all
     official: true
     why: The official reference for every data type and command used in this lesson.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: memory-tradeoff
     prompt: Why is Redis much faster than a disk-based database for simple reads, and what is the trade-off?

@@ -66,15 +66,15 @@ resources:
     level: all
     official: true
     why: Complete reference for workflow syntax, events, runners, security hardening and deployments.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: GitHub Actions quickstart
-    url: https://docs.github.com/en/actions/writing-workflows/quickstart
+    url: https://docs.github.com/en/actions/get-started/quickstart
     publisher: GitHub
     type: tutorial
     level: beginner
     official: true
     why: The shortest official path to a first working workflow.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24

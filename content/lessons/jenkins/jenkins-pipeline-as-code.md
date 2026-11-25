@@ -27,7 +27,7 @@ resources:
     level: all
     official: true
     why: Official installation, pipeline, security and administration documentation.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 self_check:
   - id: post
     prompt: What does the post section of a declarative pipeline do?

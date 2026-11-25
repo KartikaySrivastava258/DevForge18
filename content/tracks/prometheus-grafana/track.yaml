@@ -65,7 +65,7 @@ resources:
     level: beginner
     official: true
     why: Explains Prometheus architecture, its data model and when it is (and is not) a good fit.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Querying Prometheus (PromQL basics)
     url: https://prometheus.io/docs/prometheus/latest/querying/basics/
     publisher: Prometheus Authors
@@ -73,7 +73,7 @@ resources:
     level: intermediate
     official: true
     why: Official introduction to selectors, range vectors, functions and operators in PromQL.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Grafana documentation
     url: https://grafana.com/docs/
     publisher: Grafana Labs
@@ -81,7 +81,7 @@ resources:
     level: all
     official: true
     why: Official docs for data sources, dashboards, panels, variables and Grafana alerting.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
 content_status: outline
 owner: content-team
 last_reviewed: 2026-11-24

@@ -19,7 +19,7 @@ resources:
     level: beginner
     official: true
     why: Official installers and package-manager instructions for Windows, macOS and Linux.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-25 }
   - title: Terraform releases on GitHub
     url: https://github.com/hashicorp/terraform/releases
     publisher: HashiCorp
@@ -54,8 +54,8 @@ self_check:
     answer: b
     explanation: State is both sensitive and authoritative. Teams keep it in a remote backend with encryption, access control and locking, so two people cannot apply at once.
 verification:
-  method: pending
-  details: Every command is run automatically in CI with Terraform 1.15.6 and the hashicorp/local provider, after the previous lesson. The expected output was written from the Terraform documentation and has not yet been confirmed by a test run.
+  method: executed
+  details: Every command is run by the test suite with Terraform 1.15.6 (checksum-verified) and the hashicorp/local provider, after the previous lesson; the documented output was confirmed in CI run 45643638519 on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 1

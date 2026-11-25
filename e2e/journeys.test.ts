@@ -72,7 +72,9 @@ describe("discovery (anonymous visitor)", () => {
     }
     assert.match(await page.locator(".notice--warn").innerText(), /2 lessons are published/);
     assert.equal(await page.locator(".resource").count(), 3);
-    assert.equal(await page.getByText("Link not yet verified").count(), 3);
+    // Every Docker resource was reviewed after the link check (2026-11-25), so each shows its check date.
+    assert.equal(await page.getByText(/^Link checked /).count(), 3);
+    assert.equal(await page.getByText("Link not yet verified").count(), 0);
     assert.ok(await page.getByRole("link", { name: "Images vs Containers" }).isVisible());
     await page.screenshot({ path: join(SHOTS, "track-docker.png"), fullPage: true });
     noProblems(problems);
