@@ -183,6 +183,8 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 
 ### Milestone 4 — Path 2, part 2: OpenTelemetry (2026-11-25)
 
+- **CI run 45670107268 (a docs-only commit) failed** on a timing race in an older runner test, *cleanup stops a background process*: it checked the process the instant the trap sent `kill`, and signals are delivered asynchronously. It had passed in earlier runs. The failure went unnoticed for one commit because that run was not watched; the test now allows the process up to three seconds to exit (the property under test is unchanged).
+
 - **Versions** from the projects' GitHub releases and the npm registry (2026-11-25): Collector **0.166.0** (the core `otelcol` distribution), Jaeger **2.23.0**, OpenTelemetry JavaScript **3.1.1** with `@opentelemetry/sdk-node` **0.301.2** (its dependency list pins core 3.1.1; it requires Node.js ≥ 22.15.0, which DevForge's own minimum already meets). CI installs the Collector (archive checked against its `.sha256`) and Jaeger (its checksum file lists the programs *inside* the archive, so CI verifies after unpacking).
 - **Lesson 1** *Traces, spans and context* — a Collector with the `debug` exporter, a hand-written two-span trace in OTLP/JSON (the W3C Trace Context specification's own example IDs), the `traceparent` format, a rejected malformed ID.
 - **Lesson 2** *Instrumenting a Node.js service* — the SDK loaded with `node --import`, two services (frontend → backend), and following the propagated `traceparent` to the exact spans it connects. Found while trying it: ES-module services are not instrumented by `--import` alone (they need an extra loader hook), so the services are CommonJS, as in the official getting-started example.

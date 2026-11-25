@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
@@ -80,6 +81,16 @@ function isRunning(pid: number): boolean {
   }
 }
 
+/** Poll for up to three seconds; true once the process has stopped. */
+function waitUntilStopped(pid: number): boolean {
+  const deadline = Date.now() + 3000;
+  while (isRunning(pid)) {
+    if (Date.now() > deadline) return false;
+    spawnSync("sleep", ["0.05"]);
+  }
+  return true;
+}
+
 describe("cleanup", () => {
   it("detects Nginx lessons and stops a background process even when a later block fails", () => {
     const blocks = extractRunBlocks("```bash run\n# nginx -p \"$PWD\" (simulated)\nsleep 300 & echo $! > nginx.pid\n```\n```bash run\nfalse\n```");
@@ -89,7 +100,8 @@ describe("cleanup", () => {
     pid = Number(run.results[1]?.output.trim());
     assert.ok(pid > 0, "captured the background pid");
     assert.ok(run.failure !== undefined, "the failing block stopped the script");
-    assert.equal(isRunning(pid), false, "cleanup trap killed the background process");
+    // kill delivers the signal asynchronously: allow the process a moment to exit before checking.
+    assert.equal(waitUntilStopped(pid), true, "cleanup trap killed the background process");
   });
 });
 
@@ -99,7 +111,7 @@ describe("background servers", () => {
     const pid = Number(run.results[0]?.output.trim());
     assert.ok(pid > 0, "captured the background pid");
     assert.ok(run.failure !== undefined);
-    assert.equal(isRunning(pid), false, "cleanup trap stopped the background job");
+    assert.equal(waitUntilStopped(pid), true, "cleanup trap stopped the background job");
   });
   it("toolsUsed finds programs run as commands, not names of files or folders", () => {
     const used = toolsUsed(extractRunBlocks("```bash run\nmkdir prometheus-lab && cd prometheus-lab\npromtool check config prometheus.yml\notelcol --config=x.yaml &\nkill $(cat jaeger.pid)\n```"));
