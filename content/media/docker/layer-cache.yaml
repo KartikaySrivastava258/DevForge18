@@ -1,0 +1,4 @@
+alt: 'Left: a well-ordered Dockerfile''s four layers, bottom to top: FROM alpine:3.20, COPY requirements.txt, RUN install (slow), COPY src/. After a code change, the first three are reused and only COPY src/ is rebuilt. Right: a badly ordered Dockerfile — FROM, COPY . (all files), RUN install — where a code change rebuilds COPY . and the slow RUN install. A note says the first changed layer and every layer after it are rebuilt.'
+caption: 'Order for the cache: what changes rarely first, your code last.'
+credit: DevForge 18 content team
+licence: project-content

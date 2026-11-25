@@ -1,0 +1,7 @@
+figure: layer-cache.svg
+title: 'Layers and the build cache'
+steps:
+  - caption: 'Each instruction that changes files — FROM''s base image, COPY, RUN — is a layer, stacked in order.'
+  - caption: 'Change the code: COPY src/ is the first layer whose input changed, so only it is rebuilt. The slow install is reused from the cache.'
+  - caption: 'Copy everything first instead, and the same code change breaks the cache at COPY . — the slow install below it runs again.'
+  - caption: 'The rule: Docker reuses layers until the first change; that layer and everything after it are rebuilt.'

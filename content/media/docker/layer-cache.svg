@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 268">
+  <!-- Layers and the build cache, from Writing a Dockerfile. -->
+  <g data-step="1" data-until="1">
+    <text class="f-small f-strong" x="146" y="26" text-anchor="middle">good order: 4 layers</text>
+    <rect class="f-box" x="16" y="196" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="28" y="220">FROM alpine:3.20</text>
+    <rect class="f-box" x="16" y="152" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="28" y="176">COPY requirements.txt</text>
+    <rect class="f-box" x="16" y="108" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="28" y="132">RUN install (slow)</text>
+    <rect class="f-box" x="16" y="64" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="28" y="88">COPY src/</text>
+  </g>
+  <g data-step="2">
+    <text class="f-small f-strong" x="146" y="26" text-anchor="middle">good order: code changed</text>
+    <rect class="f-box-ok" x="16" y="196" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="28" y="220">FROM alpine:3.20</text>
+    <text class="f-small" x="266" y="220" text-anchor="end">reused</text>
+    <rect class="f-box-ok" x="16" y="152" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="28" y="176">COPY requirements.txt</text>
+    <text class="f-small" x="266" y="176" text-anchor="end">reused</text>
+    <rect class="f-box-ok" x="16" y="108" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="28" y="132">RUN install (slow)</text>
+    <text class="f-small" x="266" y="132" text-anchor="end">reused</text>
+    <rect class="f-box-warn" x="16" y="64" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="28" y="88">COPY src/</text>
+    <text class="f-small" x="266" y="88" text-anchor="end">rebuilt</text>
+  </g>
+  <g data-step="3">
+    <text class="f-small f-strong" x="486" y="26" text-anchor="middle">bad order: code changed</text>
+    <rect class="f-box-ok" x="356" y="196" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="368" y="220">FROM alpine:3.20</text>
+    <text class="f-small" x="606" y="220" text-anchor="end">reused</text>
+    <rect class="f-box-warn" x="356" y="152" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="368" y="176">COPY . (all files)</text>
+    <text class="f-small" x="606" y="176" text-anchor="end">rebuilt</text>
+    <rect class="f-box-warn" x="356" y="108" width="260" height="38" rx="4"/>
+    <text class="f-small f-mono" x="368" y="132">RUN install (slow)</text>
+    <text class="f-small" x="606" y="132" text-anchor="end">rebuilt</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-accent" x="320" y="258" text-anchor="middle">the first changed layer, and every layer after it, is rebuilt</text>
+  </g>
+</svg>

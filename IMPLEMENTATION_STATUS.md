@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 45 published across all 18 tracks; 43 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Jira's executed lesson: CI confirmation in progress |
+| Lessons | ✅ 46 published across all 18 tracks; 44 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Latest additions (Jira lesson 3, Docker lesson 3): CI confirmation in progress |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 46 figures across all 45 lessons (no ASCII diagrams left), 18 of them step-throughs — one in every track; tested |
-| Simulations | 🟡 Framework done and tested; 10 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira), with server-verified challenges |
+| Figures and step-through diagrams | ✅ 47 figures across all 46 lessons (no ASCII diagrams left), 19 of them step-throughs — at least one in every track; tested |
+| Simulations | 🟡 Framework done and tested; 11 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira, Docker), with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -263,9 +263,18 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Simulation** *Sprint board* (§5.12): a three-person, ten-day sprint over an eight-story backlog (34 points) with two blockers on fixed days; plan, set the In Progress WIP limit, play day by day with a burndown and the board. Starting more stories than developers costs focus (10 % each, down to half — labelled as a simplification). Calibrated so that: with everything committed, WIP 8 misses the sprint goal (19 points left) while WIP 2–4 meets it; WIP 1 is worse than 2–4 because a blocked story then stops the team; and even WIP 3 leaves 6 points unfinished until the plan is cut. 9 model tests; two server-verified challenges (meet the sprint goal; finish everything committed); a browser test, which also covers the docs-checked label; embedded in lesson 2.
 - Figures: the work-item hierarchy and a workflow, a sprint from planning to completion (step-through), keys linking code to a work item.
 
+### Milestone 5 — Docker, lesson 3 and simulation (2026-11-25)
+
+- **Lesson** *Writing a Dockerfile — layers, cache and .dockerignore* (executed): a well-ordered Dockerfile (dependency list, install, then code) where a code change reuses layers 1–3 and rebuilds only the last; the same project copied all at once, where the slow install reruns and `secrets.env` lands in the image; `.dockerignore` keeping it out. A `RUN sleep 2` stands in for installing dependencies, so only `alpine:3.20` is downloaded.
+- **Builder differences:** this machine has no buildx, so `docker build` uses the legacy builder and prints a deprecation notice; CI has Docker Buildx 0.39.0 (BuildKit). The lesson therefore keeps the builder's messages in a log (shown only on failure) and compares the image's **layer digests**, not build output. CI is the first run on BuildKit.
+- **Facts** checked against Docker's documentation on 2026-11-25 (quoted: "Once a layer changes, then all downstream layers need to be rebuilt as well"; order "from less frequently changed to more frequently changed"; `.dockerignore` removes files from the build context). Corrected before publishing: the draft said COPY's cache compares file *contents* (the documentation says a checksum from file metadata, modification time excluded) and that CMD "adds no layer" as a documented rule (the documentation describes every instruction as a layer; the lesson now states only what it counts: CMD adds no *file* layer). An unsourced claim about deleted files persisting in earlier layers was removed.
+- **Simulation** *Layer cake and cache* (§5.2): a Dockerfile of six possible steps to switch on, off and reorder; edit the code or the dependency list; build and see each step reused or rebuilt, the time, the size and the files in the image; impossible orders fail with the reason (installing before the dependency list is copied). 9 model tests; two server-verified challenges (a code change in one second; keep the secret out); a browser test; embedded in lesson 3.
+- Figure: layers and the build cache (step-through).
+- **Tests made content-driven:** three tests (two API, one browser) hard-coded that the Docker track has 2 lessons; they now read the count from the content or the API, so adding lessons to the Path 1 tracks does not break them. The Docker lesson time limit was raised to 120 s (lesson 3 with its two prerequisites took 27 s locally; CI's first BuildKit build may be slower).
+
 ### Milestone 5 — what remains
 
-Nine tracks still have two lessons: Docker, PostgreSQL, Terraform, GitHub Actions, Redis, Jenkins, Postman and Nginx (each also needs a simulation), and Kubernetes (which has its simulation but needs a third lesson — REMAINING_WORK.md §7 lists only the first eight).
+Eight tracks still have two lessons: PostgreSQL, Terraform, GitHub Actions, Redis, Jenkins, Postman and Nginx (each also needs a simulation), and Kubernetes (which has its simulation but needs a third lesson — REMAINING_WORK.md §7 lists only the Path 1 tracks).
 
 ## Current work
 
@@ -311,7 +320,7 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 45 lessons across 18 tracks | 9 tracks have two lessons, 8 of them no simulation | Milestone 5 |
+| 46 lessons across 18 tracks | 8 tracks have two lessons, 7 of them no simulation | Milestone 5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Python packages for the LangChain + LlamaIndex lessons | Only the top-level packages are pinned; a new release of one of their dependencies could change behaviour or break the install in CI | If it happens: pin the full set with a constraints file generated by `pip freeze` in the lesson container |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka`, `apache/airflow`, `n8nio/n8n`, `python:3.12-slim` and (from GitHub's registry) `ghcr.io/mlflow/mlflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |

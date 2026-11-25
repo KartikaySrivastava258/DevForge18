@@ -70,7 +70,10 @@ describe("discovery (anonymous visitor)", () => {
     for (const name of ["Understand it", "How it connects", "Curriculum", "Lessons", "Labs", "Projects", "Official resources", "About this track"]) {
       assert.ok(await page.getByRole("heading", { level: 2, name }).isVisible(), name);
     }
-    assert.match(await page.locator(".notice--warn").innerText(), /2 lessons are published/);
+    // The count comes from the API, so the test survives new lessons.
+    const { lessons } = (await (await fetch(`${h.url}/api/tracks/docker`)).json()) as { lessons: unknown[] };
+    assert.ok(lessons.length >= 2);
+    assert.match(await page.locator(".notice--warn").innerText(), new RegExp(`${lessons.length} lessons are published`));
     assert.equal(await page.locator(".resource").count(), 3);
     // Every Docker resource was reviewed after the link check (2026-11-25), so each shows its check date.
     assert.equal(await page.getByText(/^Link checked /).count(), 3);
@@ -262,7 +265,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("every page has exactly one h1 and every form control has a label", async () => {
     const { page } = await h.newPage();
-    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board"]) {
+    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       await page.waitForLoadState("networkidle");
@@ -279,7 +282,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -657,6 +660,29 @@ describe("simulations", () => {
 
     await page.goto("/tracks/jira/lessons/jira-work-items-and-workflows");
     await page.locator(".verified--docs-checked", { hasText: "Checked against official documentation." }).waitFor();
+    noProblems(problems);
+  });
+
+  it("Docker: copying everything first reinstalls on a code change; reordering makes it a one-second build", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/docker/simulations/docker-layer-cache");
+    const sim = page.locator(".sim");
+    await sim.locator(".layer-sim").waitFor();
+    const summary = sim.locator(".k8s-sim__summary");
+    await sim.getByRole("button", { name: "Edit the source code" }).click();
+    await sim.getByRole("button", { name: "Build", exact: true }).click();
+    assert.match(await summary.innerText(), /Last build\s+46 s/);
+    assert.match(await summary.innerText(), /secrets\.env/);
+    await sim.getByRole("button", { name: "Move COPY requirements.txt /app/ up" }).click();
+    await sim.getByRole("button", { name: "Remove COPY . /app/" }).click();
+    await sim.getByRole("button", { name: "Add COPY requirements.txt /app/" }).click();
+    await sim.getByRole("button", { name: "Add COPY src/ /app/src/" }).click();
+    await sim.getByRole("button", { name: "Build", exact: true }).click();
+    await sim.getByRole("button", { name: "Edit the source code" }).click();
+    await sim.getByRole("button", { name: "Build", exact: true }).click();
+    assert.match(await summary.innerText(), /Last build\s+1 s/);
+    assert.doesNotMatch(await summary.innerText(), /secrets\.env/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
 

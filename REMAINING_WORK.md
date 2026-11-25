@@ -180,8 +180,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.2 Docker
 
-- **Lessons:** ✅ Images vs containers · ✅ Volumes and bind mounts · Writing a Dockerfile (layers, cache, `.dockerignore`) · Multi-stage builds and small images · Networks and Docker Compose · Health checks, logs and resource limits · Image security: non-root users, scanning, pinning digests (advanced) · Build cache and supply-chain (SBOM, provenance) basics (advanced).
-- **Simulation — layer cake and cache:** model a Dockerfile as ordered instructions; editing a line invalidates the cache from that point; show which layers rebuild and the final image size. **Challenge:** reorder instructions so a source change does not reinstall dependencies.
+- **Lessons:** ✅ Images vs containers · ✅ Volumes and bind mounts · ✅ Writing a Dockerfile (layers, cache, `.dockerignore`) · Multi-stage builds and small images · Networks and Docker Compose · Health checks, logs and resource limits · Image security: non-root users, scanning, pinning digests (advanced) · Build cache and supply-chain (SBOM, provenance) basics (advanced).
+- ✅ **Simulation — layer cake and cache:** model a Dockerfile as ordered instructions; editing a line invalidates the cache from that point; show which layers rebuild and the final image size. **Challenge:** reorder instructions so a source change does not reinstall dependencies.
 - **Labs:** containerise a small API (executed); Compose an API with PostgreSQL (executed in CI); shrink an oversized image (executed, compare `docker image ls` sizes).
 - **Real world:** Docker was open-sourced by dotCloud in 2013. Sources: Docker's official blog and documentation; CNCF and company engineering blogs for container adoption stories.
 - **Alternatives:** Podman, containerd/nerdctl, Buildah; for local VMs, Lima/Colima.

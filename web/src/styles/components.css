@@ -502,3 +502,10 @@
 .sprint-sim__ideal { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 3; }
 .sprint-sim__line { fill: none; stroke: var(--accent); stroke-width: 2; }
 @media (max-width: 40rem) { .sprint-sim__board { grid-template-columns: 1fr; } }
+.layer-sim__file { list-style: decimal inside; margin: 0 0 var(--space-3); padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.layer-sim__line { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--space-2); padding: 4px var(--space-2); border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg); }
+.layer-sim__line[data-on="false"] { opacity: 0.55; border-style: dashed; }
+.layer-sim__line code { font-size: 0.8125rem; overflow-wrap: anywhere; }
+.layer-sim__result { font-size: var(--step--1); color: var(--muted); min-width: 4.5rem; }
+.layer-sim__buttons { display: inline-flex; gap: 2px; }
+@media (max-width: 40rem) { .layer-sim__line { grid-template-columns: 1fr; } }

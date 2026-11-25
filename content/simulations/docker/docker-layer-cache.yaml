@@ -1,0 +1,55 @@
+id: docker-layer-cache
+track: docker
+title: Layer cake and cache
+concept: Docker rebuilds an image step by step and reuses cached steps until the first change; from there on, every step is rebuilt. The order of a Dockerfile decides whether a one-line code change takes a second or reinstalls every dependency — and what you copy decides what ends up in the image.
+learning_objectives:
+  - Predict which Dockerfile steps are reused and which are rebuilt after a change.
+  - Reorder a Dockerfile so a source-code change does not reinstall dependencies.
+  - Keep a secret out of an image with .dockerignore or by copying only what the app needs.
+simplifications:
+  - Times and sizes are invented round numbers (the dependency install takes 45 s and adds 120 MB).
+  - "The base image is always cached, and the project has only three files: requirements.txt, src/ and secrets.env."
+  - Real builds also cache by the exact instruction text and file metadata; here a step's cache key is its position after the previous steps and the versions of the files it copies.
+text_alternative: The Dockerfile's steps in order (on or off); whether .dockerignore lists secrets.env; what was edited since the last build; for the last build, each step reused or rebuilt, the build time, the image size and the files in the image. Every change and build is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: bad-order
+    title: Everything copied first
+    description: The Dockerfile copies the whole project, then installs dependencies. It has been built once, so the cache is warm.
+    params:
+      lines: [{ id: from, on: true }, { id: copyAll, on: true }, { id: install, on: true }, { id: copyDeps, on: false }, { id: copySrc, on: false }, { id: cmd, on: true }]
+      ignoreSecrets: false
+      prebuilt: true
+  - id: leaky
+    title: A secret in the image
+    description: The same Dockerfile. The project folder also holds secrets.env, and there is no .dockerignore.
+    params:
+      lines: [{ id: from, on: true }, { id: copyAll, on: true }, { id: install, on: true }, { id: copyDeps, on: false }, { id: copySrc, on: false }, { id: cmd, on: true }]
+      ignoreSecrets: false
+      prebuilt: true
+challenges:
+  - id: fast-code-change
+    title: A code change in one second
+    goal: Change the Dockerfile so that, after you edit the source code, the next build reuses the dependency install.
+    scenario: bad-order
+    check: fast-code-change
+    hint: Edit the code and build first to see the problem. Then copy only requirements.txt before the install, and the source code after it. Build once to fill the cache, edit the code, build again.
+    solution:
+      - { type: moveUp, id: copyDeps }
+      - { type: toggle, id: copyAll }
+      - { type: toggle, id: copyDeps }
+      - { type: toggle, id: copySrc }
+      - { type: build }
+      - { type: edit, file: src }
+      - { type: build }
+  - id: no-secrets
+    title: Keep the secret out
+    goal: Build an image that has the app and its dependencies but not secrets.env.
+    scenario: leaky
+    check: no-secrets
+    hint: Build it and look at the files in the image. Either tell the builder to ignore the file, or stop copying the whole folder.
+    solution:
+      - { type: setIgnore, on: true }
+      - { type: build }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

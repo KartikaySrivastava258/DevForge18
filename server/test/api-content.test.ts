@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import { Client, startTestServer, type TestServer } from "./helpers.ts";
+import { Client, startTestServer, type TestServer, testContent } from "./helpers.ts";
 
 let server: TestServer;
 let client: Client;
@@ -51,7 +51,8 @@ describe("content API", () => {
     assert.equal(res.json.tracks.length, 18);
     assert.equal(res.json.categories.length, 7);
     const docker = res.json.tracks.find((t: { slug: string }) => t.slug === "docker");
-    assert.equal(docker.lessonCount, 2);
+    assert.equal(docker.lessonCount, testContent().lessonsFor("docker").length, "the count comes from the content (so the test survives new lessons)");
+    assert.ok(docker.lessonCount >= 2);
     assert.deepEqual(docker.products, ["Docker Engine", "Docker Compose"]);
   });
 

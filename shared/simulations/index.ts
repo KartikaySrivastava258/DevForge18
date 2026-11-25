@@ -26,6 +26,8 @@ import { WorkflowActionSchema, WorkflowScenarioSchema } from "./n8n/schema.ts";
 import { workflowExecutor } from "./n8n/workflow-executor.ts";
 import { SprintActionSchema, SprintScenarioSchema } from "./jira/schema.ts";
 import { sprintBoard } from "./jira/sprint-board.ts";
+import { layerCache } from "./docker/layer-cache.ts";
+import { LayerActionSchema, LayerScenarioSchema } from "./docker/schema.ts";
 import type { SimulationModel } from "./types.ts";
 
 // Each model has its own state, action and scenario types; callers validate
@@ -43,4 +45,5 @@ export const MODELS: Readonly<Record<string, AnyModel>> = {
   [ragPipeline.id]: { ...ragPipeline, scenarioSchema: RagScenarioSchema, actionSchema: RagActionSchema },
   [workflowExecutor.id]: { ...workflowExecutor, scenarioSchema: WorkflowScenarioSchema, actionSchema: WorkflowActionSchema },
   [sprintBoard.id]: { ...sprintBoard, scenarioSchema: SprintScenarioSchema, actionSchema: SprintActionSchema },
+  [layerCache.id]: { ...layerCache, scenarioSchema: LayerScenarioSchema, actionSchema: LayerActionSchema },
 };

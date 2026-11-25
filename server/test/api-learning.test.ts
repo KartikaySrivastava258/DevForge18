@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import { Client, STRONG_PASSWORD, startTestServer, type TestServer } from "./helpers.ts";
+import { Client, STRONG_PASSWORD, startTestServer, type TestServer, testContent } from "./helpers.ts";
 
 const LESSON = "docker-images-vs-containers";
 const ALL_RIGHT = { "shared-writes": "b", "stop-vs-remove": "a", "rebuild-running": "b", "latest-tag": "b" };
@@ -85,7 +85,7 @@ describe("progress", () => {
     assert.equal(res.status, 200);
     assert.equal(res.json.totals.lessonsCompleted, 1);
     const docker = res.json.tracks.find((t: { slug: string }) => t.slug === "docker");
-    assert.deepEqual([docker.completed, docker.total], [1, 2]);
+    assert.deepEqual([docker.completed, docker.total], [1, testContent().lessonsFor("docker").length]);
     assert.equal(res.json.recent[0].title, "Images vs Containers");
     assert.equal((await new Client(server.url).get("/api/me/progress")).status, 401);
   });
