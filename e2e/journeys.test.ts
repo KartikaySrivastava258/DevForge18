@@ -279,7 +279,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -494,6 +494,28 @@ describe("simulations", () => {
     await sim.getByLabel("Scenario").selectOption("latency");
     await sim.getByLabel("Aggregation").selectOption("none");
     assert.match(await sim.locator(".prom-sim__result").innerText(), /removes the le label/);
+    noProblems(problems);
+  });
+
+  it("OpenTelemetry: the slow span is found by its own time, and parallel calls shorten the critical path", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall");
+    const sim = page.locator(".sim");
+    await sim.locator(".otel-sim__waterfall").waitFor();
+    // The gateway's bar is the longest, but it is only waiting for its children.
+    await sim.locator(".otel-sim__row", { hasText: "gateway Server" }).click();
+    assert.match(await sim.locator(".sim__status").innerText(), /Not solved/);
+    await sim.locator(".otel-sim__row", { hasText: "payment Server" }).focus();
+    await page.keyboard.press("Enter");
+    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+
+    await sim.getByLabel("Scenario").selectOption("slow-database");
+    assert.match(await sim.locator(".otel-sim__summary").innerText(), /209 ms/);
+    await sim.getByLabel("Database and payment calls").selectOption("parallel");
+    await sim.getByRole("button", { name: "Send a checkout request" }).click();
+    assert.match(await sim.locator(".otel-sim__summary").innerText(), /: 145 ms/);
+    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    assert.equal(await sim.locator('.otel-sim__row[data-critical="true"]', { hasText: "SELECT cart (database)" }).count(), 1, "the slow database is now the critical path");
     noProblems(problems);
   });
 

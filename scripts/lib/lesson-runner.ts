@@ -140,12 +140,20 @@ export function usesDocker(blocks: RunBlock[]): boolean {
  */
 export function lessonNeeds(track: string, order: number): { api: boolean; apiPort: number; timeoutMs: number } {
   const nginxProxy = track === "nginx" && order > 1;
-  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 180_000 };
+  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 180_000, opentelemetry: 180_000 };
   return {
     api: track === "postman" || track === "prometheus-grafana" || nginxProxy,
     apiPort: nginxProxy ? 8080 : 0,
     timeoutMs: timeouts[track] ?? 60_000,
   };
+}
+
+/** Programs some lessons run that are not part of a basic system: CI installs them; locally, lessons that need them are skipped. */
+export const OPTIONAL_TOOLS = ["prometheus", "promtool", "grafana", "otelcol", "jaeger"] as const;
+
+/** Which OPTIONAL_TOOLS the blocks run (as a command, not as part of a file or folder name). */
+export function toolsUsed(blocks: RunBlock[]): string[] {
+  return OPTIONAL_TOOLS.filter((tool) => blocks.some((b) => new RegExp(`(^|[\\s;&|(])${tool}\\s`, "m").test(b.code)));
 }
 
 /** Lessons that start Nginx (with a per-lesson prefix: nginx -p). */

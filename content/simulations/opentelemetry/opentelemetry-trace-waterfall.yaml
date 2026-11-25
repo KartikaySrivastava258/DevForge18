@@ -1,0 +1,48 @@
+id: opentelemetry-trace-waterfall
+track: opentelemetry
+title: Trace waterfall
+concept: A trace shows where one request spent its time. Each span is a bar placed by its start and end; children sit inside their parents. The spans that decide the total — the critical path — are not always the ones that look slow, so the same fix can save a lot of time in one design and none in another.
+learning_objectives:
+  - Read a waterfall and find the span that spends the most time on its own work.
+  - Explain the critical path, and why speeding up a span off it does not make the request faster.
+  - Compare sequential and parallel calls, and a cache hit with a miss, by their traces.
+simplifications:
+  - Durations are fixed numbers chosen for teaching, not measurements; real spans vary from request to request.
+  - The network adds exactly 2 ms each way between services.
+  - The cache and the database are not instrumented themselves, so they appear only as the API's client spans — as uninstrumented databases do in real traces.
+  - Span and trace IDs follow the real format (32 and 16 hexadecimal characters) but are generated from the request number so the simulation can be replayed.
+text_alternative: The latest trace as an indented list of spans, each with its service, kind (Server or Client), name, start and end time in milliseconds, its own work time and whether it is on the critical path; plus the current settings (cache hit or miss, sequential or parallel calls, extra latency per service). Every change and request is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: slow-payment
+    title: Checkout is slow
+    description: Customers say checkout takes ages. One request has been traced already. Something added 300 ms somewhere.
+    params: { extra: { payment: 300 }, sent: 1 }
+  - id: slow-database
+    title: A slow database
+    description: The database now takes 125 ms per query, and the API calls the database and the payment service one after the other.
+    params: { extra: { database: 100 }, sent: 1 }
+  - id: explore
+    title: A healthy checkout
+    description: Nothing is slow. Change the design and the latencies, send requests, and watch the waterfall and the critical path change.
+    params: { sent: 1 }
+challenges:
+  - id: find-the-slow-span
+    title: Find the slow span
+    goal: Select the span in the latest trace that spends the most time on its own work.
+    scenario: slow-payment
+    check: find-the-slow-span
+    hint: A long bar is not always the culprit — a parent's bar includes all of its children. Look for the span whose bar is long but has little or nothing inside it.
+    solution:
+      - { type: select, spanId: 1752e5e9cb31196a }
+  - id: checkout-under-150ms
+    title: Checkout under 150 ms
+    goal: Change the design so that a new checkout request takes less than 150 ms, without touching the database's latency.
+    scenario: slow-database
+    check: checkout-under-150ms
+    hint: The database and payment calls do not depend on each other. Running them in parallel puts only the slower one on the critical path. A cache hit would skip the database entirely. Send a request after each change.
+    solution:
+      - { type: setParallel, parallel: true }
+      - { type: send }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

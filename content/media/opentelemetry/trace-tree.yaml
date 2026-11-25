@@ -1,0 +1,4 @@
+alt: 'One trace with the ID 4bf92f3577b34da6a3ce929d0e0e4736 drawn as a waterfall against a time axis from 0 to 250 milliseconds. The root span GET /checkout, a Server span with ID 00f067aa0ba902b7 and no parent, lasts 250 ms. Indented below it, the span SELECT orders, a Client span with ID b7ad6b7169203331 whose parent is 00f067aa0ba902b7, runs from 20 to 200 ms.'
+caption: 'A trace is a tree of spans. Drawn against time, each child sits inside its parent: here the database query took 180 of the request''s 250 ms.'
+credit: DevForge 18 content team
+licence: project-content

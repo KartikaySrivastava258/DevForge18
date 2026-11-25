@@ -1,0 +1,4 @@
+alt: 'curl sends GET to the frontend on port 7001, which starts a root Server span with a new trace ID. Inside it, the frontend''s Client span calls the backend on port 7002 and sends a traceparent header containing the trace ID and the Client span''s ID. The backend''s Server span uses them, so its parent is the Client span. Both services send their spans over OTLP to the Collector, which receives three spans with one trace ID from two services.'
+caption: 'The traceparent header carries the trace from one service to the next.'
+credit: DevForge 18 content team
+licence: project-content

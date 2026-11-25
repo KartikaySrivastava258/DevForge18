@@ -5,7 +5,7 @@ import { describe, it } from "node:test";
 import { loadContent } from "./content-loader.ts";
 import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, lessonNeeds, usesDocker, outputMatches, redisTestingEnabled, runLesson, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
+import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, lessonNeeds, toolsUsed, usesDocker, outputMatches, redisTestingEnabled, runLesson, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
 import { splitFrontMatter } from "./markdown.ts";
 import { startPracticeServer } from "./practice-server.ts";
 
@@ -101,6 +101,10 @@ describe("background servers", () => {
     assert.ok(run.failure !== undefined);
     assert.equal(isRunning(pid), false, "cleanup trap stopped the background job");
   });
+  it("toolsUsed finds programs run as commands, not names of files or folders", () => {
+    const used = toolsUsed(extractRunBlocks("```bash run\nmkdir prometheus-lab && cd prometheus-lab\npromtool check config prometheus.yml\notelcol --config=x.yaml &\nkill $(cat jaeger.pid)\n```"));
+    assert.deepEqual(used, ["promtool", "otelcol"]);
+  });
   it("lessonNeeds gives every track one shared answer", () => {
     assert.deepEqual(lessonNeeds("prometheus-grafana", 1), { api: true, apiPort: 0, timeoutMs: 180_000 });
     assert.deepEqual(lessonNeeds("nginx", 2), { api: true, apiPort: 8080, timeoutMs: 60_000 });
@@ -162,7 +166,19 @@ describe("executed lessons reproduce their documented output", () => {
     const needsPg = lesson.track === "postgresql";
     const needsNginx = lesson.track === "nginx";
     const { api: needsApi, apiPort, timeoutMs } = lessonNeeds(lesson.track, lesson.order);
-    const needsTool = ownBlocks.some((b) => /\bgrafana server\b/.test(b.code)) ? "grafana" : ownBlocks.some((b) => /(^|\s)prometheus\s/m.test(b.code)) ? "prometheus" : null;
+    const blocksOf = (id: string, track: string) =>
+      extractRunBlocks(splitFrontMatter(readFileSync(join(contentRoot, "lessons", track, `${id}.md`), "utf8"))?.body ?? "");
+    // Students continue from earlier lessons, so executed prerequisites are replayed first.
+    const chain: string[] = [];
+    const visit = (id: string) => {
+      const l = bundle.lessons.find((x) => x.id === id);
+      if (!l || chain.includes(id)) return;
+      l.prerequisites.forEach(visit);
+      if (l.verification.method !== "docs-checked") chain.push(id);
+    };
+    lesson.prerequisites.forEach(visit);
+    const setupBlocks = chain.flatMap((id) => blocksOf(id, bundle.lessons.find((x) => x.id === id)?.track ?? lesson.track));
+    const missingTools = toolsUsed([...setupBlocks, ...ownBlocks]).filter((tool) => !hasCommand(tool) || (tool === "grafana" && !process.env.GRAFANA_HOME));
     const needsRedis = lesson.track === "redis";
     const skip =
       needsGit && !hasCommand("git")
@@ -179,10 +195,8 @@ describe("executed lessons reproduce their documented output", () => {
                   ? "Kubernetes lessons need DEVFORGE_DOCKER_TEST=1, Docker, kind and kubectl (CI)"
                 : lesson.track === "terraform" && !hasCommand("terraform")
                   ? "terraform not installed (runs in CI)"
-                : needsTool === "prometheus" && !hasCommand("prometheus")
-                  ? "prometheus not installed (runs in CI)"
-                : needsTool === "grafana" && !(hasCommand("grafana") && process.env.GRAFANA_HOME)
-                  ? "grafana not installed, or GRAFANA_HOME not set (runs in CI)"
+                : missingTools.length
+                  ? `${missingTools.join(", ")} not installed${missingTools.includes("grafana") ? " (or GRAFANA_HOME not set)" : ""} (runs in CI)`
                 : needsDocker && !dockerAvailable
                   ? "Docker lessons run only with DEVFORGE_DOCKER_TEST=1 and a Docker engine (CI)"
                   : false;
@@ -199,20 +213,9 @@ describe("executed lessons reproduce their documented output", () => {
         }
         throw err;
       }
-      const blocksOf = (id: string, track: string) =>
-        extractRunBlocks(splitFrontMatter(readFileSync(join(contentRoot, "lessons", track, `${id}.md`), "utf8"))?.body ?? "");
-      // Students continue from earlier lessons, so replay executed prerequisites first.
-      // Their outputs are checked by their own tests; here they only need to succeed.
-      const chain: string[] = [];
-      const visit = (id: string) => {
-        const l = bundle.lessons.find((x) => x.id === id);
-        if (!l || chain.includes(id)) return;
-        l.prerequisites.forEach(visit);
-        if (l.verification.method !== "docs-checked") chain.push(id);
-      };
-      lesson.prerequisites.forEach(visit);
+      // Prerequisites' outputs are checked by their own tests; here they only need to succeed.
       // (pending prerequisites are replayed too: they are part of the learner's state)
-      const setup = chain.flatMap((id) => blocksOf(id, bundle.lessons.find((x) => x.id === id)?.track ?? lesson.track)).map((b) => ({ ...b, expected: undefined }));
+      const setup = setupBlocks.map((b) => ({ ...b, expected: undefined }));
       const own = blocksOf(lesson.id, lesson.track);
       const blocks = [...setup, ...own].map((b, index) => ({ ...b, index }));
       let run;

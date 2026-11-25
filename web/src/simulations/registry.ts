@@ -22,4 +22,5 @@ export const SIMULATIONS: Record<string, () => Promise<{ default: SimulationEntr
   "git-commit-graph": () => import("./GitGraph.tsx"),
   "kubernetes-reconciliation": () => import("./K8sCluster.tsx"),
   "prometheus-scrape-and-rate": () => import("./PromScrape.tsx"),
+  "opentelemetry-trace-waterfall": () => import("./TraceWaterfall.tsx"),
 };

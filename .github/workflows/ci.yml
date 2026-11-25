@@ -113,6 +113,29 @@ jobs:
           echo "GRAFANA_HOME=$RUNNER_TEMP/grafana-${GRAFANA_VERSION}" >> "$GITHUB_ENV"
           echo "$RUNNER_TEMP/grafana-${GRAFANA_VERSION}/bin" >> "$GITHUB_PATH"
           "$RUNNER_TEMP/grafana-${GRAFANA_VERSION}/bin/grafana" --version
+      - name: Install the OpenTelemetry Collector and Jaeger (pinned and checksum-verified)
+        env:
+          OTELCOL_VERSION: "0.166.0"
+          JAEGER_VERSION: "2.23.0"
+        run: |
+          cd "$RUNNER_TEMP"
+          c="otelcol_${OTELCOL_VERSION}_linux_amd64.tar.gz"
+          base="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v${OTELCOL_VERSION}"
+          curl -fsSLO --retry 3 "${base}/${c}"
+          curl -fsSLO --retry 3 "${base}/${c}.sha256"
+          echo "$(cut -d' ' -f1 "${c}.sha256")  ${c}" | sha256sum -c -
+          mkdir -p otelcol && tar -xzf "${c}" -C otelcol
+          sudo install -m 0755 otelcol/otelcol /usr/local/bin/
+          otelcol --version
+          # Jaeger's checksum file lists the programs inside the archive, so verify after unpacking.
+          j="jaeger-${JAEGER_VERSION}-linux-amd64"
+          jbase="https://github.com/jaegertracing/jaeger/releases/download/v${JAEGER_VERSION}"
+          curl -fsSLO --retry 3 "${jbase}/${j}.tar.gz"
+          curl -fsSLO --retry 3 "${jbase}/${j}.sha256sum.txt"
+          tar -xzf "${j}.tar.gz"
+          sha256sum -c "${j}.sha256sum.txt"
+          sudo install -m 0755 "${j}/jaeger" /usr/local/bin/
+          jaeger version 2>/dev/null
       - name: Typecheck server, shared code and scripts
         run: npm run typecheck
       - name: Typecheck frontend (React)

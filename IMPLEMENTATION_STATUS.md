@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **3 — simulation framework** (REMAINING_WORK.md §7) · Next: **Milestone 4 — complete Path 2 (Prometheus + Grafana, OpenTelemetry)**
+Last updated: 2026-11-25 · Milestone: **4 — Path 2 complete** (REMAINING_WORK.md §7) · Next: **Milestone 5 — beginner lessons and a simulation for Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 24 published across 11 tracks, **all executed** and confirmed in CI (none pending) |
+| Lessons | ✅ 27 published across 12 tracks, **all executed** (the 3 OpenTelemetry lessons recorded against the real tools locally; CI confirmation in progress) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
 | Figures and step-through diagrams | ✅ 22 figures in all 21 lessons (no ASCII diagrams left), a step-through in each of the 10 tracks with lessons; tested |
-| Simulations | 🟡 Framework done and tested; 2 of 18 tracks have one (Git, Kubernetes), with server-verified challenges |
+| Simulations | 🟡 Framework done and tested; 4 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry), with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -181,9 +181,20 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Simulation** *Scrape, rate and percentiles* (§5.7): two instances, scrape interval, range, restarts, `rate`, `sum(rate)`, `rate(sum)` (as a real subquery) and `histogram_quantile` aggregated three ways. rate()'s reset rule and histogram_quantile's interpolation follow the documentation (worked examples in the tests); it says that real rate() also extrapolates. Three server-verified challenges. 11 model tests; a browser test shows `rate(sum())` overestimating after a restart and `sum(rate())` giving the true 15/s. Embedded in lesson 2.
 - Figures: the anatomy of a metric line, the scrape loop (step-through), how Grafana, Prometheus and DevForge fit together.
 
+### Milestone 4 — Path 2, part 2: OpenTelemetry (2026-11-25)
+
+- **Versions** from the projects' GitHub releases and the npm registry (2026-11-25): Collector **0.166.0** (the core `otelcol` distribution), Jaeger **2.23.0**, OpenTelemetry JavaScript **3.1.1** with `@opentelemetry/sdk-node` **0.301.2** (its dependency list pins core 3.1.1; it requires Node.js ≥ 22.15.0, which DevForge's own minimum already meets). CI installs the Collector (archive checked against its `.sha256`) and Jaeger (its checksum file lists the programs *inside* the archive, so CI verifies after unpacking).
+- **Lesson 1** *Traces, spans and context* — a Collector with the `debug` exporter, a hand-written two-span trace in OTLP/JSON (the W3C Trace Context specification's own example IDs), the `traceparent` format, a rejected malformed ID.
+- **Lesson 2** *Instrumenting a Node.js service* — the SDK loaded with `node --import`, two services (frontend → backend), and following the propagated `traceparent` to the exact spans it connects. Found while trying it: ES-module services are not instrumented by `--import` alone (they need an extra loader hook), so the services are CommonJS, as in the official getting-started example.
+- **Lesson 3** *The Collector pipeline and Jaeger* — receiver, `batch` processor and `otlp` exporter in front of Jaeger; Jaeger's OTLP ports moved with `--set` and its UI bound to 127.0.0.1 (by default it listens on all interfaces); traces looked up through `/api/v3`, which Jaeger documents as stable (its older `/api/traces` is marked internal); the resource attributes (host name, command line) the SDK adds by itself.
+- **Found while recording:** stopping the Collector together with the services delayed their exit (the SDK's final export had nowhere to go), which could leave ports busy for the next lesson in a chain. The lessons now stop the services first, wait for them to exit, then the Collector — verified with two complete runs back to back.
+- **Facts** checked against primary sources on 2026-11-25: the OpenTelemetry Node.js guide and JS 3.0.0 release notes, the W3C Trace Context Recommendation, `trace.proto` (span kinds), the Collector configuration page and batch processor README, and Jaeger's getting-started and API pages. The OTLP specification page returned a server error, so the lessons call 4317/4318 "OTLP's usual ports" (as Jaeger's API page lists them) rather than quoting the specification.
+- **Runner:** optional tools (prometheus, promtool, grafana, otelcol, jaeger) are detected from a lesson's and its prerequisites' commands by `toolsUsed()` (tested), replacing per-tool special cases.
+- **Simulation** *Trace waterfall* (§5.15): gateway → api → cache, database, payment; added latency, cache hit/miss, sequential or parallel calls; self time and critical path. 8 model tests with hand-worked timings (109 ms sequential, 84 ms parallel or cached, 209 ms with a slow database). Two challenges: find the slow span (largest own time — the long parent bars are only waiting), and get checkout under 150 ms without touching the database's latency (the check enforces that condition, which the first draft only stated). Embedded in lesson 1; a browser test covers both challenges and the critical path moving to the database.
+
 ## Current work
 
-Milestone 4 of REMAINING_WORK.md §7: complete Path 2 — Prometheus + Grafana and OpenTelemetry beginner lessons (executed in CI) and their simulations.
+Milestone 5 of REMAINING_WORK.md §7: beginner lessons and a simulation for Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira.
 
 ## Pending work (ordered)
 
@@ -225,7 +236,7 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 24 lessons across 11 tracks | 7 tracks show outline only | Milestones 4–5 |
+| 27 lessons across 12 tracks | 6 tracks show outline only | Milestone 5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine` and `alpine:3.20` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
 | No lesson currently uses `pending` or `docs-checked`, and no resource is unverified | Those UI states ("Automated test pending.", "Link not yet verified") are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such content exists, or test the states with fixture content |
@@ -260,7 +271,7 @@ npm run db:backup -- ./backups/manual.db
 
 The full plan for all remaining work is in [`REMAINING_WORK.md`](REMAINING_WORK.md); [`MASTER_PROMPT.md`](MASTER_PROMPT.md) is a ready-made prompt for continuing with a coding agent.
 
-1. Milestone 4 — complete Path 2: Prometheus + Grafana (a real Prometheus scraping DevForge's `/metrics` in CI), then OpenTelemetry; one simulation each (§5.7, §5.15).
-2. Milestone 5 — beginner lessons and a simulation for Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira.
+1. Milestone 5 — beginner lessons and a simulation for Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira (§5.8, §5.10, §5.12, §5.16–5.18). Done when all 18 tracks have at least three beginner lessons and one simulation, which also means a third beginner lesson for each Path 1 track that has two.
+2. Milestone 6 — case studies and alternatives for every track.
 3. Re-run the *Link check* workflow monthly; a person re-confirms each page before updating `checked_on`.
 4. Update this file after each milestone.

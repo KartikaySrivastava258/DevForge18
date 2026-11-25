@@ -12,6 +12,8 @@ import { reconciliation } from "./kubernetes/reconciliation.ts";
 import { K8sActionSchema, K8sScenarioSchema } from "./kubernetes/schema.ts";
 import { PromActionSchema, PromScenarioSchema } from "./prometheus/schema.ts";
 import { scrapeAndRate } from "./prometheus/scrape-and-rate.ts";
+import { WaterfallActionSchema, WaterfallScenarioSchema } from "./opentelemetry/schema.ts";
+import { traceWaterfall } from "./opentelemetry/trace-waterfall.ts";
 import type { SimulationModel } from "./types.ts";
 
 // Each model has its own state, action and scenario types; callers validate
@@ -22,4 +24,5 @@ export const MODELS: Readonly<Record<string, AnyModel>> = {
   [commitGraph.id]: { ...commitGraph, scenarioSchema: GitScenarioSchema, actionSchema: GitActionSchema },
   [reconciliation.id]: { ...reconciliation, scenarioSchema: K8sScenarioSchema, actionSchema: K8sActionSchema },
   [scrapeAndRate.id]: { ...scrapeAndRate, scenarioSchema: PromScenarioSchema, actionSchema: PromActionSchema },
+  [traceWaterfall.id]: { ...traceWaterfall, scenarioSchema: WaterfallScenarioSchema, actionSchema: WaterfallActionSchema },
 };

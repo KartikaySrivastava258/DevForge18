@@ -73,7 +73,7 @@ resources:
     official: true
     why: A multi-service demo application instrumented with OpenTelemetry across several languages.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: outline
+content_status: in-progress
 owner: content-team
-last_reviewed: 2026-11-24
-content_version: 1
+last_reviewed: 2026-11-25
+content_version: 2

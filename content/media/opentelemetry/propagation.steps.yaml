@@ -1,0 +1,7 @@
+figure: propagation.svg
+title: 'How two services end up in one trace'
+steps:
+  - caption: 'A request arrives at the frontend. Its HTTP instrumentation starts a Server span, the root of a new trace with a new trace ID.'
+  - caption: 'To answer, the frontend calls the backend. The instrumentation starts a Client span as a child of the Server span, and adds a traceparent header with the trace ID and the Client span''s ID.'
+  - caption: 'The backend''s instrumentation reads traceparent and starts its Server span in the same trace, with the frontend''s Client span as its parent.'
+  - caption: 'Each service sends its finished spans to the Collector over OTLP. Together they form one trace: three spans, one trace ID, two services.'

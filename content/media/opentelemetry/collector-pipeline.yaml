@@ -1,0 +1,4 @@
+alt: 'Two Node.js services, frontend and backend, send spans over OTLP/HTTP on port 4318 to an OpenTelemetry Collector. Its traces pipeline has an otlp receiver, a batch processor and an otlp exporter, which sends the spans over gRPC to Jaeger on port 14317. Jaeger stores the traces and serves a web interface and an API on port 16686, for example /api/v3/traces/ followed by a trace ID.'
+caption: 'Services only know the Collector. What happens next — batching, filtering, which back end — is decided in one configuration file.'
+credit: DevForge 18 content team
+licence: project-content
