@@ -55,8 +55,8 @@ self_check:
     answer: b
     explanation: '"latest" has no special meaning beyond being the default tag. It can point at different images over time, which makes builds and deployments non-reproducible.'
 verification:
-  method: pending
-  details: Every command is run automatically in CI on a Docker engine (GitHub-hosted Ubuntu runner). The expected output was written from the Docker documentation and has not yet been confirmed by a test run, so small differences are possible until it is.
+  method: executed
+  details: Every command is run by the test suite on a disposable Docker engine and its output is compared with this lesson. Confirmed in CI (GitHub-hosted Ubuntu 24.04 runner, Docker API 1.48) on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 2

@@ -116,7 +116,16 @@ export function Layout({ children }: { children: ReactNode }) {
               DevForge <span className="brand__num">18</span>
             </span>
           </Link>
-          <nav className="nav" id="primary-nav" aria-label="Primary" data-open={menuOpen}>
+          <nav
+            className="nav"
+            id="primary-nav"
+            aria-label="Primary"
+            data-open={menuOpen}
+            onClick={(e) => {
+              // Close immediately on tap, rather than after the route change re-renders the page.
+              if ((e.target as HTMLElement).closest("a")) setMenuOpen(false);
+            }}
+          >
             <Link to="/tracks" aria-current={section("/tracks")}>
               Tracks
             </Link>

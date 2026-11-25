@@ -46,8 +46,8 @@ self_check:
     answer: b
     explanation: Least privilege applies to storage too. A container that only serves files should not be able to modify them; :ro makes the mount read-only inside the container, as the failed write in the lab shows.
 verification:
-  method: pending
-  details: Every command is run automatically in CI on a Docker engine (GitHub-hosted Ubuntu runner), after the previous lesson's commands. The expected output was written from the Docker documentation and has not yet been confirmed by a test run, so small differences are possible until it is.
+  method: executed
+  details: Every command is run by the test suite on a disposable Docker engine, after the previous lesson, and its output is compared with this lesson. Confirmed in CI (GitHub-hosted Ubuntu 24.04 runner, Docker API 1.48) on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 1

@@ -54,8 +54,8 @@ self_check:
     answer: a
     explanation: 'Load balancing increases capacity and availability. It does not share state: anything kept in one instance''s memory (such as DevForge''s rate-limit counters) is not visible to the others, which is why shared state belongs in a database or Redis.'
 verification:
-  method: pending
-  details: Every command is run automatically in CI with Nginx 1.24 (Ubuntu 24.04) as an unprivileged process in a throwaway folder. The expected output was written from the Nginx documentation and has not yet been confirmed by a test run, so small differences are possible until it is.
+  method: executed
+  details: Every command is run by the test suite with Nginx as an unprivileged process in front of a real DevForge server, and its output is compared with this lesson. Confirmed in CI with Nginx 1.24.0 (Ubuntu 24.04) on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 1

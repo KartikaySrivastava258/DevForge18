@@ -54,8 +54,8 @@ self_check:
     answer: a
     explanation: PostgreSQL names the violated constraint, and default names follow table_column_check. The DETAIL line shows the failing row, so you can see which value was rejected.
 verification:
-  method: pending
-  details: Every SQL block is run automatically in CI against a fresh PostgreSQL 16 database. The expected output shown was written from the PostgreSQL 16 documentation and has not yet been confirmed by a test run, so small formatting differences are possible until it is.
+  method: executed
+  details: Every SQL block is run by the test suite against a fresh PostgreSQL database and its output is compared with this lesson. Confirmed in CI against PostgreSQL 16.16 with the psql 16 client on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 2

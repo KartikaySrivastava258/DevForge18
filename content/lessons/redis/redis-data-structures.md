@@ -54,8 +54,8 @@ self_check:
     answer: b
     explanation: Redis runs commands one at a time, so INCR is atomic. Reading a value, adding one in your code and writing it back would lose updates under concurrency; INCR cannot.
 verification:
-  method: pending
-  details: Every Redis command block is run automatically in CI with redis-cli against a throwaway Redis 7 server. The expected output was written from the Redis documentation and has not yet been confirmed by a test run, so small differences are possible until it is.
+  method: executed
+  details: Every Redis command block is run by the test suite with redis-cli against a throwaway Redis server and its output is compared with this lesson. Confirmed in CI against Redis 7.4.12 (redis-cli 7.0.15) on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 1

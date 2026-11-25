@@ -92,11 +92,11 @@ describe("discovery (anonymous visitor)", () => {
     await page.locator(".pager").getByRole("link", { name: /Next lesson/ }).click();
     await page.getByRole("heading", { level: 1, name: "Sharing work with remotes, push and pull" }).waitFor();
     await page.locator(".pager").getByRole("link", { name: /Previous lesson/ }).waitFor();
+    // Lessons confirmed against real services in CI show the tested label too.
     await page.goto("/tracks/docker/lessons/docker-images-vs-containers");
-    await page.locator(".verified--pending").waitFor();
-    // PostgreSQL lessons are honest that their output awaits a real-server test run.
+    await page.locator(".verified--executed").waitFor();
     await page.goto("/tracks/postgresql/lessons/postgresql-tables-and-constraints");
-    assert.match(await page.locator(".verified--pending").innerText(), /Automated test pending\..*not yet been confirmed/);
+    assert.match(await page.locator(".verified--executed").innerText(), /Tested commands\..*PostgreSQL 16/);
     assert.ok((await page.locator('.code-block[data-lang="sql"]').count()) >= 8);
     noProblems(problems);
   });
@@ -290,9 +290,11 @@ describe("accessibility, theming and responsiveness", () => {
     const nav = page.locator("#primary-nav");
     assert.equal(await nav.isVisible(), false);
     await page.getByRole("button", { name: "Open menu" }).click();
-    assert.ok(await nav.isVisible());
+    await nav.waitFor({ state: "visible", timeout: 5000 });
     await nav.getByRole("link", { name: "Learning paths" }).click();
     await page.waitForURL("**/paths");
+    // Wait for the state change rather than sampling one instant (slower CI machines need a moment).
+    await nav.waitFor({ state: "hidden", timeout: 5000 }).catch(() => undefined);
     assert.equal(await nav.isVisible(), false, "menu closes after navigating");
     await page.screenshot({ path: join(SHOTS, "mobile-paths.png"), fullPage: true });
     await page.goto("/");

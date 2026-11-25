@@ -54,8 +54,8 @@ self_check:
     answer: a
     explanation: By default a foreign key refuses to delete a referenced row, so references can never dangle. You can remove the enrolments first, or choose a different rule such as ON DELETE CASCADE when that is truly the intended behaviour.
 verification:
-  method: pending
-  details: Every SQL block is run automatically in CI against a fresh PostgreSQL 16 database. The expected output shown was written from the PostgreSQL 16 documentation and has not yet been confirmed by a test run, so small formatting differences are possible until it is.
+  method: executed
+  details: Every SQL block is run by the test suite against a fresh PostgreSQL database, after the previous lesson, and its output is compared with this lesson. Confirmed in CI against PostgreSQL 16.16 with the psql 16 client on 2026-11-25.
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 1

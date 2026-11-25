@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **First run on the owner's machine: frontend typecheck passes; dependency audit fixed; first pending lesson confirmed** · Next: **Jenkins, Terraform, Kubernetes (Path 2)**
+Last updated: 2026-11-25 · Milestone: **First GitHub CI run: all 15 lessons confirmed against real services; one browser-test race found and fixed** · Next: **Jenkins, Terraform, Kubernetes (Path 2)**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,13 +10,13 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | 🟡 15 published across 7 tracks — all of Path 1, plus GitHub Actions: Git ×3, Postman ×2, GitHub Actions ×2, Nginx ×1 (**executed**); PostgreSQL ×2, Redis ×2, Nginx ×1, Docker ×2 (**pending** — outputs await their first real run in CI) |
+| Lessons | ✅ 15 published across 7 tracks — all of Path 1, plus GitHub Actions — **every one executed and confirmed in CI** against real Git, PostgreSQL 16.16, Redis 7.4.12, Nginx 1.24.0, Docker and a live DevForge API |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
 | Labs, simulations, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
-| CI, Docker, Nginx | 🟡 Written and syntax-checked; **not executed** (no Docker or GitHub runner available in the build environment) |
+| CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
 
 ## Verified results (last run 2026-11-25)
 
@@ -80,6 +80,13 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 - **Bug caught by the checker during authoring**: an example `run: echo "Thanks for: $TITLE"` was invalid YAML (colon-space in a plain scalar) — GitHub would have rejected it, and the "invalid" example was being flagged for the wrong reason. Fixed, and the test now requires invalid examples to parse.
 - **Cross-lesson fix**: the PostgreSQL lesson's Docker command now stores data in a named volume (`devforge-pgdata`), so a learner's database survives removing the container (content version 2).
 
+### First GitHub CI run (2026-11-25, ubuntu-24.04 runner, Node 22.23.5)
+
+- Docs lint, both typechecks and the build passed.
+- `npm test`: **139 passed, 0 failed, 0 skipped.** The seven lessons that had been `pending` — PostgreSQL ×2, Redis ×2, Docker ×2, Nginx lesson 2 — ran against real services (PostgreSQL 16.16, Redis 7.4.12 via redis-cli 7.0.15, Nginx 1.24.0, Docker API 1.48) and reproduced their documented output exactly; the PostgreSQL service log shows the predicted errors and identity gaps. All seven promoted to `executed`, with the confirmed versions in their verification notes. **No lesson is pending any more.**
+- `npm run test:e2e`: 15 passed, 1 failed — *mobile menu closes after navigating*. **Diagnosed**: the menu closed in a separate, later React update (an effect after the route change), leaving a window where the URL had changed but the menu was still open; Playwright's `waitForURL` resolves inside that window, so a slow machine could sample it. Shown deterministically by sampling the menu state across event-loop phases (old: still open after the navigation's microtask flush, closed only on the next task; new: closed in the same flush). A plain 8× CPU-throttling experiment did **not** reproduce it locally — recorded for honesty. **Fixed** in the app (the menu closes in the tap's own update) and in the test (waits for the hidden state).
+- Docker Hub pulls for `postgres:16` and `redis:7` succeeded without login; the rate-limit risk did not materialise in this run.
+
 ### First run on the owner's machine (2026-11-25, Ubuntu, Node 22.23.2)
 
 - `npm install`, `npm run build`, `npm run user:create`: worked.
@@ -137,10 +144,9 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| PostgreSQL, Redis and Nginx lesson outputs unconfirmed | Small differences possible; the lessons say so. Nginx lessons could also fail to *start* if an assumption about the Ubuntu package is wrong (for example a temp path) — `lessons:record` cannot fix that; the CI log will show the exact error | First CI run + `lessons:record` |
 | 15 lessons across 7 tracks | 11 tracks show outline only | Phase 1 |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine` and `alpine:3.20` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
-| No lesson currently uses `docs-checked` | That UI state is no longer exercised by the browser tests (it is still validated by the content schema and loader) | Re-add an e2e assertion when a docs-checked lesson exists |
+| No lesson currently uses `pending` or `docs-checked` | Those UI states are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such a lesson exists |
 
 ## Decisions made
 
@@ -170,7 +176,7 @@ npm run db:backup -- ./backups/manual.db
 
 ## Exact next steps for the next session
 
-1. (Owner) Push to GitHub and check CI. Expect the PostgreSQL, Redis, Nginx and Docker lesson tests (eight lessons) to run for the first time: if any fails, run `npm run lessons:record -- --all` locally with throwaway PostgreSQL and Redis containers (see docs/content-authoring.md; Redis needs `DEVFORGE_REDIS_TEST=1`), review the diff, commit. Then change those lessons' `verification.method` to `executed`.
+1. (Owner) Apply the CI-fix patch, push, and confirm the CI run is green.
 2. (Owner) Fix any `typecheck:web` errors from CI; commit `package-lock.json`; run the *Link check* workflow.
 3. Path 2 (DevOps), continuing: Jenkins (a `Jenkinsfile` checker plus a Jenkins container in CI is feasible), Terraform (local providers), Kubernetes (kind in CI).
 4. Update this file after each track.
