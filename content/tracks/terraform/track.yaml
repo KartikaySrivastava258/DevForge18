@@ -73,7 +73,7 @@ resources:
     official: true
     why: Reference for the Terraform language, CLI commands and state management.
     verification: { status: unverified }
-content_status: outline
+content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

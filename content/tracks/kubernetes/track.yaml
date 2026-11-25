@@ -88,7 +88,7 @@ resources:
     official: true
     why: Official tutorials covering configuration, stateless and stateful applications, and security.
     verification: { status: unverified }
-content_status: outline
+content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

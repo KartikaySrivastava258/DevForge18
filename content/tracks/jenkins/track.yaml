@@ -75,7 +75,7 @@ resources:
     official: true
     why: Official guided tour from installing Jenkins to running a first Pipeline.
     verification: { status: unverified }
-content_status: outline
+content_status: in-progress
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

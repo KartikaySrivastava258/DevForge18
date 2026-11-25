@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **First GitHub CI run: all 15 lessons confirmed against real services; one browser-test race found and fixed** · Next: **Jenkins, Terraform, Kubernetes (Path 2)**
+Last updated: 2026-11-25 · Milestone: **Path 2 lessons for Jenkins, Terraform and Kubernetes added** · Next: **Prometheus + Grafana, OpenTelemetry (completing Path 2)**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,7 +10,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 15 published across 7 tracks — all of Path 1, plus GitHub Actions — **every one executed and confirmed in CI** against real Git, PostgreSQL 16.16, Redis 7.4.12, Nginx 1.24.0, Docker and a live DevForge API |
+| Lessons | 🟡 21 published across 10 tracks. 16 executed and confirmed; 5 **pending** their first CI run: Jenkins 1 (real Jenkins 2.580.2), Terraform 1–2 (Terraform 1.15.6), Kubernetes 1–2 (real kind cluster, Kubernetes 1.36.1) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
@@ -80,6 +80,30 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 - **Bug caught by the checker during authoring**: an example `run: echo "Thanks for: $TITLE"` was invalid YAML (colon-space in a plain scalar) — GitHub would have rejected it, and the "invalid" example was being flagged for the wrong reason. Fixed, and the test now requires invalid examples to parse.
 - **Cross-lesson fix**: the PostgreSQL lesson's Docker command now stores data in a named volume (`devforge-pgdata`), so a learner's database survives removing the container (content version 2).
 
+### Terraform track (Path 2)
+
+- CI installs **Terraform 1.15.6**, verified against HashiCorp's published SHA-256 checksums (1.15.0 released 2026-04-29; 1.15.6 confirmed on HashiCorp's announcements forum).
+- **Terraform lesson 1** *Your first configuration — init, plan, apply, destroy* (**pending**) and **lesson 2** *Variables, validation, outputs and state* (**pending**): `hashicorp/local` provider (no cloud account), `fmt -check`, `validate`, plan/apply/destroy, idempotent re-plan, typed variables with validation (a rejected value), update-versus-replace in plans, state contents in plain text and how teams protect state, licence context (BSL since 1.6; OpenTofu fork from 1.5, 2023).
+- **Risks:** HCL formatting must match `terraform fmt` exactly (written to its alignment rules); the provider downloads need network (CI has it).
+
+### Kubernetes track (Path 2)
+
+- CI installs **kind v0.32.0** and **kubectl v1.36.1**, both checksum-verified (kubectl per the official procedure). kind v0.32.0's release notes give the default node image `kindest/node:v1.36.1@sha256:3489c767…`, pinned by digest in the lessons.
+- Runner: kind clusters created by a lesson are deleted in the cleanup trap even on failure (tested with a stub). CI job timeout raised to 40 minutes.
+- **Kubernetes lesson 1** *Deployments, Pods and self-healing* (**pending**) and **lesson 2** *Services, rolling updates and rollback* (**pending**): desired state and controllers, `kubectl wait`, a Deployment of three replicas, deleting a Pod and watching it be replaced, scaling to five, a ClusterIP Service reached via port-forward, a rolling update, a deliberately broken release that stalls while four old Pods keep serving (maxUnavailable 25% of 5 → 1), rollback, rollout history, cluster deletion.
+- **Risks:** the kind release asset `kind-linux-amd64.sha256sum` is assumed to exist (CI will show if not); expected kubectl output was written from documentation, with wildcards for ages, names and progress lines.
+
+### CI run #2 (2026-11-25): ✅ all green
+
+All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesson tests (every lesson against real services), 16 browser tests. The mobile-menu fix held on GitHub's runner.
+
+### Jenkins track (Path 2)
+
+- **Jenkinsfile checker** (`scripts/lib/jenkinsfile-check.ts`): comment- and string-aware brace balancing, `pipeline`/`agent`/`stages` structure, stages that do something, hard-coded secrets in `environment`, and credentials interpolated by Groovy in double-quoted strings (the leak Jenkins itself warns about). 8 tests, including all lesson Jenkinsfiles.
+- **Runner**: per-lesson time limit (Jenkins 300 s); Docker gating now detected from a lesson's commands, not only its track; groovy syntax highlighting.
+- **Jenkins lesson 1** *Jenkins in Docker — controller, agents and first start* (**pending**): pinned `jenkins/jenkins:2.580.2-lts-jdk21` (current LTS per the official LTS changelog, 2026-10-28; LTS now requires Java 21 or 25), a status-code-aware readiness loop with a time limit, `X-Jenkins` version header, unlocking, why builds should not run on the built-in node, cleanup. Runs a real Jenkins in CI. **Risk:** the exact Docker tag follows Jenkins' naming convention but was not confirmed to exist; if the pull fails, CI will say so.
+- **Jenkins lesson 2** *Pipeline as code with a Jenkinsfile* (**executed**): a Jenkinsfile running the same `check-notes.sh` as the GitHub Actions lesson, committed in the practice repository (real output recorded with `lessons:record`), running it as a Pipeline job (UI steps, not executed), credentials with an invalid and a safe example, and a Jenkins vs GitHub Actions comparison.
+
 ### First GitHub CI run (2026-11-25, ubuntu-24.04 runner, Node 22.23.5)
 
 - Docs lint, both typechecks and the build passed.
@@ -144,7 +168,8 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 15 lessons across 7 tracks | 11 tracks show outline only | Phase 1 |
+| 21 lessons across 10 tracks | 8 tracks show outline only | Phase 1 |
+| CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine` and `alpine:3.20` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
 | No lesson currently uses `pending` or `docs-checked` | Those UI states are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such a lesson exists |
 
@@ -176,7 +201,9 @@ npm run db:backup -- ./backups/manual.db
 
 ## Exact next steps for the next session
 
-1. (Owner) Apply the CI-fix patch, push, and confirm the CI run is green.
-2. (Owner) Fix any `typecheck:web` errors from CI; commit `package-lock.json`; run the *Link check* workflow.
-3. Path 2 (DevOps), continuing: Jenkins (a `Jenkinsfile` checker plus a Jenkins container in CI is feasible), Terraform (local providers), Kubernetes (kind in CI).
+The full plan for all remaining work is in [`REMAINING_WORK.md`](REMAINING_WORK.md); [`MASTER_PROMPT.md`](MASTER_PROMPT.md) is a ready-made prompt for continuing with a coding agent.
+
+1. (Owner) Apply the latest patch, push, and share the CI result. Five lessons run against real tools for the first time (Jenkins, Terraform ×2, Kubernetes ×2); any mismatch is fixed from the CI log, then they are promoted to `executed`.
+2. (Owner, optional) Run the *Link check* workflow from the Actions tab and share the report.
+3. Complete Path 2: Prometheus + Grafana (a real Prometheus scraping DevForge's own `/metrics`), then OpenTelemetry.
 4. Update this file after each track.

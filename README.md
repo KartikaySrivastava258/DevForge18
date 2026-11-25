@@ -4,7 +4,7 @@
 
 DevForge 18 is an interactive developer engineering academy. It teaches 18 industry technology tracks — from Git and Docker to Kafka, OpenTelemetry and MLflow — the way they are actually used: as parts of one system. Every track starts with a plain-language explanation, shows where the tool sits in an architecture and how it connects to the others, and leads into lessons with graded self-checks, labs and projects.
 
-> **Project status: Phase 1 in progress.** The platform, all 18 track curricula and 8 learning paths are in place, and 15 beginner lessons are published across 7 tracks (all of Learning Path 1 plus GitHub Actions). Every command in every published lesson is run by the test suite against the real tool, and CI confirms the output matches. Labs and projects are still being written; the app labels everything that is planned rather than available. See [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) for exactly what works today.
+> **Project status: Phase 1 in progress.** The platform, all 18 track curricula and 8 learning paths are in place, and 21 beginner lessons are published across 10 tracks (all of Learning Path 1, plus GitHub Actions, Jenkins, Terraform and Kubernetes). Every command in every published lesson is run by the test suite against the real tool, and CI confirms the output matches. Labs and projects are still being written; the app labels everything that is planned rather than available. See [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) for exactly what works today.
 
 ![DevForge 18 home page with the interactive system map](docs/screenshots/home-dark.jpg)
 
@@ -36,7 +36,7 @@ DevForge 18 is an interactive developer engineering academy. It teaches 18 indus
 | Interactive system map showing how the tracks connect, with an explanation behind every connection | Working |
 | 8 learning paths with ordered modules, prerequisites, alternate routes and time estimates | Working |
 | Search across tracks, curriculum topics, lessons and paths, with typo tolerance and abbreviations (`k8s`, `pg`, `otel`) | Working |
-| Lesson reader with objectives, table of contents, copyable code blocks, expected output and a server-graded self-check | Working (15 lessons, each with executed, CI-verified commands) |
+| Lesson reader with objectives, table of contents, copyable code blocks, expected output and a server-graded self-check | Working (21 lessons; their commands are run by the test suite and in CI) |
 | Accounts, sign-in, progress tracking (a lesson completes only when its self-check is passed), bookmarks, dashboard | Working |
 | Roles (student, faculty, admin), admin user management with an audit log, faculty aggregate statistics | API working; admin/faculty screens not built yet |
 | Dark and light themes, keyboard navigation, mobile layout | Working |
@@ -170,7 +170,7 @@ Details and the reasoning behind each choice: [`docs/architecture.md`](docs/arch
 ```bash
 npm run typecheck       # strict TypeScript: server, shared code, scripts, tests
 npm run typecheck:web   # strict TypeScript: React frontend
-npm test                # 139 unit, API and executable-lesson tests
+npm test                # unit, API, checker and executable-lesson tests
 npm run test:e2e        # 16 browser journeys in headless Chromium (builds first)
 npm run verify          # everything above, in order
 ```
@@ -213,6 +213,8 @@ Found a vulnerability? Please report it privately to the maintainers rather than
 | Document | Read it when |
 |---|---|
 | [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) | You want to know exactly what is finished, tested, pending or known to be broken |
+| [`REMAINING_WORK.md`](REMAINING_WORK.md) | You want the plan for everything still to build: simulations for all 18 tracks, pictures and animations, labs, projects, case studies, alternatives |
+| [`MASTER_PROMPT.md`](MASTER_PROMPT.md) | You want to continue the project with a coding agent |
 | [`docs/architecture.md`](docs/architecture.md) | You want to understand how the platform works |
 | [`docs/adr/`](docs/adr/) | You want to know *why* a technical decision was made |
 | [`docs/content-authoring.md`](docs/content-authoring.md) | You are writing or reviewing learning content |
@@ -224,7 +226,7 @@ Found a vulnerability? Please report it privately to the maintainers rather than
 
 ## Known limitations
 
-- 15 lessons are published across 7 tracks; the other 11 tracks show their reviewed curriculum outline. Labs and projects are listed as planned.
+- 21 lessons are published across 10 tracks; the other 8 tracks show their reviewed curriculum outline. Labs and projects are listed as planned.
 - External resource links have not yet been verified (the build environment had no internet access). The app shows "Link not yet verified" until the weekly link check and a human review confirm each one.
 - Admin and faculty features exist in the API but have no screens yet.
 - Rate limits are kept in memory, so they apply per server process. See [ADR 0004](docs/adr/0004-auth-sessions.md).

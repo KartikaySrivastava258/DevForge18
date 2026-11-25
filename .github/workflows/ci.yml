@@ -17,7 +17,7 @@ jobs:
   verify:
     name: Typecheck, build, test
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 40
     # A real PostgreSQL server so SQL lessons' commands run and their output is checked.
     # Version 16 matches the psql client shipped by Ubuntu 24.04.
     services:
@@ -61,6 +61,35 @@ jobs:
       - run: npm install --no-audit --no-fund
       - name: Install lesson tools (psql, createdb, dropdb, redis-cli, nginx)
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client redis-tools nginx
+      - name: Install Terraform (pinned and checksum-verified)
+        env:
+          TF_VERSION: "1.15.6"
+        run: |
+          cd "$RUNNER_TEMP"
+          base="https://releases.hashicorp.com/terraform/${TF_VERSION}"
+          curl -fsSLO "${base}/terraform_${TF_VERSION}_linux_amd64.zip"
+          curl -fsSLO "${base}/terraform_${TF_VERSION}_SHA256SUMS"
+          grep " terraform_${TF_VERSION}_linux_amd64.zip$" "terraform_${TF_VERSION}_SHA256SUMS" | sha256sum -c -
+          unzip -o -q "terraform_${TF_VERSION}_linux_amd64.zip" terraform -d tfbin
+          sudo install -m 0755 tfbin/terraform /usr/local/bin/terraform
+          terraform version
+      - name: Install kind and kubectl (pinned and checksum-verified)
+        env:
+          KIND_VERSION: "v0.32.0"
+          KUBECTL_VERSION: "v1.36.1"
+        run: |
+          cd "$RUNNER_TEMP"
+          kind_base="https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}"
+          curl -fsSLo kind "${kind_base}/kind-linux-amd64"
+          curl -fsSLo kind.sha256sum "${kind_base}/kind-linux-amd64.sha256sum"
+          echo "$(cut -d' ' -f1 kind.sha256sum)  kind" | sha256sum -c -
+          k8s_base="https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64"
+          curl -fsSLO "${k8s_base}/kubectl"
+          curl -fsSLO "${k8s_base}/kubectl.sha256"
+          echo "$(cat kubectl.sha256)  kubectl" | sha256sum -c -
+          sudo install -m 0755 kind kubectl /usr/local/bin/
+          kind version
+          kubectl version --client
       - name: Typecheck server, shared code and scripts
         run: npm run typecheck
       - name: Typecheck frontend (React)

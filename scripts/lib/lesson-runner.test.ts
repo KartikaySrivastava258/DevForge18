@@ -5,7 +5,7 @@ import { describe, it } from "node:test";
 import { loadContent } from "./content-loader.ts";
 import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, outputMatches, redisTestingEnabled, runLesson, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
+import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, usesDocker, outputMatches, redisTestingEnabled, runLesson, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
 import { splitFrontMatter } from "./markdown.ts";
 import { startPracticeServer } from "./practice-server.ts";
 
@@ -93,6 +93,22 @@ describe("cleanup", () => {
   });
 });
 
+describe("kind clusters", () => {
+  it("are deleted by the cleanup trap even when a later block fails", () => {
+    const bin = mkdtempSync(join(tmpdir(), "devforge-kindstub-"));
+    const log = join(bin, "calls.log");
+    writeFileSync(join(bin, "kind"), `#!/bin/bash\necho "kind $*" >> "${log}"\n`);
+    chmodSync(join(bin, "kind"), 0o755);
+    try {
+      const run = runLesson(extractRunBlocks("```bash run\nkind create cluster --name lab\n```\n```bash run\nfalse\n```"), { path: `${bin}:${process.env.PATH}` });
+      assert.ok(run.failure !== undefined);
+      assert.deepEqual(readFileSync(log, "utf8").trim().split("\n"), ["kind create cluster --name lab", "kind delete cluster --name lab"]);
+    } finally {
+      rmSync(bin, { recursive: true, force: true });
+    }
+  });
+});
+
 describe("Redis blocks", () => {
   it("refuse to run without the explicit flush opt-in", () => {
     const blocks = extractRunBlocks("```redis run\nPING\n```");
@@ -124,7 +140,9 @@ describe("executed lessons reproduce their documented output", () => {
   const redisAvailable = redisTestingEnabled();
   const dockerAvailable = dockerTestingEnabled();
   for (const lesson of bundle.lessons.filter((l) => l.verification.method !== "docs-checked")) {
-    const needsGit = lesson.track === "git-github" || lesson.track === "github-actions";
+    const needsGit = ["git-github", "github-actions", "jenkins"].includes(lesson.track);
+    const ownBlocks = extractRunBlocks(splitFrontMatter(readFileSync(join(contentRoot, "lessons", lesson.track, `${lesson.id}.md`), "utf8"))?.body ?? "");
+    const needsDocker = lesson.track === "docker" || usesDocker(ownBlocks);
     const needsPg = lesson.track === "postgresql";
     const needsNginx = lesson.track === "nginx";
     // Postman lessons use any free port ($API); Nginx lessons proxy to DevForge's real address, 127.0.0.1:8080.
@@ -142,7 +160,11 @@ describe("executed lessons reproduce their documented output", () => {
               ? "Redis lessons run only with DEVFORGE_REDIS_TEST=1 and a reachable server (CI)"
               : needsNginx && !hasCommand("nginx")
                 ? "nginx not installed (runs in CI)"
-                : lesson.track === "docker" && !dockerAvailable
+                : lesson.track === "kubernetes" && !(dockerAvailable && hasCommand("kind") && hasCommand("kubectl"))
+                  ? "Kubernetes lessons need DEVFORGE_DOCKER_TEST=1, Docker, kind and kubectl (CI)"
+                : lesson.track === "terraform" && !hasCommand("terraform")
+                  ? "terraform not installed (runs in CI)"
+                : needsDocker && !dockerAvailable
                   ? "Docker lessons run only with DEVFORGE_DOCKER_TEST=1 and a Docker engine (CI)"
                   : false;
     it(`${lesson.id} (${lesson.verification.method})`, { skip }, async (t) => {
@@ -176,7 +198,11 @@ describe("executed lessons reproduce their documented output", () => {
       const blocks = [...setup, ...own].map((b, index) => ({ ...b, index }));
       let run;
       try {
-        run = runLesson(blocks, { ...(api ? { env: { API: api.url } } : {}), allowRedisFlush: needsRedis && redisAvailable });
+        run = runLesson(blocks, {
+          ...(api ? { env: { API: api.url } } : {}),
+          allowRedisFlush: needsRedis && redisAvailable,
+          timeoutMs: lesson.track === "kubernetes" ? 900_000 : lesson.track === "jenkins" ? 300_000 : lesson.track === "terraform" ? 180_000 : 60_000,
+        });
       } finally {
         await api?.close();
       }

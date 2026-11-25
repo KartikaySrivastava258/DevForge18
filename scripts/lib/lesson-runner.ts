@@ -126,6 +126,11 @@ function redisCommand(code: string): string {
   return [`redis-cli --no-raw <<'${delimiter}'`, code, delimiter].join("\n");
 }
 
+/** Lessons whose commands use Docker (they create and remove containers and volumes). */
+export function usesDocker(blocks: RunBlock[]): boolean {
+  return blocks.some((b) => /(^|\n|;|&&|\|)\s*docker\s/.test(b.code));
+}
+
 /** Lessons that start Nginx (with a per-lesson prefix: nginx -p). */
 export function usesNginx(blocks: RunBlock[]): boolean {
   return blocks.some((b) => /\bnginx -p\b/.test(b.code));
@@ -149,6 +154,8 @@ export interface RunOptions {
    * (set from DEVFORGE_REDIS_TEST=1, which CI sets for its throwaway service).
    */
   allowRedisFlush?: boolean;
+  /** Overall time limit for the lesson's commands (default 60 s; slow-starting servers such as Jenkins need more). */
+  timeoutMs?: number;
 }
 
 export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonRun {
@@ -164,6 +171,10 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   // Cleanup runs even when a block fails, so nothing outlives the lesson run.
   const cleanup: string[] = [];
   if (needsDb) cleanup.push(`dropdb --if-exists "$DEVFORGE_PGDATABASE" >/dev/null 2>&1 || true`);
+  // Delete any kind cluster a lesson creates, even if a later command fails.
+  for (const name of new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bkind create cluster --name ([a-z0-9-]+)/g)].map((m) => m[1] ?? "")))) {
+    if (name) cleanup.push(`kind delete cluster --name ${name} >/dev/null 2>&1 || true`);
+  }
   if (usesNginx(blocks)) {
     cleanup.push(`for f in $(find "${work}" -name nginx.pid 2>/dev/null); do kill "$(cat "$f")" 2>/dev/null || true; done`);
   }
@@ -186,7 +197,7 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
 
   const proc = spawnSync("bash", ["--noprofile", "--norc", "-c", script], {
     encoding: "utf8",
-    timeout: 60_000,
+    timeout: options.timeoutMs ?? 60_000,
     env: {
       PATH: options.path ?? process.env.PATH ?? "/usr/bin:/bin",
       // Connection settings for SQL lessons (e.g. the CI PostgreSQL service).

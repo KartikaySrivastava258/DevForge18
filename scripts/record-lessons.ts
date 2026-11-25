@@ -15,7 +15,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadContent } from "./lib/content-loader.ts";
-import { dockerTestingEnabled, extractRunBlocks, outputMatches, redisTestingEnabled, runLesson, type RunBlock } from "./lib/lesson-runner.ts";
+import { dockerTestingEnabled, extractRunBlocks, outputMatches, redisTestingEnabled, usesDocker, runLesson, type RunBlock } from "./lib/lesson-runner.ts";
 import { splitFrontMatter } from "./lib/markdown.ts";
 import { startPracticeServer } from "./lib/practice-server.ts";
 
@@ -54,7 +54,7 @@ for (const lesson of targets) {
     await api?.close();
     continue;
   }
-  if (lesson.track === "docker" && !dockerTestingEnabled()) {
+  if ((lesson.track === "docker" || lesson.track === "kubernetes" || usesDocker(blocksOf(lesson.id))) && !dockerTestingEnabled()) {
     console.error(`${lesson.id}: skipped. Docker lessons force-remove containers and volumes with fixed names; run them only on a disposable Docker engine with DEVFORGE_DOCKER_TEST=1.`);
     process.exitCode = 1;
     await api?.close();
@@ -63,6 +63,7 @@ for (const lesson of targets) {
   const run = runLesson([...setup, ...own].map((b, index) => ({ ...b, index })), {
     ...(api ? { env: { API: api.url } } : {}),
     allowRedisFlush: lesson.track === "redis",
+    timeoutMs: lesson.track === "kubernetes" ? 900_000 : lesson.track === "jenkins" ? 300_000 : lesson.track === "terraform" ? 180_000 : 60_000,
   });
   await api?.close();
   if (run.failure) {

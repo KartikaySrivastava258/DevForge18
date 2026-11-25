@@ -13,6 +13,7 @@ import { Marked, type Tokens } from "marked";
 import hljs from "highlight.js/lib/core";
 import bash from "highlight.js/lib/languages/bash";
 import dockerfile from "highlight.js/lib/languages/dockerfile";
+import groovy from "highlight.js/lib/languages/groovy";
 import ini from "highlight.js/lib/languages/ini";
 import javascript from "highlight.js/lib/languages/javascript";
 import json from "highlight.js/lib/languages/json";
@@ -23,7 +24,7 @@ import sql from "highlight.js/lib/languages/sql";
 import typescript from "highlight.js/lib/languages/typescript";
 import yaml from "highlight.js/lib/languages/yaml";
 
-const LANGUAGES = { bash, dockerfile, ini, javascript, json, nginx, plaintext, python, sql, typescript, yaml } as const;
+const LANGUAGES = { bash, dockerfile, groovy, ini, javascript, json, nginx, plaintext, python, sql, typescript, yaml } as const;
 for (const [name, def] of Object.entries(LANGUAGES)) hljs.registerLanguage(name, def);
 const ALIASES: Record<string, string> = {
   sh: "bash",
@@ -40,6 +41,7 @@ const ALIASES: Record<string, string> = {
   hcl: "plaintext",
   py: "python",
   docker: "dockerfile",
+  jenkinsfile: "groovy",
 };
 
 export function escapeHtml(value: string): string {
