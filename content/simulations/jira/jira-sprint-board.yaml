@@ -1,0 +1,49 @@
+id: jira-sprint-board
+track: jira
+title: Sprint board
+concept: A sprint is a bet on how much a team can finish. How much it commits, how many stories it starts at once, and how it handles blocked work decide whether the sprint goal is met — and the burndown shows it day by day.
+learning_objectives:
+  - Plan a sprint against the team's capacity, keeping the sprint goal first.
+  - See how a work-in-progress limit changes what gets finished, including when a story is blocked.
+  - Read a burndown against its ideal line.
+simplifications:
+  - The team does 3 story points of work a day at full focus; every story in progress beyond the three developers costs 10 % of the team's focus, down to half. Real context-switching costs vary.
+  - Blockers happen on fixed days, and nothing new arrives during the sprint.
+  - Story points are treated as exact amounts of work; in reality they are rough, relative estimates.
+text_alternative: The day, committed points, points left and the sprint goal; each column of the board with its stories, work left and whether they are blocked; the backlog with what is in the sprint; the burndown as a list of points left per day. Every day is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: too-much-wip
+    title: Everything started at once
+    description: All eight stories are in the sprint (34 points) and In Progress has no real limit.
+    params: { committed: [DEV-1, DEV-2, DEV-3, DEV-4, DEV-5, DEV-6, DEV-7, DEV-8], wip: 8 }
+  - id: overcommitted
+    title: A sprint that is too full
+    description: All eight stories are in the sprint with a WIP limit of 3.
+    params: { committed: [DEV-1, DEV-2, DEV-3, DEV-4, DEV-5, DEV-6, DEV-7, DEV-8], wip: 3 }
+  - id: plan-it
+    title: Plan it yourself
+    description: An empty sprint. Pick the stories and the WIP limit.
+    params: { committed: [], wip: 3 }
+challenges:
+  - id: meet-the-goal
+    title: Meet the sprint goal
+    goal: Finish DEV-1, DEV-2 and DEV-3 — the sprint goal — by the end of day 10.
+    scenario: too-much-wip
+    check: goal-met
+    hint: Play it once and watch the focus and the burndown. What happens to the goal stories when all eight are in progress at once?
+    solution:
+      - { type: setWip, limit: 3 }
+      - { type: tick, count: 10 }
+  - id: finish-what-you-start
+    title: Finish everything you commit
+    goal: Meet the sprint goal and finish every story in the sprint — nothing carried over.
+    scenario: overcommitted
+    check: all-done
+    hint: 34 points do not fit, even at full focus with blockers. Move the stories that matter least back to the backlog before the sprint starts.
+    solution:
+      - { type: uncommit, id: DEV-8 }
+      - { type: uncommit, id: DEV-7 }
+      - { type: tick, count: 10 }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

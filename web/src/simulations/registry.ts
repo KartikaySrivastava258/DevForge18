@@ -28,4 +28,5 @@ export const SIMULATIONS: Record<string, () => Promise<{ default: SimulationEntr
   "mlflow-experiment-explorer": () => import("./MlflowExplorer.tsx"),
   "langchain-rag-pipeline": () => import("./RagPipeline.tsx"),
   "n8n-workflow-executor": () => import("./N8nWorkflow.tsx"),
+  "jira-sprint-board": () => import("./SprintBoard.tsx"),
 };

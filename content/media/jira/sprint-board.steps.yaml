@@ -1,0 +1,7 @@
+figure: sprint-board.svg
+title: 'A sprint, start to finish'
+steps:
+  - caption: 'The backlog holds every story, most important first. DEV-1 to DEV-3 together are the sprint goal.'
+  - caption: 'Sprint planning: the team moves what fits its capacity into the sprint. DEV-8 stays in the backlog.'
+  - caption: 'Mid-sprint: three stories are in progress — the column''s maximum — so DEV-4 and DEV-5 wait. DEV-2 is blocked; the team swarms on what it can finish.'
+  - caption: 'Completing the sprint: only work in the last column counts as done. Jira asks where unfinished work goes — here DEV-5 goes back to the backlog.'

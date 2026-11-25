@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 270">
+  <!-- Work types and a workflow, from Work items, types and workflows. -->
+  <g>
+    <rect class="f-box-accent" x="200" y="12" width="240" height="48" rx="6"/>
+    <text class="f-small f-mono f-strong" x="210" y="32">DEV-10 · Epic</text>
+    <text class="f-small" x="210" y="50">Members can sign up online</text>
+  </g>
+  <g>
+    <rect class="f-box" x="16" y="96" width="144" height="48" rx="6"/>
+    <text class="f-small f-mono f-strong" x="26" y="116">DEV-11 · Story</text>
+    <text class="f-small" x="26" y="134">Sign-up form</text>
+  </g>
+  <line class="f-line" x1="88" y1="94" x2="88" y2="78"/>
+  <g>
+    <rect class="f-box" x="172" y="96" width="144" height="48" rx="6"/>
+    <text class="f-small f-mono f-strong" x="182" y="116">DEV-12 · Story</text>
+    <text class="f-small" x="182" y="134">Reset password</text>
+  </g>
+  <line class="f-line" x1="244" y1="94" x2="244" y2="78"/>
+  <g>
+    <rect class="f-box" x="328" y="96" width="144" height="48" rx="6"/>
+    <text class="f-small f-mono f-strong" x="338" y="116">DEV-14 · Task</text>
+    <text class="f-small" x="338" y="134">Set up email</text>
+  </g>
+  <line class="f-line" x1="400" y1="94" x2="400" y2="78"/>
+  <g>
+    <rect class="f-box-danger" x="484" y="96" width="144" height="48" rx="6"/>
+    <text class="f-small f-mono f-strong" x="494" y="116">DEV-13 · Bug</text>
+    <text class="f-small" x="494" y="134">Reset link opens 404</text>
+  </g>
+  <line class="f-line" x1="556" y1="94" x2="556" y2="78"/>
+  <line class="f-line" x1="88" y1="78" x2="556" y2="78"/>
+  <line class="f-line" x1="320" y1="62" x2="320" y2="78"/>
+  <g>
+    <rect class="f-box-faint" x="172" y="172" width="144" height="44" rx="6"/>
+    <text class="f-small f-mono f-strong" x="182" y="192">DEV-15 · Subtask</text>
+    <text class="f-small" x="182" y="210">Write the email text</text>
+  </g>
+  <line class="f-line" x1="244" y1="170" x2="244" y2="146"/>
+  <text class="f-small f-muted" x="16" y="246">workflow:</text>
+  <rect class="f-box-faint" x="90" y="230" width="110" height="26" rx="13"/>
+  <text class="f-small" x="145" y="248" text-anchor="middle">To Do</text>
+  <g>
+    <path class="f-arrow" d="M202 243 L216 243"/>
+    <polygon class="f-head" points="224,243 216,247.5 216,238.5"/>
+  </g>
+  <rect class="f-box-faint" x="226" y="230" width="110" height="26" rx="13"/>
+  <text class="f-small" x="281" y="248" text-anchor="middle">In Progress</text>
+  <g>
+    <path class="f-arrow" d="M338 243 L352 243"/>
+    <polygon class="f-head" points="360,243 352,247.5 352,238.5"/>
+  </g>
+  <rect class="f-box-faint" x="362" y="230" width="110" height="26" rx="13"/>
+  <text class="f-small" x="417" y="248" text-anchor="middle">In Review</text>
+  <g>
+    <path class="f-arrow" d="M474 243 L488 243"/>
+    <polygon class="f-head" points="496,243 488,247.5 488,238.5"/>
+  </g>
+  <rect class="f-box-ok" x="498" y="230" width="110" height="26" rx="13"/>
+  <text class="f-small" x="553" y="248" text-anchor="middle">Done</text>
+</svg>

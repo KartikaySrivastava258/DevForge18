@@ -262,7 +262,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("every page has exactly one h1 and every form control has a label", async () => {
     const { page } = await h.newPage();
-    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor"]) {
+    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       await page.waitForLoadState("networkidle");
@@ -279,7 +279,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -635,6 +635,28 @@ describe("simulations", () => {
     await sim.getByRole("button", { name: "Run the workflow" }).click();
     assert.match(await summary.innerText(), /Saved\s+#1 #5/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("Jira: starting everything misses the sprint goal; a WIP limit meets it; the lesson is marked docs-checked", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/jira/simulations/jira-sprint-board");
+    const sim = page.locator(".sim");
+    await sim.locator(".sprint-sim").waitFor();
+    const summary = sim.locator(".k8s-sim__summary");
+    assert.match(await summary.innerText(), /34 points/);
+    for (let i = 0; i < 10; i++) await sim.getByRole("button", { name: "Step" }).click();
+    assert.match(await summary.innerText(), /Sprint goal\s+missed/);
+    assert.match(await summary.innerText(), /Points left\s+19\.0/);
+    await sim.getByRole("button", { name: "Reset" }).click();
+    await sim.getByLabel("In Progress WIP limit").selectOption("3");
+    for (let i = 0; i < 10; i++) await sim.getByRole("button", { name: "Step" }).click();
+    assert.match(await summary.innerText(), /Sprint goal\s+met/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    assert.equal(await sim.getByRole("button", { name: "Remove DEV-8 from the sprint" }).isDisabled(), true, "planning is over once the sprint starts");
+
+    await page.goto("/tracks/jira/lessons/jira-work-items-and-workflows");
+    await page.locator(".verified--docs-checked", { hasText: "Checked against official documentation." }).waitFor();
     noProblems(problems);
   });
 

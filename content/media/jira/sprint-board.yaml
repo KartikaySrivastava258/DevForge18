@@ -1,0 +1,4 @@
+alt: 'Four columns: Backlog, To Do, In Progress with a maximum of 3, and Done. First every story is in the backlog. Then DEV-1 to DEV-5 are planned into the sprint, DEV-1 to DEV-3 being the sprint goal, and DEV-8 stays in the backlog. Then DEV-1, DEV-2 (blocked) and DEV-3 are in progress — three, the limit — while DEV-4 and DEV-5 wait. At the end, DEV-1 to DEV-4 are done and the unfinished DEV-5 goes back to the backlog beside DEV-8.'
+caption: 'Plan what fits, keep work in progress under the limit, and send unfinished work back when the sprint is completed.'
+credit: DevForge 18 content team
+licence: project-content

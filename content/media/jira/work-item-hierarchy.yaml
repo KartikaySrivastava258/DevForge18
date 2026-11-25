@@ -1,0 +1,4 @@
+alt: 'An epic, DEV-10 ''Members can sign up online'', groups four work items: two stories (DEV-11 Sign-up form, DEV-12 Reset password), a task (DEV-14 Set up email) and a bug (DEV-13 Reset link opens 404). The story DEV-12 has a subtask, DEV-15 Write the email text. Below, a workflow: To Do, In Progress, In Review, Done.'
+caption: 'Epics group stories, tasks and bugs; subtasks split a work item; every work item moves through the same workflow.'
+credit: DevForge 18 content team
+licence: project-content

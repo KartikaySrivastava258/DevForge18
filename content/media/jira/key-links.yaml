@@ -1,0 +1,4 @@
+alt: 'The work item DEV-12 Reset password is linked to a branch named DEV-12-reset-link-expiry, a commit ''DEV-12 Expire reset links…'' and a pull request ''DEV-12 Reset links expire''. A fourth commit, ''dev-12 log reset link use'', written in lower case, has no link; a note says a lower-case key gives no link.'
+caption: 'Jira links branches, commits and pull requests that contain the work item key, written exactly as Jira shows it.'
+credit: DevForge 18 content team
+licence: project-content

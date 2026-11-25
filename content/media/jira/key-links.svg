@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 210">
+  <!-- How a work item key links code to Jira, from Linking work items to branches and commits. -->
+  <g>
+    <rect class="f-box-accent" x="16" y="70" width="150" height="56" rx="6"/>
+    <text class="f-small f-mono f-strong" x="26" y="90">DEV-12</text>
+    <text class="f-small" x="26" y="108">Reset password</text>
+  </g>
+  <rect class="f-box" x="300" y="14" width="324" height="38" rx="4"/>
+  <text class="f-small f-muted" x="312" y="30">branch</text>
+  <text class="f-small f-mono" x="312" y="45">DEV-12-reset-link-expiry</text>
+  <g>
+    <path class="f-arrow-accent" d="M298 33 L175.2 94.4"/>
+    <polygon class="f-head-accent" points="168,98 173.2,90.4 177.2,98.4"/>
+  </g>
+  <rect class="f-box" x="300" y="62" width="324" height="38" rx="4"/>
+  <text class="f-small f-muted" x="312" y="78">commit</text>
+  <text class="f-small f-mono" x="312" y="93">DEV-12 Expire reset links…</text>
+  <g>
+    <path class="f-arrow-accent" d="M298 81 L175.9 97.0"/>
+    <polygon class="f-head-accent" points="168,98 175.4,92.5 176.5,101.4"/>
+  </g>
+  <rect class="f-box" x="300" y="110" width="324" height="38" rx="4"/>
+  <text class="f-small f-muted" x="312" y="126">pull request</text>
+  <text class="f-small f-mono" x="312" y="141">DEV-12 Reset links expire</text>
+  <g>
+    <path class="f-arrow-accent" d="M298 129 L175.8 99.9"/>
+    <polygon class="f-head-accent" points="168,98 176.8,95.5 174.7,104.2"/>
+  </g>
+  <rect class="f-box-danger" x="300" y="158" width="324" height="38" rx="4"/>
+  <text class="f-small f-muted" x="312" y="174">commit</text>
+  <text class="f-small f-mono" x="312" y="189">dev-12 log reset link use</text>
+  <text class="f-small f-danger" x="230" y="196" text-anchor="middle">lower-case key: no link</text>
+</svg>

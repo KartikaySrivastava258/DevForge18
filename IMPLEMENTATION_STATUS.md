@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **5 in progress — Kafka, Airflow, MLflow, LangChain + LlamaIndex and n8n done** (REMAINING_WORK.md §7) · Next: **Jira**
+Last updated: 2026-11-25 · Milestone: **5 in progress — the six new tracks done (Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira)** (REMAINING_WORK.md §7) · Next: **a third lesson and a simulation for the Path 1 tracks**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 42 published across 17 tracks, **all executed** (the 3 n8n lessons recorded against a real n8n locally, CI confirmation in progress) |
+| Lessons | ✅ 45 published across all 18 tracks; 43 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Jira's executed lesson: CI confirmation in progress |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 43 figures across all 42 lessons (no ASCII diagrams left), 17 of them step-throughs — one in each of the 17 tracks with lessons; tested |
-| Simulations | 🟡 Framework done and tested; 9 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n), with server-verified challenges |
+| Figures and step-through diagrams | ✅ 46 figures across all 45 lessons (no ASCII diagrams left), 18 of them step-throughs — one in every track; tested |
+| Simulations | 🟡 Framework done and tested; 10 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira), with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -251,12 +251,25 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Facts** checked against the n8n documentation on 2026-11-25: nodes, trigger nodes and items; the Code node; test and production webhooks and publishing; Respond to Webhook and response codes; Retry On Fail, On Error (Continue using error output) and error workflows with the Error Trigger; the CLI; the encryption key for credentials. Not found in the documentation pages read, so not stated: the `{{ }}` syntax being JavaScript (shown working instead) and the terms of n8n's licence.
 - **Simulation** *Workflow executor* (§5.17): five form submissions through Form → Valid? (If) → Check seats → Save; the learner chooses the checks, where the false branch goes, On Error and Retry On Fail, runs the batch and sees every node's outputs and every item's outcome (saved, error workflow, dropped silently, or not saved because the execution failed). 9 model tests; three server-verified challenges (report invalid submissions instead of dropping them; complete the checks; survive a flaky service — where an error output alone would report a valid submission instead of saving it, and a retry is the fix); a browser test; embedded in lesson 3.
 - **Cold cache:** all three lessons pass after removing the image (4 m 32 s including the 1.3 GB pull).
+- **CI:** confirmed in run 45704707925 (317 tests, 31 browser journeys; all three n8n lessons executed).
 - **A flaky first execution:** once, in a full local run, lesson 1's first `n8n execute` produced no JSON and the reason was hidden (the helper discarded stderr); it did not happen in five fresh starts. The `items` helper now retries `execute` up to five times, parses only from the line where the JSON starts, and prints n8n's own output if it still fails, so a future failure explains itself.
 - Figures: items through the Big orders workflow, one webhook request (step-through), the branches of the validated sign-up.
 
+### Milestone 5 — Jira (2026-11-25)
+
+- **Following §5.12: a real Jira site is never required.** Jira is a hosted service, so lessons 1 and 2 are **docs-checked** (marked on the page, dated), and lesson 3 is **executed with Git only**.
+- **Lessons:** *Work items, types and workflows* (Atlassian's own definitions of epics, stories, tasks, bugs and subtasks; keys; workflows; writing a story with checkable acceptance criteria; a read-through lab with a checklist); *Sprints, boards and work-in-progress limits* (backlog, planning against capacity, the sprint goal, the last column as "done", where unfinished work goes, column constraints, burndown and cumulative flow); *Linking work items to branches and commits* (keys in branch names, commits and pull request titles; `git log --grep`, a key count for release notes, and a check that catches a lower-case key that would link to nothing).
+- **Facts:** the work types are quoted from Atlassian's "What are work types?" page; development references, completing a sprint, column constraints and the burndown come from Atlassian's support pages (their bodies were read partly as summaries, so the lessons only state what those summaries and search results agree on). The "issues" → "work items" naming change is cited from Atlassian's developer-community announcement. Atlassian's user-story and acceptance-criteria articles could not be read, so the story format is presented as common practice, not as Atlassian's guidance, and those pages are not cited.
+- **Simulation** *Sprint board* (§5.12): a three-person, ten-day sprint over an eight-story backlog (34 points) with two blockers on fixed days; plan, set the In Progress WIP limit, play day by day with a burndown and the board. Starting more stories than developers costs focus (10 % each, down to half — labelled as a simplification). Calibrated so that: with everything committed, WIP 8 misses the sprint goal (19 points left) while WIP 2–4 meets it; WIP 1 is worse than 2–4 because a blocked story then stops the team; and even WIP 3 leaves 6 points unfinished until the plan is cut. 9 model tests; two server-verified challenges (meet the sprint goal; finish everything committed); a browser test, which also covers the docs-checked label; embedded in lesson 2.
+- Figures: the work-item hierarchy and a workflow, a sprint from planning to completion (step-through), keys linking code to a work item.
+
+### Milestone 5 — what remains
+
+Nine tracks still have two lessons: Docker, PostgreSQL, Terraform, GitHub Actions, Redis, Jenkins, Postman and Nginx (each also needs a simulation), and Kubernetes (which has its simulation but needs a third lesson — REMAINING_WORK.md §7 lists only the first eight).
+
 ## Current work
 
-Milestone 5 of REMAINING_WORK.md §7: Kafka, Airflow, MLflow, LangChain + LlamaIndex and n8n are done; next Jira, LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
+Milestone 5 of REMAINING_WORK.md §7: the six new tracks are done; next LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
 
 ## Pending work (ordered)
 
@@ -298,11 +311,11 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 42 lessons across 17 tracks | 1 track shows outline only (Jira) | Milestone 5 |
+| 45 lessons across 18 tracks | 9 tracks have two lessons, 8 of them no simulation | Milestone 5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Python packages for the LangChain + LlamaIndex lessons | Only the top-level packages are pinned; a new release of one of their dependencies could change behaviour or break the install in CI | If it happens: pin the full set with a constraints file generated by `pip freeze` in the lesson container |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka`, `apache/airflow`, `n8nio/n8n`, `python:3.12-slim` and (from GitHub's registry) `ghcr.io/mlflow/mlflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
-| No lesson currently uses `pending` or `docs-checked`, and no resource is unverified | Those UI states ("Automated test pending.", "Link not yet verified") are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such content exists, or test the states with fixture content |
+| No lesson currently uses `pending`, and no resource is unverified | Those UI states ("Automated test pending.", "Link not yet verified") are not exercised by the browser tests (still validated by the content schema and loader); the `docs-checked` state is, by a Jira lesson | Add e2e assertions when such content exists, or test the states with fixture content |
 
 ## Decisions made
 

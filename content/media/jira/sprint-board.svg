@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250">
+  <!-- A sprint from planning to completion, from Sprints, boards and work-in-progress limits. -->
+  <rect class="f-box-faint" x="16" y="12" width="128" height="228" rx="8"/>
+  <text class="f-small f-strong" x="80" y="32" text-anchor="middle">Backlog</text>
+  <rect class="f-box-faint" x="176" y="12" width="128" height="228" rx="8"/>
+  <text class="f-small f-strong" x="240" y="32" text-anchor="middle">To Do</text>
+  <rect class="f-box-faint" x="336" y="12" width="128" height="228" rx="8"/>
+  <text class="f-small f-strong" x="400" y="32" text-anchor="middle">In Progress  max 3</text>
+  <rect class="f-box-faint" x="496" y="12" width="128" height="228" rx="8"/>
+  <text class="f-small f-strong" x="560" y="32" text-anchor="middle">Done</text>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-accent" x="24" y="44" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="80" y="64" text-anchor="middle">DEV-1 goal</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-accent" x="24" y="76" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="80" y="96" text-anchor="middle">DEV-2 goal</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-accent" x="24" y="108" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="80" y="128" text-anchor="middle">DEV-3 goal</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box" x="24" y="140" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="80" y="160" text-anchor="middle">DEV-4</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box" x="24" y="172" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="80" y="192" text-anchor="middle">DEV-5</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box" x="24" y="204" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="80" y="224" text-anchor="middle">DEV-8</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <rect class="f-box-accent" x="184" y="44" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="240" y="64" text-anchor="middle">DEV-1 goal</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <rect class="f-box-accent" x="184" y="76" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="240" y="96" text-anchor="middle">DEV-2 goal</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <rect class="f-box-accent" x="184" y="108" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="240" y="128" text-anchor="middle">DEV-3 goal</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <rect class="f-box" x="184" y="140" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="240" y="160" text-anchor="middle">DEV-4</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <rect class="f-box" x="184" y="172" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="240" y="192" text-anchor="middle">DEV-5</text>
+  </g>
+  <g data-step="2" data-until="3">
+    <rect class="f-box" x="24" y="44" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="80" y="64" text-anchor="middle">DEV-8</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <rect class="f-box" x="184" y="44" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="240" y="64" text-anchor="middle">DEV-4</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <rect class="f-box" x="184" y="76" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="240" y="96" text-anchor="middle">DEV-5</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <rect class="f-box-accent" x="344" y="44" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="400" y="64" text-anchor="middle">DEV-1 goal</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <rect class="f-box-warn" x="344" y="76" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="400" y="96" text-anchor="middle">DEV-2 blocked</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <rect class="f-box-accent" x="344" y="108" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="400" y="128" text-anchor="middle">DEV-3 goal</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box" x="24" y="44" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="80" y="64" text-anchor="middle">DEV-8</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box" x="24" y="76" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="80" y="96" text-anchor="middle">DEV-5</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-ok" x="504" y="44" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="560" y="64" text-anchor="middle">DEV-1</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-ok" x="504" y="76" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="560" y="96" text-anchor="middle">DEV-2</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-ok" x="504" y="108" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="560" y="128" text-anchor="middle">DEV-3</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-ok" x="504" y="140" width="112" height="30" rx="4"/>
+    <text class="f-small f-mono" x="560" y="160" text-anchor="middle">DEV-4</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-muted" x="80" y="128" text-anchor="middle">unfinished →</text>
+    <text class="f-small f-muted" x="80" y="144" text-anchor="middle">back to backlog</text>
+  </g>
+</svg>

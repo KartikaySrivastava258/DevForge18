@@ -270,8 +270,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.12 Jira
 
-- **Lessons:** Issues, issue types and workflows · Writing good stories and acceptance criteria · Scrum boards and sprints · Kanban and flow metrics · Linking work to Git commits and pull requests · Reports, cycle time and anti-patterns (advanced).
-- **Simulation — sprint board:** a backlog of stories with estimates; plan a sprint against capacity; play the sprint day by day with random blockers (seeded) and watch the burndown and cumulative flow. **Challenge:** finish the sprint goal by limiting work in progress.
+- **Lessons:** ✅ Work items, types and workflows (including writing good stories and acceptance criteria) · ✅ Sprints, boards and work-in-progress limits · ✅ Linking work items to branches and commits · Kanban and flow metrics in depth · Reports, cycle time and anti-patterns (advanced).
+- ✅ **Simulation — sprint board:** a backlog of stories with estimates; plan a sprint against capacity; play the sprint day by day with random blockers (seeded) and watch the burndown and cumulative flow. **Challenge:** finish the sprint goal by limiting work in progress.
 - **Labs:** read-through and simulation labs; a real Jira site is optional (free plans exist — check current terms) and must never be required.
 - **Real world:** Jira was first released by Atlassian in 2002. Sources: Atlassian's website and blog.
 - **Alternatives:** GitHub Projects, GitLab issues and boards, Linear, YouTrack, Azure Boards, Trello.
@@ -381,7 +381,7 @@ Each milestone ends with CI green and `IMPLEMENTATION_STATUS.md` updated.
 2. ✅ Done (verified in CI on 2026-11-25, run 45650635699). **Visual learning system.** Media pipeline (`media:` paths, figures, captions, dark/light SVGs), `StepDiagram`, animation guidelines; convert the ASCII diagrams in the existing 21 lessons into SVG figures, and add a step-through to at least one lesson per track. *Done when:* every existing lesson has at least one real figure, and browser tests cover a step-through with keyboard and reduced motion.
 3. ✅ Done (verified in CI on 2026-11-25, run 45655582859). **Simulation framework plus two exemplars.** `SimulationShell`, the model/view split, challenges and progress; build the Git commit-graph and the Kubernetes reconciliation simulations first. *Done when:* both have unit-tested models with invariants, browser tests, and are embedded in their lessons.
 4. ✅ Done (verified in CI on 2026-11-25, run 45675259630). **Complete Path 2.** Prometheus + Grafana and OpenTelemetry beginner lessons (executed in CI) and their simulations.
-5. **Remaining tracks, beginner level.** Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira: lessons, setup guide, one simulation each. *Done when:* all 18 tracks have at least three beginner lessons and one simulation.
+5. **Remaining tracks, beginner level.** Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira: lessons, setup guide, one simulation each. *Done when:* all 18 tracks have at least three beginner lessons and one simulation. Status (2026-11-25): the six tracks are done; Kubernetes also needs a third lesson, in addition to the Path 1 tracks.
 6. **Real-world context.** Case-study and alternatives content types; at least two sourced case studies and an alternatives table per track.
 7. **Labs.** Lab pages, verification scripts, lab progress; at least two labs per track, executed in CI where the tool allows.
 8. **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first.
