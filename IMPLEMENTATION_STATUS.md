@@ -10,7 +10,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 27 published across 12 tracks, **all executed** (the 3 OpenTelemetry lessons recorded against the real tools locally; CI confirmation in progress) |
+| Lessons | ✅ 27 published across 12 tracks, **all executed** and confirmed in CI (none pending) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
@@ -182,6 +182,8 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - Figures: the anatomy of a metric line, the scrape loop (step-through), how Grafana, Prometheus and DevForge fit together.
 
 ### Milestone 4 — Path 2, part 2: OpenTelemetry (2026-11-25)
+
+- **CI run 45675259630: ✅ green** — the Collector and Jaeger installed and checksum-verified on the runner; all six Path 2 lessons ran against their real tools; 249/249 tests with 0 skipped, 26/26 browser tests. (Run 45674074140 for the OpenTelemetry commit passed its 249 tests and was then cancelled by the next push.)
 
 - **CI run 45670107268 (a docs-only commit) failed** on a timing race in an older runner test, *cleanup stops a background process*: it checked the process the instant the trap sent `kill`, and signals are delivered asynchronously. It had passed in earlier runs. The failure went unnoticed for one commit because that run was not watched; the test now allows the process up to three seconds to exit (the property under test is unchanged).
 
