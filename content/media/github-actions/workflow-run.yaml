@@ -1,0 +1,4 @@
+alt: 'A push event starts the workflow file .github/workflows/check.yml. Inside it, the job check runs on a fresh ubuntu-latest runner with two steps: uses actions/checkout@v7, then run bash scripts/check-notes.sh. Below, exit code 0 means success and a non-zero exit code means failure.'
+caption: 'Events start workflows; jobs run on runners; steps use actions or run commands; exit codes decide the result.'
+credit: DevForge 18 content team
+licence: project-content

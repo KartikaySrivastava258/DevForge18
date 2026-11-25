@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 284">
+  <!-- Anatomy of an HTTP exchange, from HTTP requests and responses. -->
+  <rect class="f-box-faint" x="16" y="12" width="296" height="262" rx="8"/>
+  <text class="f-strong" x="164" y="34" text-anchor="middle">Request</text>
+  <rect class="f-box-accent" x="28" y="46" width="272" height="50" rx="4"/>
+  <text class="f-small f-muted" x="40" y="63">request line: method, path, HTTP version</text>
+  <text class="f-mono" x="40" y="83">POST /api/auth/login HTTP/1.1</text>
+  <rect class="f-box" x="28" y="104" width="272" height="90" rx="4"/>
+  <text class="f-small f-muted" x="40" y="121">headers</text>
+  <text class="f-mono" x="40" y="141">Host: localhost:8080</text>
+  <text class="f-mono" x="40" y="160">Content-Type: application/json</text>
+  <text class="f-mono" x="40" y="179">X-DevForge-CSRF: 1</text>
+  <rect class="f-box" x="28" y="202" width="272" height="62" rx="4"/>
+  <text class="f-small f-muted" x="40" y="219">body</text>
+  <text class="f-mono" x="40" y="239">{"email":"asha@example.edu",</text>
+  <text class="f-mono" x="40" y="258"> "password":"…"}</text>
+  <rect class="f-box-faint" x="328" y="12" width="296" height="262" rx="8"/>
+  <text class="f-strong" x="476" y="34" text-anchor="middle">Response</text>
+  <rect class="f-box-warn" x="340" y="46" width="272" height="50" rx="4"/>
+  <text class="f-small f-muted" x="352" y="63">status line: version, status code</text>
+  <text class="f-mono" x="352" y="83">HTTP/1.1 401 Unauthorized</text>
+  <rect class="f-box" x="340" y="104" width="272" height="90" rx="4"/>
+  <text class="f-small f-muted" x="352" y="121">headers</text>
+  <text class="f-mono" x="352" y="141">Content-Type: application/json</text>
+  <text class="f-mono" x="352" y="160">X-Request-Id: 75a0fe9a-…</text>
+  <rect class="f-box" x="340" y="202" width="272" height="62" rx="4"/>
+  <text class="f-small f-muted" x="352" y="219">body</text>
+  <text class="f-mono" x="352" y="239">{"error":{"code":</text>
+  <text class="f-mono" x="352" y="258"> "invalid_credentials",…}}</text>
+</svg>

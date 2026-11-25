@@ -77,18 +77,8 @@ Jobs configured by clicking through web forms cannot be reviewed, are hard to co
 
 ## How it works
 
-```text
- pipeline {
-   agent any                 ← where to run (any available executor or agent)
-   options { … }             ← e.g. a timeout for the whole pipeline
-   stages {
-     stage('Check README') {  ← a named phase, shown on the build page
-       steps { sh '…' }        ← the commands; a non-zero exit code fails the stage
-     }
-   }
-   post { failure { … } success { … } always { … } }   ← after the stages
- }
-```
+![](media:jenkins/jenkinsfile-anatomy.svg)
+
 
 This is the **declarative** syntax — structured and checked by Jenkins before it runs. (Jenkins also supports a *scripted* syntax, which is plain Groovy code; declarative is recommended for most pipelines.)
 

@@ -69,14 +69,8 @@ Containers are meant to be disposable: you replace them to upgrade, scale or rec
 
 ## How it works
 
-```text
-            container (disposable)                  outside the container
- ┌──────────────────────────────────────┐
- │ writable layer   /notes.txt ──────── │──▶  deleted by docker rm
- │ volume mount     /data ───────────── │──▶  volume "notes-data"   (managed by Docker)
- │ bind mount       /usr/share/…/html ─ │──▶  ./site on your computer
- └──────────────────────────────────────┘
-```
+![](media:docker/mounts.svg)
+
 
 - `-v notes-data:/data` mounts the named volume `notes-data` at `/data`. Docker creates it if it does not exist.
 - `-v "$PWD/site":/usr/share/nginx/html:ro` mounts a folder from your computer, read-only (`:ro`).

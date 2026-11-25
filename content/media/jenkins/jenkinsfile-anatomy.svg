@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 330">
+  <!-- The parts of a declarative Jenkinsfile, from Pipeline as code with a Jenkinsfile. -->
+  <rect class="f-box-faint" x="16" y="12" width="364" height="306" rx="8"/>
+  <text class="f-mono" x="28" y="34">pipeline {</text>
+  <rect class="f-box" x="32" y="46" width="332" height="30" rx="4"/>
+  <text class="f-mono" x="44" y="66">agent any</text>
+  <rect class="f-box" x="32" y="84" width="332" height="30" rx="4"/>
+  <text class="f-mono" x="44" y="104">options { … }</text>
+  <rect class="f-box-faint" x="32" y="122" width="332" height="132" rx="4"/>
+  <text class="f-mono" x="44" y="142">stages {</text>
+  <rect class="f-box-accent" x="48" y="152" width="300" height="92" rx="4"/>
+  <text class="f-mono" x="60" y="172">stage('Check README') {</text>
+  <rect class="f-box" x="64" y="184" width="268" height="48" rx="4"/>
+  <text class="f-mono" x="76" y="213">steps { sh '…' }</text>
+  <rect class="f-box" x="32" y="266" width="332" height="40" rx="4"/>
+  <text class="f-mono" x="44" y="291">post { failure · success · always }</text>
+  <line class="f-line f-dashed" x1="372" y1="57" x2="392" y2="57"/>
+  <text class="f-small f-muted" x="400" y="61">where to run: any available</text>
+  <text class="f-small f-muted" x="400" y="77">executor or agent</text>
+  <line class="f-line f-dashed" x1="372" y1="95" x2="392" y2="95"/>
+  <text class="f-small f-muted" x="400" y="99">options, e.g. a time limit</text>
+  <text class="f-small f-muted" x="400" y="115">for the whole pipeline</text>
+  <line class="f-line f-dashed" x1="372" y1="168" x2="392" y2="168"/>
+  <text class="f-small f-muted" x="400" y="172">a named phase, shown</text>
+  <text class="f-small f-muted" x="400" y="188">on the build page</text>
+  <line class="f-line f-dashed" x1="372" y1="204" x2="392" y2="204"/>
+  <text class="f-small f-muted" x="400" y="208">the commands; a non-zero exit</text>
+  <text class="f-small f-muted" x="400" y="224">code fails the stage</text>
+  <line class="f-line f-dashed" x1="372" y1="282" x2="392" y2="282"/>
+  <text class="f-small f-muted" x="400" y="286">runs after the stages, by result</text>
+</svg>

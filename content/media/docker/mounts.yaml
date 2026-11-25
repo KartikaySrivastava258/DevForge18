@@ -1,0 +1,4 @@
+alt: 'A container with three places to write data. Files in its writable layer, such as /notes.txt, are deleted by docker rm. A volume mounted at /data is stored in the Docker-managed volume notes-data. A bind mount at /usr/share/nginx/html shows the ./site folder from your computer, read-only.'
+caption: 'Only the writable layer disappears with the container. Volumes and bind mounts keep data outside it.'
+credit: DevForge 18 content team
+licence: project-content

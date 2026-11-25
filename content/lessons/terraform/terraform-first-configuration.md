@@ -77,13 +77,9 @@ Infrastructure created by clicking through web consoles cannot be reviewed, repe
 
 ## How it works
 
-```text
-  main.tf (desired state) ─┐
-                           ├─▶ terraform plan ──▶ "1 to add, 0 to change, 0 to destroy"
-  terraform.tfstate ───────┤        (compare)              │
-  (what Terraform built)   │                               ▼
-  real world ──────────────┘                     terraform apply ──▶ providers ──▶ APIs
+```diagram steps=terraform/plan-apply
 ```
+
 
 - **Providers** are plugins for each kind of system (here `hashicorp/local`, which manages files, so you need no cloud account).
 - **Resources** are the things to manage; **outputs** report values back.

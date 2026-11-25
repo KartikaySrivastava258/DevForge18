@@ -77,13 +77,9 @@ Without a proxy, every application must face the internet directly: serve its ow
 
 ## How it works
 
-```text
-                       ┌───────────── Nginx :8088 ─────────────┐
- client ── GET /api/ ─▶│ location /api/ → upstream devforge    │──▶ DevForge :8080
-                       │ location /     → files in site/       │
-                       │ location /balanced/ → demo_backends   │──▶ backend A :8091
-                       └───────────────────────────────────────┘──▶ backend B :8092
+```diagram steps=nginx/reverse-proxy
 ```
+
 
 - `proxy_pass` forwards the request to an upstream address or **upstream group**.
 - `proxy_set_header` adds or replaces headers on the forwarded request.

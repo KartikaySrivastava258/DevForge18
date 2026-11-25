@@ -1,0 +1,6 @@
+figure: controller-agents.svg
+title: 'Who does what in Jenkins'
+steps:
+  - caption: 'You work with the controller through its web UI. It stores the jobs, configuration and credentials, schedules builds and keeps the build history.'
+  - caption: 'When a build runs, the controller sends the work to an agent: a separate machine or container that runs the build steps.'
+  - caption: 'Work can be spread across several agents. Keeping builds off the controller protects it, because build steps run whatever code is in the repository.'

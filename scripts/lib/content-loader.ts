@@ -172,6 +172,10 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       if (meta.verification.method === "pending" && runBlocks === 0) errors.push(`${rel}: verification "pending" requires run blocks`);
       const rendered = renderMarkdown(split.body, { media: mediaResolver(media, usedMedia) });
       for (const problem of rendered.problems) errors.push(`${rel}: ${problem}`);
+      // REMAINING_WORK.md §4.2: every explanation of how something works comes with a picture.
+      if (rendered.toc.some((t) => t.text === "How it works") && rendered.figures === 0) {
+        errors.push(`${rel}: the "How it works" section needs a figure (media:…) or a step-through (\`\`\`diagram steps=…)`);
+      }
       if (rendered.toc.length < 2) warnings.push(`${rel}: fewer than two "##" sections — consider structuring the lesson`);
       lessons.push({ ...meta, html: rendered.html, toc: rendered.toc, word_count: rendered.wordCount });
     }

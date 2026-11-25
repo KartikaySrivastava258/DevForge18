@@ -77,16 +77,8 @@ Application servers are good at business logic but poorly suited to everything e
 
 ## How it works
 
-```text
- nginx.conf
- ├─ main context          pid, error_log            (whole process)
- ├─ events { }           connection handling
- └─ http {                types, logs, defaults
-      └─ server {         one virtual server: listen address and port
-           └─ location / { … }    rules for URLs that start with /
-         }
-    }
-```
+![](media:nginx/config-contexts.svg)
+
 
 - A **directive** is a name, its values and a semicolon: `listen 127.0.0.1:8088;`.
 - A **block** (or *context*) groups directives in braces; inner blocks inherit settings from outer ones.

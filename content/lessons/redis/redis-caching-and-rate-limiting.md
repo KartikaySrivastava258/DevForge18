@@ -79,20 +79,11 @@ Login forms, APIs and expensive operations need limits on how often one client c
 
 ## How it works
 
-```text
- cache-aside read
-   app ──GET key──▶ Redis ── hit ──▶ return cached value
-                      │
-                     miss
-                      ▼
-                  database ── value ──▶ app ──SET key value EX 60──▶ Redis
-
- fixed-window rate limit (3 requests per 60 seconds)
-   request ──INCR ratelimit:asha──▶ count
-                 count == 1 → EXPIRE ratelimit:asha 60   (start the window)
-                 count <= 3 → allow
-                 count  > 3 → reject with 429 Too Many Requests
+```diagram steps=redis/cache-aside
 ```
+
+![](media:redis/fixed-window.svg)
+
 
 - **Hit**: the value was in the cache. **Miss**: it was not, so the app loads it and stores it.
 - The **TTL** bounds how stale a cached value can become.

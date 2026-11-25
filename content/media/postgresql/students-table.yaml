@@ -1,0 +1,4 @@
+alt: 'The students table drawn as a grid with columns id, name, email and study_year and two rows, Asha Rao and Ravi Kumar. Arrows point from labels to columns: id is the PRIMARY KEY that identifies a row, email is UNIQUE so there are no duplicates, and study_year has a CHECK that allows only 1 to 4.'
+caption: 'Columns have types, rows are records, and constraints decide which values the table accepts.'
+credit: DevForge 18 content team
+licence: project-content

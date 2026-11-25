@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 306">
+  <!-- Desired state and controllers, from Deployments, Pods and self-healing. -->
+  <text class="f-strong" x="36" y="50" text-anchor="middle">you</text>
+  <g>
+    <path class="f-arrow" d="M56 46 L130 46"/>
+    <polygon class="f-head" points="138,46 130,50.5 130,41.5"/>
+  </g>
+  <text class="f-mono" x="97" y="37" text-anchor="middle">kubectl</text>
+  <rect class="f-box" x="140" y="18" width="140" height="56" rx="8"/>
+  <text class="f-strong" x="210" y="51" text-anchor="middle">API server</text>
+  <g>
+    <path class="f-arrow" d="M282 46 L320 46"/>
+    <polygon class="f-head" points="328,46 320,50.5 320,41.5"/>
+  </g>
+  <rect class="f-box-accent" x="330" y="18" width="294" height="56" rx="8"/>
+  <text class="f-mono" x="477" y="41" text-anchor="middle">Deployment "web", replicas: 3</text>
+  <text class="f-small f-muted" x="477" y="62" text-anchor="middle">stored desired state</text>
+  <g>
+    <path class="f-arrow" d="M477 76 L477 110"/>
+    <polygon class="f-head" points="477,118 472.5,110 481.5,110"/>
+  </g>
+  <text class="f-small f-muted" x="487" y="102">watch</text>
+  <rect class="f-box" x="330" y="120" width="294" height="58" rx="8"/>
+  <text class="f-strong" x="477" y="144" text-anchor="middle">Controllers</text>
+  <text class="f-small f-muted" x="477" y="164" text-anchor="middle">compare desired with actual; fix differences</text>
+  <g>
+    <path class="f-arrow" d="M477 180 L477 198 L220 198 L220 218"/>
+    <polygon class="f-head" points="220,226 215.5,218 224.5,218"/>
+  </g>
+  <rect class="f-box-ok" x="150" y="228" width="140" height="50" rx="8"/>
+  <text class="f-mono" x="220" y="250" text-anchor="middle">Pod web-…</text>
+  <text class="f-small f-muted" x="220" y="268" text-anchor="middle">app=web</text>
+  <g>
+    <path class="f-arrow" d="M477 180 L477 198 L380 198 L380 218"/>
+    <polygon class="f-head" points="380,226 375.5,218 384.5,218"/>
+  </g>
+  <rect class="f-box-ok" x="310" y="228" width="140" height="50" rx="8"/>
+  <text class="f-mono" x="380" y="250" text-anchor="middle">Pod web-…</text>
+  <text class="f-small f-muted" x="380" y="268" text-anchor="middle">app=web</text>
+  <g>
+    <path class="f-arrow" d="M477 180 L477 198 L540 198 L540 218"/>
+    <polygon class="f-head" points="540,226 535.5,218 544.5,218"/>
+  </g>
+  <rect class="f-box-ok" x="470" y="228" width="140" height="50" rx="8"/>
+  <text class="f-mono" x="540" y="250" text-anchor="middle">Pod web-…</text>
+  <text class="f-small f-muted" x="540" y="268" text-anchor="middle">app=web</text>
+  <text class="f-small f-muted" x="320" y="298" text-anchor="middle">containers, scheduled on nodes</text>
+</svg>

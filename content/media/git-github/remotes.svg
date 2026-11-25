@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 200">
+  <!-- Remotes, from Sharing work with remotes, push and pull. -->
+  <rect class="f-box" x="16" y="16" width="140" height="168" rx="8"/>
+  <text class="f-strong" x="86" y="40" text-anchor="middle">Your laptop</text>
+  <rect class="f-box-accent" x="30" y="74" width="112" height="30" rx="15"/>
+  <text class="f-mono" x="86" y="94" text-anchor="middle">main</text>
+  <rect class="f-box-faint" x="30" y="118" width="112" height="30" rx="15"/>
+  <text class="f-mono" x="86" y="138" text-anchor="middle">origin/main</text>
+  <rect class="f-box" x="250" y="16" width="140" height="168" rx="8"/>
+  <text class="f-strong" x="320" y="40" text-anchor="middle">Remote</text>
+  <text class="f-small f-muted" x="320" y="58" text-anchor="middle">e.g. GitHub</text>
+  <rect class="f-box-accent" x="264" y="74" width="112" height="30" rx="15"/>
+  <text class="f-mono" x="320" y="94" text-anchor="middle">main</text>
+  <rect class="f-box" x="484" y="16" width="140" height="168" rx="8"/>
+  <text class="f-strong" x="554" y="40" text-anchor="middle">Teammate's laptop</text>
+  <rect class="f-box-accent" x="498" y="74" width="112" height="30" rx="15"/>
+  <text class="f-mono" x="554" y="94" text-anchor="middle">main</text>
+  <g>
+    <path class="f-arrow" d="M158 82 L240 82"/>
+    <polygon class="f-head" points="248,82 240,86.5 240,77.5"/>
+  </g>
+  <text class="f-mono" x="203" y="73" text-anchor="middle">git push</text>
+  <g>
+    <path class="f-arrow" d="M248 134 L166 134"/>
+    <polygon class="f-head" points="158,134 166,129.5 166,138.5"/>
+  </g>
+  <text class="f-mono" x="203" y="154" text-anchor="middle">git fetch</text>
+  <text class="f-mono" x="203" y="172" text-anchor="middle">or git pull</text>
+  <g>
+    <path class="f-arrow" d="M392 82 L474 82"/>
+    <polygon class="f-head" points="482,82 474,86.5 474,77.5"/>
+  </g>
+  <text class="f-mono" x="437" y="73" text-anchor="middle">git pull</text>
+  <g>
+    <path class="f-arrow" d="M482 134 L400 134"/>
+    <polygon class="f-head" points="392,134 400,129.5 400,138.5"/>
+  </g>
+  <text class="f-mono" x="437" y="154" text-anchor="middle">git push</text>
+</svg>

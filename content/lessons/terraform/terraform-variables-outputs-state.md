@@ -77,15 +77,8 @@ Copying a configuration for every course, team or environment produces many slig
 
 ## How it works
 
-```text
- variables.tf ──▶ var.course_code, var.student_count  (typed, validated, defaults)
-       │
- main.tf ─────▶ resource "local_file" "summary" { filename = …var.course_code… }
-       │
- terraform.tfstate ◀── apply records every attribute of every managed resource
-       │
- outputs ──────▶ summary_file = "./cs101.txt"
-```
+![](media:terraform/values-flow.svg)
+
 
 Values can come from defaults, `-var` on the command line, `*.tfvars` files or `TF_VAR_name` environment variables.
 

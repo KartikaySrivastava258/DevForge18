@@ -85,14 +85,9 @@ Pods come and go, so their addresses cannot be written into other programs. And 
 
 ## How it works
 
-```text
-            Service "web" (stable name, ClusterIP) ── selects app=web ──┐
-                                                                         ▼
- rolling update:   old ReplicaSet  ■ ■ ■ ■ ■   →  ■ ■ ■ ■     →  ■ ■ ■
-                   new ReplicaSet              →  □ □         →  □ □ □ □ □
-                   (old Pods removed only as new ones become ready;
-                    at most 25% unavailable and 25% extra by default)
+```diagram steps=kubernetes/rolling-update
 ```
+
 
 ## Try it yourself
 

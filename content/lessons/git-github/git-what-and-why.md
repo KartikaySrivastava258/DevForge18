@@ -88,15 +88,8 @@ Nobody is sure which file is current, what changed between versions, or who chan
 
 Git manages work in three areas:
 
-```text
- working tree            staging area              repository (.git)
- (files you edit)        (the next commit,         (every commit,
-                          being assembled)          permanently)
-      │                         │                         │
-      │ ── git add ───────────▶ │                         │
-      │                         │ ── git commit ────────▶ │
-      │ ◀──────────────── git restore / git switch ────── │
-```
+![](media:git-github/three-areas.svg)
+
 
 1. **Working tree** — the ordinary files in your project folder. You edit them with any editor.
 2. **Staging area** (also called the *index*) — where you place the changes you want in the next commit, using `git add`. This lets you commit some edits and leave others for later.

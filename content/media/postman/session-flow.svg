@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 340">
+  <!-- A session from sign-up to sign-out, from Sessions, chained requests and API tests. -->
+  <rect class="f-box" x="16" y="8" width="120" height="32" rx="6"/>
+  <text class="f-small f-strong" x="76" y="29" text-anchor="middle">Client</text>
+  <line class="f-line f-dashed" x1="76" y1="40" x2="76" y2="332"/>
+  <rect class="f-box" x="504" y="8" width="120" height="32" rx="6"/>
+  <text class="f-small f-strong" x="564" y="29" text-anchor="middle">DevForge server</text>
+  <line class="f-line f-dashed" x1="564" y1="40" x2="564" y2="332"/>
+  <g data-step="1">
+    <text class="f-mono" x="320" y="62" text-anchor="middle">1. POST /api/auth/register</text>
+    <g>
+      <path class="f-arrow" d="M80 68 L552 68"/>
+      <polygon class="f-head" points="560,68 552,72.5 552,63.5"/>
+    </g>
+    <g>
+      <path class="f-arrow f-dashed" d="M560 84 L88 84"/>
+      <polygon class="f-head" points="80,84 88,79.5 88,88.5"/>
+    </g>
+    <text class="f-small" x="320" y="99" text-anchor="middle">201 Created · Set-Cookie: df_session=&lt;token&gt;</text>
+  </g>
+  <g data-step="2">
+    <text class="f-mono" x="320" y="120" text-anchor="middle">2. GET /api/auth/me   + Cookie</text>
+    <g>
+      <path class="f-arrow" d="M80 126 L552 126"/>
+      <polygon class="f-head" points="560,126 552,130.5 552,121.5"/>
+    </g>
+    <g>
+      <path class="f-arrow f-dashed" d="M560 142 L88 142"/>
+      <polygon class="f-head" points="80,142 88,137.5 88,146.5"/>
+    </g>
+    <text class="f-small" x="320" y="157" text-anchor="middle">200 {"user":{…}}</text>
+  </g>
+  <g data-step="3">
+    <text class="f-mono" x="320" y="178" text-anchor="middle">3. PUT /api/me/bookmarks/…   + Cookie</text>
+    <g>
+      <path class="f-arrow" d="M80 184 L552 184"/>
+      <polygon class="f-head" points="560,184 552,188.5 552,179.5"/>
+    </g>
+    <g>
+      <path class="f-arrow f-dashed" d="M560 200 L88 200"/>
+      <polygon class="f-head" points="80,200 88,195.5 88,204.5"/>
+    </g>
+    <text class="f-small" x="320" y="215" text-anchor="middle">200 {"bookmarked":true}</text>
+  </g>
+  <g data-step="4">
+    <text class="f-mono" x="320" y="236" text-anchor="middle">4. POST /api/auth/logout</text>
+    <g>
+      <path class="f-arrow" d="M80 242 L552 242"/>
+      <polygon class="f-head" points="560,242 552,246.5 552,237.5"/>
+    </g>
+    <g>
+      <path class="f-arrow f-dashed" d="M560 258 L88 258"/>
+      <polygon class="f-head" points="80,258 88,253.5 88,262.5"/>
+    </g>
+    <text class="f-small" x="320" y="273" text-anchor="middle">session deleted on the server, cookie cleared</text>
+  </g>
+  <g data-step="5">
+    <text class="f-mono" x="320" y="294" text-anchor="middle">5. GET /api/me/bookmarks   + old token</text>
+    <g>
+      <path class="f-arrow" d="M80 300 L552 300"/>
+      <polygon class="f-head" points="560,300 552,304.5 552,295.5"/>
+    </g>
+    <g>
+      <path class="f-arrow f-dashed" d="M560 316 L88 316"/>
+      <polygon class="f-head" points="80,316 88,311.5 88,320.5"/>
+    </g>
+    <text class="f-small" x="320" y="331" text-anchor="middle">401: the token no longer means anything</text>
+  </g>
+</svg>

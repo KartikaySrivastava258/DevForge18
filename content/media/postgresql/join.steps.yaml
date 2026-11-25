@@ -1,0 +1,7 @@
+figure: join.svg
+title: 'Following foreign keys with a JOIN'
+steps:
+  - caption: 'Three tables. Each row of the linking table enrolments pairs one student with one course; its primary key (student_id, course_code) stops the same pair being stored twice.'
+  - caption: 'enrolments.student_id is a foreign key: every value must exist in students.id. Both of Asha''s enrolments point at student 1.'
+  - caption: 'enrolments.course_code is a foreign key too, so every enrolment also points at exactly one row of courses.'
+  - caption: 'A JOIN follows these links — ON s.id = e.student_id and ON c.code = e.course_code — to build rows that combine a student''s name with a course title.'

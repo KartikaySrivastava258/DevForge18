@@ -1,0 +1,7 @@
+figure: cache-aside.svg
+title: 'A cache-aside read: hit and miss'
+steps:
+  - caption: 'Every read starts with the cache: the app asks Redis for the key with GET key.'
+  - caption: 'Hit: Redis has the value, so the app uses it straight away, without touching the database.'
+  - caption: 'Miss: Redis answers (nil). The app loads the value from the database, which stays the source of truth.'
+  - caption: 'The app stores the value in Redis with an expiry, SET key value EX 60, so reads in the next 60 seconds are hits. The expiry bounds how stale the copy can get.'

@@ -77,12 +77,8 @@ If everyone pushes straight to `main`, a broken change reaches everyone before a
 
 ## How it works
 
-```text
- main ──●──────────────────────────────●── (merge)
-         \                            /
- improve-readme ●── push ──▶ pull request ── CI ✓ ── review ✓ ── merge
-                                          └─ required checks must pass
-```
+![](media:github-actions/pull-request-flow.svg)
+
 
 ## Try it yourself
 

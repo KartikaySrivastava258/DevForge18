@@ -77,16 +77,9 @@ Hosted CI services are convenient, but some organisations need their CI inside t
 
 ## How it works
 
-```text
-            ┌───────────── controller ─────────────┐
-  you ────▶ │ web UI · jobs · scheduling · history │
-            └───────┬───────────────────┬──────────┘
-                    │ "run this stage"  │
-              ┌─────▼─────┐       ┌─────▼─────┐
-              │  agent A  │       │  agent B  │   (machines or containers)
-              │ runs steps│       │ runs steps│
-              └───────────┘       └───────────┘
+```diagram steps=jenkins/controller-agents
 ```
+
 
 - **Jobs** (or *items*) define what to build. A **Pipeline** job reads its steps from a `Jenkinsfile` — the next lesson.
 - **Plugins** add almost everything: Git support, pipelines, credentials, Docker agents. Keeping them updated is part of running Jenkins.

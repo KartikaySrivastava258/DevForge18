@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 236">
+  <!-- Where a container's data lives, from Keeping data with volumes and bind mounts. -->
+  <rect class="f-box" x="16" y="30" width="336" height="190" rx="8"/>
+  <text class="f-strong" x="184" y="54" text-anchor="middle">container (disposable)</text>
+  <text class="f-small f-muted" x="530" y="22" text-anchor="middle">outside the container</text>
+  <rect class="f-box-faint" x="30" y="70" width="308" height="38" rx="4"/>
+  <text class="f-small" x="42" y="94">writable layer</text>
+  <text class="f-mono" x="136" y="94">/notes.txt</text>
+  <g>
+    <path class="f-arrow" d="M340 89 L426 89"/>
+    <polygon class="f-head" points="434,89 426,93.5 426,84.5"/>
+  </g>
+  <rect class="f-box-danger" x="436" y="68" width="188" height="42" rx="8"/>
+  <text class="f-small f-strong" x="530" y="94" text-anchor="middle">deleted by docker rm</text>
+  <rect class="f-box-faint" x="30" y="120" width="308" height="38" rx="4"/>
+  <text class="f-small" x="42" y="144">volume mount</text>
+  <text class="f-mono" x="136" y="144">/data</text>
+  <g>
+    <path class="f-arrow" d="M340 139 L426 139"/>
+    <polygon class="f-head" points="434,139 426,143.5 426,134.5"/>
+  </g>
+  <rect class="f-box-ok" x="436" y="118" width="188" height="42" rx="8"/>
+  <text class="f-small f-strong" x="530" y="136" text-anchor="middle">volume notes-data</text>
+  <text class="f-small f-muted" x="530" y="152" text-anchor="middle">managed by Docker</text>
+  <rect class="f-box-faint" x="30" y="170" width="308" height="38" rx="4"/>
+  <text class="f-small" x="42" y="194">bind mount</text>
+  <text class="f-mono" x="136" y="194">/usr/share/nginx/html</text>
+  <g>
+    <path class="f-arrow" d="M340 189 L426 189"/>
+    <polygon class="f-head" points="434,189 426,193.5 426,184.5"/>
+  </g>
+  <rect class="f-box" x="436" y="168" width="188" height="42" rx="8"/>
+  <text class="f-small f-strong" x="530" y="186" text-anchor="middle">./site on your computer</text>
+  <text class="f-small f-muted" x="530" y="202" text-anchor="middle">read-only here (:ro)</text>
+</svg>

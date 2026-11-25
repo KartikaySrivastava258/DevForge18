@@ -1,0 +1,4 @@
+alt: 'A Service named web above two rows of Pods: the old ReplicaSet and the new ReplicaSet. Over the steps, new Pods start, become ready, and replace old ones until all five Pods run the new version.'
+caption: 'A rolling update replaces Pods gradually, so the Service always has ready Pods to send traffic to.'
+credit: DevForge 18 content team
+licence: project-content

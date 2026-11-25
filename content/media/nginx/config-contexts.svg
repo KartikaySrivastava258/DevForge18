@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300">
+  <!-- Nginx configuration contexts, from Nginx configuration and static files. -->
+  <rect class="f-box-faint" x="16" y="12" width="608" height="276" rx="8"/>
+  <text class="f-mono" x="30" y="36">nginx.conf — main context</text>
+  <text class="f-small f-muted" x="610" y="36" text-anchor="end">pid, error_log: the whole process</text>
+  <rect class="f-box" x="32" y="52" width="576" height="40" rx="4"/>
+  <text class="f-mono" x="46" y="77">events { }</text>
+  <text class="f-small f-muted" x="594" y="77" text-anchor="end">connection handling</text>
+  <rect class="f-box" x="32" y="104" width="576" height="172" rx="4"/>
+  <text class="f-mono" x="46" y="128">http {</text>
+  <text class="f-small f-muted" x="594" y="128" text-anchor="end">types, logs, defaults</text>
+  <rect class="f-box-faint" x="48" y="142" width="544" height="120" rx="4"/>
+  <text class="f-mono" x="62" y="166">server {</text>
+  <text class="f-small f-muted" x="578" y="166" text-anchor="end">one virtual server: listen address and port</text>
+  <rect class="f-box-accent" x="64" y="182" width="512" height="64" rx="4"/>
+  <text class="f-mono" x="78" y="210">location / { … }</text>
+  <text class="f-small f-muted" x="562" y="210" text-anchor="end">rules for URLs that start with /</text>
+  <text class="f-small" x="78" y="230">inner blocks inherit settings from outer ones</text>
+</svg>

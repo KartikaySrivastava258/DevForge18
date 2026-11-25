@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **1 — open verification closed** (REMAINING_WORK.md §7) · Next: **Milestone 2 — visual learning system**
+Last updated: 2026-11-25 · Milestone: **2 — visual learning system** (REMAINING_WORK.md §7) · Next: **Milestone 3 — simulation framework (Git and Kubernetes)**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -14,6 +14,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
+| Figures and step-through diagrams | ✅ 22 figures in all 21 lessons (no ASCII diagrams left), a step-through in each of the 10 tracks with lessons; tested |
 | Labs, simulations, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -25,7 +26,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | `npm run typecheck` | ✅ 0 errors (strict; server, shared, scripts, tests) |
 | `npm run build` | ✅ 18 tracks, 8 paths, 1 lesson validated; JS 254.5 KB, CSS 25.6 KB (minified, before gzip) |
 | `npm test` | ✅ 131 passing, 8 skipped, 0 failing (139 tests). The 8 skips are the PostgreSQL, Redis, Nginx and Docker lessons: none of these tools exists in the build environment; they run in CI. |
-| `npm run test:e2e` | ✅ 16 / 16 passing (headless Chromium 1243) |
+| `npm run test:e2e` | ✅ 20 / 20 passing (headless Chromium 1243) |
 | `npm run lessons:record` | ✅ No-op on matching lessons; repaired a deliberately corrupted output block to a byte-identical file; wildcard lines preserved |
 | SQL lesson plumbing (`sql run` → psql in a throwaway database) | ✅ Tested with stub `psql`/`createdb`/`dropdb`; ⚠️ never run against a real PostgreSQL server yet |
 | `npm start` + curl smoke test | ✅ health, SPA routes with CSP, 18 tracks via API, CSRF rejection, `/metrics` |
@@ -135,9 +136,21 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
   - Kept as is after inspection: `kafka.apache.org/documentation/` (official entry point; redirects by script to the current versioned docs) and `university.redis.io` (Redis University, hosted on the Flockjay platform, hence its page title).
 - Browser test updated for the new honest state: the Docker track now shows three "Link checked" labels and no "Link not yet verified" label (was hard-coded to three unverified links).
 
+### Milestone 2 — visual learning system (2026-11-25)
+
+- **Media pipeline** (REMAINING_WORK.md §4.2): `content/media/<track>/<name>.svg` with a `.yaml` sidecar (alt text, caption, credit, licence; third-party media need `source_url`), referenced as `![](media:<track>/<name>.svg)`; step-throughs as `<name>.steps.yaml`, embedded with an empty ```` ```diagram steps=<track>/<name> ```` fence. `data-step` reveals and highlights elements; `data-until` hides them.
+- **Design change, recorded in ADR 0007:** SVGs are validated against a strict allowlist and **inlined**, not shown with `<img>`, because an `<img>` SVG cannot follow the app's theme toggle or be stepped through. The validator rejects scripts, `foreignObject`, `style` elements and attributes, event handlers, external references, DOCTYPE/CDATA/unknown entities and hard-coded colours, and re-serialises only what it parsed. No CSP change, no new dependency.
+- **`StepDiagram`** (`web/src/components/StepDiagram.tsx`): Previous/Next, arrow keys, user-started Play and Pause (Play is not offered under `prefers-reduced-motion`, and transitions are disabled), a live caption, and the full step list as the text alternative. `aria-disabled` instead of `disabled` keeps keyboard focus at the first and last steps (a disabled button would drop focus to the page).
+- **Content:** all 21 ASCII diagrams replaced by 22 SVG figures (the caching lesson's diagram covered two ideas, so it became a step-through and a figure). Step-throughs: Git commit cycle, Docker image → containers, Kubernetes rolling update (labelled simplified), PostgreSQL join, Terraform plan/apply, GitHub Actions workflow run, Redis cache-aside, Jenkins controller/agents, Nginx request routing, Postman session. Every caption and label was taken from the lesson's own text or verified output; where a figure shows a subset of the lesson's data (the PostgreSQL join), it says so.
+- **Build rule:** a lesson with a "How it works" section must contain a figure or step-through; unused media files are reported as warnings.
+- **Tests:** 8 SVG allowlist tests (attacks and malformed input), 3 renderer tests, 8 loader tests (real content renders; unsafe SVG, missing sidecar, mismatched steps, unknown references, third-party media without source, and a missing figure are rejected), and 4 browser tests (buttons, arrow keys and focus at the ends; Play/Pause and no autoplay; reduced motion and the light theme; phone width scrolls inside the figure, not the page). The mobile overflow sweep now includes a lesson with a step-through.
+- **Looked at:** every figure in the dark and light themes and the step-through on a 390 px phone viewport; four layout problems (overlapping labels and clipped table text) found that way and fixed.
+- **Sizes:** JS 257.2 KB (+2.4 KB), CSS 29.0 KB (+3.0 KB); `content.json` 559 KB with the inline SVGs.
+- **Not done in this milestone (still planned):** moving-element animations with the Web Animations API (§4.2 level 3) — step-throughs with Play cover the "watch the process" goal for now; photographs and screenshots (`<img>` pipeline) until there is a real screenshot to add.
+
 ## Current work
 
-Milestone 2 of REMAINING_WORK.md §7: the visual learning system (media pipeline, figures, `StepDiagram`), then Milestone 3 (simulation framework with the Git and Kubernetes simulations).
+Milestone 3 of REMAINING_WORK.md §7: the simulation framework (§4.3) with the Git commit-graph and Kubernetes reconciliation simulations.
 
 ## Pending work (ordered)
 
@@ -214,7 +227,7 @@ npm run db:backup -- ./backups/manual.db
 
 The full plan for all remaining work is in [`REMAINING_WORK.md`](REMAINING_WORK.md); [`MASTER_PROMPT.md`](MASTER_PROMPT.md) is a ready-made prompt for continuing with a coding agent.
 
-1. Milestone 2 — visual learning system (REMAINING_WORK.md §4.2): `media:` image references with figures, captions and theme-aware SVGs; `StepDiagram`; convert the ASCII diagrams in all 21 lessons; at least one step-through per track; browser tests for keyboard and reduced motion.
-2. Milestone 3 — simulation framework (§4.3) with the Git commit-graph and Kubernetes reconciliation simulations (§5.1, §5.3).
+1. Milestone 3 — simulation framework (§4.3) with the Git commit-graph and Kubernetes reconciliation simulations (§5.1, §5.3).
+2. Milestone 4 — complete Path 2: Prometheus + Grafana, then OpenTelemetry.
 3. Re-run the *Link check* workflow monthly; a person re-confirms each page before updating `checked_on`.
 4. Update this file after each milestone.

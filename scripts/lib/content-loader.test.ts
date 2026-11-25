@@ -143,6 +143,14 @@ describe("figures and step-throughs", () => {
     const { errors } = loadContent(dir);
     assert.ok(errors.some((e) => e.startsWith("lessons/git-github/git-first-commits.md: unknown step-through")), errors.join("\n"));
   });
+  it("are required in every lesson that explains how something works", () => {
+    const dir = copyContent();
+    const file = join(dir, "lessons", "docker", "docker-volumes-and-bind-mounts.md");
+    writeFileSync(file, readFileSync(file, "utf8").replace("![](media:docker/mounts.svg)", "(diagram removed)"));
+    const { errors, warnings } = loadContent(dir);
+    assert.ok(errors.some((e) => e.startsWith('lessons/docker/docker-volumes-and-bind-mounts.md: the "How it works" section needs a figure')), errors.join("\n"));
+    assert.ok(warnings.includes("media/docker/mounts.svg is not used by any lesson"));
+  });
   it("reject third-party media without a source", () => {
     const dir = copyContent();
     const file = join(dir, "media", "git-github", "commit-cycle.yaml");

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 236">
+  <!-- How Nginx routes requests, from Reverse proxy, 502 errors and load balancing. -->
+  <rect class="f-box" x="214" y="14" width="248" height="210" rx="8"/>
+  <text class="f-strong" x="338" y="38" text-anchor="middle">Nginx :8088</text>
+  <rect class="f-box-faint" x="226" y="52" width="222" height="46" rx="4"/>
+  <text class="f-mono" x="238" y="72">location /api/</text>
+  <text class="f-small f-muted" x="238" y="89">proxy to upstream devforge</text>
+  <rect class="f-box-faint" x="226" y="108" width="222" height="46" rx="4"/>
+  <text class="f-mono" x="238" y="128">location /</text>
+  <text class="f-small f-muted" x="238" y="145">files from the site/ folder</text>
+  <rect class="f-box-faint" x="226" y="164" width="222" height="46" rx="4"/>
+  <text class="f-mono" x="238" y="184">location /balanced/</text>
+  <text class="f-small f-muted" x="238" y="201">proxy to upstream demo_backends</text>
+  <g data-step="1">
+    <rect class="f-box" x="16" y="54" width="104" height="42" rx="8"/>
+    <text class="f-strong" x="68" y="80" text-anchor="middle">client</text>
+    <g>
+      <path class="f-arrow" d="M122 75 L216 75"/>
+      <polygon class="f-head" points="224,75 216,79.5 216,70.5"/>
+    </g>
+    <text class="f-mono" x="172" y="66" text-anchor="middle">GET /api/…</text>
+  </g>
+  <g data-step="2">
+    <rect class="f-box-accent" x="226" y="52" width="222" height="46" rx="4"/>
+    <text class="f-mono" x="238" y="72">location /api/</text>
+    <text class="f-small" x="238" y="89">proxy to upstream devforge</text>
+    <g>
+      <path class="f-arrow" d="M450 75 L490 75"/>
+      <polygon class="f-head" points="498,75 490,79.5 490,70.5"/>
+    </g>
+    <rect class="f-box-ok" x="500" y="54" width="124" height="42" rx="8"/>
+    <text class="f-small f-strong" x="562" y="80" text-anchor="middle">DevForge :8080</text>
+  </g>
+  <g data-step="3">
+    <rect class="f-box-accent" x="226" y="108" width="222" height="46" rx="4"/>
+    <text class="f-mono" x="238" y="128">location /</text>
+    <text class="f-small" x="238" y="145">files from the site/ folder</text>
+    <g>
+      <path class="f-arrow" d="M450 131 L490 131"/>
+      <polygon class="f-head" points="498,131 490,135.5 490,126.5"/>
+    </g>
+    <rect class="f-box-faint" x="500" y="110" width="124" height="42" rx="8"/>
+    <text class="f-small f-strong" x="562" y="136" text-anchor="middle">site/ on disk</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-accent" x="226" y="164" width="222" height="46" rx="4"/>
+    <text class="f-mono" x="238" y="184">location /balanced/</text>
+    <text class="f-small" x="238" y="201">proxy to upstream demo_backends</text>
+    <g>
+      <path class="f-arrow" d="M450 182 L490.1 177.0"/>
+      <polygon class="f-head" points="498,176 490.6,181.4 489.5,172.5"/>
+    </g>
+    <g>
+      <path class="f-arrow" d="M450 194 L490.5 209.2"/>
+      <polygon class="f-head" points="498,212 488.9,213.4 492.1,205.0"/>
+    </g>
+    <rect class="f-box-ok" x="500" y="160" width="124" height="30" rx="6"/>
+    <text class="f-small f-strong" x="562" y="180" text-anchor="middle">backend A :8091</text>
+    <rect class="f-box-ok" x="500" y="198" width="124" height="30" rx="6"/>
+    <text class="f-small f-strong" x="562" y="218" text-anchor="middle">backend B :8092</text>
+  </g>
+</svg>

@@ -85,14 +85,8 @@ So far your history lives on one computer. If the laptop is lost, so is the work
 
 ## How it works
 
-```text
-   your laptop                    remote (e.g. GitHub)               teammate's laptop
-  ┌───────────┐   git push       ┌───────────────────┐   git pull     ┌───────────┐
-  │ main      │ ───────────────▶ │ main              │ ─────────────▶ │ main      │
-  │ origin/   │ ◀─────────────── │                   │ ◀───────────── │           │
-  │   main    │ git fetch / pull └───────────────────┘   git push     └───────────┘
-  └───────────┘
-```
+![](media:git-github/remotes.svg)
+
 
 - **origin** is the conventional name for your main remote.
 - **origin/main** is your *local record* of where the remote's `main` branch was the last time you talked to it. It only changes when you fetch, pull or push.

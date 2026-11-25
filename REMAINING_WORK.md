@@ -52,7 +52,7 @@ These rules are why the existing work can be trusted. Every new feature must fol
 | Blueprint feature | Current state | Priority |
 |---|---|---|
 | Comprehensive beginner → advanced lessons for all 18 tracks | 21 beginner lessons on 10 tracks | P1 |
-| Pictures, diagrams and animations that explain each concept | ASCII diagrams in lessons; one interactive system map | P1 |
+| Pictures, diagrams and animations that explain each concept | ✅ SVG figures in every lesson and a step-through per track with lessons (2026-11-25); moving-element animations still to come | P1 |
 | Interactive simulations for every track | None | P1 |
 | Hands-on labs with verification | Lesson "Try it yourself" sections only; lab pages do not exist | P1 |
 | Quizzes (more question types, per-track assessments) | Per-lesson multiple-choice self-checks | P2 |

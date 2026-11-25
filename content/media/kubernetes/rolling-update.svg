@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250">
+  <!-- A simplified rolling update, from Services, rolling updates and rollback. -->
+  <rect class="f-box-accent" x="200" y="12" width="240" height="54" rx="8"/>
+  <text class="f-strong" x="320" y="35" text-anchor="middle">Service "web"</text>
+  <text class="f-small f-muted" x="320" y="55" text-anchor="middle">traffic to ready Pods, app=web</text>
+  <g>
+    <path class="f-arrow" d="M320 68 L320 84"/>
+    <polygon class="f-head" points="320,92 315.5,84 324.5,84"/>
+  </g>
+  <text class="f-small" x="16" y="128">old ReplicaSet</text>
+  <text class="f-small" x="16" y="200">new ReplicaSet</text>
+  <g data-until="3">
+    <rect class="f-box" x="180" y="100" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="218" y="127" text-anchor="middle">old</text>
+  </g>
+  <g data-until="3">
+    <rect class="f-box" x="270" y="100" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="308" y="127" text-anchor="middle">old</text>
+  </g>
+  <g data-until="3">
+    <rect class="f-box" x="360" y="100" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="398" y="127" text-anchor="middle">old</text>
+  </g>
+  <g data-until="2">
+    <rect class="f-box" x="450" y="100" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="488" y="127" text-anchor="middle">old</text>
+  </g>
+  <g data-until="2">
+    <rect class="f-box" x="540" y="100" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="578" y="127" text-anchor="middle">old</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <rect class="f-box-faint" x="180" y="172" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="218" y="199" text-anchor="middle">starting</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <rect class="f-box-faint" x="270" y="172" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="308" y="199" text-anchor="middle">starting</text>
+  </g>
+  <g data-step="3">
+    <rect class="f-box-ok" x="180" y="172" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="218" y="199" text-anchor="middle">new</text>
+  </g>
+  <g data-step="3">
+    <rect class="f-box-ok" x="270" y="172" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="308" y="199" text-anchor="middle">new</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <rect class="f-box-faint" x="360" y="172" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="398" y="199" text-anchor="middle">starting</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-ok" x="360" y="172" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="398" y="199" text-anchor="middle">new</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-ok" x="450" y="172" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="488" y="199" text-anchor="middle">new</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-ok" x="540" y="172" width="76" height="44" rx="6"/>
+    <text class="f-small f-strong" x="578" y="199" text-anchor="middle">new</text>
+  </g>
+  <text class="f-small f-muted" x="320" y="240" text-anchor="middle">simplified: the exact order depends on when Pods become ready</text>
+</svg>

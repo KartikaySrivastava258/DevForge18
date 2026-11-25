@@ -77,18 +77,8 @@ Applications that save data in their own files soon hit hard problems: two users
 
 ## How it works
 
-```text
- table: students
- ┌────┬────────────┬───────────────────┬────────────┐
- │ id │ name       │ email             │ study_year │   ← columns: name + type
- ├────┼────────────┼───────────────────┼────────────┤
- │  1 │ Asha Rao   │ asha@example.edu  │          2 │   ← one row per student
- │  2 │ Ravi Kumar │ ravi@example.edu  │          3 │
- └────┴────────────┴───────────────────┴────────────┘
-   ▲                       ▲                  ▲
- PRIMARY KEY            UNIQUE         CHECK (1 to 4)
- (identifies a row)  (no duplicates)  (allowed values)
-```
+![](media:postgresql/students-table.svg)
+
 
 - A **column type** (`integer`, `text`, `date`, `numeric`…) restricts what a column can hold.
 - A **primary key** uniquely identifies each row. Here PostgreSQL generates it automatically with `GENERATED ALWAYS AS IDENTITY`.

@@ -1,0 +1,4 @@
+alt: 'An app, Redis and a database. The app sends GET key to Redis. On a hit, Redis returns the cached value. On a miss, Redis returns nil, the app loads the value from the database, then stores it in Redis with SET key value EX 60.'
+caption: 'Cache-aside: the app checks the cache first and fills it on a miss.'
+credit: DevForge 18 content team
+licence: project-content

@@ -85,14 +85,8 @@ Running containers by hand on several servers means someone must restart crashed
 
 ## How it works
 
-```text
- you ── kubectl ──▶ API server ──▶ stored desired state: Deployment "web", replicas: 3
-                                        │
-                     controllers ◀──────┘  compare desired vs actual, fix differences
-                          │
-        ┌─────────────────┼─────────────────┐
-     Pod web-…         Pod web-…         Pod web-…      (containers, scheduled on nodes)
-```
+![](media:kubernetes/desired-state.svg)
+
 
 - A **Deployment** manages a **ReplicaSet**, which keeps the requested number of **Pods** running.
 - Pods carry **labels** (here `app=web`); controllers and Services find Pods through label **selectors**, not by name.

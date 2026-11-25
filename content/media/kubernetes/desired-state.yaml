@@ -1,0 +1,4 @@
+alt: 'You send a request with kubectl to the API server, which stores the desired state: Deployment web with 3 replicas. Controllers watch it, compare desired with actual state and fix differences, which keeps three Pods named web-something, labelled app=web, running on nodes.'
+caption: 'You declare what you want; controllers keep making it true. That is why a deleted Pod comes back.'
+credit: DevForge 18 content team
+licence: project-content

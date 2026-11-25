@@ -1,0 +1,6 @@
+figure: image-and-containers.svg
+title: 'From one image to two containers'
+steps:
+  - caption: 'An image is a read-only stack of layers plus configuration such as the default command. You get one with docker build or docker pull.'
+  - caption: 'docker run creates container web1: a new writable layer on top of the image''s read-only layers, started as an isolated process with its own network and hostname.'
+  - caption: 'A second docker run creates web2 from the same image. Each container writes only to its own layer, so the image is shared and never changes.'

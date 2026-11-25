@@ -77,15 +77,8 @@ Some data is read far more often than it changes, or must be updated by many ser
 
 ## How it works
 
-```text
- key                       type         value
- greeting                  string       "Hello, Redis"
- page:views                string       12            ← INCR treats it as a number
- student:1                 hash         name → "Asha Rao", email → …, year → "2"
- jobs                      list         ["email:reminder"]              (ordered)
- course:CS101:students     set          {asha, meera}                   (unique)
- quiz:leaderboard          sorted set   ravi 92, asha 88, meera 85      (ordered by score)
-```
+![](media:redis/data-types.svg)
+
 
 - Every value lives under a **key**. A naming convention such as `object:id:field` (`course:CS101:students`) keeps keys readable.
 - Each key holds one **type**, and each type has its own commands.

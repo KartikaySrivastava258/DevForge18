@@ -1,0 +1,4 @@
+alt: 'A request runs INCR ratelimit:asha, which returns a count. If the count is 1, EXPIRE ratelimit:asha 60 starts a 60-second window. If the count is 3 or less, the request is allowed. If it is more than 3, it is rejected with 429 Too Many Requests.'
+caption: 'A fixed-window limiter: one counter per user, which disappears when its window expires.'
+credit: DevForge 18 content team
+licence: project-content

@@ -77,16 +77,9 @@ Copying a student's name and email onto every course record wastes space and, wo
 
 ## How it works
 
-```text
- students              enrolments                    courses
- ┌────┬────────────┐   ┌────────────┬─────────────┐   ┌───────┬────────────────────┐
- │ id │ name       │◀──│ student_id │ course_code │──▶│ code  │ title              │
- ├────┼────────────┤   ├────────────┼─────────────┤   ├───────┼────────────────────┤
- │  1 │ Asha Rao   │   │          1 │ CS101       │   │ CS101 │ Programming Basics │
- │  2 │ Ravi Kumar │   │          1 │ DB201       │   │ DB201 │ Database Systems   │
- └────┴────────────┘   └────────────┴─────────────┘   └───────┴────────────────────┘
-                        PRIMARY KEY (student_id, course_code): no duplicate pairs
+```diagram steps=postgresql/join
 ```
+
 
 - A **foreign key** (`REFERENCES`) says a column's value must exist in another table's key.
 - A **linking table** such as `enrolments` turns a many-to-many relationship into two one-to-many relationships.

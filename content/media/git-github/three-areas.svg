@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 236">
+  <!-- Git's three areas, from What Git is, and setting it up. -->
+  <rect class="f-box" x="16" y="16" width="180" height="76" rx="8"/>
+  <text class="f-strong" x="106" y="42" text-anchor="middle">Working tree</text>
+  <text class="f-small f-muted" x="106" y="62" text-anchor="middle">files you edit</text>
+  <line class="f-line f-dashed" x1="106" y1="92" x2="106" y2="226"/>
+  <rect class="f-box" x="230" y="16" width="180" height="76" rx="8"/>
+  <text class="f-strong" x="320" y="42" text-anchor="middle">Staging area</text>
+  <text class="f-small f-muted" x="320" y="62" text-anchor="middle">the next commit,</text>
+  <text class="f-small f-muted" x="320" y="78" text-anchor="middle">being assembled</text>
+  <line class="f-line f-dashed" x1="320" y1="92" x2="320" y2="226"/>
+  <rect class="f-box" x="444" y="16" width="180" height="76" rx="8"/>
+  <text class="f-strong" x="534" y="42" text-anchor="middle">Repository (.git)</text>
+  <text class="f-small f-muted" x="534" y="62" text-anchor="middle">every commit,</text>
+  <text class="f-small f-muted" x="534" y="78" text-anchor="middle">permanently</text>
+  <line class="f-line f-dashed" x1="534" y1="92" x2="534" y2="226"/>
+  <g>
+    <path class="f-arrow" d="M106 130 L312 130"/>
+    <polygon class="f-head" points="320,130 312,134.5 312,125.5"/>
+  </g>
+  <text class="f-mono" x="213" y="121" text-anchor="middle">git add</text>
+  <g>
+    <path class="f-arrow" d="M320 170 L526 170"/>
+    <polygon class="f-head" points="534,170 526,174.5 526,165.5"/>
+  </g>
+  <text class="f-mono" x="427" y="161" text-anchor="middle">git commit</text>
+  <g>
+    <path class="f-arrow" d="M534 210 L114 210"/>
+    <polygon class="f-head" points="106,210 114,205.5 114,214.5"/>
+  </g>
+  <text class="f-mono" x="213" y="201" text-anchor="middle">git restore / git switch</text>
+</svg>

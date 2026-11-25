@@ -1,0 +1,4 @@
+alt: 'A table of six Redis keys. greeting is a string holding Hello, Redis. page:views is a string holding 12, which INCR treats as a number. student:1 is a hash with name, email and year fields. jobs is an ordered list with one job. course:CS101:students is a set of unique members asha and meera. quiz:leaderboard is a sorted set ordered by score: ravi 92, asha 88, meera 85.'
+caption: 'Every value lives under a key, and each key holds one type with its own commands.'
+credit: DevForge 18 content team
+licence: project-content

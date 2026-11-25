@@ -1,0 +1,4 @@
+alt: 'Nested boxes showing the contexts of nginx.conf. The main context holds pid and error_log for the whole process. Inside it are events, for connection handling, and http, for types, logs and defaults. Inside http is a server block for one virtual server, and inside that a location block with rules for URLs that start with a slash.'
+caption: 'Contexts nest, and inner blocks inherit settings from the blocks around them.'
+credit: DevForge 18 content team
+licence: project-content

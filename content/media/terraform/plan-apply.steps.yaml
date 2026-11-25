@@ -1,0 +1,6 @@
+figure: plan-apply.svg
+title: 'From configuration to real resources'
+steps:
+  - caption: 'Terraform works with three views of your infrastructure: the configuration in main.tf (what you want), the state file (what Terraform built last time) and the real world (what actually exists).'
+  - caption: 'terraform plan compares them and shows what it would change, without changing anything: Plan: 1 to add, 0 to change, 0 to destroy.'
+  - caption: 'terraform apply carries out the plan through a provider — here hashicorp/local, which creates a file — and records the result in terraform.tfstate.'

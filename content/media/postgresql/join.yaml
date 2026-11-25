@@ -1,0 +1,4 @@
+alt: 'Three tables: students (1 Asha Rao, 2 Ravi Kumar), enrolments (1 CS101, 1 DB201, 2 DB201) and courses (CS101 Programming Basics, DB201 Database Systems). Arrows show each enrolment''s student_id pointing to a student and its course_code pointing to a course. Below, the join result pairs each student''s name with a course title.'
+caption: 'A linking table turns many-to-many into two one-to-many relationships, and a JOIN follows those links.'
+credit: DevForge 18 content team
+licence: project-content

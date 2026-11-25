@@ -1,0 +1,4 @@
+alt: 'Two panels side by side. The request has a request line, POST /api/auth/login HTTP/1.1, then headers Host, Content-Type application/json and X-DevForge-CSRF, then a JSON body with an email and password. The response has a status line, HTTP/1.1 401 Unauthorized, headers Content-Type and X-Request-Id, and a JSON body with the error code invalid_credentials.'
+caption: 'Every request and response has the same three parts: a first line, headers, and an optional body.'
+credit: DevForge 18 content team
+licence: project-content

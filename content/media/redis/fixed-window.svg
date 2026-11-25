@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 210">
+  <!-- A fixed-window rate limiter, from Caching and rate limiting with Redis. -->
+  <text class="f-small f-muted" x="16" y="22">limit: 3 requests per 60 seconds</text>
+  <rect class="f-box" x="16" y="82" width="76" height="44" rx="8"/>
+  <text class="f-strong" x="54" y="109" text-anchor="middle">request</text>
+  <g>
+    <path class="f-arrow" d="M94 104 L250 104"/>
+    <polygon class="f-head" points="258,104 250,108.5 250,99.5"/>
+  </g>
+  <text class="f-mono" x="176" y="95" text-anchor="middle">INCR ratelimit:asha</text>
+  <rect class="f-box-accent" x="260" y="82" width="96" height="44" rx="8"/>
+  <text class="f-strong" x="308" y="109" text-anchor="middle">count</text>
+  <g>
+    <path class="f-arrow" d="M358 104 L380 104 L380 58 L390 58"/>
+    <polygon class="f-head" points="398,58 390,62.5 390,53.5"/>
+  </g>
+  <rect class="f-box" x="400" y="36" width="224" height="46" rx="8"/>
+  <text class="f-small f-strong" x="512" y="55" text-anchor="middle">count = 1: start the window</text>
+  <text class="f-mono" x="512" y="73" text-anchor="middle">EXPIRE ratelimit:asha 60</text>
+  <g>
+    <path class="f-arrow" d="M358 104 L380 104 L380 120 L390 120"/>
+    <polygon class="f-head" points="398,120 390,124.5 390,115.5"/>
+  </g>
+  <rect class="f-box-ok" x="400" y="98" width="224" height="40" rx="8"/>
+  <text class="f-small f-strong" x="512" y="123" text-anchor="middle">count ≤ 3: allow</text>
+  <g>
+    <path class="f-arrow" d="M358 104 L380 104 L380 174 L390 174"/>
+    <polygon class="f-head" points="398,174 390,178.5 390,169.5"/>
+  </g>
+  <rect class="f-box-danger" x="400" y="152" width="224" height="46" rx="8"/>
+  <text class="f-small f-strong" x="512" y="171" text-anchor="middle">count &gt; 3: reject</text>
+  <text class="f-small" x="512" y="189" text-anchor="middle">429 Too Many Requests</text>
+</svg>

@@ -87,23 +87,9 @@ Before containers, "installing an application" meant changing a machine: adding 
 
 ## How it works
 
-```text
-              docker build / docker pull
-                         │
-                         ▼
- ┌──────────────── IMAGE  nginx:1.27-alpine (read-only) ──────────┐
- │  layer 3: nginx configuration                                   │
- │  layer 2: nginx binaries                                        │
- │  layer 1: Alpine Linux base files                               │
- │  config:  default command, exposed port, environment variables  │
- └────────────────────────────────────────────────────────────────┘
-          │ docker run                       │ docker run
-          ▼                                  ▼
- ┌──────── container web1 ────────┐  ┌──────── container web2 ────────┐
- │ writable layer (web1 only)     │  │ writable layer (web2 only)     │
- │ own process, network, hostname │  │ own process, network, hostname │
- └────────────────────────────────┘  └────────────────────────────────┘
+```diagram steps=docker/image-and-containers
 ```
+
 
 Step by step, when you run `docker run nginx:1.27-alpine`:
 

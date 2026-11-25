@@ -1,0 +1,4 @@
+alt: 'Three columns: the working tree, the staging area and the repository. An arrow labelled git add goes from the working tree to the staging area, git commit goes from the staging area to the repository, and git restore or git switch bring files from the repository back into the working tree.'
+caption: 'Git''s three areas. A change moves from your files to the staging area with git add, and into the history with git commit.'
+credit: DevForge 18 content team
+licence: project-content

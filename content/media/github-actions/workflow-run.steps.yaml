@@ -1,0 +1,8 @@
+figure: workflow-run.svg
+title: 'What happens when you push'
+steps:
+  - caption: 'A push (or another event such as a pull request or a schedule) starts the workflow defined in .github/workflows/check.yml.'
+  - caption: 'GitHub runs the job named check on a fresh runner: a new ubuntu-latest virtual machine with nothing left over from earlier runs.'
+  - caption: 'Step 1 uses a reusable action, actions/checkout pinned to v7, to copy the repository onto the runner.'
+  - caption: 'Step 2 runs a shell command, bash scripts/check-notes.sh, exactly as you would in your own terminal.'
+  - caption: 'The exit code decides the result. 0 means success; any other code fails the step, and with it the job.'

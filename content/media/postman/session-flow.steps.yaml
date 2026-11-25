@@ -1,0 +1,8 @@
+figure: session-flow.svg
+title: 'A session, request by request'
+steps:
+  - caption: 'Registering signs you in. The response is 201 Created with a Set-Cookie header: df_session holds a random token, marked HttpOnly and SameSite=Lax.'
+  - caption: 'The client sends the cookie back with every request. GET /api/auth/me returns 200 and the user, because the server finds the session that token belongs to.'
+  - caption: 'Chained requests keep working the same way: adding a bookmark with the cookie returns 200.'
+  - caption: 'Signing out deletes the session on the server and clears the cookie in the client.'
+  - caption: 'Replaying the old token now gets 401: the server no longer has a session for it. Browsers, Postman''s cookie jar and curl''s cookie file all just store and resend the cookie; the server decides what it means.'

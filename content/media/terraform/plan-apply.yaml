@@ -1,0 +1,4 @@
+alt: 'main.tf (the desired state), terraform.tfstate (what Terraform built) and the real world all feed terraform plan, which compares them and reports Plan: 1 to add, 0 to change, 0 to destroy. terraform apply then carries out the plan through the hashicorp/local provider, which creates the file, and records the result in the state.'
+caption: 'Plan compares; apply acts through a provider and records what it did in the state.'
+credit: DevForge 18 content team
+licence: project-content

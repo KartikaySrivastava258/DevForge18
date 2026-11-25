@@ -1,0 +1,4 @@
+alt: 'Four boxes from top to bottom: variables.tf declares var.course_code and var.student_count, typed and validated with defaults; main.tf uses them in a local_file resource called summary; terraform apply records every attribute of the managed resource in terraform.tfstate; and outputs report summary_file = ./cs101.txt.'
+caption: 'Values flow from variables into resources; apply records the result in the state, and outputs report it back.'
+credit: DevForge 18 content team
+licence: project-content

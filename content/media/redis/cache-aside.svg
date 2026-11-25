@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 262">
+  <!-- Cache-aside reads, from Caching and rate limiting with Redis. -->
+  <rect class="f-box" x="16" y="16" width="130" height="230" rx="8"/>
+  <text class="f-strong" x="81" y="126" text-anchor="middle">App</text>
+  <rect class="f-box-accent" x="470" y="16" width="154" height="128" rx="8"/>
+  <text class="f-strong" x="547" y="72" text-anchor="middle">Redis</text>
+  <text class="f-small f-muted" x="547" y="92" text-anchor="middle">cache in memory</text>
+  <rect class="f-box" x="470" y="164" width="154" height="82" rx="8"/>
+  <text class="f-strong" x="547" y="200" text-anchor="middle">Database</text>
+  <text class="f-small f-muted" x="547" y="220" text-anchor="middle">source of truth</text>
+  <g data-step="1">
+    <g>
+      <path class="f-arrow" d="M148 40 L460 40"/>
+      <polygon class="f-head" points="468,40 460,44.5 460,35.5"/>
+    </g>
+    <text class="f-mono" x="308" y="31" text-anchor="middle">GET key</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <g>
+      <path class="f-arrow-accent" d="M468 70 L156 70"/>
+      <polygon class="f-head-accent" points="148,70 156,65.5 156,74.5"/>
+    </g>
+    <text class="f-small f-ok" x="308" y="61" text-anchor="middle">hit: the cached value</text>
+  </g>
+  <g data-step="3">
+    <g>
+      <path class="f-arrow f-dashed" d="M468 70 L156 70"/>
+      <polygon class="f-head" points="148,70 156,65.5 156,74.5"/>
+    </g>
+    <text class="f-small f-warn" x="308" y="61" text-anchor="middle">miss: (nil)</text>
+    <g>
+      <path class="f-arrow" d="M148 186 L460 186"/>
+      <polygon class="f-head" points="468,186 460,190.5 460,181.5"/>
+    </g>
+    <text class="f-small" x="308" y="177" text-anchor="middle">load it from the database</text>
+    <g>
+      <path class="f-arrow" d="M468 220 L156 220"/>
+      <polygon class="f-head" points="148,220 156,215.5 156,224.5"/>
+    </g>
+    <text class="f-small" x="308" y="211" text-anchor="middle">value</text>
+  </g>
+  <g data-step="4">
+    <g>
+      <path class="f-arrow-accent" d="M148 118 L460 118"/>
+      <polygon class="f-head-accent" points="468,118 460,122.5 460,113.5"/>
+    </g>
+    <text class="f-mono" x="308" y="109" text-anchor="middle">SET key value EX 60</text>
+  </g>
+</svg>

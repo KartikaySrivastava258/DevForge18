@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 176">
+  <!-- Branch, pull request, checks and merge, from Pull requests, required checks and safe workflows. -->
+  <line class="f-line-accent" x1="24" y1="46" x2="616" y2="46"/>
+  <text class="f-mono" x="24" y="34">main</text>
+  <circle class="f-dot-accent" cx="70" cy="46" r="6"/>
+  <circle class="f-dot-accent" cx="572" cy="46" r="6"/>
+  <g>
+    <path class="f-arrow" d="M70 52 L70 104 L96.8 116.6"/>
+    <polygon class="f-head" points="104,120 94.9,120.6 98.7,112.5"/>
+  </g>
+  <circle class="f-dot" cx="112" cy="122" r="6"/>
+  <text class="f-mono" x="112" y="150" text-anchor="middle">improve-readme</text>
+  <g>
+    <path class="f-arrow" d="M120 122 L170 122"/>
+    <polygon class="f-head" points="178,122 170,126.5 170,117.5"/>
+  </g>
+  <text class="f-small f-muted" x="149" y="113" text-anchor="middle">push</text>
+  <rect class="f-box" x="180" y="104" width="112" height="36" rx="8"/>
+  <text class="f-small f-strong" x="236" y="127" text-anchor="middle">pull request</text>
+  <g>
+    <path class="f-arrow" d="M294 122 L310 122"/>
+    <polygon class="f-head" points="318,122 310,126.5 310,117.5"/>
+  </g>
+  <rect class="f-box-ok" x="320" y="104" width="112" height="36" rx="8"/>
+  <text class="f-small f-strong" x="376" y="127" text-anchor="middle">CI checks ✓</text>
+  <text class="f-small f-muted" x="376" y="158" text-anchor="middle">required checks must pass</text>
+  <g>
+    <path class="f-arrow" d="M434 122 L450 122"/>
+    <polygon class="f-head" points="458,122 450,126.5 450,117.5"/>
+  </g>
+  <rect class="f-box-ok" x="460" y="104" width="86" height="36" rx="8"/>
+  <text class="f-small f-strong" x="503" y="127" text-anchor="middle">review ✓</text>
+  <g>
+    <path class="f-arrow" d="M548 122 L572 122 L572 62"/>
+    <polygon class="f-head" points="572,54 576.5,62 567.5,62"/>
+  </g>
+  <text class="f-small f-muted" x="582" y="92">merge</text>
+</svg>

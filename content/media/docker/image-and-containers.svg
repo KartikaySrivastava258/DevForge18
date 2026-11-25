@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 356">
+  <!-- One read-only image, two containers, from Images vs Containers. -->
+  <g data-step="1">
+    <g>
+      <path class="f-arrow" d="M320 4 L320 30"/>
+      <polygon class="f-head" points="320,38 315.5,30 324.5,30"/>
+    </g>
+    <text class="f-mono" x="330" y="26">docker build / docker pull</text>
+    <rect class="f-box" x="100" y="40" width="440" height="172" rx="8"/>
+    <text class="f-strong" x="320" y="64" text-anchor="middle">Image nginx:1.27-alpine (read-only)</text>
+    <rect class="f-box-faint" x="116" y="76" width="408" height="26" rx="4"/>
+    <text class="f-small" x="130" y="94">layer 3: nginx configuration</text>
+    <rect class="f-box-faint" x="116" y="108" width="408" height="26" rx="4"/>
+    <text class="f-small" x="130" y="126">layer 2: nginx binaries</text>
+    <rect class="f-box-faint" x="116" y="140" width="408" height="26" rx="4"/>
+    <text class="f-small" x="130" y="158">layer 1: Alpine Linux base files</text>
+    <text class="f-small f-muted" x="320" y="198" text-anchor="middle">config: default command, exposed port, environment variables</text>
+  </g>
+  <g data-step="2">
+    <g>
+      <path class="f-arrow" d="M170 214 L170 258"/>
+      <polygon class="f-head" points="170,266 165.5,258 174.5,258"/>
+    </g>
+    <text class="f-mono" x="180" y="245">docker run</text>
+    <rect class="f-box-accent" x="40" y="268" width="260" height="80" rx="8"/>
+    <text class="f-strong" x="170" y="292" text-anchor="middle">container web1</text>
+    <text class="f-small" x="170" y="314" text-anchor="middle">writable layer (web1 only)</text>
+    <text class="f-small f-muted" x="170" y="334" text-anchor="middle">own process, network, hostname</text>
+  </g>
+  <g data-step="3">
+    <g>
+      <path class="f-arrow" d="M470 214 L470 258"/>
+      <polygon class="f-head" points="470,266 465.5,258 474.5,258"/>
+    </g>
+    <text class="f-mono" x="480" y="245">docker run</text>
+    <rect class="f-box-accent" x="340" y="268" width="260" height="80" rx="8"/>
+    <text class="f-strong" x="470" y="292" text-anchor="middle">container web2</text>
+    <text class="f-small" x="470" y="314" text-anchor="middle">writable layer (web2 only)</text>
+    <text class="f-small f-muted" x="470" y="334" text-anchor="middle">own process, network, hostname</text>
+  </g>
+</svg>

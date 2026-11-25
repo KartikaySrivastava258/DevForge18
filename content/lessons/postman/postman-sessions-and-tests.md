@@ -85,14 +85,9 @@ HTTP does not remember anything between requests. Without sessions, you would se
 
 ## How it works
 
-```text
- 1. POST /api/auth/register  ──▶  201 Created
-                                  Set-Cookie: df_session=<random token>; HttpOnly; SameSite=Lax
- 2. GET  /api/auth/me        ──▶  Cookie: df_session=<token>   →  200 {"user":{…}}
- 3. PUT  /api/me/bookmarks/… ──▶  Cookie: df_session=<token>   →  200 {"bookmarked":true}
- 4. POST /api/auth/logout    ──▶  session deleted on the server, cookie cleared
- 5. GET  /api/me/bookmarks   ──▶  old token is now meaningless →  401
+```diagram steps=postman/session-flow
 ```
+
 
 The client's job is to keep the cookie and send it back. Browsers do this automatically; Postman keeps a **cookie jar** per domain; with curl you choose a file to store cookies in.
 

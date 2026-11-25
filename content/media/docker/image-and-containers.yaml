@@ -1,0 +1,4 @@
+alt: 'An image, nginx:1.27-alpine, drawn as a stack of three read-only layers plus configuration. Two arrows labelled docker run lead from it to two containers, web1 and web2, each with its own writable layer, process, network and hostname.'
+caption: 'One read-only image can start many containers. Each container adds only its own writable layer.'
+credit: DevForge 18 content team
+licence: project-content

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 262">
+  <!-- Keys and their types, from Keys, values and Redis data structures. -->
+  <text class="f-small f-muted" x="16" y="22">key</text>
+  <text class="f-small f-muted" x="196" y="22">type</text>
+  <text class="f-small f-muted" x="290" y="22">value</text>
+  <line class="f-line" x1="16" y1="34" x2="624" y2="34"/>
+  <text class="f-mono" x="16" y="57">greeting</text>
+  <rect class="f-box-faint" x="196" y="41" width="86" height="24" rx="12"/>
+  <text class="f-small" x="239" y="57" text-anchor="middle">string</text>
+  <rect class="f-box-accent" x="290" y="40" width="120" height="26" rx="4"/>
+  <text class="f-small f-mono" x="350" y="57" text-anchor="middle">"Hello, Redis"</text>
+  <line class="f-line" x1="16" y1="71" x2="624" y2="71"/>
+  <text class="f-mono" x="16" y="94">page:views</text>
+  <rect class="f-box-faint" x="196" y="78" width="86" height="24" rx="12"/>
+  <text class="f-small" x="239" y="94" text-anchor="middle">string</text>
+  <rect class="f-box-accent" x="290" y="77" width="40" height="26" rx="4"/>
+  <text class="f-small f-mono" x="310" y="94" text-anchor="middle">12</text>
+  <text class="f-small f-muted" x="624" y="94" text-anchor="end">INCR treats it as a number</text>
+  <line class="f-line" x1="16" y1="108" x2="624" y2="108"/>
+  <text class="f-mono" x="16" y="131">student:1</text>
+  <rect class="f-box-faint" x="196" y="115" width="86" height="24" rx="12"/>
+  <text class="f-small" x="239" y="131" text-anchor="middle">hash</text>
+  <rect class="f-box-accent" x="290" y="114" width="132" height="26" rx="4"/>
+  <text class="f-small f-mono" x="356" y="131" text-anchor="middle">name → Asha Rao</text>
+  <rect class="f-box-accent" x="428" y="114" width="84" height="26" rx="4"/>
+  <text class="f-small f-mono" x="470" y="131" text-anchor="middle">email → …</text>
+  <rect class="f-box-accent" x="518" y="114" width="76" height="26" rx="4"/>
+  <text class="f-small f-mono" x="556" y="131" text-anchor="middle">year → 2</text>
+  <line class="f-line" x1="16" y1="145" x2="624" y2="145"/>
+  <text class="f-mono" x="16" y="168">jobs</text>
+  <rect class="f-box-faint" x="196" y="152" width="86" height="24" rx="12"/>
+  <text class="f-small" x="239" y="168" text-anchor="middle">list</text>
+  <rect class="f-box-accent" x="290" y="151" width="150" height="26" rx="4"/>
+  <text class="f-small f-mono" x="365" y="168" text-anchor="middle">"email:reminder"</text>
+  <text class="f-small f-muted" x="624" y="168" text-anchor="end">ordered</text>
+  <line class="f-line" x1="16" y1="182" x2="624" y2="182"/>
+  <text class="f-mono" x="16" y="205">course:CS101:students</text>
+  <rect class="f-box-faint" x="196" y="189" width="86" height="24" rx="12"/>
+  <text class="f-small" x="239" y="205" text-anchor="middle">set</text>
+  <rect class="f-box-accent" x="290" y="188" width="52" height="26" rx="4"/>
+  <text class="f-small f-mono" x="316" y="205" text-anchor="middle">asha</text>
+  <rect class="f-box-accent" x="348" y="188" width="60" height="26" rx="4"/>
+  <text class="f-small f-mono" x="378" y="205" text-anchor="middle">meera</text>
+  <text class="f-small f-muted" x="624" y="205" text-anchor="end">unique members</text>
+  <line class="f-line" x1="16" y1="219" x2="624" y2="219"/>
+  <text class="f-mono" x="16" y="242">quiz:leaderboard</text>
+  <rect class="f-box-faint" x="196" y="226" width="86" height="24" rx="12"/>
+  <text class="f-small" x="239" y="242" text-anchor="middle">sorted set</text>
+  <rect class="f-box-accent" x="290" y="225" width="70" height="26" rx="4"/>
+  <text class="f-small f-mono" x="325" y="242" text-anchor="middle">ravi 92</text>
+  <rect class="f-box-accent" x="366" y="225" width="70" height="26" rx="4"/>
+  <text class="f-small f-mono" x="401" y="242" text-anchor="middle">asha 88</text>
+  <rect class="f-box-accent" x="442" y="225" width="78" height="26" rx="4"/>
+  <text class="f-small f-mono" x="481" y="242" text-anchor="middle">meera 85</text>
+  <text class="f-small f-muted" x="624" y="242" text-anchor="end">ordered by score</text>
+  <line class="f-line" x1="16" y1="256" x2="624" y2="256"/>
+</svg>

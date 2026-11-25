@@ -1,0 +1,4 @@
+alt: 'A sequence between a client and the DevForge server. 1: register returns 201 Created with a Set-Cookie header holding a df_session token. 2 and 3: requests that send the cookie back succeed with 200. 4: logout deletes the session on the server and clears the cookie. 5: a request with the old token gets 401.'
+caption: 'The client keeps the session cookie and sends it back; the server decides what the token means.'
+credit: DevForge 18 content team
+licence: project-content

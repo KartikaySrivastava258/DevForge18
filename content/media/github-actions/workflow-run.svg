@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 264">
+  <!-- How a workflow runs, from Your first workflow. -->
+  <g data-step="1">
+    <rect class="f-box" x="16" y="30" width="150" height="64" rx="8"/>
+    <text class="f-strong" x="91" y="56" text-anchor="middle">push</text>
+    <text class="f-small f-muted" x="91" y="76" text-anchor="middle">or another event</text>
+    <g>
+      <path class="f-arrow" d="M168 62 L186 62"/>
+      <polygon class="f-head" points="194,62 186,66.5 186,57.5"/>
+    </g>
+    <rect class="f-box-faint" x="196" y="12" width="428" height="176" rx="8"/>
+    <text class="f-mono" x="210" y="32">.github/workflows/check.yml</text>
+  </g>
+  <g data-step="2">
+    <rect class="f-box" x="212" y="44" width="396" height="132" rx="8"/>
+    <text class="f-strong" x="226" y="66">job "check"</text>
+    <text class="f-small f-muted" x="594" y="66" text-anchor="end">fresh runner: ubuntu-latest</text>
+  </g>
+  <rect class="f-box-accent" x="228" y="80" width="364" height="38" rx="4" data-step="3"/>
+  <text class="f-mono" x="242" y="104" data-step="3">step 1   uses: actions/checkout@v7</text>
+  <rect class="f-box-accent" x="228" y="126" width="364" height="38" rx="4" data-step="4"/>
+  <text class="f-mono" x="242" y="150" data-step="4">step 2   run: bash scripts/check-notes.sh</text>
+  <g data-step="5">
+    <rect class="f-box-ok" x="196" y="206" width="206" height="46" rx="8"/>
+    <text class="f-small f-strong" x="299" y="234" text-anchor="middle">exit code 0 → success ✓</text>
+    <rect class="f-box-danger" x="418" y="206" width="206" height="46" rx="8"/>
+    <text class="f-small f-strong" x="521" y="234" text-anchor="middle">non-zero → failure ✗</text>
+  </g>
+</svg>

@@ -1,0 +1,7 @@
+figure: rolling-update.svg
+title: 'A rolling update, step by step (simplified)'
+steps:
+  - caption: 'The Service web sends traffic only to ready Pods labelled app=web. Five Pods of the old version are serving.'
+  - caption: 'kubectl set image starts a rolling update. A new ReplicaSet creates Pods with the new image. They are not ready yet, so they get no traffic.'
+  - caption: 'As new Pods become ready, Kubernetes removes old ones. By default at most 25% of the Pods — here 1 of 5 — may be unavailable, so users keep being served.'
+  - caption: 'When all five Pods run the new version, the rollout is complete. The old ReplicaSet is scaled to zero but kept, so kubectl rollout undo can return to it.'

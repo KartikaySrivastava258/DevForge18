@@ -77,14 +77,9 @@ Checks that depend on people remembering to run them get skipped, especially und
 
 ## How it works
 
-```text
- event (push, pull_request, schedule …)
-   └─▶ workflow  .github/workflows/check.yml
-         └─▶ job "check"  ── runs on a fresh runner (ubuntu-latest)
-               ├─ step 1: uses: actions/checkout@v7      (a reusable action)
-               └─ step 2: run: bash scripts/check-notes.sh (a shell command)
-                     exit code 0 → ✓ success     non-zero → ✗ failure
+```diagram steps=github-actions/workflow-run
 ```
+
 
 - An **event** starts a workflow.
 - A **job** is a set of steps that runs on one **runner** — a fresh virtual machine provided by GitHub (or your own server).

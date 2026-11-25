@@ -1,0 +1,4 @@
+alt: 'Three boxes: your laptop, a remote such as GitHub, and a teammate''s laptop, each with a main branch; your laptop also has origin/main. Arrows show git push sending commits from a laptop to the remote, and git fetch or git pull bringing them back down.'
+caption: 'Everyone shares work through the remote. origin/main is your copy''s record of where the remote''s main was when you last fetched, pulled or pushed.'
+credit: DevForge 18 content team
+licence: project-content

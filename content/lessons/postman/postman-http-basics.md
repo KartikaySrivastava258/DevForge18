@@ -85,16 +85,8 @@ Frontends, mobile apps, scripts and other services all talk to backends over HTT
 
 ## How it works
 
-```text
- REQUEST                                     RESPONSE
- POST /api/auth/login HTTP/1.1               HTTP/1.1 401 Unauthorized
- Host: localhost:8080                        Content-Type: application/json
- Content-Type: application/json              X-Request-Id: 75a0fe9a-…
- X-DevForge-CSRF: 1
-                                             {"error":{"code":"invalid_credentials",…}}
- {"email":"asha@example.edu","password":"…"}
- └ method ─┘└──── path ─────┘                └ status code ┘
-```
+![](media:postman/http-anatomy.svg)
+
 
 - **Method**: `GET` reads, `POST` creates or performs an action, `PUT` replaces or sets, `PATCH` changes part of something, `DELETE` removes.
 - **URL**: scheme, host and port (`http://localhost:8080`), path (`/api/tracks/docker`) and optional query string (`?q=k8s&limit=1`).

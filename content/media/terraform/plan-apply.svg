@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 268">
+  <!-- Plan and apply, from Your first configuration. -->
+  <g data-step="1">
+    <rect class="f-box-accent" x="16" y="16" width="184" height="52" rx="8"/>
+    <text class="f-mono" x="108" y="38" text-anchor="middle">main.tf</text>
+    <text class="f-small f-muted" x="108" y="57" text-anchor="middle">desired state</text>
+    <rect class="f-box" x="16" y="100" width="184" height="52" rx="8"/>
+    <text class="f-mono" x="108" y="122" text-anchor="middle">terraform.tfstate</text>
+    <text class="f-small f-muted" x="108" y="141" text-anchor="middle">what Terraform built</text>
+    <rect class="f-box" x="16" y="200" width="184" height="52" rx="8"/>
+    <text class="f-mono" x="108" y="222" text-anchor="middle">the real world</text>
+    <text class="f-small f-muted" x="108" y="241" text-anchor="middle">what actually exists</text>
+  </g>
+  <g data-step="2">
+    <g>
+      <path class="f-arrow" d="M202 42 L230 42 L230 112 L250 112"/>
+      <polygon class="f-head" points="258,112 250,116.5 250,107.5"/>
+    </g>
+    <g>
+      <path class="f-arrow" d="M202 126 L250 126"/>
+      <polygon class="f-head" points="258,126 250,130.5 250,121.5"/>
+    </g>
+    <g>
+      <path class="f-arrow" d="M202 226 L230 226 L230 140 L250 140"/>
+      <polygon class="f-head" points="258,140 250,144.5 250,135.5"/>
+    </g>
+    <rect class="f-box" x="260" y="98" width="150" height="56" rx="8"/>
+    <text class="f-mono" x="335" y="122" text-anchor="middle">terraform plan</text>
+    <text class="f-small f-muted" x="335" y="142" text-anchor="middle">compare</text>
+    <g>
+      <path class="f-arrow" d="M412 126 L430 126"/>
+      <polygon class="f-head" points="438,126 430,130.5 430,121.5"/>
+    </g>
+    <rect class="f-box-faint" x="440" y="96" width="184" height="60" rx="8"/>
+    <text class="f-small" x="532" y="120" text-anchor="middle">Plan: 1 to add,</text>
+    <text class="f-small" x="532" y="138" text-anchor="middle">0 to change, 0 to destroy.</text>
+  </g>
+  <g data-step="3">
+    <g>
+      <path class="f-arrow" d="M335 156 L335 186"/>
+      <polygon class="f-head" points="335,194 330.5,186 339.5,186"/>
+    </g>
+    <rect class="f-box-accent" x="260" y="196" width="150" height="52" rx="8"/>
+    <text class="f-mono" x="335" y="227" text-anchor="middle">terraform apply</text>
+    <g>
+      <path class="f-arrow" d="M412 222 L430 222"/>
+      <polygon class="f-head" points="438,222 430,226.5 430,217.5"/>
+    </g>
+    <rect class="f-box-ok" x="440" y="196" width="184" height="52" rx="8"/>
+    <text class="f-small f-strong" x="532" y="218" text-anchor="middle">provider hashicorp/local</text>
+    <text class="f-small" x="532" y="236" text-anchor="middle">creates the file</text>
+    <text class="f-small f-accent" x="108" y="170" text-anchor="middle">↑ updated by apply</text>
+  </g>
+</svg>

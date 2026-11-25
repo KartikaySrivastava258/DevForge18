@@ -1,0 +1,7 @@
+figure: reverse-proxy.svg
+title: 'Following a request through Nginx'
+steps:
+  - caption: 'A client sends GET /api/… to Nginx, listening on port 8088.'
+  - caption: 'Nginx picks the location block that matches the path. location /api/ forwards the request to the upstream devforge — DevForge on port 8080 — and passes its response back.'
+  - caption: 'A path that matches no more specific block, such as /index.html, is handled by location /, which serves files from the site/ folder.'
+  - caption: 'location /balanced/ forwards to the upstream group demo_backends. By default Nginx sends requests to its servers in turn (round robin): backend A, then backend B.'

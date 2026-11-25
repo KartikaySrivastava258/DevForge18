@@ -1,0 +1,4 @@
+alt: 'A declarative Jenkinsfile drawn as nested blocks: pipeline contains agent any, options, stages, and post. Inside stages is stage Check README, and inside that, steps with an sh command. Notes explain each part: where to run, pipeline options such as a time limit, a named phase shown on the build page, the commands whose non-zero exit code fails the stage, and post actions that run after the stages.'
+caption: 'The structure of a declarative pipeline. Jenkins checks this structure before it runs anything.'
+credit: DevForge 18 content team
+licence: project-content

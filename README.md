@@ -37,6 +37,7 @@ DevForge 18 is an interactive developer engineering academy. It teaches 18 indus
 | 8 learning paths with ordered modules, prerequisites, alternate routes and time estimates | Working |
 | Search across tracks, curriculum topics, lessons and paths, with typo tolerance and abbreviations (`k8s`, `pg`, `otel`) | Working |
 | Lesson reader with objectives, table of contents, copyable code blocks, expected output and a server-graded self-check | Working (21 lessons; their commands are run by the test suite and in CI) |
+| Figures in every lesson, and step-through diagrams (Previous/Next, arrow keys, Play) for processes in every track with lessons; both themes, reduced motion respected | Working (22 figures, 10 step-throughs) |
 | Accounts, sign-in, progress tracking (a lesson completes only when its self-check is passed), bookmarks, dashboard | Working |
 | Roles (student, faculty, admin), admin user management with an audit log, faculty aggregate statistics | API working; admin/faculty screens not built yet |
 | Dark and light themes, keyboard navigation, mobile layout | Working |
@@ -171,7 +172,7 @@ Details and the reasoning behind each choice: [`docs/architecture.md`](docs/arch
 npm run typecheck       # strict TypeScript: server, shared code, scripts, tests
 npm run typecheck:web   # strict TypeScript: React frontend
 npm test                # unit, API, checker and executable-lesson tests
-npm run test:e2e        # 16 browser journeys in headless Chromium (builds first)
+npm run test:e2e        # 20 browser journeys in headless Chromium (builds first)
 npm run verify          # everything above, in order
 ```
 

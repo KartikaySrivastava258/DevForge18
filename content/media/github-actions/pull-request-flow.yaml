@@ -1,0 +1,4 @@
+alt: 'A main branch line with a branch called improve-readme coming off it. The branch is pushed and opened as a pull request, CI checks pass, a review approves it, and it is merged back into main. A note under CI says required checks must pass.'
+caption: 'Work happens on a branch; the pull request is where CI and review must succeed before the change reaches main.'
+credit: DevForge 18 content team
+licence: project-content

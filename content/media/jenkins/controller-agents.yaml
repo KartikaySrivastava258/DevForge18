@@ -1,0 +1,4 @@
+alt: 'You talk to the Jenkins controller, which holds the web UI, jobs, scheduling, build history, configuration and credentials. Arrows labelled run this stage go from the controller to two agents, A and B, which run the build steps on separate machines or containers.'
+caption: 'The controller decides and records; agents do the work.'
+credit: DevForge 18 content team
+licence: project-content

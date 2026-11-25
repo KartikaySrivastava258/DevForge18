@@ -1,0 +1,4 @@
+alt: 'A client sends GET /api/ to Nginx on port 8088. Nginx has three location blocks: /api/ proxies to DevForge on port 8080, / serves files from the site folder, and /balanced/ proxies to an upstream group that alternates between backend A on port 8091 and backend B on port 8092.'
+caption: 'Nginx chooses a location block by the request path, then serves a file or forwards the request.'
+credit: DevForge 18 content team
+licence: project-content
