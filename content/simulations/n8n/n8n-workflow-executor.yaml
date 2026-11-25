@@ -1,0 +1,58 @@
+id: n8n-workflow-executor
+track: n8n
+title: Workflow executor
+concept: Items flow through a workflow node by node. Where each one ends up depends on the checks in an If node, where its false branch goes, and how a node that calls another service handles errors — stop, error output or retry.
+learning_objectives:
+  - Trace items through a workflow and see what every node received and produced.
+  - Route invalid submissions to an error workflow instead of dropping or saving them.
+  - Choose between retries and an error output for a failing service.
+simplifications:
+  - One execution processes the whole batch of five submissions.
+  - The seat service fails in a fixed, repeatable pattern rather than at random, and only on the first attempt for a given submission.
+  - Save and the error workflow only collect items; a real error workflow is a separate workflow started by an Error Trigger when an execution fails.
+text_alternative: The submissions with where each one ended up in the last execution; the items every node produced on each of its outputs; the current checks, branch and error settings. Every change and run is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: silent-drops
+    title: Invalid items vanish
+    description: The If node checks all three rules, but its false output is not connected.
+    params: { rules: [nameRequired, emailHasAt, knownTrack], falseBranch: none, onError: stop, retries: 0 }
+  - id: missing-rules
+    title: Only the name is checked
+    description: Invalid items go to the error workflow — but the If node only checks the name.
+    params: { rules: [nameRequired], falseBranch: errorWorkflow, onError: stop, retries: 0 }
+  - id: flaky-service
+    title: A flaky seat service
+    description: Validation is complete, but the seat service times out the first time it is asked about submission 5.
+    params: { rules: [nameRequired, emailHasAt, knownTrack], falseBranch: errorWorkflow, onError: stop, retries: 0, flaky: [5] }
+challenges:
+  - id: report-invalid
+    title: Report invalid submissions
+    goal: Run the workflow so that the valid submissions are saved and every invalid one reaches the error workflow — none dropped silently.
+    scenario: silent-drops
+    check: valid-saved-invalid-reported
+    hint: Run it first and look at where items 2, 3 and 4 end up. An output that is not connected sends its items nowhere.
+    solution:
+      - { type: setFalseBranch, to: errorWorkflow }
+      - { type: run }
+  - id: complete-checks
+    title: Check everything that matters
+    goal: Make sure no invalid submission is saved, then run the workflow.
+    scenario: missing-rules
+    check: valid-saved-invalid-reported
+    hint: Run it and see which invalid submissions were saved. Which checks would have caught them?
+    solution:
+      - { type: toggleRule, rule: emailHasAt }
+      - { type: toggleRule, rule: knownTrack }
+      - { type: run }
+  - id: survive-flaky
+    title: Survive a flaky service
+    goal: Get every valid submission saved even though the seat service times out once.
+    scenario: flaky-service
+    check: valid-saved-invalid-reported
+    hint: An error output keeps the execution going, but then submission 5 is reported instead of saved. The outage is temporary — what would a person do?
+    solution:
+      - { type: setRetries, retries: 1 }
+      - { type: run }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

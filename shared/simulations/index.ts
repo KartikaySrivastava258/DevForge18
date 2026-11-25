@@ -22,6 +22,8 @@ import { experimentExplorer } from "./mlflow/experiment-explorer.ts";
 import { ExplorerActionSchema, ExplorerScenarioSchema } from "./mlflow/schema.ts";
 import { ragPipeline } from "./langchain/rag-pipeline.ts";
 import { RagActionSchema, RagScenarioSchema } from "./langchain/schema.ts";
+import { WorkflowActionSchema, WorkflowScenarioSchema } from "./n8n/schema.ts";
+import { workflowExecutor } from "./n8n/workflow-executor.ts";
 import type { SimulationModel } from "./types.ts";
 
 // Each model has its own state, action and scenario types; callers validate
@@ -37,4 +39,5 @@ export const MODELS: Readonly<Record<string, AnyModel>> = {
   [schedulerTimeline.id]: { ...schedulerTimeline, scenarioSchema: AirflowScenarioSchema, actionSchema: AirflowActionSchema },
   [experimentExplorer.id]: { ...experimentExplorer, scenarioSchema: ExplorerScenarioSchema, actionSchema: ExplorerActionSchema },
   [ragPipeline.id]: { ...ragPipeline, scenarioSchema: RagScenarioSchema, actionSchema: RagActionSchema },
+  [workflowExecutor.id]: { ...workflowExecutor, scenarioSchema: WorkflowScenarioSchema, actionSchema: WorkflowActionSchema },
 };

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 230">
+  <!-- Items flowing through the Big orders workflow, from Workflows, nodes and items. -->
+  <g>
+    <rect class="f-box-faint" x="16" y="20" width="110" height="56" rx="8"/>
+    <text class="f-strong" x="71" y="44" text-anchor="middle">Start</text>
+    <text class="f-small f-muted" x="71" y="62" text-anchor="middle">manual trigger</text>
+  </g>
+  <g>
+    <rect class="f-box" x="176" y="20" width="120" height="56" rx="8"/>
+    <text class="f-strong" x="236" y="44" text-anchor="middle">Orders</text>
+    <text class="f-small f-muted" x="236" y="62" text-anchor="middle">Code node</text>
+  </g>
+  <g>
+    <rect class="f-box" x="346" y="20" width="120" height="56" rx="8"/>
+    <text class="f-strong" x="406" y="44" text-anchor="middle">Over 100</text>
+    <text class="f-small f-muted" x="406" y="62" text-anchor="middle">Filter node</text>
+  </g>
+  <g>
+    <path class="f-arrow" d="M128 48 L166 48"/>
+    <polygon class="f-head" points="174,48 166,52.5 166,43.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M298 48 L336 48"/>
+    <polygon class="f-head" points="344,48 336,52.5 336,43.5"/>
+  </g>
+  <text class="f-small f-muted" x="151" y="100" text-anchor="middle">1 empty item</text>
+  <rect class="f-box-accent" x="176" y="104" width="120" height="26" rx="4"/>
+  <text class="f-small f-mono" x="236" y="122" text-anchor="middle">asha · 120</text>
+  <g>
+    <path class="f-arrow" d="M298 117 L336 117"/>
+    <polygon class="f-head" points="344,117 336,121.5 336,112.5"/>
+  </g>
+  <rect class="f-box-ok" x="346" y="104" width="120" height="26" rx="4"/>
+  <text class="f-small" x="406" y="122" text-anchor="middle">kept: asha</text>
+  <rect class="f-box-accent" x="176" y="138" width="120" height="26" rx="4"/>
+  <text class="f-small f-mono" x="236" y="156" text-anchor="middle">ravi · 40</text>
+  <g>
+    <path class="f-line f-dashed" d="M298 151 L336 151"/>
+    <polygon class="f-head" points="344,151 336,155.5 336,146.5"/>
+  </g>
+  <rect class="f-box-faint" x="346" y="138" width="120" height="26" rx="4"/>
+  <text class="f-small f-faint" x="406" y="156" text-anchor="middle">dropped: ravi</text>
+  <rect class="f-box-accent" x="176" y="172" width="120" height="26" rx="4"/>
+  <text class="f-small f-mono" x="236" y="190" text-anchor="middle">meera · 300</text>
+  <g>
+    <path class="f-arrow" d="M298 185 L336 185"/>
+    <polygon class="f-head" points="344,185 336,189.5 336,180.5"/>
+  </g>
+  <rect class="f-box-ok" x="346" y="172" width="120" height="26" rx="4"/>
+  <text class="f-small" x="406" y="190" text-anchor="middle">kept: meera</text>
+  <text class="f-small f-muted" x="520" y="112">each node runs</text>
+  <text class="f-small f-muted" x="520" y="128">once per item</text>
+  <text class="f-small f-mono" x="520" y="160">total &gt; 100?</text>
+</svg>

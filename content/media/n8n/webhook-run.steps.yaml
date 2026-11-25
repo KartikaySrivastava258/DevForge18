@@ -1,0 +1,7 @@
+figure: webhook-run.svg
+title: 'One request, step by step'
+steps:
+  - caption: 'The caller sends a POST request with a JSON body to the workflow''s production URL.'
+  - caption: 'The Webhook node starts an execution: the request becomes the first item, with the JSON body under body.'
+  - caption: 'Shape builds new fields with expressions: inside {{ }}, $json is the current item, so $json.body.name is the name that was sent.'
+  - caption: 'Reply answers the caller with the new item as JSON — status 200.'

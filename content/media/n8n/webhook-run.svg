@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 230">
+  <!-- One request through the Course sign-up workflow, from Webhooks and expressions. -->
+  <g>
+    <rect class="f-box-faint" x="16" y="30" width="130" height="56" rx="8"/>
+    <text class="f-strong" x="81" y="54" text-anchor="middle">caller</text>
+    <text class="f-small f-muted" x="81" y="72" text-anchor="middle">curl / a form</text>
+  </g>
+  <g>
+    <rect class="f-box" x="176" y="30" width="140" height="56" rx="8"/>
+    <text class="f-strong" x="246" y="54" text-anchor="middle">Webhook</text>
+    <text class="f-small f-muted" x="246" y="72" text-anchor="middle">POST /webhook/signup</text>
+  </g>
+  <g>
+    <rect class="f-box" x="346" y="30" width="110" height="56" rx="8"/>
+    <text class="f-strong" x="401" y="54" text-anchor="middle">Shape</text>
+    <text class="f-small f-muted" x="401" y="72" text-anchor="middle">Edit Fields</text>
+  </g>
+  <g>
+    <rect class="f-box" x="486" y="30" width="138" height="56" rx="8"/>
+    <text class="f-strong" x="555" y="54" text-anchor="middle">Reply</text>
+    <text class="f-small f-muted" x="555" y="72" text-anchor="middle">Respond to Webhook</text>
+  </g>
+  <g data-step="1">
+    <path class="f-arrow" d="M148 50 L166 50"/>
+    <polygon class="f-head" points="174,50 166,54.5 166,45.5"/>
+  </g>
+  <g data-step="2">
+    <path class="f-arrow" d="M318 58 L336 58"/>
+    <polygon class="f-head" points="344,58 336,62.5 336,53.5"/>
+  </g>
+  <g data-step="3">
+    <path class="f-arrow" d="M458 58 L476 58"/>
+    <polygon class="f-head" points="484,58 476,62.5 476,53.5"/>
+  </g>
+  <g data-step="4">
+    <path class="f-arrow-accent" d="M555 88 L555 196 L81 196 L81 96"/>
+    <polygon class="f-head-accent" points="81,88 85.5,96 76.5,96"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <text class="f-small f-mono" x="20" y="120">POST {"name": "  Asha ", "track": "Docker"}</text>
+  </g>
+  <g data-step="2" data-until="2">
+    <text class="f-small f-mono" x="20" y="120">item: { body: { name: "  Asha ", track: "Docker" }, headers: … }</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <text class="f-small f-mono" x="20" y="120">student = {{ $json.body.name.trim() }}  →  Asha</text>
+    <text class="f-small f-mono" x="20" y="140">track = {{ $json.body.track.toLowerCase() }}  →  docker</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-mono" x="20" y="120">200 {"student":"Asha","track":"docker","message":"Welcome, Asha! …"}</text>
+  </g>
+</svg>

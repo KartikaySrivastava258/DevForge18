@@ -1,0 +1,4 @@
+alt: 'A manual trigger named Start produces one empty item and starts the Code node named Orders, which produces three items: asha with total 120, ravi with 40 and meera with 300. The Filter node named Over 100 checks each item: asha and meera are kept, ravi is dropped. A note says each node runs once per item.'
+caption: 'Data moves between nodes as a list of items, and each node handles every item it receives.'
+credit: DevForge 18 content team
+licence: project-content

@@ -1,0 +1,4 @@
+alt: 'A caller sends POST with the body name ''  Asha '' and track ''Docker'' to the Webhook node at /webhook/signup. The Webhook node turns the request into an item whose body holds the fields. The Shape node (Edit Fields) builds student = name.trim(), which is Asha, and track = track.toLowerCase(), which is docker. The Reply node (Respond to Webhook) sends 200 with that JSON back to the caller.'
+caption: 'A webhook request becomes an item; expressions build new fields from it; Respond to Webhook answers the caller.'
+credit: DevForge 18 content team
+licence: project-content

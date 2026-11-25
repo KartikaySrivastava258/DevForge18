@@ -27,4 +27,5 @@ export const SIMULATIONS: Record<string, () => Promise<{ default: SimulationEntr
   "airflow-scheduler-timeline": () => import("./AirflowTimeline.tsx"),
   "mlflow-experiment-explorer": () => import("./MlflowExplorer.tsx"),
   "langchain-rag-pipeline": () => import("./RagPipeline.tsx"),
+  "n8n-workflow-executor": () => import("./N8nWorkflow.tsx"),
 };

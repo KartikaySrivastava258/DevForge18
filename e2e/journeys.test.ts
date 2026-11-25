@@ -262,7 +262,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("every page has exactly one h1 and every form control has a label", async () => {
     const { page } = await h.newPage();
-    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline"]) {
+    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       await page.waitForLoadState("networkidle");
@@ -279,7 +279,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -610,6 +610,30 @@ describe("simulations", () => {
     assert.match(await summary.innerText(), /65 \/ 70 words/);
     assert.equal(await sim.locator('.rag-sim__chunk[data-retrieved="true"]').count(), 3);
     assert.match(await sim.locator(".rag-sim__prompt pre").innerText(), /file: operations\.md\nA cache entry expires when its TTL runs out/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("n8n: invalid items vanish until the false branch is connected; retries rescue a flaky service", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/n8n/simulations/n8n-workflow-executor");
+    const sim = page.locator(".sim");
+    await sim.locator(".n8n-sim").waitFor();
+    const summary = sim.locator(".k8s-sim__summary");
+    await sim.getByRole("button", { name: "Run the workflow" }).click();
+    assert.match(await summary.innerText(), /Dropped silently\s+#2 #3 #4/);
+    assert.doesNotMatch(await sim.locator(".sim__status").innerText(), /^Solved/);
+    await sim.getByLabel("Valid? false output").selectOption("errorWorkflow");
+    await sim.getByRole("button", { name: "Run the workflow" }).click();
+    assert.match(await summary.innerText(), /Error workflow\s+#2 #3 #4/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+
+    await sim.getByLabel("Scenario").selectOption("flaky-service");
+    await sim.getByRole("button", { name: "Run the workflow" }).click();
+    assert.match(await summary.innerText(), /Last execution\s+failed/);
+    await sim.getByLabel("Check seats: retries").selectOption("1");
+    await sim.getByRole("button", { name: "Run the workflow" }).click();
+    assert.match(await summary.innerText(), /Saved\s+#1 #5/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });

@@ -1,0 +1,4 @@
+alt: 'The Webhook node leads to an If node called Valid?. Its true output goes to the HTTP Request node Check seats; its false output goes to Rejected, which answers 400 with a reason. Check seats has two outputs because its On Error setting is Continue (using error output): on success it goes to Accepted, which answers 200; on error it goes to Seat service down, which answers 502.'
+caption: 'Every outcome has its own branch and its own answer: invalid input, a failing service, and success.'
+credit: DevForge 18 content team
+licence: project-content

@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **5 in progress — Kafka, Airflow, MLflow and LangChain + LlamaIndex done** (REMAINING_WORK.md §7) · Next: **n8n**
+Last updated: 2026-11-25 · Milestone: **5 in progress — Kafka, Airflow, MLflow, LangChain + LlamaIndex and n8n done** (REMAINING_WORK.md §7) · Next: **Jira**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 39 published across 16 tracks, **all executed** (the 3 LangChain + LlamaIndex lessons recorded locally, CI confirmation in progress) |
+| Lessons | ✅ 42 published across 17 tracks, **all executed** (the 3 n8n lessons recorded against a real n8n locally, CI confirmation in progress) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 40 figures across all 39 lessons (no ASCII diagrams left), 16 of them step-throughs — one in each of the 16 tracks with lessons; tested |
-| Simulations | 🟡 Framework done and tested; 8 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex), with server-verified challenges |
+| Figures and step-through diagrams | ✅ 43 figures across all 42 lessons (no ASCII diagrams left), 17 of them step-throughs — one in each of the 17 tracks with lessons; tested |
+| Simulations | 🟡 Framework done and tested; 9 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n), with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -240,10 +240,23 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Facts:** checked against the langchain-core 1.8.4 and llama-index-core 0.14.26 source and docstrings (Runnable, fake chat models, the Embeddings interface, `InMemoryVectorStore` using cosine similarity, `chunk_size` in tokens, the default text-QA prompt) and the LangChain and LlamaIndex embeddings pages (both verbatim). Not verified from an official source, so not stated: when and by whom the two projects were started.
 - **Simulation** *A RAG pipeline, end to end* (§5.8): three documents of four sentences with hand-made vectors; chunk size 1–4 and k 1–6; every chunk ranked by cosine similarity, the retrieved ones highlighted, the answering sentence marked, and the assembled prompt with its length against a budget. 9 model tests, including that each challenge has exactly one solution: the TTL question needs one-sentence chunks and k=3 (big chunks bury the answer among Kafka and Docker sentences), the why-cache question needs two-sentence chunks (the answer needs its neighbour's context). A browser test; embedded in lesson 3.
 - Figures: the parts of a chain, cosine similarity (a step-through whose vectors are computed from the lesson's own sentences), the RAG pipeline.
+- **CI:** the first run after this commit (45699232410) failed — not in these lessons but in the runner's own test that background jobs are stopped by the cleanup trap: a background `sleep` survived and held the output pipe until the 60 s timeout. It never failed locally (0 survivors in 200 runs). The trap read the job list inside a `$(…)` subshell; it now reads it in the lesson shell, kills those jobs, then falls back to `pkill -P $$`, and every step ends in `|| true`. With that fix, run 45701836727 passed (305 tests, 30 browser journeys, including these three lessons).
+
+### Milestone 5 — n8n (2026-11-25)
+
+- **Version:** n8n **2.49.6** — the latest stable release (2026-11-25; 2.50.x and 3.4.0 are pre-releases), from the official `n8nio/n8n:2.49.6` image pinned by digest `sha256:a1a9955a…`, with `N8N_DIAGNOSTICS_ENABLED=false`.
+- **No editor clicks needed:** workflows are written as JSON in the lessons (exactly what the editor stores) and loaded with n8n's own CLI — `import:workflow`, `execute --id`, `publish:workflow` (n8n 2 replaced activate/deactivate with publish/unpublish, per its CLI documentation) — so every step is visible and executable.
+- **Lessons:** *Workflows, nodes and items* (a manual trigger, a Code node returning three items, a Filter; the items of every node read from n8n's own execution record); *Webhooks and expressions* (404 before publishing, a published webhook answering with fields built by expressions); *Validating input and handling errors* (an If node answering 400 with a reason, an HTTP Request node whose error output answers 502 while the seat service is down, and 200 once a three-line Node.js seat service runs; clean-up).
+- **Found by running it:** `n8n execute` inside the running container collides with the server's task-broker port (so the lessons move it with `N8N_RUNNERS_BROKER_PORT`); the first import right after start-up can hit the database while n8n initialises (so imports retry); a published webhook takes a moment to register (so the lessons wait for it); and the Filter node's execution record also lists the item it dropped, which the lesson shows rather than hides.
+- **Facts** checked against the n8n documentation on 2026-11-25: nodes, trigger nodes and items; the Code node; test and production webhooks and publishing; Respond to Webhook and response codes; Retry On Fail, On Error (Continue using error output) and error workflows with the Error Trigger; the CLI; the encryption key for credentials. Not found in the documentation pages read, so not stated: the `{{ }}` syntax being JavaScript (shown working instead) and the terms of n8n's licence.
+- **Simulation** *Workflow executor* (§5.17): five form submissions through Form → Valid? (If) → Check seats → Save; the learner chooses the checks, where the false branch goes, On Error and Retry On Fail, runs the batch and sees every node's outputs and every item's outcome (saved, error workflow, dropped silently, or not saved because the execution failed). 9 model tests; three server-verified challenges (report invalid submissions instead of dropping them; complete the checks; survive a flaky service — where an error output alone would report a valid submission instead of saving it, and a retry is the fix); a browser test; embedded in lesson 3.
+- **Cold cache:** all three lessons pass after removing the image (4 m 32 s including the 1.3 GB pull).
+- **A flaky first execution:** once, in a full local run, lesson 1's first `n8n execute` produced no JSON and the reason was hidden (the helper discarded stderr); it did not happen in five fresh starts. The `items` helper now retries `execute` up to five times, parses only from the line where the JSON starts, and prints n8n's own output if it still fails, so a future failure explains itself.
+- Figures: items through the Big orders workflow, one webhook request (step-through), the branches of the validated sign-up.
 
 ## Current work
 
-Milestone 5 of REMAINING_WORK.md §7: Kafka, Airflow, MLflow and LangChain + LlamaIndex are done; next n8n, then Jira, LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
+Milestone 5 of REMAINING_WORK.md §7: Kafka, Airflow, MLflow, LangChain + LlamaIndex and n8n are done; next Jira, LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
 
 ## Pending work (ordered)
 
@@ -285,10 +298,10 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 39 lessons across 16 tracks | 2 tracks show outline only (n8n, Jira) | Milestone 5 |
+| 42 lessons across 17 tracks | 1 track shows outline only (Jira) | Milestone 5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Python packages for the LangChain + LlamaIndex lessons | Only the top-level packages are pinned; a new release of one of their dependencies could change behaviour or break the install in CI | If it happens: pin the full set with a constraints file generated by `pip freeze` in the lesson container |
-| Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka`, `apache/airflow` and (from GitHub's registry) `ghcr.io/mlflow/mlflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
+| Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka`, `apache/airflow`, `n8nio/n8n`, `python:3.12-slim` and (from GitHub's registry) `ghcr.io/mlflow/mlflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
 | No lesson currently uses `pending` or `docs-checked`, and no resource is unverified | Those UI states ("Automated test pending.", "Link not yet verified") are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such content exists, or test the states with fixture content |
 
 ## Decisions made
