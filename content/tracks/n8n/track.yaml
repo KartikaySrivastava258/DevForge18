@@ -1,0 +1,81 @@
+slug: n8n
+number: 17
+title: Workflow & AI Automation
+short_title: n8n
+category: apis-automation
+products:
+  - name: n8n
+    role: Workflow-automation tool, self-hosted or managed, that connects apps and APIs through visual node-based workflows with optional code.
+mental_model: n8n connects applications and APIs through visual workflows, while allowing code when needed.
+outcome: Connect applications and automate business processes.
+summary: >-
+  An n8n workflow starts with a trigger — a webhook call, a schedule or an event in another app — and
+  passes data through a chain of nodes that call APIs, transform data, branch on conditions or wait
+  for a human to approve. You build workflows visually and can drop into code nodes when the
+  built-in nodes are not enough.
+problem: >-
+  Many business processes — form submissions, notifications, ticket routing — are glue between
+  existing services. Writing, hosting and monitoring custom code for each one is slow; an automation
+  tool lets teams build and observe these integrations quickly.
+not_this: >-
+  n8n is not a replacement for a well-tested backend service or for large-scale data-pipeline
+  orchestration (Airflow's domain). It is distributed under n8n's "fair-code" Sustainable Use
+  License rather than an OSI-approved open-source licence, so check the terms before building a
+  commercial product on it.
+architecture_position: >-
+  n8n sits in the integration layer, reacting to webhooks and schedules and calling the APIs of
+  internal services and SaaS products — often the same APIs explored and tested with Postman.
+entry_level: beginner
+estimated_hours: { min: 8, max: 12 }
+skills_needed:
+  - Sending HTTP requests and reading JSON responses
+prerequisites: [postman]
+related:
+  - slug: postman
+    why: APIs tested in Postman become the building blocks that n8n workflows call.
+  - slug: airflow
+    why: Comparing them clarifies business-process automation versus scheduled data pipelines.
+  - slug: postgresql
+    why: Workflows often validate input and record results or audit trails in a database.
+topics:
+  - { level: beginner, title: "Nodes, triggers, workflows and connections" }
+  - { level: beginner, title: "Webhooks and scheduled triggers" }
+  - { level: beginner, title: "Expressions and data mapping" }
+  - { level: intermediate, title: "HTTP Request node and API authentication" }
+  - { level: intermediate, title: "Branching, loops and error workflows" }
+  - { level: intermediate, title: "Credentials and secret management" }
+  - { level: intermediate, title: "Executions, retries and debugging" }
+  - { level: intermediate, title: "Human approval steps" }
+  - { level: advanced, title: "Self-hosting vs managed deployment" }
+  - { level: advanced, title: "AI workflow risks, prompt injection and tool permissions" }
+  - { level: advanced, title: "When to use n8n vs custom code vs Airflow" }
+labs:
+  - { title: "Build a webhook-to-email workflow", level: beginner, mode: local, status: planned }
+  - { title: "Connect a form to PostgreSQL", level: intermediate, mode: local, status: planned }
+  - { title: "Add branching and error handling", level: intermediate, mode: local, status: planned }
+  - { title: "Require human approval before a consequential action", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Student event registration automation", level: beginner, status: planned }
+  - { title: "Assignment reminder workflow", level: intermediate, status: planned }
+  - { title: "Support ticket triage automation", level: advanced, status: planned }
+resources:
+  - title: n8n documentation
+    url: https://docs.n8n.io/
+    publisher: n8n
+    type: documentation
+    level: all
+    official: true
+    why: Official documentation for nodes, expressions, credentials, hosting and security.
+    verification: { status: unverified }
+  - title: n8n courses
+    url: https://docs.n8n.io/courses/
+    publisher: n8n
+    type: course
+    level: beginner
+    official: true
+    why: Official text-based courses that build workflows step by step.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

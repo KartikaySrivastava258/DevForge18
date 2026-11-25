@@ -1,0 +1,92 @@
+slug: postgresql
+number: 4
+title: Relational Databases
+short_title: PostgreSQL
+category: data-messaging
+products:
+  - name: PostgreSQL
+    role: Open-source object-relational database server with SQL, transactions, rich data types and extensions.
+  - name: psql
+    role: Interactive terminal client shipped with PostgreSQL for running queries and inspecting databases.
+mental_model: PostgreSQL is a relational database that stores structured information and lets applications query it reliably.
+outcome: Model, query, index and protect relational data.
+summary: >-
+  PostgreSQL stores data in tables with defined columns and types, and enforces rules — primary keys,
+  foreign keys, unique and check constraints — so invalid data is rejected instead of silently saved.
+  Applications ask questions in SQL, and transactions group several changes so that either all of
+  them happen or none do, even if the server crashes part-way through.
+problem: >-
+  Keeping application data in ad-hoc files makes it hard to keep it consistent, query it flexibly
+  or let many users update it at the same time. A relational database provides safe concurrent
+  access, integrity guarantees and an expressive query language.
+not_this: >-
+  PostgreSQL is not a cache or a message broker, and it is not automatically fast — performance
+  depends on schema design, indexes and query shape. Replication is not a backup either: a replica
+  faithfully copies an accidental DELETE, so you still need tested backups.
+architecture_position: >-
+  PostgreSQL is the durable system of record behind backend services. Caches such as Redis sit in
+  front of it to reduce read load, and changes can be published to streaming systems such as Kafka,
+  for example through the transactional outbox pattern.
+entry_level: beginner
+estimated_hours: { min: 18, max: 25 }
+skills_needed:
+  - Running commands in a terminal
+  - Basic programming concepts (variables, conditions) are helpful
+prerequisites: []
+related:
+  - slug: redis
+    why: Redis commonly caches frequently read PostgreSQL query results to cut latency and load.
+  - slug: kafka
+    why: The outbox pattern publishes committed database changes to Kafka as events without dual writes.
+  - slug: langchain-llamaindex
+    why: With the pgvector extension, PostgreSQL can store embeddings used for retrieval in LLM applications.
+topics:
+  - { level: beginner, title: "Tables, rows, columns, types and constraints" }
+  - { level: beginner, title: "Primary and foreign keys" }
+  - { level: beginner, title: "SQL CRUD, joins, grouping and subqueries" }
+  - { level: intermediate, title: "Normalisation and schema design" }
+  - { level: intermediate, title: "Indexes, query plans and EXPLAIN ANALYZE" }
+  - { level: intermediate, title: "Transactions and ACID" }
+  - { level: intermediate, title: "Roles, privileges, SQL injection prevention and parameterised queries" }
+  - { level: intermediate, title: "Views, functions and triggers" }
+  - { level: advanced, title: "Isolation levels, locks and deadlocks" }
+  - { level: advanced, title: "Backups, restores, migrations and connection pooling" }
+  - { level: advanced, title: "Replication and scaling concepts" }
+labs:
+  - { title: "Design a college database", level: beginner, mode: local, status: planned }
+  - { title: "Write joins and aggregation queries", level: beginner, mode: local, status: planned }
+  - { title: "Compare query plans before and after indexing", level: intermediate, mode: local, status: planned }
+  - { title: "Demonstrate transaction rollback and isolation", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "College course registration database", level: beginner, status: planned }
+  - { title: "Expense tracking API database", level: intermediate, status: planned }
+  - { title: "Analytics-ready schema with indexes and migration scripts", level: advanced, status: planned }
+resources:
+  - title: PostgreSQL tutorial
+    url: https://www.postgresql.org/docs/current/tutorial.html
+    publisher: The PostgreSQL Global Development Group
+    type: tutorial
+    level: beginner
+    official: true
+    why: The official introductory tutorial on SQL concepts, queries and advanced features.
+    verification: { status: unverified }
+  - title: PostgreSQL documentation
+    url: https://www.postgresql.org/docs/
+    publisher: The PostgreSQL Global Development Group
+    type: documentation
+    level: all
+    official: true
+    why: The authoritative manual, versioned per release, covering SQL, administration and internals.
+    verification: { status: unverified }
+  - title: PostgreSQL Exercises
+    url: https://pgexercises.com/
+    publisher: pgexercises.com
+    type: exercises
+    level: beginner
+    official: false
+    why: Free, browser-based SQL practice against a sample schema, from simple queries to aggregates.
+    verification: { status: unverified }
+content_status: in-progress
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

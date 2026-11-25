@@ -1,0 +1,140 @@
+/** API response shapes (mirrors server/src/routes). */
+import type { LearningPath, Resource, Track } from "../../../shared/content-schema.ts";
+
+export type { LearningPath, Resource, Track };
+export type Level = "beginner" | "intermediate" | "advanced";
+export type Role = "student" | "faculty" | "admin";
+
+export interface User {
+  id: string;
+  email: string;
+  displayName: string;
+  role: Role;
+  createdAt: string;
+}
+
+export interface TrackSummary {
+  slug: string;
+  number: number;
+  title: string;
+  shortTitle: string;
+  category: string;
+  categoryLabel: string;
+  products: string[];
+  mentalModel: string;
+  outcome: string;
+  entryLevel: Level;
+  estimatedHours: { min: number; max: number };
+  contentStatus: "outline" | "in-progress" | "complete";
+  lessonCount: number;
+  topicCount: number;
+  prerequisites: string[];
+  related: { slug: string; why: string }[];
+}
+
+export interface LessonSummary {
+  id: string;
+  title: string;
+  track: string;
+  order: number;
+  level: Level;
+  estimatedMinutes: number;
+}
+
+export interface TracksResponse {
+  categories: { id: string; label: string }[];
+  tracks: TrackSummary[];
+}
+
+export interface TrackResponse {
+  track: Track;
+  summary: TrackSummary;
+  lessons: LessonSummary[];
+  prerequisites: TrackSummary[];
+  related: { why: string; track: TrackSummary }[];
+  paths: { slug: string; title: string; number: number }[];
+}
+
+export interface PathsResponse {
+  paths: (LearningPath & { estimatedHours: { min: number; max: number } })[];
+}
+
+export interface PathResponse {
+  path: LearningPath;
+  modules: { focus: string; track: TrackSummary | null }[];
+  estimatedHours: { min: number; max: number };
+}
+
+export interface PublicLesson {
+  id: string;
+  title: string;
+  track: string;
+  order: number;
+  level: Level;
+  estimatedMinutes: number;
+  prerequisites: string[];
+  learningObjectives: string[];
+  resources: Resource[];
+  html: string;
+  toc: { id: string; text: string }[];
+  wordCount: number;
+  lastReviewed: string;
+  contentVersion: number;
+  verification: { method: "executed" | "pending" | "docs-checked"; details: string };
+  selfCheck: { id: string; prompt: string; options: { id: string; text: string }[] }[];
+  previous: LessonSummary | null;
+  next: LessonSummary | null;
+}
+
+export interface LessonResponse {
+  lesson: PublicLesson;
+  track: TrackSummary | null;
+}
+
+export interface LessonProgress {
+  lessonId: string;
+  track: string;
+  status: "in_progress" | "completed";
+  attempts: number;
+  bestScore: number | null;
+  startedAt: string;
+  completedAt: string | null;
+  updatedAt: string;
+}
+
+export interface CheckResponse {
+  lessonId: string;
+  total: number;
+  correct: number;
+  score: number;
+  passed: boolean;
+  results: { id: string; correct: boolean; explanation?: string }[];
+  saved: boolean;
+  progress: LessonProgress | null;
+}
+
+export interface ProgressResponse {
+  lessons: LessonProgress[];
+  tracks: { slug: string; shortTitle: string; completed: number; total: number }[];
+  recent: (LessonProgress & { title: string })[];
+  totals: { lessonsCompleted: number; lessonsInProgress: number; lessonsAvailable: number };
+}
+
+export interface Bookmark {
+  type: "track" | "lesson" | "path";
+  id: string;
+  createdAt: string;
+  title: string | null;
+  url: string | null;
+  available: boolean;
+}
+
+export interface SearchResult {
+  type: "track" | "path" | "lesson" | "topic";
+  id: string;
+  title: string;
+  url: string;
+  snippet: string;
+  context: string;
+  score: number;
+}

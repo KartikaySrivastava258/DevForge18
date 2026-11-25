@@ -1,0 +1,90 @@
+slug: kafka
+number: 10
+title: Event Streaming
+short_title: Apache Kafka
+category: data-messaging
+products:
+  - name: Apache Kafka
+    role: Distributed event-streaming platform that stores ordered, replicated logs of records (topics) for producers and consumers.
+mental_model: Kafka is a distributed event-streaming platform that lets systems publish, retain and consume event records independently.
+outcome: Build event-driven systems and reliable asynchronous pipelines.
+summary: >-
+  Kafka stores streams of events — "order placed", "payment failed", "student enrolled" — in topics.
+  Each topic is split into partitions: append-only logs replicated across brokers. Producers append
+  records, and consumers read at their own pace by tracking an offset, so several independent
+  services can process the same events, and a new consumer can replay history that is still within
+  the retention period.
+problem: >-
+  When services call each other directly, one slow or failed service blocks the others, and adding a
+  new consumer of the same data means changing the producer. Kafka decouples producers from
+  consumers and retains events so systems can process them independently and recover after failures.
+not_this: >-
+  Kafka is not a database for ad-hoc queries, not a job scheduler, and not always the best message
+  queue — per-message routing, priorities and simple task queues are often better served by a
+  traditional broker. Ordering is guaranteed only within a partition, and running Kafka well takes
+  real operational effort.
+architecture_position: >-
+  Kafka is the asynchronous backbone between services: backend services publish domain events, and
+  downstream consumers such as notification services, analytics pipelines and search indexers
+  subscribe independently.
+entry_level: intermediate
+estimated_hours: { min: 16, max: 24 }
+skills_needed:
+  - Programming in Java, Python or JavaScript
+  - Running multi-container setups with Docker
+prerequisites: [docker]
+related:
+  - slug: postgresql
+    why: The transactional outbox pattern publishes committed database changes to Kafka reliably.
+  - slug: airflow
+    why: Airflow can orchestrate batch processing of data that originated as streams — it is not a Kafka consumer by itself.
+topics:
+  - { level: beginner, title: "Event, topic, partition, broker and cluster" }
+  - { level: beginner, title: "Producers, consumers and consumer groups" }
+  - { level: beginner, title: "Kafka vs traditional message queues" }
+  - { level: intermediate, title: "Offsets, ordering and retention" }
+  - { level: intermediate, title: "Replication and fault tolerance" }
+  - { level: intermediate, title: "Delivery semantics and idempotent producers" }
+  - { level: intermediate, title: "Schema evolution and serialisation" }
+  - { level: advanced, title: "Consumer lag, rebalancing and backpressure" }
+  - { level: advanced, title: "Retry topics and dead-letter queues" }
+  - { level: advanced, title: "Event-driven architecture and the outbox pattern" }
+  - { level: advanced, title: "Security, monitoring and operational trade-offs" }
+labs:
+  - { title: "Publish and consume events", level: beginner, mode: local, status: planned }
+  - { title: "Observe partitions and consumer groups", level: intermediate, mode: simulation, status: planned }
+  - { title: "Simulate a consumer failure", level: intermediate, mode: simulation, status: planned }
+  - { title: "Implement retry and dead-letter handling", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Order event pipeline", level: beginner, status: planned }
+  - { title: "Live campus activity stream", level: intermediate, status: planned }
+  - { title: "Event-driven notification service", level: advanced, status: planned }
+resources:
+  - title: Apache Kafka documentation
+    url: https://kafka.apache.org/documentation/
+    publisher: The Apache Software Foundation
+    type: documentation
+    level: all
+    official: true
+    why: Authoritative design, configuration and operations documentation for Kafka.
+    verification: { status: unverified }
+  - title: Apache Kafka quickstart
+    url: https://kafka.apache.org/quickstart
+    publisher: The Apache Software Foundation
+    type: tutorial
+    level: beginner
+    official: true
+    why: Official steps to start a local broker, create a topic and produce and consume events.
+    verification: { status: unverified }
+  - title: Confluent Developer
+    url: https://developer.confluent.io/
+    publisher: Confluent
+    type: course
+    level: intermediate
+    official: false
+    why: Free courses and patterns from a company founded by Kafka's original creators; some material covers Confluent-specific products.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

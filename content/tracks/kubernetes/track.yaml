@@ -1,0 +1,94 @@
+slug: kubernetes
+number: 3
+title: Container Orchestration
+short_title: Kubernetes
+category: containers-infra
+products:
+  - name: Kubernetes
+    role: Open-source system that schedules and manages containerised workloads across a cluster of machines.
+  - name: kubectl
+    role: Command-line client used to inspect and change objects through the Kubernetes API.
+mental_model: Kubernetes is a control system that keeps the desired number of application containers running across a cluster.
+outcome: Deploy, scale and recover containerised services.
+summary: >-
+  Kubernetes runs containers across a group of machines called a cluster and keeps them in the state
+  you declare. You describe what you want — for example three replicas of an API reachable through a
+  stable Service — and controllers continuously compare that desired state with what is actually
+  running, replacing failed Pods and rolling out new versions gradually.
+problem: >-
+  Running containers by hand on several servers does not scale: someone must restart crashed
+  processes, spread load, upgrade without downtime and send traffic only to healthy instances.
+  Kubernetes automates these operations behind a declarative API.
+not_this: >-
+  Kubernetes is not a container runtime or an image builder, and it is not required for every
+  project — for a small application a single server or Docker Compose is often simpler and cheaper to
+  operate. It also does not make an application scalable by itself; the application has to be
+  designed to run as several interchangeable instances.
+architecture_position: >-
+  Kubernetes is the runtime platform layer. It runs images built in CI, exposes them through
+  Services and Ingress or Gateway controllers, and exposes workload and cluster metrics to monitoring
+  systems such as Prometheus.
+entry_level: intermediate
+estimated_hours: { min: 20, max: 30 }
+skills_needed:
+  - Building and running Docker containers
+  - Reading and writing YAML
+prerequisites: [docker]
+related:
+  - slug: docker
+    why: Kubernetes deploys the container images that Docker (or another builder) produces.
+  - slug: prometheus-grafana
+    why: Prometheus is widely used to scrape metrics from cluster components and workloads.
+  - slug: terraform
+    why: Terraform can provision clusters and the cloud resources around them declaratively.
+topics:
+  - { level: beginner, title: "Cluster, control plane, node and kubelet" }
+  - { level: beginner, title: "Pod, Deployment, ReplicaSet and Service" }
+  - { level: beginner, title: "Namespaces, labels and selectors" }
+  - { level: beginner, title: "When Kubernetes is unnecessary" }
+  - { level: intermediate, title: "ConfigMaps and Secrets" }
+  - { level: intermediate, title: "Requests, limits, probes and autoscaling" }
+  - { level: intermediate, title: "Scheduling, rolling updates and rollback" }
+  - { level: intermediate, title: "DNS, service discovery and networking basics" }
+  - { level: intermediate, title: "Troubleshooting with kubectl" }
+  - { level: advanced, title: "Ingress and Gateway concepts, and why they need a controller" }
+  - { level: advanced, title: "Persistent volumes and claims" }
+  - { level: advanced, title: "RBAC, network policies and security contexts" }
+labs:
+  - { title: "Deploy an application to a local cluster", level: beginner, mode: local, status: planned }
+  - { title: "Expose it with a Service", level: beginner, mode: local, status: planned }
+  - { title: "Change replica count and observe self-healing", level: intermediate, mode: simulation, status: planned }
+  - { title: "Break a configuration and debug events and logs", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Deploy a three-tier application", level: beginner, status: planned }
+  - { title: "Rolling deployment and rollback demo", level: intermediate, status: planned }
+  - { title: "Resource-limited service with health probes", level: advanced, status: planned }
+resources:
+  - title: Kubernetes Basics tutorial
+    url: https://kubernetes.io/docs/tutorials/kubernetes-basics/
+    publisher: The Kubernetes Authors
+    type: tutorial
+    level: beginner
+    official: true
+    why: Official step-by-step introduction to deploying, exposing, scaling and updating an app.
+    verification: { status: unverified }
+  - title: Kubernetes documentation
+    url: https://kubernetes.io/docs/
+    publisher: The Kubernetes Authors
+    type: documentation
+    level: all
+    official: true
+    why: Concepts, task guides and API reference for every Kubernetes object.
+    verification: { status: unverified }
+  - title: Kubernetes tutorials
+    url: https://kubernetes.io/docs/tutorials/
+    publisher: The Kubernetes Authors
+    type: tutorial
+    level: intermediate
+    official: true
+    why: Official tutorials covering configuration, stateless and stateful applications, and security.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

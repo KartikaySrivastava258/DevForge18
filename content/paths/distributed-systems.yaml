@@ -1,0 +1,20 @@
+slug: distributed-systems
+number: 3
+title: Distributed & Event-Driven Systems
+target_learner: Intermediate developers who want to understand how multi-service systems stay fast, consistent and observable.
+outcome: Combine a relational store, a cache and an event stream into a system that degrades gracefully and can be debugged end to end.
+prerequisites:
+  - Built at least one backend API with a database
+  - Basic Docker usage
+modules:
+  - { track: postgresql, focus: "Transactions, isolation and the outbox pattern." }
+  - { track: redis, focus: "Caching strategies, invalidation and stampede protection." }
+  - { track: kafka, focus: "Partitions, consumer groups, delivery semantics and dead-letter handling." }
+  - { track: nginx, focus: "Routing and load balancing across service instances." }
+  - { track: docker, focus: "Running the multi-service system locally." }
+  - { track: kubernetes, focus: "Self-healing, scaling and service discovery." }
+  - { track: opentelemetry, focus: "Tracing a request across synchronous and asynchronous hops." }
+  - { track: prometheus-grafana, focus: "Consumer lag, latency and error-rate dashboards." }
+capstone: { title: "Project A — Production-style E-commerce Platform", status: planned }
+alternate_route: Strong in databases already? Take the PostgreSQL transactions quiz and, if you pass, begin with Redis.
+last_reviewed: 2026-11-24

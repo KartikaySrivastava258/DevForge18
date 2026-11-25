@@ -1,0 +1,28 @@
+# Weekly check that every external resource link still resolves.
+# Results are a report for a human reviewer; content is never edited automatically.
+name: Link check
+
+on:
+  schedule:
+    - cron: "0 3 * * 1" # Mondays 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npm run content:check-links
+      - if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: link-report
+          path: build/link-report.json

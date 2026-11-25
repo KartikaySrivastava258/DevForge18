@@ -1,0 +1,19 @@
+slug: mlops
+number: 6
+title: MLOps
+target_learner: Students who can train models in notebooks and want to make training reproducible and deployment reliable.
+outcome: Track, compare, register and serve models through an orchestrated, monitored pipeline.
+prerequisites:
+  - Python and basic machine learning
+  - Comfort with the command line
+modules:
+  - { track: git-github, focus: "Versioning training code and configuration." }
+  - { track: postgresql, focus: "Backend store for experiment metadata and feature tables." }
+  - { track: docker, focus: "Reproducible training and serving environments." }
+  - { track: mlflow, focus: "Experiments, model logging, registry versions and aliases." }
+  - { track: airflow, focus: "Scheduled, retryable training pipelines." }
+  - { track: kubernetes, focus: "Serving a model API with probes and resource limits." }
+  - { track: prometheus-grafana, focus: "Monitoring latency, errors and prediction volume." }
+capstone: { title: "Project E — MLOps Experiment Platform", status: planned }
+alternate_route: If you already use MLflow, take its quiz and focus on Airflow orchestration and Kubernetes serving.
+last_reviewed: 2026-11-24

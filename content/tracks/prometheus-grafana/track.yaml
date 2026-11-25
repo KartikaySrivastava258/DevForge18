@@ -1,0 +1,88 @@
+slug: prometheus-grafana
+number: 7
+title: Monitoring & Metrics
+short_title: Prometheus + Grafana
+category: observability
+products:
+  - name: Prometheus
+    role: Open-source monitoring system that scrapes metrics from targets, stores them as time series and evaluates alerting rules.
+  - name: Grafana
+    role: Visualisation platform that queries data sources such as Prometheus to build dashboards and alerts.
+mental_model: Prometheus collects time-series measurements; Grafana turns measurements into dashboards and useful visual insight.
+outcome: Collect metrics, create dashboards and alert on symptoms.
+summary: >-
+  Prometheus regularly pulls ("scrapes") numeric measurements from applications and exporters over
+  HTTP — request counts, error counts, latency buckets, memory use — and stores each labelled series
+  over time. You query that data with PromQL. Grafana connects to Prometheus and other data sources
+  and turns those queries into dashboards that show whether a system is healthy.
+problem: >-
+  Without metrics, teams learn about outages from users and cannot tell whether a change made
+  things faster or slower. Metrics give a continuous numeric view of system health that drives
+  dashboards and alerts.
+not_this: >-
+  Prometheus is not a log store or a long-term data warehouse, and it is not intended for data that
+  must be 100% accurate per event, such as billing. Grafana does not collect data itself; it
+  visualises data stored elsewhere.
+architecture_position: >-
+  Together they form the monitoring layer: services and infrastructure expose metrics, Prometheus
+  scrapes and stores them, Alertmanager routes alerts, and Grafana presents dashboards to engineers.
+entry_level: intermediate
+estimated_hours: { min: 12, max: 18 }
+skills_needed:
+  - Running containers with Docker
+  - Basic understanding of HTTP requests and status codes
+prerequisites: [docker]
+related:
+  - slug: kubernetes
+    why: Prometheus is commonly deployed to scrape Kubernetes components and workloads.
+  - slug: opentelemetry
+    why: Complementary, not interchangeable — OpenTelemetry standardises producing telemetry; Prometheus stores and queries metrics.
+topics:
+  - { level: beginner, title: "Metrics, labels, time series and scraping" }
+  - { level: beginner, title: "Metrics vs logs vs traces" }
+  - { level: beginner, title: "Prometheus targets and exporters" }
+  - { level: beginner, title: "Grafana data sources, dashboards, panels and variables" }
+  - { level: intermediate, title: "Counters, gauges, histograms and summaries" }
+  - { level: intermediate, title: "PromQL fundamentals" }
+  - { level: intermediate, title: "Instrumentation and label cardinality" }
+  - { level: intermediate, title: "Recording and alerting rules; Alertmanager concepts" }
+  - { level: advanced, title: "SLI, SLO and error budget basics" }
+  - { level: advanced, title: "Dashboard design and alert fatigue" }
+labs:
+  - { title: "Monitor a sample application", level: beginner, mode: local, status: planned }
+  - { title: "Query request rate and error rate", level: intermediate, mode: local, status: planned }
+  - { title: "Build a Grafana dashboard", level: intermediate, mode: local, status: planned }
+  - { title: "Trigger and investigate an alert", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Application health dashboard", level: beginner, status: planned }
+  - { title: "Resource monitoring lab", level: intermediate, status: planned }
+  - { title: "SLO dashboard for a sample API", level: advanced, status: planned }
+resources:
+  - title: Prometheus overview
+    url: https://prometheus.io/docs/introduction/overview/
+    publisher: Prometheus Authors
+    type: documentation
+    level: beginner
+    official: true
+    why: Explains Prometheus architecture, its data model and when it is (and is not) a good fit.
+    verification: { status: unverified }
+  - title: Querying Prometheus (PromQL basics)
+    url: https://prometheus.io/docs/prometheus/latest/querying/basics/
+    publisher: Prometheus Authors
+    type: reference
+    level: intermediate
+    official: true
+    why: Official introduction to selectors, range vectors, functions and operators in PromQL.
+    verification: { status: unverified }
+  - title: Grafana documentation
+    url: https://grafana.com/docs/
+    publisher: Grafana Labs
+    type: documentation
+    level: all
+    official: true
+    why: Official docs for data sources, dashboards, panels, variables and Grafana alerting.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

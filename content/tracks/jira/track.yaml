@@ -1,0 +1,76 @@
+slug: jira
+number: 12
+title: Agile Project Management
+short_title: Jira
+category: source-planning
+products:
+  - name: Jira
+    role: Atlassian's work-tracking product for planning and reporting on issues, backlogs, boards and sprints.
+mental_model: Jira helps teams organise work, track progress and make delivery visible.
+outcome: Plan work, manage backlogs, sprints, bugs and delivery.
+summary: >-
+  Jira organises a team's work into issues — stories, tasks, bugs and epics — that move through a
+  workflow such as To Do → In Progress → Done. Teams plan from a backlog, commit to time-boxed
+  sprints (Scrum) or manage a continuous flow of work (Kanban), and use reports to see what is
+  blocked and how long work actually takes.
+problem: >-
+  Without shared work tracking, teams lose track of who is doing what, priorities live in chat
+  threads and nobody can tell whether a release is on schedule. A work-tracking tool makes scope,
+  ownership and progress visible.
+not_this: >-
+  Jira is not agile by itself — it supports whatever process a team configures, good or bad. It is
+  not a documentation system or a code host, though it can link to both. Atlassian updates Jira's
+  interface and terminology regularly, so check current documentation for exact menus.
+architecture_position: >-
+  Jira sits in the planning layer of the engineering workflow rather than in the runtime
+  architecture: work items link to branches, commits, pull requests and deployments so the path
+  from requirement to release is traceable.
+entry_level: beginner
+estimated_hours: { min: 6, max: 10 }
+skills_needed:
+  - No technical prerequisites; experience working in a team project helps
+prerequisites: []
+related:
+  - slug: git-github
+    why: Referencing issue keys in branches, commits and pull requests links code changes to work items.
+topics:
+  - { level: beginner, title: "Projects, spaces (where applicable), issues and issue types" }
+  - { level: beginner, title: "Epics, stories, tasks, bugs and subtasks" }
+  - { level: beginner, title: "Backlogs, boards and sprints" }
+  - { level: beginner, title: "Scrum vs Kanban" }
+  - { level: intermediate, title: "Writing useful acceptance criteria" }
+  - { level: intermediate, title: "Workflow states, transitions and permissions" }
+  - { level: intermediate, title: "Estimation, prioritisation and dependencies" }
+  - { level: intermediate, title: "Connecting commits and pull requests" }
+  - { level: advanced, title: "Reports, dashboards and cycle time" }
+  - { level: advanced, title: "Agile ceremonies and common anti-patterns" }
+labs:
+  - { title: "Create a student project backlog", level: beginner, mode: simulation, status: planned }
+  - { title: "Plan and run a sprint", level: intermediate, mode: simulation, status: planned }
+  - { title: "Move a bug through a workflow", level: intermediate, mode: simulation, status: planned }
+  - { title: "Read a sprint report and identify bottlenecks", level: advanced, mode: read-through, status: planned }
+projects:
+  - { title: "Manage a semester software project", level: beginner, status: planned }
+  - { title: "Plan a hackathon product backlog", level: intermediate, status: planned }
+  - { title: "Build a release and bug-triage workflow", level: advanced, status: planned }
+resources:
+  - title: Jira guides
+    url: https://www.atlassian.com/software/jira/guides
+    publisher: Atlassian
+    type: tutorial
+    level: beginner
+    official: true
+    why: Official getting-started guides covering issues, boards, workflows and reports.
+    verification: { status: unverified }
+  - title: Jira Cloud support documentation
+    url: https://support.atlassian.com/jira-software-cloud/
+    publisher: Atlassian
+    type: documentation
+    level: all
+    official: true
+    why: Detailed, current documentation for configuring and administering Jira Cloud.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

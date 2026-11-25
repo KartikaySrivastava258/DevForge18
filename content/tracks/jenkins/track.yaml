@@ -1,0 +1,81 @@
+slug: jenkins
+number: 11
+title: CI/CD Automation
+short_title: Jenkins
+category: ci-cd
+products:
+  - name: Jenkins
+    role: Open-source, self-hosted automation server with a large plugin ecosystem and Pipeline-as-Code via Jenkinsfiles.
+mental_model: Jenkins is an automation server that runs repeatable build, test and delivery pipelines.
+outcome: Build extensible pipeline automation and understand Jenkins operations.
+summary: >-
+  Jenkins is a server you install and operate yourself. A controller schedules work and stores
+  configuration, and agents — other machines or containers — run the actual build steps. Pipelines
+  are usually written as a Jenkinsfile kept in the repository, describing stages such as build,
+  test and deploy, with post actions for success and failure.
+problem: >-
+  Organisations need repeatable build, test and release automation that can run on their own
+  infrastructure, reach private networks and adapt to unusual toolchains. Jenkins provides a
+  self-managed automation server with extensive integrations.
+not_this: >-
+  Jenkins is not a hosted service: you are responsible for upgrades, plugin security, backups and
+  agent capacity. It is not inherently better or worse than GitHub Actions — the right choice
+  depends on hosting requirements, existing investment and operational capacity.
+architecture_position: >-
+  Jenkins sits in the delivery layer next to source control: repository webhooks trigger pipelines
+  that build and test code, publish artefacts or container images, and hand off to deployment environments.
+entry_level: intermediate
+estimated_hours: { min: 10, max: 14 }
+skills_needed:
+  - Branching and pushing with Git
+  - Running containers with Docker is helpful
+prerequisites: [git-github]
+related:
+  - slug: git-github
+    why: Repository webhooks trigger Jenkins pipelines, and the Jenkinsfile lives in the repository.
+  - slug: github-actions
+    why: Comparing both tools shows when a hosted service or a self-managed server fits better.
+  - slug: docker
+    why: Docker-based agents give each build a clean, reproducible environment.
+topics:
+  - { level: beginner, title: "Controller/agent architecture" }
+  - { level: beginner, title: "Freestyle jobs vs Pipeline as Code" }
+  - { level: beginner, title: "Jenkinsfile and declarative pipelines" }
+  - { level: beginner, title: "Stages, steps, agents and post actions" }
+  - { level: intermediate, title: "Credentials store and secret handling" }
+  - { level: intermediate, title: "Webhooks and SCM integration" }
+  - { level: intermediate, title: "Parallel stages, artefacts and test reports" }
+  - { level: intermediate, title: "Jenkins vs GitHub Actions — why an organisation might choose either" }
+  - { level: advanced, title: "Plugins and plugin risk" }
+  - { level: advanced, title: "Docker and Kubernetes agents" }
+  - { level: advanced, title: "Backup, upgrades, access control and maintenance" }
+labs:
+  - { title: "Create a basic pipeline", level: beginner, mode: local, status: planned }
+  - { title: "Build and test an application", level: intermediate, mode: local, status: planned }
+  - { title: "Trigger a job from a repository event", level: intermediate, mode: local, status: planned }
+  - { title: "Store credentials safely", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Jenkins CI pipeline for a backend", level: beginner, status: planned }
+  - { title: "Container build pipeline", level: intermediate, status: planned }
+  - { title: "Jenkins + Kubernetes deployment lab", level: advanced, status: planned }
+resources:
+  - title: Jenkins user documentation
+    url: https://www.jenkins.io/doc/
+    publisher: Jenkins project
+    type: documentation
+    level: all
+    official: true
+    why: Official installation, pipeline, security and administration documentation.
+    verification: { status: unverified }
+  - title: Jenkins Pipeline — getting started
+    url: https://www.jenkins.io/doc/pipeline/tour/getting-started/
+    publisher: Jenkins project
+    type: tutorial
+    level: beginner
+    official: true
+    why: Official guided tour from installing Jenkins to running a first Pipeline.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

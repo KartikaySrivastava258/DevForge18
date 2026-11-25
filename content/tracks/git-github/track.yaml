@@ -1,0 +1,100 @@
+slug: git-github
+number: 1
+title: Version Control & Collaboration
+short_title: Git + GitHub
+category: source-planning
+products:
+  - name: Git
+    role: Distributed version-control system that records snapshots of a project's files and their full history on your own machine.
+  - name: GitHub
+    role: Hosting platform for Git repositories that adds pull requests, code review, issues, releases, permissions and automation.
+mental_model: Git is a time machine for a codebase; GitHub is a collaboration platform built around repositories and Git workflows.
+outcome: Track changes, branch, review and collaborate on code.
+summary: >-
+  Git keeps the history of a project as a series of snapshots called commits, so you can see
+  what changed, when, why and by whom — and go back when something breaks. Every clone holds
+  the complete history, so people can work on their own branches, even offline, and merge
+  their work later. GitHub hosts Git repositories and adds the collaboration layer teams rely
+  on: pull requests, reviews, issues, releases and access control.
+problem: >-
+  Without version control, teams email zip files, overwrite each other's work and cannot
+  reliably answer "what changed, and why?". Git makes every change traceable and reversible,
+  and GitHub gives a team one place to propose, review and discuss changes before they are merged.
+not_this: >-
+  Git is not GitHub. Git is the version-control tool that runs on your machine; GitHub is one of
+  several hosting services for Git repositories (GitLab and Bitbucket are others). Neither is a
+  backup system for large binary files, and neither is a safe place to store secrets.
+architecture_position: >-
+  Repositories are the source of truth for code, configuration and infrastructure definitions.
+  Almost every other track starts here: CI systems react to repository events, pipelines and
+  infrastructure are defined as files in repositories, and work items link to branches and pull requests.
+entry_level: beginner
+estimated_hours: { min: 10, max: 15 }
+skills_needed:
+  - Navigating folders in a terminal
+  - Editing text files in a code editor
+prerequisites: []
+related:
+  - slug: github-actions
+    why: Repository events such as pushes and pull requests trigger GitHub Actions workflows.
+  - slug: jira
+    why: Work items can be linked to branches, commits and pull requests for end-to-end traceability.
+  - slug: jenkins
+    why: Repository webhooks can trigger Jenkins pipelines that build and test each change.
+topics:
+  - { level: beginner, title: "Repository, working tree, staging area and commit" }
+  - { level: beginner, title: "init, clone, status, add, commit, log and diff" }
+  - { level: beginner, title: ".gitignore, README files and conventional commit messages" }
+  - { level: beginner, title: "Remote repositories: fetch, pull and push" }
+  - { level: intermediate, title: "restore, reset and revert — undoing work safely" }
+  - { level: intermediate, title: "Branches, merges and merge conflicts" }
+  - { level: intermediate, title: "Pull requests, code reviews, issues, releases, tags and permissions" }
+  - { level: intermediate, title: "Collaboration simulation with two contributors" }
+  - { level: advanced, title: "Rebasing and choosing a branching strategy" }
+  - { level: advanced, title: "Protected branches, GitHub Actions integration and secret handling" }
+labs:
+  - { title: "Create a repository and make a sequence of commits", level: beginner, mode: local, status: planned }
+  - { title: "Resolve a merge conflict", level: intermediate, mode: local, status: planned }
+  - { title: "Create a pull request and review checklist", level: intermediate, mode: local, status: planned }
+  - { title: "Diagnose an accidental commit and recover safely", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Personal developer portfolio repository", level: beginner, status: planned }
+  - { title: "Team task tracker with branches and pull requests", level: intermediate, status: planned }
+  - { title: "Release workflow with automated tests", level: advanced, status: planned }
+resources:
+  - title: Pro Git (2nd edition)
+    url: https://git-scm.com/book/en/v2
+    publisher: git-scm.com (Scott Chacon and Ben Straub)
+    type: documentation
+    level: all
+    official: true
+    why: The free, official Git book — covers basics through Git internals with clear diagrams.
+    verification: { status: verified, checked_on: 2026-11-25 }
+  - title: Git reference manual
+    url: https://git-scm.com/docs
+    publisher: git-scm.com
+    type: reference
+    level: all
+    official: true
+    why: Authoritative documentation for every Git command and option.
+    verification: { status: unverified }
+  - title: GitHub Skills
+    url: https://skills.github.com/
+    publisher: GitHub
+    type: course
+    level: beginner
+    official: true
+    why: Free hands-on courses that run inside real GitHub repositories.
+    verification: { status: unverified }
+  - title: GitHub Docs
+    url: https://docs.github.com/
+    publisher: GitHub
+    type: documentation
+    level: all
+    official: true
+    why: Official documentation for pull requests, issues, permissions and repository settings.
+    verification: { status: unverified }
+content_status: in-progress
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

@@ -1,0 +1,17 @@
+slug: data-engineering
+number: 4
+title: Data Engineering
+target_learner: Students interested in moving, transforming and analysing data reliably at scale.
+outcome: Build a pipeline that ingests events, processes them in scheduled batches and reports on its own health.
+prerequisites:
+  - Python programming
+  - Basic SQL
+modules:
+  - { track: postgresql, focus: "Analytical schemas, aggregation and indexes for reporting." }
+  - { track: kafka, focus: "Ingesting event streams with replay and retention." }
+  - { track: airflow, focus: "Scheduling idempotent batch jobs, retries and safe backfills." }
+  - { track: docker, focus: "A reproducible local data platform." }
+  - { track: prometheus-grafana, focus: "Pipeline health, task failures and freshness dashboards." }
+capstone: { title: "Project D — Data Engineering & Analytics Pipeline", status: planned }
+alternate_route: If you have used Airflow before, start with Kafka and treat the Airflow module as a review of backfills and idempotency.
+last_reviewed: 2026-11-24

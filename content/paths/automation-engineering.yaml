@@ -1,0 +1,17 @@
+slug: automation-engineering
+number: 7
+title: Automation Engineering
+target_learner: Learners who want to automate real campus or business processes safely, with or without writing much code.
+outcome: Build validated, idempotent, observable automations with human approval for consequential actions.
+prerequisites:
+  - Understanding of what an API is
+modules:
+  - { track: postman, focus: "Understanding and testing the APIs you will automate." }
+  - { track: n8n, focus: "Triggers, branching, error workflows and approvals." }
+  - { track: postgresql, focus: "Storing records and audit trails with constraints that prevent duplicates." }
+  - { track: redis, focus: "Idempotency keys and rate limiting for external calls." }
+  - { track: docker, focus: "Self-hosting the automation stack locally." }
+  - { track: opentelemetry, focus: "Tracing workflows across services to debug failures." }
+capstone: { title: "Project G — No-Code / Low-Code Campus Operations Automation", status: planned }
+alternate_route: Developers comfortable with HTTP can skim the Postman beginner lessons and start with n8n.
+last_reviewed: 2026-11-24

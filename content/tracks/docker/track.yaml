@@ -1,0 +1,91 @@
+slug: docker
+number: 2
+title: Containerisation
+short_title: Docker
+category: containers-infra
+products:
+  - name: Docker Engine
+    role: Builds images and runs containers on a host through a background daemon and the docker CLI.
+  - name: Docker Compose
+    role: Defines and runs multi-container applications (for example an API plus its database) from one YAML file.
+mental_model: Docker packages an application with the dependencies it needs so it behaves consistently across environments.
+outcome: Package and run reproducible applications.
+summary: >-
+  Docker packages an application together with its runtime, libraries and configuration into an
+  image. Running an image creates a container — an isolated process on the host that gets its own
+  view of the filesystem, network and process list. Because the same image runs on a laptop, in CI
+  and on a server, "it works on my machine" becomes "it works wherever the image runs".
+problem: >-
+  Applications break when moved between machines because of different operating-system packages,
+  language versions or configuration. Docker captures those dependencies in a versioned image, so
+  development, testing and production run the same artefact.
+not_this: >-
+  A container is not a virtual machine. Containers share the host's kernel instead of booting their
+  own operating system, so they start quickly but isolate less strongly than a VM. (On macOS and
+  Windows, Docker Desktop runs Linux containers inside a lightweight VM.) Docker is also not an
+  orchestrator: scheduling containers across many machines is Kubernetes' job.
+architecture_position: >-
+  Docker sits between your code and the environment that runs it. CI pipelines build images,
+  registries store them, and Docker Compose or Kubernetes run them alongside databases, caches and proxies.
+entry_level: beginner
+estimated_hours: { min: 12, max: 18 }
+skills_needed:
+  - Navigating folders and running commands in a terminal
+  - A basic idea of what a web server or API does
+prerequisites: []
+related:
+  - slug: kubernetes
+    why: Kubernetes runs container images as Pods and manages them across a cluster.
+  - slug: github-actions
+    why: CI workflows commonly build, test and publish container images on every change.
+  - slug: postgresql
+    why: Running PostgreSQL in a container with a named volume is a common, disposable local setup.
+topics:
+  - { level: beginner, title: "Images vs containers" }
+  - { level: beginner, title: "Containers vs virtual machines" }
+  - { level: beginner, title: "Docker Engine, daemon, CLI and registry" }
+  - { level: beginner, title: "Dockerfile instructions and build context" }
+  - { level: beginner, title: "Ports, volumes, bind mounts and networks" }
+  - { level: intermediate, title: "Layers, build caching and multi-stage builds" }
+  - { level: intermediate, title: "Environment variables, secrets and health checks" }
+  - { level: intermediate, title: "Docker Compose and multi-container applications" }
+  - { level: intermediate, title: "Container logs, resource limits and debugging" }
+  - { level: advanced, title: "Image size, non-root users, image scanning and supply-chain basics" }
+labs:
+  - { title: "Containerise a simple API", level: beginner, mode: local, status: planned }
+  - { title: "Persist database data using volumes", level: beginner, mode: local, status: planned }
+  - { title: "Connect an API and PostgreSQL with Compose", level: intermediate, mode: local, status: planned }
+  - { title: "Optimise a slow, oversized image", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Containerised notes API", level: beginner, status: planned }
+  - { title: "Local full-stack application with Compose", level: intermediate, status: planned }
+  - { title: "Multi-service event application with health checks", level: advanced, status: planned }
+resources:
+  - title: Docker — Get started
+    url: https://docs.docker.com/get-started/
+    publisher: Docker
+    type: tutorial
+    level: beginner
+    official: true
+    why: Official guided introduction to images, containers and building your first image.
+    verification: { status: unverified }
+  - title: Docker documentation
+    url: https://docs.docker.com/
+    publisher: Docker
+    type: documentation
+    level: all
+    official: true
+    why: Reference for the Docker CLI, Dockerfile instructions, networking and storage.
+    verification: { status: unverified }
+  - title: Docker Compose documentation
+    url: https://docs.docker.com/compose/
+    publisher: Docker
+    type: documentation
+    level: intermediate
+    official: true
+    why: Official guide to defining multi-container applications with Compose files.
+    verification: { status: unverified }
+content_status: in-progress
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

@@ -1,0 +1,18 @@
+slug: ai-application-engineering
+number: 5
+title: AI Application Engineering
+target_learner: Developers who want to build LLM features that are grounded, measurable and safe rather than impressive demos.
+outcome: Ship a retrieval-augmented assistant with citations, permission checks, caching, evaluation and tracing.
+prerequisites:
+  - Python programming
+  - Calling HTTP APIs and handling JSON
+modules:
+  - { track: git-github, focus: "Versioning prompts, evaluation sets and code together." }
+  - { track: postgresql, focus: "Document metadata, permissions and vector storage with pgvector." }
+  - { track: docker, focus: "Reproducible services for ingestion and serving." }
+  - { track: langchain-llamaindex, focus: "Ingestion, retrieval, citations, tool use and evaluation." }
+  - { track: redis, focus: "Caching responses and enforcing rate limits on expensive calls." }
+  - { track: opentelemetry, focus: "Tracing retrieval and model calls to manage latency and cost." }
+capstone: { title: "Project C — Intelligent College Knowledge Assistant", status: planned }
+alternate_route: If you already run services in Docker, skip that module's beginner lessons and take its quiz to confirm.
+last_reviewed: 2026-11-24

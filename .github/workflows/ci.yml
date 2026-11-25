@@ -1,0 +1,84 @@
+# Continuous integration: every push and pull request must pass all checks.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck, build, test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    # A real PostgreSQL server so SQL lessons' commands run and their output is checked.
+    # Version 16 matches the psql client shipped by Ubuntu 24.04.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: devforge
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: devforge
+      # Allows Redis lessons to empty the throwaway CI Redis before each run. Never set this against real data.
+      DEVFORGE_REDIS_TEST: "1"
+      # Allows Docker lessons to create and force-remove containers/volumes on this disposable runner.
+      DEVFORGE_DOCKER_TEST: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+      # No lockfile is committed yet (see IMPLEMENTATION_STATUS.md); switch to `npm ci` once package-lock.json exists.
+      - run: npm install --no-audit --no-fund
+      - name: Install lesson tools (psql, createdb, dropdb, redis-cli, nginx)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client redis-tools nginx
+      - name: Typecheck server, shared code and scripts
+        run: npm run typecheck
+      - name: Typecheck frontend (React)
+        run: npm run typecheck:web
+      - name: Lint documentation
+        run: npm run lint:md
+      - name: Validate content and build
+        run: npm run build
+      - name: Unit and integration tests
+        run: npm test
+      - name: Install Chromium for end-to-end tests
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end tests
+        run: npm run test:e2e
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: e2e-screenshots
+          path: build/screenshots
+          retention-days: 7

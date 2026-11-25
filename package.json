@@ -1,0 +1,50 @@
+{
+  "name": "devforge18",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DevForge 18 — an interactive developer engineering academy covering 18 industry technology tracks.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "content:build": "node --disable-warning=ExperimentalWarning scripts/build-content.ts",
+    "content:check-links": "node --disable-warning=ExperimentalWarning scripts/check-links.ts",
+    "web:build": "node scripts/build-web.ts",
+    "build": "npm run content:build && npm run web:build",
+    "start": "node --disable-warning=ExperimentalWarning server/src/main.ts",
+    "dev": "npm run build && node --disable-warning=ExperimentalWarning --watch-path=server/src server/src/main.ts",
+    "db:migrate": "node --disable-warning=ExperimentalWarning scripts/db-migrate.ts",
+    "user:create": "node --disable-warning=ExperimentalWarning scripts/create-user.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "typecheck:web": "tsc -p tsconfig.web.json",
+    "test": "node --disable-warning=ExperimentalWarning --test \"server/test/**/*.test.ts\" \"shared/**/*.test.ts\" \"scripts/**/*.test.ts\"",
+    "test:e2e": "npm run build && node --disable-warning=ExperimentalWarning --test \"e2e/**/*.test.ts\"",
+    "verify": "npm run typecheck && npm run typecheck:web && npm run lint:md && npm run build && npm test && npm run test:e2e",
+    "db:backup": "node --disable-warning=ExperimentalWarning scripts/db-backup.ts",
+    "lint:md": "markdownlint-cli2 \"**/*.md\"",
+    "lessons:record": "node --disable-warning=ExperimentalWarning scripts/record-lessons.ts"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.3",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "esbuild": "0.28.2",
+    "highlight.js": "11.12.0",
+    "js-yaml": "^4.2.0",
+    "markdownlint-cli2": "0.24.2",
+    "marked": "18.0.10",
+    "playwright": "1.63.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-icons": "5.7.0",
+    "typescript": "6.0.3"
+  },
+  "license": "UNLICENSED",
+  "overrides": {
+    "katex": "^0.18.2"
+  }
+}

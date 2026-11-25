@@ -1,0 +1,79 @@
+slug: redis
+number: 9
+title: Caching & Fast Data
+short_title: Redis
+category: data-messaging
+products:
+  - name: Redis
+    role: In-memory data store offering strings, hashes, lists, sets, sorted sets and streams, with optional persistence.
+mental_model: Redis keeps frequently needed data in memory so applications can retrieve or update it quickly.
+outcome: Reduce latency, manage ephemeral state and coordinate work.
+summary: >-
+  Redis holds data in memory, so individual operations are very fast. Instead of tables it offers
+  data structures — strings, hashes, lists, sets, sorted sets and streams — manipulated with atomic
+  commands. That makes it a common choice for caches, sessions, counters, rate limiters,
+  leaderboards and lightweight queues shared between many application instances.
+problem: >-
+  Repeatedly reading the same data from a disk-based database or a slow external API wastes time and
+  capacity. Redis serves hot data from memory and offers atomic operations for shared state that
+  several application instances must coordinate on.
+not_this: >-
+  Redis is not a drop-in replacement for a relational database: memory is limited and costly, and
+  depending on persistence settings the most recent writes can be lost after a crash. A cache holds a
+  copy of data, so every cache needs an expiry and invalidation plan.
+architecture_position: >-
+  Redis sits beside backend services, usually in front of a primary database such as PostgreSQL,
+  holding cached results, sessions and rate-limit counters that must be fast and shared between instances.
+entry_level: beginner
+estimated_hours: { min: 10, max: 14 }
+skills_needed:
+  - Running commands in a terminal
+  - Basic programming in any language
+prerequisites: []
+related:
+  - slug: postgresql
+    why: Cache-aside with Redis in front of PostgreSQL is one of the most common backend patterns.
+  - slug: kafka
+    why: Redis Streams and Kafka both handle event streams but differ greatly in retention, scale and guarantees.
+topics:
+  - { level: beginner, title: "Key-value data model and core data structures" }
+  - { level: beginner, title: "Strings, hashes, lists, sets, sorted sets and streams" }
+  - { level: beginner, title: "TTL, eviction policies and memory limits" }
+  - { level: beginner, title: "When not to cache" }
+  - { level: intermediate, title: "Cache-aside, write-through and invalidation" }
+  - { level: intermediate, title: "Sessions, rate limiting and counters" }
+  - { level: intermediate, title: "Pub/Sub vs Streams" }
+  - { level: intermediate, title: "Atomic operations and transactions" }
+  - { level: advanced, title: "Cache stampede, penetration and avalanche" }
+  - { level: advanced, title: "Persistence, replication and high-availability concepts" }
+  - { level: advanced, title: "Security, authentication and network exposure" }
+labs:
+  - { title: "Cache database query results", level: beginner, mode: local, status: planned }
+  - { title: "Add TTL and observe expiration", level: beginner, mode: simulation, status: planned }
+  - { title: "Implement a rate limiter", level: intermediate, mode: local, status: planned }
+  - { title: "Simulate stale cache and invalidation", level: advanced, mode: simulation, status: planned }
+projects:
+  - { title: "Product catalogue cache", level: beginner, status: planned }
+  - { title: "API rate limiter", level: intermediate, status: planned }
+  - { title: "Real-time notification stream", level: advanced, status: planned }
+resources:
+  - title: Redis documentation
+    url: https://redis.io/docs/latest/
+    publisher: Redis
+    type: documentation
+    level: all
+    official: true
+    why: Official reference for data types, commands, persistence, replication and security.
+    verification: { status: unverified }
+  - title: Redis University
+    url: https://university.redis.io/
+    publisher: Redis
+    type: course
+    level: beginner
+    official: true
+    why: Free official courses on Redis data structures and application patterns.
+    verification: { status: unverified }
+content_status: in-progress
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

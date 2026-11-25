@@ -1,0 +1,17 @@
+slug: team-workflow
+number: 8
+title: Engineering Team Workflow
+target_learner: Project teams and team leads who want a professional, traceable workflow from requirement to release.
+outcome: Run a sprint where every change is planned, reviewed, tested and automatically verified.
+prerequisites:
+  - Basic programming
+  - Working in or leading a student team project
+modules:
+  - { track: git-github, focus: "Branching strategy, pull requests and review checklists." }
+  - { track: jira, focus: "Backlogs, sprints, acceptance criteria and flow metrics." }
+  - { track: postman, focus: "Shared API collections as executable documentation." }
+  - { track: github-actions, focus: "Automated checks that gate every merge." }
+  - { track: jenkins, focus: "When a self-managed pipeline is the better organisational fit." }
+capstone: { title: "Project F (team slice) — issue-to-pull-request delivery workflow", status: planned }
+alternate_route: Teams already using Jira can start with GitHub Actions and return to the Jira acceptance-criteria lesson later.
+last_reviewed: 2026-11-24

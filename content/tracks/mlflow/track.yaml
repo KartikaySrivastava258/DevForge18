@@ -1,0 +1,82 @@
+slug: mlflow
+number: 18
+title: MLOps & Experiment Tracking
+short_title: MLflow
+category: ai-ml
+products:
+  - name: MLflow
+    role: Open-source platform for tracking ML experiments, packaging models and managing them in a model registry.
+mental_model: MLflow helps machine-learning teams record experiments, package models and manage the path from experimentation to deployment.
+outcome: Track experiments, package models and manage model lifecycle.
+summary: >-
+  When you train a model, MLflow records each run's parameters, metrics, code version and output
+  files (artifacts), so you can compare experiments instead of relying on memory or spreadsheets.
+  Models are logged in a standard format, registered under a name with numbered versions, and loaded
+  back later for evaluation or serving.
+problem: >-
+  Machine-learning work involves many experiments with different data, code and hyperparameters;
+  without tracking, results cannot be reproduced and nobody is sure which model is in production.
+  MLflow provides a shared record and a managed lifecycle for models.
+not_this: >-
+  MLflow does not train models or pick hyperparameters for you, and it is not a workflow scheduler —
+  tools such as Airflow run the pipelines that call it. Its Model Registry workflow has changed
+  between versions (registry stages were deprecated in favour of aliases), so always check the
+  documentation for the version you install.
+architecture_position: >-
+  MLflow sits in the MLOps layer: training jobs log to a tracking server backed by a database such
+  as PostgreSQL and artifact storage, and deployment pipelines pull registered model versions to serve them.
+entry_level: intermediate
+estimated_hours: { min: 10, max: 15 }
+skills_needed:
+  - Python programming
+  - Basic machine learning (train/test split, evaluation metrics)
+prerequisites: []
+related:
+  - slug: airflow
+    why: Airflow can orchestrate repeatable training pipelines that log runs to MLflow.
+  - slug: postgresql
+    why: A PostgreSQL database can serve as the tracking server's backend store.
+  - slug: docker
+    why: Packaging a trained model and its environment as an image makes serving reproducible.
+topics:
+  - { level: beginner, title: "Experiment, run, parameters, metrics and artifacts" }
+  - { level: beginner, title: "Model comparison" }
+  - { level: intermediate, title: "Tracking server and backend store" }
+  - { level: intermediate, title: "Model logging and signatures" }
+  - { level: intermediate, title: "Model flavours and packaging" }
+  - { level: intermediate, title: "Reproducibility and environment capture" }
+  - { level: intermediate, title: "Dataset and evaluation tracking" }
+  - { level: advanced, title: "Model Registry: versions and aliases in current releases" }
+  - { level: advanced, title: "Deployment and serving concepts" }
+  - { level: advanced, title: "Model monitoring and drift concepts" }
+  - { level: advanced, title: "Security and governance" }
+labs:
+  - { title: "Track a simple model experiment", level: beginner, mode: local, status: planned }
+  - { title: "Compare two runs", level: beginner, mode: local, status: planned }
+  - { title: "Log a model and load it back", level: intermediate, mode: local, status: planned }
+  - { title: "Register and promote a model using the current MLflow workflow", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Student performance prediction experiment using synthetic data", level: beginner, status: planned }
+  - { title: "Model comparison dashboard", level: intermediate, status: planned }
+  - { title: "Reproducible training pipeline coordinated by Airflow", level: advanced, status: planned }
+resources:
+  - title: MLflow documentation
+    url: https://mlflow.org/docs/latest/
+    publisher: MLflow Project
+    type: documentation
+    level: all
+    official: true
+    why: Official documentation for tracking, models, the registry and deployment.
+    verification: { status: unverified }
+  - title: MLflow tutorials (classic ML)
+    url: https://mlflow.org/docs/latest/ml/
+    publisher: MLflow Project
+    type: tutorial
+    level: beginner
+    official: true
+    why: Official getting-started material for tracking and model management in traditional ML.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

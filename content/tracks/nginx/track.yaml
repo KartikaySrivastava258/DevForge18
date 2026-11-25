@@ -1,0 +1,80 @@
+slug: nginx
+number: 14
+title: Web Traffic & Reverse Proxy
+short_title: Nginx
+category: containers-infra
+products:
+  - name: Nginx
+    role: High-performance web server and reverse proxy that serves static files, routes requests, terminates TLS and load-balances.
+mental_model: Nginx sits in front of applications and handles incoming web traffic efficiently.
+outcome: Route requests, serve static assets, terminate TLS and load balance.
+summary: >-
+  Nginx accepts incoming HTTP connections and decides what to do with each request based on its
+  configuration: serve a file from disk, forward ("proxy") the request to an application server,
+  spread traffic across several backend instances, or reject it. Its event-driven design lets one
+  server handle many concurrent connections with modest memory.
+problem: >-
+  Exposing application servers directly to the internet means each one must handle TLS, slow
+  clients, static files, compression and abuse protection. A reverse proxy centralises those
+  concerns in front of the applications.
+not_this: >-
+  Nginx is not an application server for business logic, and adding it does not automatically make
+  a system secure or fast — misconfigured headers, timeouts or caching rules can cause outages and
+  even leak private data between users.
+architecture_position: >-
+  Nginx sits at the edge, between clients and backend services: it terminates TLS, serves static
+  frontend assets and routes API requests to the right service instances.
+entry_level: beginner
+estimated_hours: { min: 8, max: 12 }
+skills_needed:
+  - Running commands in a terminal
+  - Basic understanding of HTTP requests and responses
+prerequisites: []
+related:
+  - slug: docker
+    why: Nginx is frequently run as a container in front of application containers in Compose setups.
+  - slug: postman
+    why: API tests sent through the proxy verify routing, headers and timeouts end to end.
+topics:
+  - { level: beginner, title: "Web server vs reverse proxy" }
+  - { level: beginner, title: "Static file serving" }
+  - { level: beginner, title: "Request routing with server and location blocks" }
+  - { level: beginner, title: "Nginx vs an application server" }
+  - { level: intermediate, title: "Proxy headers and passing client information upstream" }
+  - { level: intermediate, title: "Load-balancing methods" }
+  - { level: intermediate, title: "Logs and troubleshooting" }
+  - { level: intermediate, title: "Caching and compression" }
+  - { level: advanced, title: "TLS termination and certificate concepts" }
+  - { level: advanced, title: "Rate limiting and access control" }
+  - { level: advanced, title: "Upstream health and failure handling" }
+  - { level: advanced, title: "Secure configuration and least exposure" }
+labs:
+  - { title: "Serve a static site", level: beginner, mode: local, status: planned }
+  - { title: "Reverse proxy to a local API", level: beginner, mode: local, status: planned }
+  - { title: "Load balance two backend instances", level: intermediate, mode: local, status: planned }
+  - { title: "Configure safe headers and rate limiting", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Reverse proxy for a multi-service application", level: beginner, status: planned }
+  - { title: "Local load-balancing demo", level: intermediate, status: planned }
+  - { title: "Static frontend + API gateway-style routing", level: advanced, status: planned }
+resources:
+  - title: Nginx beginner's guide
+    url: https://nginx.org/en/docs/beginners_guide.html
+    publisher: nginx.org
+    type: tutorial
+    level: beginner
+    official: true
+    why: Official introduction to starting Nginx, configuration structure, static content and proxying.
+    verification: { status: unverified }
+  - title: Nginx documentation
+    url: https://nginx.org/en/docs/
+    publisher: nginx.org
+    type: reference
+    level: all
+    official: true
+    why: Directive-level reference for every core and bundled Nginx module.
+    verification: { status: unverified }
+content_status: in-progress
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

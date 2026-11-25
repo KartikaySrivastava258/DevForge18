@@ -1,0 +1,20 @@
+slug: devops-platform
+number: 2
+title: DevOps & Platform Engineering
+target_learner: Learners who can build an application and want to automate how it is tested, packaged, deployed and operated.
+outcome: Take a service from commit to a monitored Kubernetes deployment through automated pipelines and reviewed infrastructure code.
+prerequisites:
+  - Backend Developer Foundations or equivalent experience
+  - Comfort with the command line and YAML
+modules:
+  - { track: git-github, focus: "Protected branches, reviews and repository conventions that pipelines rely on." }
+  - { track: docker, focus: "Small, secure, reproducible images." }
+  - { track: github-actions, focus: "CI on every pull request; building and publishing images." }
+  - { track: jenkins, focus: "A self-managed pipeline for comparison, and when each choice fits." }
+  - { track: terraform, focus: "Provision environments declaratively and review plans before applying." }
+  - { track: kubernetes, focus: "Deploy, scale, roll out and roll back workloads." }
+  - { track: prometheus-grafana, focus: "Metrics, dashboards and symptom-based alerts." }
+  - { track: opentelemetry, focus: "Traces that explain where time goes across services." }
+capstone: { title: "Project F — Automated Software Delivery Platform", status: planned }
+alternate_route: If you already use GitHub Actions daily, skim Jenkins for the comparison lesson only and spend the saved time on Kubernetes.
+last_reviewed: 2026-11-24

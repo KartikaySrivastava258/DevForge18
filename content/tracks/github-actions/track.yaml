@@ -1,0 +1,81 @@
+slug: github-actions
+number: 6
+title: CI/CD
+short_title: GitHub Actions
+category: ci-cd
+products:
+  - name: GitHub Actions
+    role: GitHub's built-in automation service that runs workflows on GitHub-hosted or self-hosted runners.
+mental_model: GitHub Actions runs automated workflows when repository events occur.
+outcome: Automate build, test, security checks and delivery.
+summary: >-
+  GitHub Actions runs workflows — YAML files stored in .github/workflows — when something happens in
+  a repository, such as a push, a pull request or a schedule. A workflow contains jobs that run on
+  runners (fresh virtual machines or your own servers), and each job runs steps: shell commands or
+  reusable actions published by GitHub and the community.
+problem: >-
+  Running tests and builds by hand before every merge is easy to forget and differs between
+  developers. CI automation runs the same checks on every change and shows the result directly on
+  the pull request.
+not_this: >-
+  GitHub Actions is not a production secrets vault or a complete deployment platform. Third-party
+  actions execute code inside your pipeline with your workflow's permissions, so they are a
+  supply-chain risk that should be pinned and reviewed.
+architecture_position: >-
+  GitHub Actions connects source control to delivery: it reacts to repository events, runs tests,
+  builds container images and can hand off to deployment targets such as Kubernetes.
+entry_level: beginner
+estimated_hours: { min: 8, max: 12 }
+skills_needed:
+  - Committing, branching and pushing with Git
+  - Reading and writing YAML
+prerequisites: [git-github]
+related:
+  - slug: git-github
+    why: Workflows are stored in the repository and triggered by its events.
+  - slug: docker
+    why: Workflows commonly build, scan and push container images.
+  - slug: jenkins
+    why: Comparing a hosted CI service with a self-managed automation server teaches CI trade-offs.
+  - slug: postman
+    why: API regression collections can run inside a workflow as an automated quality gate.
+topics:
+  - { level: beginner, title: "Workflow YAML, events, jobs, steps and runners" }
+  - { level: beginner, title: "Build, test, lint and package pipelines" }
+  - { level: intermediate, title: "Actions, reusable workflows and matrices" }
+  - { level: intermediate, title: "Artifacts and caches" }
+  - { level: intermediate, title: "Container builds and deployment workflows" }
+  - { level: intermediate, title: "Workflow debugging and cost awareness" }
+  - { level: advanced, title: "Environment protection rules and approvals" }
+  - { level: advanced, title: "Secrets, the GITHUB_TOKEN's permissions and OIDC concepts" }
+  - { level: advanced, title: "Supply-chain security and pinned action versions" }
+labs:
+  - { title: "Run tests on every pull request", level: beginner, mode: local, status: planned }
+  - { title: "Cache dependencies", level: intermediate, mode: local, status: planned }
+  - { title: "Build and publish a container image", level: intermediate, mode: local, status: planned }
+  - { title: "Add a protected deployment stage", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Full CI pipeline for a REST API", level: beginner, status: planned }
+  - { title: "Multi-version test matrix", level: intermediate, status: planned }
+  - { title: "Automated release workflow", level: advanced, status: planned }
+resources:
+  - title: GitHub Actions documentation
+    url: https://docs.github.com/en/actions
+    publisher: GitHub
+    type: documentation
+    level: all
+    official: true
+    why: Complete reference for workflow syntax, events, runners, security hardening and deployments.
+    verification: { status: unverified }
+  - title: GitHub Actions quickstart
+    url: https://docs.github.com/en/actions/writing-workflows/quickstart
+    publisher: GitHub
+    type: tutorial
+    level: beginner
+    official: true
+    why: The shortest official path to a first working workflow.
+    verification: { status: unverified }
+content_status: in-progress
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

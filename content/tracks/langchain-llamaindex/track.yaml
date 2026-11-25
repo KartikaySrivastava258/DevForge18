@@ -1,0 +1,102 @@
+slug: langchain-llamaindex
+number: 8
+title: LLM Application Frameworks
+short_title: LangChain + LlamaIndex
+category: ai-ml
+products:
+  - name: LangChain
+    role: Open-source framework for composing LLM applications from model integrations, prompts, retrievers, tools and agent workflows.
+  - name: LlamaIndex
+    role: Open-source data framework focused on ingesting, indexing and retrieving your own data for LLM applications such as RAG.
+mental_model: These frameworks help developers connect language models to data, tools and application workflows. They do not replace the model itself.
+outcome: Build grounded LLM applications, retrieval and tool workflows.
+summary: >-
+  LangChain and LlamaIndex are Python and TypeScript libraries that sit between your application and
+  a large language model. They provide building blocks for common patterns: loading documents,
+  splitting them into chunks, turning chunks into embeddings, storing them in a vector index,
+  retrieving relevant passages for a question and sending them to the model with a prompt — or
+  letting the model request calls to tools that you define and control.
+problem: >-
+  Calling a model API directly is simple, but real LLM features need retrieval over your own data,
+  structured outputs, tool calls, retries, evaluation and cost control. These frameworks package
+  common patterns and integrations so teams do not rebuild them for every project.
+not_this: >-
+  Neither framework is a language model — they orchestrate calls to models hosted by a provider or
+  run locally. They do not make answers correct: grounding, evaluation and permission checks remain
+  the engineer's job. They overlap, but LlamaIndex centres on data ingestion and retrieval, while
+  LangChain centres on composing model, tool and agent workflows.
+architecture_position: >-
+  The frameworks live inside an application service. They read permitted documents from storage,
+  write and query embeddings in a vector store (which can be PostgreSQL with pgvector), call a model
+  provider, and return grounded answers with citations to the user interface.
+entry_level: intermediate
+estimated_hours: { min: 18, max: 25 }
+skills_needed:
+  - Python programming (functions, packages, virtual environments)
+  - Calling HTTP APIs and handling JSON
+prerequisites: []
+related:
+  - slug: postgresql
+    why: PostgreSQL with the pgvector extension can serve as the vector store for retrieval.
+  - slug: redis
+    why: Caching repeated model responses or embeddings can reduce latency and token cost.
+  - slug: opentelemetry
+    why: Tracing each retrieval and model call shows where latency and failures come from.
+topics:
+  - { level: beginner, title: "LLM application architecture and model-provider abstraction" }
+  - { level: beginner, title: "Prompts, structured outputs and validation" }
+  - { level: beginner, title: "LangChain vs LlamaIndex: different centres of gravity, overlapping features" }
+  - { level: intermediate, title: "Embeddings, chunking and vector retrieval" }
+  - { level: intermediate, title: "Retrieval-augmented generation (RAG)" }
+  - { level: intermediate, title: "Data ingestion, indexing and retrieval" }
+  - { level: intermediate, title: "Tool calling and agent workflows" }
+  - { level: intermediate, title: "Memory concepts and their limitations" }
+  - { level: advanced, title: "Evaluation, hallucination checks and grounding" }
+  - { level: advanced, title: "Latency, token cost, caching and rate limits" }
+  - { level: advanced, title: "Privacy, prompt injection and data permissions" }
+labs:
+  - { title: "Build a simple question-answering app", level: beginner, mode: local, status: planned }
+  - { title: "Index a set of course PDFs", level: intermediate, mode: local, status: planned }
+  - { title: "Add citations to retrieved passages", level: intermediate, mode: local, status: planned }
+  - { title: "Evaluate answers against a small test set", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "College handbook assistant", level: beginner, status: planned }
+  - { title: "Research-paper explorer", level: intermediate, status: planned }
+  - { title: "Tool-using study assistant with safe, limited tools", level: advanced, status: planned }
+resources:
+  - title: LangChain documentation
+    url: https://docs.langchain.com/
+    publisher: LangChain
+    type: documentation
+    level: all
+    official: true
+    why: Official concepts, how-to guides and integration references for LangChain.
+    verification: { status: unverified }
+  - title: LangChain Academy
+    url: https://academy.langchain.com/
+    publisher: LangChain
+    type: course
+    level: intermediate
+    official: true
+    why: Free official courses from the LangChain team.
+    verification: { status: unverified }
+  - title: LlamaIndex documentation
+    url: https://docs.llamaindex.ai/
+    publisher: LlamaIndex
+    type: documentation
+    level: all
+    official: true
+    why: Official guides to loading, indexing, querying and evaluating data with LlamaIndex.
+    verification: { status: unverified }
+  - title: LlamaIndex examples
+    url: https://docs.llamaindex.ai/en/stable/examples/
+    publisher: LlamaIndex
+    type: tutorial
+    level: intermediate
+    official: true
+    why: Runnable notebooks demonstrating retrieval, agents and evaluation patterns.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

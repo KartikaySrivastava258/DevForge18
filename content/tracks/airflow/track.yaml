@@ -1,0 +1,89 @@
+slug: airflow
+number: 16
+title: Workflow Orchestration
+short_title: Apache Airflow
+category: data-messaging
+products:
+  - name: Apache Airflow
+    role: Platform to programmatically author, schedule and monitor workflows defined as Python DAGs.
+mental_model: Airflow schedules and monitors workflows made of dependent tasks, especially data pipelines.
+outcome: Schedule, retry and monitor data workflows using DAGs.
+summary: >-
+  In Airflow you write workflows as Python code: a DAG (directed acyclic graph) of tasks with
+  dependencies, such as extract → transform → load → report. The scheduler creates runs according to
+  a schedule or trigger, an executor hands tasks to workers, and the web UI shows each run's status,
+  logs and retries.
+problem: >-
+  Cron jobs and hand-written scripts cannot express dependencies between steps, retry failures
+  sensibly, backfill missed periods or show clearly what ran and what failed. Airflow makes batch
+  workflows explicit, observable and recoverable.
+not_this: >-
+  Airflow is not a streaming engine or a message broker — it orchestrates batch tasks and is not a
+  substitute for Kafka. XCom is meant for small values such as IDs or file paths, not for passing
+  large datasets between tasks; tasks should exchange references to data stored elsewhere.
+architecture_position: >-
+  Airflow sits in the data and ML platform layer, orchestrating batch jobs that read from sources
+  such as PostgreSQL or files produced from event streams, transform data and load results into
+  analytical stores.
+entry_level: intermediate
+estimated_hours: { min: 12, max: 18 }
+skills_needed:
+  - Python programming
+  - Basic SQL
+prerequisites: [postgresql]
+related:
+  - slug: kafka
+    why: Airflow can schedule batch processing of data that arrived as streams; streaming itself stays in Kafka.
+  - slug: mlflow
+    why: Airflow can orchestrate repeatable training runs that record experiments in MLflow.
+  - slug: n8n
+    why: Both automate workflows, but for different users, workloads and operational models.
+topics:
+  - { level: beginner, title: "DAGs, tasks, operators and dependencies" }
+  - { level: beginner, title: "Scheduling, runs and logical dates" }
+  - { level: beginner, title: "Airflow vs event streaming — why it is not a substitute for Kafka" }
+  - { level: intermediate, title: "Retries, timeouts and failure handling" }
+  - { level: intermediate, title: "Sensors, hooks and connections" }
+  - { level: intermediate, title: "XCom and data-passing limitations" }
+  - { level: intermediate, title: "Executors and workers" }
+  - { level: advanced, title: "Backfills, catchup and idempotency" }
+  - { level: advanced, title: "Testing and deployment" }
+  - { level: advanced, title: "Monitoring and operational hygiene" }
+labs:
+  - { title: "Create a three-task DAG", level: beginner, mode: local, status: planned }
+  - { title: "Add retries and failure alerts", level: intermediate, mode: local, status: planned }
+  - { title: "Build a small ETL workflow", level: intermediate, mode: local, status: planned }
+  - { title: "Backfill a date range safely", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Daily student attendance pipeline", level: beginner, status: planned }
+  - { title: "Scheduled report generation", level: intermediate, status: planned }
+  - { title: "Data quality pipeline", level: advanced, status: planned }
+resources:
+  - title: Apache Airflow documentation
+    url: https://airflow.apache.org/docs/
+    publisher: The Apache Software Foundation
+    type: documentation
+    level: all
+    official: true
+    why: Official documentation for Airflow core concepts, operators, deployment and providers.
+    verification: { status: unverified }
+  - title: Airflow tutorials
+    url: https://airflow.apache.org/docs/apache-airflow/stable/tutorial/
+    publisher: The Apache Software Foundation
+    type: tutorial
+    level: beginner
+    official: true
+    why: Official walkthroughs from a first DAG to the TaskFlow API and a small data pipeline.
+    verification: { status: unverified }
+  - title: Airflow use cases
+    url: https://airflow.apache.org/use-cases/
+    publisher: The Apache Software Foundation
+    type: article
+    level: all
+    official: true
+    why: Organisations' own descriptions of how they use Airflow, useful context for case studies.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

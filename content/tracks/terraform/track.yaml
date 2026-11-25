@@ -1,0 +1,79 @@
+slug: terraform
+number: 5
+title: Infrastructure as Code
+short_title: Terraform
+category: containers-infra
+products:
+  - name: Terraform
+    role: HashiCorp's infrastructure-as-code tool that plans and applies infrastructure changes through provider plugins.
+mental_model: Terraform describes the infrastructure you want; it calculates and applies changes to reach that desired state.
+outcome: Provision repeatable infrastructure declaratively.
+summary: >-
+  With Terraform you write configuration files in HCL that describe the infrastructure you want —
+  networks, servers, databases, DNS records. Terraform compares that description with what it has
+  recorded in its state and with the real world, shows you a plan of exactly what it will create,
+  change or destroy, and applies it only when you approve.
+problem: >-
+  Creating infrastructure by clicking through web consoles is slow, error-prone and impossible to
+  review or reproduce. Infrastructure as Code makes environments versioned, reviewable in pull
+  requests and repeatable.
+not_this: >-
+  Terraform is not a configuration-management tool for installing software inside servers (tools
+  such as Ansible fill that role), and it is not an application-release tool. Its state file is
+  critical and can contain sensitive values, so it must be stored and protected deliberately.
+architecture_position: >-
+  Terraform works at the foundation layer, provisioning what everything else runs on — clusters,
+  databases, networks and DNS — usually from a reviewed pull request and a CI pipeline.
+entry_level: intermediate
+estimated_hours: { min: 12, max: 18 }
+skills_needed:
+  - Running commands in a terminal
+  - Committing and pushing with Git
+prerequisites: [git-github]
+related:
+  - slug: kubernetes
+    why: Terraform can create clusters and supporting resources that Kubernetes workloads depend on.
+  - slug: github-actions
+    why: CI commonly runs terraform fmt, validate and plan on pull requests so changes are reviewed first.
+topics:
+  - { level: beginner, title: "What Infrastructure as Code is and why it matters" }
+  - { level: beginner, title: "Providers, resources, data sources and outputs" }
+  - { level: beginner, title: "init, fmt, validate, plan, apply and destroy" }
+  - { level: intermediate, title: "Variables, locals and modules" }
+  - { level: intermediate, title: "State files and state locking" }
+  - { level: intermediate, title: "Dependency graph and resource lifecycle" }
+  - { level: intermediate, title: "Secrets, credentials and least privilege" }
+  - { level: advanced, title: "Drift detection and import" }
+  - { level: advanced, title: "Remote state and team collaboration" }
+  - { level: advanced, title: "Reusable modules, testing and policy checks" }
+  - { level: advanced, title: "Cost and blast-radius awareness" }
+labs:
+  - { title: "Build a local or low-cost provider example", level: beginner, mode: local, status: planned }
+  - { title: "Create reusable variables and outputs", level: intermediate, mode: local, status: planned }
+  - { title: "Inspect a plan before applying", level: intermediate, mode: local, status: planned }
+  - { title: "Detect configuration drift", level: advanced, mode: local, status: planned }
+projects:
+  - { title: "Reproducible development environment", level: beginner, status: planned }
+  - { title: "Reusable infrastructure module", level: intermediate, status: planned }
+  - { title: "CI-validated infrastructure repository", level: advanced, status: planned }
+resources:
+  - title: Terraform tutorials
+    url: https://developer.hashicorp.com/terraform/tutorials
+    publisher: HashiCorp
+    type: tutorial
+    level: beginner
+    official: true
+    why: Official hands-on tutorials, including paths that use local providers and Docker.
+    verification: { status: unverified }
+  - title: Terraform documentation
+    url: https://developer.hashicorp.com/terraform/docs
+    publisher: HashiCorp
+    type: documentation
+    level: all
+    official: true
+    why: Reference for the Terraform language, CLI commands and state management.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1

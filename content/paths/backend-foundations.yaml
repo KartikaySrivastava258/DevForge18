@@ -1,0 +1,18 @@
+slug: backend-foundations
+number: 1
+title: Backend Developer Foundations
+target_learner: Students who can write basic programs and want to build and ship their first real backend service.
+outcome: Design a relational schema, expose and test an HTTP API, add caching, put it behind a reverse proxy and package it with Docker.
+prerequisites:
+  - Comfortable writing small programs in one language
+  - Basic terminal use
+modules:
+  - { track: git-github, focus: "Version every change and work through branches and pull requests." }
+  - { track: postgresql, focus: "Model the domain, write queries and protect data with constraints and transactions." }
+  - { track: postman, focus: "Explore, document and test the API you are building." }
+  - { track: redis, focus: "Cache hot reads and implement rate limiting — and learn when not to cache." }
+  - { track: nginx, focus: "Serve static assets and reverse-proxy requests to the API." }
+  - { track: docker, focus: "Package the whole stack so it runs identically anywhere." }
+capstone: { title: "Course-registration API: PostgreSQL + Redis cache behind Nginx, packaged with Docker Compose", status: planned }
+alternate_route: Already comfortable with Git and SQL? Take the Git and PostgreSQL module quizzes; if you pass, start at Postman.
+last_reviewed: 2026-11-24

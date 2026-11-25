@@ -1,0 +1,79 @@
+slug: opentelemetry
+number: 15
+title: Observability
+short_title: OpenTelemetry
+category: observability
+products:
+  - name: OpenTelemetry
+    role: Vendor-neutral, open-source APIs, SDKs and Collector for generating, processing and exporting traces, metrics and logs.
+mental_model: OpenTelemetry provides common ways to generate, collect and export telemetry so engineers can understand what happens inside distributed applications.
+outcome: Instrument traces, metrics and logs across services.
+summary: >-
+  OpenTelemetry (OTel) is a CNCF project that standardises how applications produce telemetry. You
+  add its SDK — or automatic instrumentation — to a service, and it records traces (trees of timed
+  spans showing how one request moved through services) alongside metrics and logs. The Collector
+  receives that data, processes it, and exports it to whichever backends you choose.
+problem: >-
+  In a distributed system one user request may touch many services, and without correlated
+  telemetry it is very hard to find which hop was slow or failed. Before a common standard, each
+  monitoring vendor needed its own instrumentation, which locked teams in.
+not_this: >-
+  OpenTelemetry is not a storage or dashboard backend: it produces and transports telemetry, while
+  tools such as Prometheus, Jaeger or Grafana store and visualise it. It does not replace
+  Prometheus — the two are complementary.
+architecture_position: >-
+  OpenTelemetry is the instrumentation and transport layer of observability: SDKs inside services
+  emit telemetry, the Collector pipelines it, and backends store and analyse it.
+entry_level: intermediate
+estimated_hours: { min: 12, max: 18 }
+skills_needed:
+  - Building a small HTTP service in any language
+  - Running multi-container setups with Docker
+prerequisites: [docker]
+related:
+  - slug: prometheus-grafana
+    why: OpenTelemetry metrics can be exported to Prometheus and correlated with traces in Grafana.
+  - slug: kafka
+    why: Propagating trace context through message headers connects asynchronous steps into one trace.
+topics:
+  - { level: beginner, title: "Observability vs monitoring" }
+  - { level: beginner, title: "Traces, spans, context propagation and trace IDs" }
+  - { level: beginner, title: "Metrics and logs as telemetry signals" }
+  - { level: intermediate, title: "Instrumentation APIs and SDKs" }
+  - { level: intermediate, title: "Automatic vs manual instrumentation" }
+  - { level: intermediate, title: "Collector receivers, processors and exporters" }
+  - { level: intermediate, title: "Semantic conventions and resource attributes" }
+  - { level: advanced, title: "Sampling, baggage and cardinality" }
+  - { level: advanced, title: "Correlating traces, logs and metrics" }
+  - { level: advanced, title: "Privacy and sensitive-data scrubbing" }
+  - { level: advanced, title: "Vendor-neutral telemetry pipelines" }
+labs:
+  - { title: "Instrument a small API", level: beginner, mode: local, status: planned }
+  - { title: "Trace a request across two services", level: intermediate, mode: local, status: planned }
+  - { title: "Send telemetry through an OpenTelemetry Collector", level: intermediate, mode: local, status: planned }
+  - { title: "Investigate a slow request using traces", level: advanced, mode: simulation, status: planned }
+projects:
+  - { title: "Distributed tracing for a microservice demo", level: beginner, status: planned }
+  - { title: "Unified telemetry pipeline", level: intermediate, status: planned }
+  - { title: "Latency investigation challenge", level: advanced, status: planned }
+resources:
+  - title: OpenTelemetry documentation
+    url: https://opentelemetry.io/docs/
+    publisher: OpenTelemetry Authors
+    type: documentation
+    level: all
+    official: true
+    why: Official concepts, language SDK guides and Collector documentation.
+    verification: { status: unverified }
+  - title: OpenTelemetry Demo
+    url: https://opentelemetry.io/docs/demo/
+    publisher: OpenTelemetry Authors
+    type: source-code
+    level: intermediate
+    official: true
+    why: A multi-service demo application instrumented with OpenTelemetry across several languages.
+    verification: { status: unverified }
+content_status: outline
+owner: content-team
+last_reviewed: 2026-11-24
+content_version: 1
