@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 262">
+  <!-- The scrape loop, from Running Prometheus — scraping and your first PromQL. -->
+  <rect class="f-box-faint" x="196" y="10" width="262" height="242" rx="8"/>
+  <text class="f-strong" x="327" y="32" text-anchor="middle">Prometheus  :9090</text>
+  <g data-step="1">
+    <rect class="f-box-accent" x="16" y="40" width="148" height="68" rx="8"/>
+    <text class="f-mono" x="90" y="64" text-anchor="middle">prometheus.yml</text>
+    <text class="f-small f-muted" x="90" y="82" text-anchor="middle">job: devforge</text>
+    <text class="f-small f-muted" x="90" y="98" text-anchor="middle">every 5 s</text>
+    <g>
+      <path class="f-arrow" d="M166 72 L202 72"/>
+      <polygon class="f-head" points="210,72 202,76.5 202,67.5"/>
+    </g>
+  </g>
+  <rect class="f-box" x="212" y="46" width="230" height="50" rx="8"/>
+  <text class="f-strong" x="327" y="68" text-anchor="middle">scrape loop</text>
+  <text class="f-small f-muted" x="327" y="86" text-anchor="middle">each target, every 5 seconds</text>
+  <rect class="f-box" x="500" y="46" width="124" height="58" rx="8"/>
+  <text class="f-strong" x="562" y="70" text-anchor="middle">DevForge</text>
+  <text class="f-mono" x="562" y="90" text-anchor="middle">/metrics</text>
+  <g data-step="2">
+    <g>
+      <path class="f-arrow" d="M444 58 L490 58"/>
+      <polygon class="f-head" points="498,58 490,62.5 490,53.5"/>
+    </g>
+    <text class="f-small f-muted" x="471" y="50" text-anchor="middle">GET</text>
+    <g>
+      <path class="f-arrow" d="M498 90 L452 90"/>
+      <polygon class="f-head" points="444,90 452,85.5 452,94.5"/>
+    </g>
+    <text class="f-small f-muted" x="471" y="108" text-anchor="middle">text</text>
+  </g>
+  <rect class="f-box" x="212" y="118" width="230" height="64" rx="8"/>
+  <text class="f-strong" x="327" y="140" text-anchor="middle">time-series database</text>
+  <g data-step="3">
+    <g>
+      <path class="f-arrow" d="M327 98 L327 108"/>
+      <polygon class="f-head" points="327,116 322.5,108 331.5,108"/>
+    </g>
+    <text class="f-small f-muted" x="327" y="160" text-anchor="middle">one series per set of labels:</text>
+    <text class="f-small f-mono" x="327" y="176" text-anchor="middle">(time, 12) (time, 13) (time, 14) …</text>
+  </g>
+  <rect class="f-box" x="212" y="196" width="230" height="44" rx="8"/>
+  <text class="f-strong" x="327" y="223" text-anchor="middle">PromQL engine</text>
+  <g data-step="4">
+    <rect class="f-box-accent" x="500" y="190" width="124" height="56" rx="8"/>
+    <text class="f-small f-strong" x="562" y="213" text-anchor="middle">you, promtool</text>
+    <text class="f-small f-strong" x="562" y="231" text-anchor="middle">or Grafana</text>
+    <g>
+      <path class="f-arrow" d="M498 206 L452 206"/>
+      <polygon class="f-head" points="444,206 452,201.5 452,210.5"/>
+    </g>
+    <g>
+      <path class="f-arrow" d="M444 230 L490 230"/>
+      <polygon class="f-head" points="498,230 490,234.5 490,225.5"/>
+    </g>
+    <text class="f-small f-muted" x="471" y="200" text-anchor="middle">query</text>
+    <g>
+      <path class="f-arrow" d="M327 184 L327 186"/>
+      <polygon class="f-head" points="327,194 322.5,186 331.5,186"/>
+    </g>
+  </g>
+</svg>

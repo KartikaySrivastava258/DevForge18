@@ -1,0 +1,4 @@
+alt: 'Prometheus, listening on port 9090, contains a scrape loop, a time-series database and a PromQL engine. Its configuration file, prometheus.yml, names the job devforge and an interval of 5 seconds. The scrape loop sends GET requests to DevForge''s /metrics and receives text, stores each value with its time in the database, and the PromQL engine answers queries from you, promtool or Grafana using that stored history.'
+caption: 'Prometheus pulls metrics on a schedule, stores the history, and answers questions about it.'
+credit: DevForge 18 content team
+licence: project-content

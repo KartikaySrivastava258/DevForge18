@@ -1,0 +1,4 @@
+alt: 'One line from DevForge''s /metrics output: devforge_http_requests_total with the labels method GET, route /api/tracks/:slug and status 200, and the value 3. Brackets divide it into the metric name, the labels and the value. Below, the same metric with status 404 and the value 1 is shown as a separate series.'
+caption: 'One sample line: a metric name, labels in braces, and a value. Change any label value and you have a different time series.'
+credit: DevForge 18 content team
+licence: project-content

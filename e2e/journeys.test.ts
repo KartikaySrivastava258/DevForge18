@@ -279,7 +279,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -475,6 +475,26 @@ describe("simulations", () => {
     assert.ok(duration < 0.01, `no transitions under reduced motion, got ${duration}s`);
     noProblems(problems);
     noProblems(reduced.problems);
+  });
+
+  it("Prometheus: rate(sum()) is wrong after a restart, sum(rate()) is right, and a lost le label is explained", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate");
+    const sim = page.locator(".sim");
+    await sim.locator(".prom-sim").waitFor();
+    await sim.getByRole("button", { name: "Restart devforge-2" }).click();
+    for (let i = 0; i < 2; i++) await sim.getByRole("button", { name: "Step" }).click();
+    const wrong = Number((await sim.locator(".prom-sim__result li").innerText()).match(/([\d.]+) per second/)?.[1]);
+    assert.ok(wrong > 15, `rate(sum()) overestimates after a restart (got ${wrong})`);
+    await sim.getByLabel("Query", { exact: true }).selectOption("sum-rate");
+    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    assert.match(await sim.locator(".prom-sim__result").innerText(), /\{\} 15 per second/);
+    assert.equal(await sim.locator(".prom-sim__promql").innerText(), "sum(rate(devforge_http_requests_total[1m]))");
+
+    await sim.getByLabel("Scenario").selectOption("latency");
+    await sim.getByLabel("Aggregation").selectOption("none");
+    assert.match(await sim.locator(".prom-sim__result").innerText(), /removes the le label/);
+    noProblems(problems);
   });
 
   it("is embedded in its lessons and listed on the track page with a working link", async () => {

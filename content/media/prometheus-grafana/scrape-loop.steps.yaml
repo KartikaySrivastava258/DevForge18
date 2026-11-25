@@ -1,0 +1,7 @@
+figure: scrape-loop.svg
+title: 'How Prometheus collects and answers'
+steps:
+  - caption: 'Prometheus reads prometheus.yml: scrape the job devforge, at the address given in targets, every 5 seconds.'
+  - caption: 'Every 5 seconds the scrape loop sends GET /metrics to each target, and DevForge answers with the plain-text metrics you read in the previous lesson. If the request fails, up becomes 0.'
+  - caption: 'Each value is stored with the time it was scraped, so every set of labels becomes a time series: a growing list of (time, value) pairs.'
+  - caption: 'A PromQL query — from promtool, the web interface or Grafana — reads that stored history and calculates an answer, such as requests per second.'

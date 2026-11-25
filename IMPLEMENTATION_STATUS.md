@@ -10,7 +10,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 21 published across 10 tracks, **all executed** and confirmed in CI (none pending) |
+| Lessons | ✅ 24 published across 11 tracks, **all executed** (the 3 Prometheus + Grafana lessons recorded against the real tools locally; CI confirmation in progress) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
@@ -167,6 +167,18 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Looked at:** both simulations in dark, light and on a 390 px phone; the Git graph now keeps its natural size and scrolls in its frame on phones (a global `svg { max-width: 100% }` was shrinking it to unreadable size).
 - All 21 lessons' `content_version` incremented (new figures in milestone 2; simulation embeds in three).
 
+### Milestone 4 — Path 2, part 1: Prometheus + Grafana (2026-11-25)
+
+- **Versions** from the projects' GitHub releases (2026-11-25): Prometheus **3.16.0** (2026-11-05) and Grafana **13.3.2** (2026-11-24). Both are installed in CI from the official archives, checksum-verified (Prometheus `sha256sums.txt`; Grafana's `.sha256`, which holds the hash only).
+- **Decision: native binaries, not containers.** DevForge listens on `127.0.0.1`, which a container on Docker's default network cannot reach; `--network host` works on Linux but needs extra setup in Docker Desktop. The official binaries behave the same on every OS, so beginners avoid networking problems; the lessons mention containers for later.
+- **Lesson 1** *Metrics, labels and the /metrics endpoint* — DevForge's own metrics: HELP/TYPE lines, counters, gauges, histogram buckets, one series per label set, why the route label holds a pattern. Runs with curl against a practice server (no extra tools), so it runs locally and in CI.
+- **Lesson 2** *Running Prometheus — scraping and your first PromQL* — config checked with `promtool`, readiness, `up`, label matchers, `sum by`, `rate()`, `histogram_quantile()`, and a real parse error. Waits for conditions with a PromQL comparison instead of sleeping; sorts results because Prometheus does not promise an order. A self-check option first contained `rate(sum(...)[5m])`, which is not valid PromQL; replaced.
+- **Lesson 3** *Grafana — a data source and a dashboard from files* — provisioning files, `GF_` environment variables, `/api/health`, dashboard search, data source health, a 401 without credentials.
+- **All three recorded against the real tools on this machine** (`npm run lessons:record`, Prometheus and Grafana from the verified archives): lesson 1 and 3 matched as written; lesson 2 had one difference (no leading space in promtool's error), now recorded. Facts checked against prometheus.io and grafana.com pages on 2026-11-25 (metric types, naming, rate(), jobs and instances, management API, promtool, Grafana configuration, sign-in and provisioning).
+- **Runner:** `lessonNeeds()` now holds the per-track rules (practice server, port, time limit) shared by the tests and `lessons:record`; background jobs a lesson starts (`prometheus … &`) are stopped by the cleanup trap even if a later block fails (tested); `GRAFANA_HOME` is passed through.
+- **Simulation** *Scrape, rate and percentiles* (§5.7): two instances, scrape interval, range, restarts, `rate`, `sum(rate)`, `rate(sum)` (as a real subquery) and `histogram_quantile` aggregated three ways. rate()'s reset rule and histogram_quantile's interpolation follow the documentation (worked examples in the tests); it says that real rate() also extrapolates. Three server-verified challenges. 11 model tests; a browser test shows `rate(sum())` overestimating after a restart and `sum(rate())` giving the true 15/s. Embedded in lesson 2.
+- Figures: the anatomy of a metric line, the scrape loop (step-through), how Grafana, Prometheus and DevForge fit together.
+
 ## Current work
 
 Milestone 4 of REMAINING_WORK.md §7: complete Path 2 — Prometheus + Grafana and OpenTelemetry beginner lessons (executed in CI) and their simulations.
@@ -211,7 +223,7 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 21 lessons across 10 tracks | 8 tracks show outline only | Phase 1 |
+| 24 lessons across 11 tracks | 7 tracks show outline only | Milestones 4–5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine` and `alpine:3.20` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
 | No lesson currently uses `pending` or `docs-checked`, and no resource is unverified | Those UI states ("Automated test pending.", "Link not yet verified") are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such content exists, or test the states with fixture content |

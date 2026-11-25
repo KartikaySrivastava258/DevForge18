@@ -5,7 +5,7 @@ import { describe, it } from "node:test";
 import { loadContent } from "./content-loader.ts";
 import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, usesDocker, outputMatches, redisTestingEnabled, runLesson, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
+import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, lessonNeeds, usesDocker, outputMatches, redisTestingEnabled, runLesson, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
 import { splitFrontMatter } from "./markdown.ts";
 import { startPracticeServer } from "./practice-server.ts";
 
@@ -93,6 +93,22 @@ describe("cleanup", () => {
   });
 });
 
+describe("background servers", () => {
+  it("are stopped by the cleanup trap even when a later block fails", () => {
+    const run = runLesson(extractRunBlocks("```bash run\nsleep 300 &\necho $!\n```\n```bash run\nfalse\n```"));
+    const pid = Number(run.results[0]?.output.trim());
+    assert.ok(pid > 0, "captured the background pid");
+    assert.ok(run.failure !== undefined);
+    assert.equal(isRunning(pid), false, "cleanup trap stopped the background job");
+  });
+  it("lessonNeeds gives every track one shared answer", () => {
+    assert.deepEqual(lessonNeeds("prometheus-grafana", 1), { api: true, apiPort: 0, timeoutMs: 180_000 });
+    assert.deepEqual(lessonNeeds("nginx", 2), { api: true, apiPort: 8080, timeoutMs: 60_000 });
+    assert.deepEqual(lessonNeeds("nginx", 1), { api: false, apiPort: 0, timeoutMs: 60_000 });
+    assert.equal(lessonNeeds("kubernetes", 1).timeoutMs, 900_000);
+  });
+});
+
 describe("kind clusters", () => {
   it("are deleted by the cleanup trap even when a later block fails", () => {
     const bin = mkdtempSync(join(tmpdir(), "devforge-kindstub-"));
@@ -145,9 +161,8 @@ describe("executed lessons reproduce their documented output", () => {
     const needsDocker = lesson.track === "docker" || usesDocker(ownBlocks);
     const needsPg = lesson.track === "postgresql";
     const needsNginx = lesson.track === "nginx";
-    // Postman lessons use any free port ($API); Nginx lessons proxy to DevForge's real address, 127.0.0.1:8080.
-    const needsApi = lesson.track === "postman" || (needsNginx && lesson.order > 1);
-    const apiPort = needsNginx ? 8080 : 0;
+    const { api: needsApi, apiPort, timeoutMs } = lessonNeeds(lesson.track, lesson.order);
+    const needsTool = ownBlocks.some((b) => /\bgrafana server\b/.test(b.code)) ? "grafana" : ownBlocks.some((b) => /(^|\s)prometheus\s/m.test(b.code)) ? "prometheus" : null;
     const needsRedis = lesson.track === "redis";
     const skip =
       needsGit && !hasCommand("git")
@@ -164,6 +179,10 @@ describe("executed lessons reproduce their documented output", () => {
                   ? "Kubernetes lessons need DEVFORGE_DOCKER_TEST=1, Docker, kind and kubectl (CI)"
                 : lesson.track === "terraform" && !hasCommand("terraform")
                   ? "terraform not installed (runs in CI)"
+                : needsTool === "prometheus" && !hasCommand("prometheus")
+                  ? "prometheus not installed (runs in CI)"
+                : needsTool === "grafana" && !(hasCommand("grafana") && process.env.GRAFANA_HOME)
+                  ? "grafana not installed, or GRAFANA_HOME not set (runs in CI)"
                 : needsDocker && !dockerAvailable
                   ? "Docker lessons run only with DEVFORGE_DOCKER_TEST=1 and a Docker engine (CI)"
                   : false;
@@ -201,7 +220,7 @@ describe("executed lessons reproduce their documented output", () => {
         run = runLesson(blocks, {
           ...(api ? { env: { API: api.url } } : {}),
           allowRedisFlush: needsRedis && redisAvailable,
-          timeoutMs: lesson.track === "kubernetes" ? 900_000 : lesson.track === "jenkins" ? 300_000 : lesson.track === "terraform" ? 180_000 : 60_000,
+          timeoutMs,
         });
       } finally {
         await api?.close();

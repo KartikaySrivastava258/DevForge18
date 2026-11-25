@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250">
+  <!-- How Grafana, Prometheus and DevForge fit together, from Grafana — a data source and a dashboard from files. -->
+  <rect class="f-box-faint" x="16" y="16" width="176" height="218" rx="8"/>
+  <text class="f-strong" x="104" y="38" text-anchor="middle">files in Git</text>
+  <rect class="f-box" x="30" y="54" width="148" height="46" rx="4"/>
+  <text class="f-small f-muted" x="104" y="74" text-anchor="middle">datasources/</text>
+  <text class="f-mono" x="104" y="91" text-anchor="middle">prometheus.yml</text>
+  <rect class="f-box" x="30" y="112" width="148" height="46" rx="4"/>
+  <text class="f-small f-muted" x="104" y="132" text-anchor="middle">dashboards/</text>
+  <text class="f-mono" x="104" y="149" text-anchor="middle">devforge.yml</text>
+  <rect class="f-box" x="30" y="170" width="148" height="46" rx="4"/>
+  <text class="f-small f-muted" x="104" y="190" text-anchor="middle">dashboards/</text>
+  <text class="f-mono" x="104" y="207" text-anchor="middle">devforge.json</text>
+  <g>
+    <path class="f-arrow" d="M194 125 L228 125"/>
+    <polygon class="f-head" points="236,125 228,129.5 228,120.5"/>
+  </g>
+  <text class="f-small f-muted" x="215" y="115" text-anchor="middle">startup</text>
+  <rect class="f-box-accent" x="238" y="40" width="168" height="170" rx="8"/>
+  <text class="f-strong" x="322" y="64" text-anchor="middle">Grafana  :3000</text>
+  <rect class="f-box" x="252" y="80" width="140" height="40" rx="4"/>
+  <text class="f-small" x="322" y="105" text-anchor="middle">data source</text>
+  <rect class="f-box" x="252" y="130" width="140" height="64" rx="4"/>
+  <text class="f-small" x="322" y="152" text-anchor="middle">dashboard</text>
+  <text class="f-small f-mono" x="322" y="170" text-anchor="middle">panel: PromQL</text>
+  <text class="f-small f-mono" x="322" y="186" text-anchor="middle">panel: PromQL</text>
+  <g>
+    <path class="f-arrow" d="M408 125 L458 125"/>
+    <polygon class="f-head" points="466,125 458,129.5 458,120.5"/>
+  </g>
+  <text class="f-small f-muted" x="437" y="115" text-anchor="middle">query</text>
+  <rect class="f-box" x="468" y="96" width="156" height="58" rx="8"/>
+  <text class="f-strong" x="546" y="120" text-anchor="middle">Prometheus</text>
+  <text class="f-mono" x="546" y="140" text-anchor="middle">:9090</text>
+  <g>
+    <path class="f-arrow" d="M546 94 L546 74"/>
+    <polygon class="f-head" points="546,66 550.5,74 541.5,74"/>
+  </g>
+  <text class="f-small f-muted" x="556" y="84">scrape</text>
+  <rect class="f-box" x="468" y="16" width="156" height="48" rx="8"/>
+  <text class="f-small f-strong" x="546" y="46" text-anchor="middle">DevForge /metrics</text>
+  <text class="f-small f-muted" x="322" y="236" text-anchor="middle">you open the dashboard in a browser</text>
+  <g>
+    <path class="f-arrow" d="M322 222 L322 220"/>
+    <polygon class="f-head" points="322,212 326.5,220 317.5,220"/>
+  </g>
+</svg>

@@ -10,6 +10,8 @@ import { commitGraph } from "./git/commit-graph.ts";
 import { GitActionSchema, GitScenarioSchema } from "./git/schema.ts";
 import { reconciliation } from "./kubernetes/reconciliation.ts";
 import { K8sActionSchema, K8sScenarioSchema } from "./kubernetes/schema.ts";
+import { PromActionSchema, PromScenarioSchema } from "./prometheus/schema.ts";
+import { scrapeAndRate } from "./prometheus/scrape-and-rate.ts";
 import type { SimulationModel } from "./types.ts";
 
 // Each model has its own state, action and scenario types; callers validate
@@ -19,4 +21,5 @@ export type AnyModel = SimulationModel<any, any, any> & { scenarioSchema: z.ZodT
 export const MODELS: Readonly<Record<string, AnyModel>> = {
   [commitGraph.id]: { ...commitGraph, scenarioSchema: GitScenarioSchema, actionSchema: GitActionSchema },
   [reconciliation.id]: { ...reconciliation, scenarioSchema: K8sScenarioSchema, actionSchema: K8sActionSchema },
+  [scrapeAndRate.id]: { ...scrapeAndRate, scenarioSchema: PromScenarioSchema, actionSchema: PromActionSchema },
 };

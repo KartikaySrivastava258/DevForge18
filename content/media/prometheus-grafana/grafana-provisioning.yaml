@@ -1,0 +1,4 @@
+alt: 'Files kept in Git — a data source file prometheus.yml, a dashboard provider devforge.yml and the dashboard devforge.json — are read by Grafana on port 3000 at startup, creating a data source and a dashboard whose panels hold PromQL queries. The panels send their queries to Prometheus on port 9090, which scrapes DevForge''s /metrics. You view the dashboard in a browser.'
+caption: 'Grafana stores the dashboard, not the data: every panel asks Prometheus when you look at it.'
+credit: DevForge 18 content team
+licence: project-content

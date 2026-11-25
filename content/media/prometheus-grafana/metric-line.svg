@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 244">
+  <!-- Anatomy of one sample line, from Metrics, labels and the /metrics endpoint. -->
+  <rect class="f-box-faint" x="12" y="22" width="696" height="40" rx="6"/>
+  <text class="f-mono" x="24" y="47">devforge_http_requests_total{method="GET",route="/api/tracks/:slug",status="200"} 3</text>
+  <path class="f-line-accent" d="M25.0 68 V76 H241.4 V68"/>
+  <path class="f-line-accent" d="M133.2 76 V90 H110.0 V100"/>
+  <text class="f-strong" x="110" y="118" text-anchor="middle">metric name</text>
+  <text class="f-small f-muted" x="110" y="138" text-anchor="middle">what is measured;</text>
+  <text class="f-small f-muted" x="110" y="154" text-anchor="middle">counters end in _total</text>
+  <path class="f-line-accent" d="M243.4 68 V76 H647.0 V68"/>
+  <path class="f-line-accent" d="M445.2 76 V90 H445.2 V100"/>
+  <text class="f-strong" x="445.2" y="118" text-anchor="middle">labels</text>
+  <text class="f-small f-muted" x="445.2" y="138" text-anchor="middle">which requests: each distinct set</text>
+  <text class="f-small f-muted" x="445.2" y="154" text-anchor="middle">of labels is its own time series</text>
+  <path class="f-line-accent" d="M656.8 68 V76 H662.6 V68"/>
+  <path class="f-line-accent" d="M659.7 76 V90 H640.0 V100"/>
+  <text class="f-strong" x="640" y="118" text-anchor="middle">value</text>
+  <text class="f-small f-muted" x="640" y="138" text-anchor="middle">the number</text>
+  <text class="f-small f-muted" x="640" y="154" text-anchor="middle">right now</text>
+  <rect class="f-box" x="12" y="184" width="696" height="50" rx="6"/>
+  <text class="f-small f-muted" x="24" y="203">Same metric, a different label value: another series</text>
+  <text class="f-mono" x="24" y="223">devforge_http_requests_total{method="GET",route="/api/tracks/:slug",status="404"} 1</text>
+</svg>

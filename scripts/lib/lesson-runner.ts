@@ -131,6 +131,23 @@ export function usesDocker(blocks: RunBlock[]): boolean {
   return blocks.some((b) => /(^|\n|;|&&|\|)\s*docker\s/.test(b.code));
 }
 
+/**
+ * What a lesson's commands need from the harness, by track. Shared by the
+ * lesson tests and `npm run lessons:record` so the two never disagree.
+ *   api       a practice DevForge server, exposed to the lesson as $API
+ *   apiPort   0 = any free port; Nginx proxy lessons use 8080, the address learners proxy to
+ *   timeoutMs overall limit for the lesson's commands (slow-starting servers need more)
+ */
+export function lessonNeeds(track: string, order: number): { api: boolean; apiPort: number; timeoutMs: number } {
+  const nginxProxy = track === "nginx" && order > 1;
+  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 180_000 };
+  return {
+    api: track === "postman" || track === "prometheus-grafana" || nginxProxy,
+    apiPort: nginxProxy ? 8080 : 0,
+    timeoutMs: timeouts[track] ?? 60_000,
+  };
+}
+
 /** Lessons that start Nginx (with a per-lesson prefix: nginx -p). */
 export function usesNginx(blocks: RunBlock[]): boolean {
   return blocks.some((b) => /\bnginx -p\b/.test(b.code));
@@ -178,6 +195,8 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   if (usesNginx(blocks)) {
     cleanup.push(`for f in $(find "${work}" -name nginx.pid 2>/dev/null); do kill "$(cat "$f")" 2>/dev/null || true; done`);
   }
+  // Stop servers a lesson started in the background (prometheus … &), even if a later block fails.
+  if (blocks.some((b) => /&\s*$/m.test(b.code))) cleanup.push(`for p in $(jobs -p); do kill "$p" 2>/dev/null || true; done; wait 2>/dev/null || true`);
   const script = [
     "exec 2>&1",
     "set -e",
@@ -202,6 +221,8 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
       PATH: options.path ?? process.env.PATH ?? "/usr/bin:/bin",
       // Connection settings for SQL lessons (e.g. the CI PostgreSQL service).
       ...Object.fromEntries(Object.entries(process.env).filter(([k]) => /^PG(HOST|PORT|USER|PASSWORD|SSLMODE)$/.test(k))),
+      // Where Grafana's release archive was unpacked (Grafana needs its home folder to start).
+      ...(process.env.GRAFANA_HOME ? { GRAFANA_HOME: process.env.GRAFANA_HOME } : {}),
       HOME: home,
       LANG: "C.UTF-8",
       LC_ALL: "C.UTF-8",

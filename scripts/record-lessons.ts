@@ -15,7 +15,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadContent } from "./lib/content-loader.ts";
-import { dockerTestingEnabled, extractRunBlocks, outputMatches, redisTestingEnabled, usesDocker, runLesson, type RunBlock } from "./lib/lesson-runner.ts";
+import { dockerTestingEnabled, extractRunBlocks, lessonNeeds, outputMatches, redisTestingEnabled, usesDocker, runLesson, type RunBlock } from "./lib/lesson-runner.ts";
 import { splitFrontMatter } from "./lib/markdown.ts";
 import { startPracticeServer } from "./lib/practice-server.ts";
 
@@ -46,8 +46,8 @@ for (const lesson of targets) {
   lesson.prerequisites.forEach(visit);
   const setup = chain.flatMap(blocksOf);
   const own = blocksOf(lesson.id);
-  const needsApi = lesson.track === "postman" || (lesson.track === "nginx" && lesson.order > 1);
-  const api = needsApi ? await startPracticeServer(contentRoot, lesson.track === "nginx" ? 8080 : 0) : undefined;
+  const needs = lessonNeeds(lesson.track, lesson.order);
+  const api = needs.api ? await startPracticeServer(contentRoot, needs.apiPort) : undefined;
   if (lesson.track === "redis" && !redisTestingEnabled()) {
     console.error(`${lesson.id}: skipped. Recording empties the current Redis database (FLUSHDB); use a throwaway Redis and set DEVFORGE_REDIS_TEST=1.`);
     process.exitCode = 1;
@@ -63,7 +63,7 @@ for (const lesson of targets) {
   const run = runLesson([...setup, ...own].map((b, index) => ({ ...b, index })), {
     ...(api ? { env: { API: api.url } } : {}),
     allowRedisFlush: lesson.track === "redis",
-    timeoutMs: lesson.track === "kubernetes" ? 900_000 : lesson.track === "jenkins" ? 300_000 : lesson.track === "terraform" ? 180_000 : 60_000,
+    timeoutMs: needs.timeoutMs,
   });
   await api?.close();
   if (run.failure) {

@@ -1,0 +1,59 @@
+id: prometheus-scrape-and-rate
+track: prometheus-grafana
+title: Scrape, rate and percentiles
+concept: Prometheus only sees what it scrapes, every few seconds. Queries such as rate() and histogram_quantile() work on those stored samples, so the scrape interval, the query's range and the order of rate() and sum() all change the answer you get.
+learning_objectives:
+  - See how the scrape interval and the query range decide whether rate() has data.
+  - Explain why you take rate() first and then sum(), using a counter reset.
+  - Build a 95th-percentile query from histogram buckets and know why it needs the le label.
+simplifications:
+  - Real rate() also extrapolates to the edges of the range, so Prometheus's answers are slightly higher than this model's; the model divides the increase by the time between the first and last sample.
+  - Time moves in whole seconds and every scrape succeeds. In reality scrapes can be late or fail (up = 0).
+  - Request latency follows a fixed repeating pattern per instance instead of real measurements.
+  - The rate() reset rule (a drop counts as a restart from zero) and histogram_quantile()'s linear interpolation follow the Prometheus documentation.
+text_alternative: The current time; for each of the two DevForge instances, its traffic in requests per second, its counter and its last scraped samples; the query in PromQL and the result Prometheus would return, or why it returns nothing. Every scrape, restart and change is explained in the event log. Switch to text mode to read it all as a list.
+scenarios:
+  - id: two-instances
+    title: Two instances, one total
+    description: Two copies of DevForge receive 10 and 5 requests per second. The dashboard's total uses rate(sum(...)), the wrong order.
+    params: { interval: 5, window: 60, rps: [10, 5], query: rate-sum }
+  - id: slow-scrapes
+    title: Scraping once a minute
+    description: Prometheus scrapes only every 60 seconds. Someone wants a rate over the last 30 seconds.
+    params: { interval: 60, window: 60, rps: [10, 5], query: rate, warmup: 240 }
+  - id: latency
+    title: Latency from histograms
+    description: Both instances record request latency in buckets. devforge-2 is slower. The query currently gives one 95th percentile per instance.
+    params: { interval: 5, window: 60, rps: [10, 5], query: p95, p95By: instance-le }
+challenges:
+  - id: total-survives-restart
+    title: A total that survives a restart
+    goal: Restart one instance, and make the query show the correct total requests per second for both instances (15) while that restart is inside the range.
+    scenario: two-instances
+    check: total-survives-restart
+    hint: Restart devforge-2 and step a few times. rate(sum(...)) sees the summed counter drop and misreads it as one big reset. Switch to sum(rate(...)), which handles each instance's reset on its own.
+    solution:
+      - { type: restart, instance: 1 }
+      - { type: tick, count: 10 }
+      - { type: setQuery, query: sum-rate }
+  - id: rate-with-short-window
+    title: A rate over 30 seconds
+    goal: Get a per-instance rate with a 30-second range ([30s]).
+    scenario: slow-scrapes
+    check: rate-with-short-window
+    hint: rate() needs at least two samples inside the range. With one scrape a minute, a 30-second range never holds two. Scrape more often, then wait until two scrapes fall inside the range.
+    solution:
+      - { type: setWindow, seconds: 30 }
+      - { type: setInterval, seconds: 5 }
+      - { type: tick, count: 30 }
+  - id: p95-for-the-service
+    title: One 95th percentile for the whole service
+    goal: Show a single 95th-percentile latency for both instances together.
+    scenario: latency
+    check: p95-for-the-service
+    hint: histogram_quantile() needs the le label to know the bucket bounds. Add the buckets of both instances together, but keep le — sum by (le).
+    solution:
+      - { type: setQuery, query: p95, p95By: le }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

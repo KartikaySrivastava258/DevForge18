@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, describe, it } from "node:test";
 import { EXPECTED_TRACK_COUNT, loadContent } from "./content-loader.ts";
+import { MODELS } from "../../shared/simulations/index.ts";
 
 const contentRoot = join(import.meta.dirname, "..", "..", "content");
 const temps: string[] = [];
@@ -171,7 +172,9 @@ describe("simulations", () => {
   it("load with normalised scenario params, and every challenge's solution is proven", () => {
     const { bundle, errors } = loadContent(contentRoot);
     assert.deepEqual(errors, []);
-    assert.deepEqual(bundle.simulations.map((s) => s.id).sort(), ["git-commit-graph", "kubernetes-reconciliation"]);
+    // Every registered model has content, and every content file has a model.
+    assert.deepEqual(bundle.simulations.map((s) => s.id).sort(), Object.keys(MODELS).sort());
+    assert.ok(bundle.simulations.length >= 3);
     const k8s = bundle.simulations.find((s) => s.id === "kubernetes-reconciliation");
     assert.deepEqual(k8s?.scenarios[0]?.params, { nodes: 2, replicas: 3, image: "nginx:1.27-alpine", maxSurge: "25%", maxUnavailable: "25%", setup: [] });
   });
