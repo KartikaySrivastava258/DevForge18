@@ -101,8 +101,9 @@ When one service calls another directly, both must be up at the same moment, and
 ### 1. Start a broker
 
 ```bash run
-docker run -d --name devforge-kafka -p 127.0.0.1:9092:9092 \
-  apache/kafka:4.4.0@sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f > /dev/null
+IMAGE=apache/kafka:4.4.0@sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f
+docker pull -q "$IMAGE"
+docker run -d --name devforge-kafka -p 127.0.0.1:9092:9092 "$IMAGE" > /dev/null
 kafka() { docker exec -i devforge-kafka "/opt/kafka/bin/$1" "${@:2}"; }
 for i in $(seq 1 60); do
   kafka kafka-topics.sh --bootstrap-server localhost:9092 --list > /dev/null 2>&1 && break
@@ -112,10 +113,11 @@ kafka kafka-topics.sh --version
 ```
 
 ```text output
+docker.io/apache/kafka:4.4.0@sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f
 4.4.0
 ```
 
-- The image is the official one from Kafka's quickstart, pinned to version 4.4.0 *and* its digest, so it cannot change under you.
+- The image is the official one from Kafka's quickstart, pinned to version 4.4.0 *and* its digest, so it cannot change under you. `docker pull -q` downloads it (about 460 MB, once) and prints only its name; `docker run` then starts it.
 - `-p 127.0.0.1:9092:9092` makes the broker's port 9092 reachable from your own computer only.
 - `kafka() { … }` defines a small shell function: `kafka kafka-topics.sh …` runs Kafka's `kafka-topics.sh` tool inside the container. If you open a new terminal, define it again.
 - The loop waits until the broker answers, for at most a minute.
