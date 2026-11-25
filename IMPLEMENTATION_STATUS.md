@@ -10,7 +10,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 24 published across 11 tracks, **all executed** (the 3 Prometheus + Grafana lessons recorded against the real tools locally; CI confirmation in progress) |
+| Lessons | ✅ 24 published across 11 tracks, **all executed** and confirmed in CI (none pending) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
@@ -168,6 +168,8 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - All 21 lessons' `content_version` incremented (new figures in milestone 2; simulation embeds in three).
 
 ### Milestone 4 — Path 2, part 1: Prometheus + Grafana (2026-11-25)
+
+- **CI run 45668986449: ✅ green** — Prometheus 3.16.0 and Grafana 13.3.2 installed and checksum-verified on the runner; all three lessons ran against them (not skipped); 237/237 tests, all browser tests passed.
 
 - **Versions** from the projects' GitHub releases (2026-11-25): Prometheus **3.16.0** (2026-11-05) and Grafana **13.3.2** (2026-11-24). Both are installed in CI from the official archives, checksum-verified (Prometheus `sha256sums.txt`; Grafana's `.sha256`, which holds the hash only).
 - **Decision: native binaries, not containers.** DevForge listens on `127.0.0.1`, which a container on Docker's default network cannot reach; `--network host` works on Linux but needs extra setup in Docker Desktop. The official binaries behave the same on every OS, so beginners avoid networking problems; the lessons mention containers for later.
