@@ -15,6 +15,20 @@ Tokens live in `web/src/styles/tokens.css`; components in `components.css`. Rati
 
 Type: Fira Sans 400/500/600 and italic; scale steps `--step--1` … `--step-5` (ratio 1.25). Body text 16–17 px with line-height 1.6–1.7, lines under 70 characters.
 
+## Figure classes
+
+Lesson figures are inline SVG ([ADR 0007](adr/0007-inline-svg-figures.md)) and may use only these classes (styled in `components.css` from the tokens above, so they work in both themes):
+
+| Class | Draws |
+|---|---|
+| `f-box`, `f-box-accent`, `f-box-ok`, `f-box-warn`, `f-box-danger`, `f-box-faint` | Boxes: neutral; emphasised; success; warning; failure; planned or optional (dashed) |
+| `f-line`, `f-line-accent`, `f-arrow`, `f-arrow-accent`, `f-dashed` | Lines and arrow shafts |
+| `f-head`, `f-head-accent`, `f-dot`, `f-dot-accent` | Arrow heads (polygons) and small filled shapes |
+| `f-text`, `f-muted`, `f-faint`, `f-accent`, `f-ok`, `f-warn`, `f-danger` | Text colours |
+| `f-small`, `f-large`, `f-strong`, `f-mono` | Text size, weight and code font |
+
+Status colours always come with a word or symbol in the figure or caption, never colour alone. In step-throughs the current step's boxes and arrows switch to the accent colour.
+
 ## Rules
 
 - **One accent.** Colour means interaction or status. Categories are shown by grouping and position.

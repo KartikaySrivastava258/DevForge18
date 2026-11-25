@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 244">
+  <!-- The four states a file moves through in "Your first repository and commits". -->
+  <g>
+    <rect class="f-box" x="16" y="30" width="140" height="64" rx="8"/>
+    <rect class="f-box" x="250" y="30" width="140" height="64" rx="8"/>
+    <rect class="f-box" x="484" y="30" width="140" height="64" rx="8"/>
+    <rect class="f-box" x="484" y="166" width="140" height="64" rx="8"/>
+  </g>
+  <!-- Where README.md is at each step. -->
+  <g data-step="1" data-until="1"><rect class="f-box-accent" x="16" y="30" width="140" height="64" rx="8"/><text class="f-accent f-mono" x="22" y="22">README.md</text></g>
+  <g data-step="2" data-until="2"><rect class="f-box-accent" x="250" y="30" width="140" height="64" rx="8"/><text class="f-accent f-mono" x="256" y="22">README.md</text></g>
+  <g data-step="3" data-until="3"><rect class="f-box-accent" x="484" y="30" width="140" height="64" rx="8"/><text class="f-accent f-mono" x="490" y="22">README.md</text></g>
+  <g data-step="4" data-until="4"><rect class="f-box-accent" x="484" y="166" width="140" height="64" rx="8"/><text class="f-accent f-mono" x="490" y="158">README.md</text></g>
+  <g data-step="5"><rect class="f-box-accent" x="250" y="30" width="140" height="64" rx="8"/><text class="f-accent f-mono" x="256" y="22">README.md</text></g>
+  <g text-anchor="middle">
+    <text class="f-strong" x="86" y="57">Untracked</text>
+    <text class="f-small f-muted" x="86" y="78">not tracked yet</text>
+    <text class="f-strong" x="320" y="57">Staged</text>
+    <text class="f-small f-muted" x="320" y="78">in the next commit</text>
+    <text class="f-strong" x="554" y="57">Committed</text>
+    <text class="f-small f-muted" x="554" y="78">saved in history</text>
+    <text class="f-strong" x="554" y="193">Modified</text>
+    <text class="f-small f-muted" x="554" y="214">changed, not staged</text>
+  </g>
+  <g data-step="2">
+    <path class="f-arrow" d="M158 62 H240"/>
+    <polygon class="f-head" points="248,62 240,57.5 240,66.5"/>
+    <text class="f-mono" x="203" y="52" text-anchor="middle">git add</text>
+  </g>
+  <g data-step="3">
+    <path class="f-arrow" d="M392 62 H474"/>
+    <polygon class="f-head" points="482,62 474,57.5 474,66.5"/>
+    <text class="f-mono" x="437" y="52" text-anchor="middle">git commit</text>
+  </g>
+  <g data-step="4">
+    <path class="f-arrow" d="M554 96 V156"/>
+    <polygon class="f-head" points="554,164 549.5,156 558.5,156"/>
+    <text class="f-small f-muted" x="544" y="134" text-anchor="end">you edit the file</text>
+  </g>
+  <g data-step="5">
+    <path class="f-arrow" d="M482 198 H320 V104"/>
+    <polygon class="f-head" points="320,96 315.5,104 324.5,104"/>
+    <text class="f-mono" x="401" y="190" text-anchor="middle">git add</text>
+  </g>
+</svg>

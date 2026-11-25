@@ -190,6 +190,43 @@ export const LessonMetaSchema = z
   .strict();
 export type LessonMeta = z.infer<typeof LessonMetaSchema>;
 
+/**
+ * Sidecar for a figure: content/media/<track>/<name>.yaml next to <name>.svg.
+ * The SVG itself is validated by scripts/lib/svg.ts (ADR 0007).
+ */
+export const MediaMetaSchema = z
+  .object({
+    /** Text alternative: what the figure shows, for people who cannot see it. */
+    alt: z.string().min(20, "alt text must describe what the figure shows"),
+    /** Visible caption under the figure. */
+    caption: z.string().min(10),
+    credit: z.string().min(2),
+    /** "project-content" means the same licence as the rest of DevForge's content. */
+    licence: z.enum(["project-content", "CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "Apache-2.0", "MIT"]),
+    /** Required for anything not made by the project: where the original came from. */
+    source_url: httpsUrl.optional(),
+  })
+  .strict()
+  .refine((m) => m.licence === "project-content" || m.source_url !== undefined, { message: "third-party media need source_url" });
+export type MediaMeta = z.infer<typeof MediaMetaSchema>;
+
+/**
+ * A step-through diagram: content/media/<track>/<name>.steps.yaml. Elements of
+ * the figure with data-step="N" appear at step N (and are highlighted while it
+ * is current); data-until="M" hides an element after step M.
+ */
+export const StepDiagramSchema = z
+  .object({
+    figure: z.string().regex(/^[a-z0-9-]+\.svg$/, "a figure file name in the same folder, such as commit-flow.svg"),
+    title: z.string().min(5),
+    steps: z
+      .array(z.object({ caption: z.string().min(15, "each step's caption is also its text alternative; make it a full sentence") }).strict())
+      .min(2, "a step-through needs at least two steps")
+      .max(12),
+  })
+  .strict();
+export type StepDiagram = z.infer<typeof StepDiagramSchema>;
+
 /** A lesson after compilation: Markdown rendered to safe HTML plus a table of contents. */
 export interface CompiledLesson extends LessonMeta {
   html: string;

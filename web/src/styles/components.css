@@ -1,7 +1,7 @@
 /* Buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 2.5rem; padding: 0 var(--space-4); border-radius: var(--radius-m); border: 1px solid var(--line-strong); background: var(--panel); color: var(--text); font: inherit; font-weight: 500; font-size: 0.9375rem; text-decoration: none; cursor: pointer; transition: background-color 120ms var(--ease), border-color 120ms var(--ease); }
 .btn:hover { background: var(--panel-2); color: var(--text); }
-.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
 .btn--primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .btn--primary:hover { background: var(--accent-strong); border-color: var(--accent-strong); color: var(--accent-ink); }
 .btn--ghost { background: transparent; border-color: transparent; color: var(--muted); }
@@ -150,6 +150,52 @@
 .lesson-list a { display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; padding: var(--space-3) var(--space-2); border-bottom: 1px solid var(--line); text-decoration: none; color: var(--text); }
 .lesson-list a:hover { background: var(--panel); }
 .lesson-list__n { color: var(--faint); font-variant-numeric: tabular-nums; }
+
+/* Figures and step-through diagrams (ADR 0007). Figures are inline SVG whose
+   colours come only from these classes, so they follow the theme. */
+.figure { margin: var(--space-5) 0 var(--space-6); }
+.figure__scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--panel); padding: var(--space-4); }
+.figure__svg { display: block; width: 100%; min-width: 30rem; height: auto; fill: var(--text); font-family: var(--font-sans); font-size: 14px; }
+.figure figcaption { margin-top: var(--space-2); font-size: var(--step--1); line-height: 1.55; color: var(--muted); }
+.figure__title { display: block; color: var(--text); font-weight: 600; }
+.figure__credit { color: var(--faint); }
+.figure .f-box { fill: var(--panel-2); stroke: var(--line-strong); stroke-width: 1.5; }
+.figure .f-box-accent { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.figure .f-box-ok { fill: var(--ok-soft); stroke: var(--ok); stroke-width: 1.5; }
+.figure .f-box-warn { fill: var(--warn-soft); stroke: var(--warn); stroke-width: 1.5; }
+.figure .f-box-danger { fill: var(--danger-soft); stroke: var(--danger); stroke-width: 1.5; }
+.figure .f-box-faint { fill: none; stroke: var(--line-strong); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.figure .f-line { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }
+.figure .f-line-accent { fill: none; stroke: var(--accent); stroke-width: 2; }
+.figure .f-arrow { fill: none; stroke: var(--muted); stroke-width: 1.5; }
+.figure .f-arrow-accent { fill: none; stroke: var(--accent); stroke-width: 2; }
+.figure .f-dashed { stroke-dasharray: 5 4; }
+.figure .f-head, .figure .f-dot { fill: var(--muted); stroke: none; }
+.figure .f-head-accent, .figure .f-dot-accent { fill: var(--accent); stroke: none; }
+.figure .f-text { fill: var(--text); }
+.figure .f-muted { fill: var(--muted); }
+.figure .f-faint { fill: var(--faint); }
+.figure .f-accent { fill: var(--accent); }
+.figure .f-ok { fill: var(--ok); }
+.figure .f-warn { fill: var(--warn); }
+.figure .f-danger { fill: var(--danger); }
+.figure .f-small { font-size: 12px; }
+.figure .f-large { font-size: 17px; }
+.figure .f-strong { font-weight: 600; }
+.figure .f-mono { font-family: var(--font-mono); font-size: 13px; }
+.step-diagram [data-step], .step-diagram [data-until] { transition: opacity 280ms var(--ease), visibility 280ms; }
+.step-diagram[data-enhanced] [data-step-state="future"], .step-diagram[data-enhanced] [data-step-state="gone"] { opacity: 0; visibility: hidden; }
+.step-diagram [data-step-state="current"].f-box, .step-diagram [data-step-state="current"] .f-box,
+.step-diagram [data-step-state="current"].f-arrow, .step-diagram [data-step-state="current"] .f-arrow,
+.step-diagram [data-step-state="current"].f-line, .step-diagram [data-step-state="current"] .f-line { stroke: var(--accent); stroke-width: 2.5; }
+.step-diagram [data-step-state="current"].f-head, .step-diagram [data-step-state="current"] .f-head { fill: var(--accent); }
+.step-diagram__controls:empty { display: none; }
+.step-diagram__controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-top: var(--space-3); }
+.step-diagram__caption { flex-basis: 100%; min-height: 3.2em; margin: 0 0 var(--space-1); color: var(--text); line-height: 1.6; }
+.step-diagram__count { margin-left: auto; color: var(--muted); font-size: var(--step--1); }
+.step-diagram__all { margin-top: var(--space-2); }
+.step-diagram__all summary { cursor: pointer; color: var(--accent); }
+.step-diagram__all ol { margin: var(--space-2) 0 0; padding-left: 1.4rem; }
 
 /* Lesson article */
 .article { max-width: var(--measure); font-size: 1.0625rem; line-height: 1.7; }

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { isSafeHref, renderMarkdown, splitFrontMatter } from "./markdown.ts";
+import { isSafeHref, renderMarkdown, splitFrontMatter, type MediaResolver } from "./markdown.ts";
 
 describe("renderMarkdown security", () => {
   it("escapes raw HTML instead of passing it through", () => {
@@ -45,5 +45,43 @@ describe("helpers", () => {
   it("splitFrontMatter handles CRLF and missing front matter", () => {
     assert.deepEqual(splitFrontMatter("---\r\na: 1\r\n---\r\nbody"), { frontMatter: "a: 1", body: "body" });
     assert.equal(splitFrontMatter("no front matter"), null);
+  });
+});
+
+describe("renderMarkdown media references", () => {
+  const calls: string[] = [];
+  const media: MediaResolver = {
+    figure: (ref, alt, caption) => {
+      calls.push(`figure ${ref} ${alt} ${caption}`);
+      if (ref === "x/missing.svg") throw new Error("unknown figure media:x/missing.svg");
+      return '<figure class="figure"></figure>\n';
+    },
+    stepDiagram: (ref) => {
+      calls.push(`steps ${ref}`);
+      return '<figure class="figure step-diagram"></figure>\n';
+    },
+  };
+  it("renders a figure on its own line as a block, without a wrapping paragraph", () => {
+    const { html, problems, figures } = renderMarkdown('Before.\n\n![Alt text](media:git-github/a.svg "Caption")\n\nAfter.', { media });
+    assert.deepEqual(problems, []);
+    assert.equal(figures, 1);
+    assert.ok(html.includes('<p>Before.</p>\n<figure class="figure"></figure>\n<p>After.</p>'), html);
+    assert.ok(calls.includes("figure git-github/a.svg Alt text Caption"));
+  });
+  it("renders an empty diagram fence as a step-through", () => {
+    const { html, problems } = renderMarkdown("```diagram steps=git-github/commit-cycle\n```", { media });
+    assert.deepEqual(problems, []);
+    assert.ok(html.includes("step-diagram"));
+  });
+  it("reports bad references instead of rendering them", () => {
+    const check = (md: string, pattern: RegExp) => {
+      const { problems } = renderMarkdown(md, { media });
+      assert.ok(problems.some((p) => pattern.test(p)), `${md} → ${problems.join("; ")}`);
+    };
+    check("![a](media:x/missing.svg)", /unknown figure/);
+    check("Text ![a](media:git-github/a.svg) inline.", /must be on a line of its own/);
+    check("```diagram\n```", /must be written/);
+    check("```diagram steps=git-github/x\nsteps: []\n```", /must be empty/);
+    assert.match(renderMarkdown("![a](media:git-github/a.svg)").problems[0] ?? "", /resolved only when lessons are built by the content loader/);
   });
 });

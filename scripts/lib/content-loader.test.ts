@@ -105,3 +105,49 @@ describe("validation catches authoring mistakes", () => {
     assert.ok(errors.some((e) => e.startsWith("prerequisite cycle")));
   });
 });
+
+describe("figures and step-throughs", () => {
+  const svgFile = (dir: string) => join(dir, "media", "git-github", "commit-cycle.svg");
+  it("are rendered into lessons as inline SVG with a text alternative", () => {
+    const { bundle } = loadContent(contentRoot);
+    const html = bundle.lessons.find((l) => l.id === "git-first-commits")?.html ?? "";
+    assert.match(html, /<figure class="figure step-diagram" id="steps-git-github-commit-cycle" data-step-diagram data-steps="5">/);
+    assert.match(html, /<svg [^>]*role="img" aria-labelledby="git-github-commit-cycle-title"><title id="git-github-commit-cycle-title">How a change becomes a commit\. Four boxes/);
+    assert.match(html, /<details class="step-diagram__all"><summary>All 5 steps as text<\/summary><ol><li>You create README\.md\./);
+  });
+  it("reject an unsafe SVG with the file and reason", () => {
+    const dir = copyContent();
+    writeFileSync(svgFile(dir), readFileSync(svgFile(dir), "utf8").replace("<g>", '<g onclick="alert(1)">'));
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.startsWith("media/git-github/commit-cycle.svg: svg > g: attribute onclick is not allowed")), errors.join("\n"));
+  });
+  it("reject a figure without its sidecar, and a lesson that references it", () => {
+    const dir = copyContent();
+    rmSync(join(dir, "media", "git-github", "commit-cycle.yaml"));
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes("missing sidecar commit-cycle.yaml")));
+    assert.ok(errors.some((e) => e.includes("step-through") || e.includes("figure \"commit-cycle.svg\" not found")));
+  });
+  it("reject step definitions that do not match the figure", () => {
+    const dir = copyContent();
+    const steps = join(dir, "media", "git-github", "commit-cycle.steps.yaml");
+    // Dropping the last step leaves elements marked data-step="5" with nowhere to appear.
+    writeFileSync(steps, readFileSync(steps, "utf8").replace(/\n  - caption: git add stages the new version[^\n]*\n/, "\n"));
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes('uses data-step="5" but there are only 4 steps')), errors.join("\n"));
+  });
+  it("reject an unknown media reference in a lesson", () => {
+    const dir = copyContent();
+    const file = join(dir, "lessons", "git-github", "git-first-commits.md");
+    writeFileSync(file, readFileSync(file, "utf8").replace("steps=git-github/commit-cycle", "steps=git-github/no-such-diagram"));
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.startsWith("lessons/git-github/git-first-commits.md: unknown step-through")), errors.join("\n"));
+  });
+  it("reject third-party media without a source", () => {
+    const dir = copyContent();
+    const file = join(dir, "media", "git-github", "commit-cycle.yaml");
+    writeFileSync(file, readFileSync(file, "utf8").replace("licence: project-content", "licence: CC-BY-4.0"));
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes("third-party media need source_url")));
+  });
+});

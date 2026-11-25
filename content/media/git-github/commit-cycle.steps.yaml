@@ -1,0 +1,8 @@
+figure: commit-cycle.svg
+title: How a change becomes a commit
+steps:
+  - caption: You create README.md. Git sees it in the folder but is not tracking it, so git status lists it as untracked.
+  - caption: git add README.md copies the file's current content into the staging area. It is now staged and will be part of the next commit.
+  - caption: git commit records everything that is staged as a snapshot in the history. The file is committed and unmodified.
+  - caption: You edit the file. It is now modified — tracked, but changed since the last commit and not yet staged.
+  - caption: git add stages the new version, and the next git commit records it. Every change goes round this edit, add, commit loop.

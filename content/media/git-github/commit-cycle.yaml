@@ -1,0 +1,4 @@
+alt: Four boxes for the states of a file in Git — untracked, staged, committed and modified — joined by arrows labelled git add, git commit, "you edit the file" and git add again, forming a loop from modified back to staged.
+caption: The states a file moves through as you work. git status tells you which one each file is in.
+credit: DevForge 18 content team
+licence: project-content

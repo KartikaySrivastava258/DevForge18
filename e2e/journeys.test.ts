@@ -279,7 +279,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -302,6 +302,92 @@ describe("accessibility, theming and responsiveness", () => {
     await page.goto("/");
     await page.locator("h1").waitFor();
     await page.screenshot({ path: join(SHOTS, "mobile-home.png"), fullPage: true });
+    noProblems(problems);
+  });
+});
+
+describe("figures and step-through diagrams", () => {
+  const LESSON = "/tracks/git-github/lessons/git-first-commits";
+  const stepOf = async (fig: import("playwright").Locator) => (await fig.locator(".step-diagram__count").innerText()).trim();
+
+  it("steps forward and back with buttons and arrow keys, keeping keyboard focus", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto(LESSON);
+    const fig = page.locator(".step-diagram").first();
+    await fig.locator(".step-diagram__caption").waitFor();
+    assert.equal(await fig.getAttribute("data-enhanced"), "true");
+    assert.match(await fig.locator(".figure__svg").getAttribute("aria-labelledby") ?? "", /-title$/);
+    assert.match(await fig.locator(".figure__svg title").textContent() ?? "", /How a change becomes a commit/);
+    assert.equal(await stepOf(fig), "Step 1 of 5");
+    assert.match(await fig.locator(".step-diagram__caption").innerText(), /untracked/);
+    const hiddenAtStart = await fig.locator('[data-step-state="future"]').count();
+    assert.ok(hiddenAtStart > 0, "later steps are hidden at step 1");
+    assert.equal(await fig.getByRole("button", { name: "Previous" }).getAttribute("aria-disabled"), "true");
+
+    const next = fig.getByRole("button", { name: "Next" });
+    await next.focus();
+    await page.keyboard.press("Enter");
+    assert.equal(await stepOf(fig), "Step 2 of 5");
+    assert.ok((await fig.locator('[data-step-state="future"]').count()) < hiddenAtStart, "the next step's elements appear");
+    assert.equal(await fig.locator('[data-step-state="current"]').count() > 0, true, "the new step is highlighted");
+    await page.keyboard.press("ArrowRight");
+    await page.keyboard.press("ArrowRight");
+    await page.keyboard.press("ArrowRight");
+    assert.equal(await stepOf(fig), "Step 5 of 5");
+    await page.keyboard.press("ArrowRight");
+    assert.equal(await stepOf(fig), "Step 5 of 5", "stops at the last step");
+    assert.equal(await next.getAttribute("aria-disabled"), "true");
+    assert.ok(await next.evaluate((el) => el === document.activeElement), "focus stays on Next at the last step");
+    await page.keyboard.press("ArrowLeft");
+    assert.equal(await stepOf(fig), "Step 4 of 5");
+    // The full text alternative is always available.
+    await fig.locator(".step-diagram__all summary").click();
+    assert.equal(await fig.locator(".step-diagram__all li").count(), 5);
+    await fig.screenshot({ path: join(SHOTS, "step-diagram-dark.png") });
+    noProblems(problems);
+  });
+
+  it("plays only when asked, and pauses", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto(LESSON);
+    const fig = page.locator(".step-diagram").first();
+    await fig.locator(".step-diagram__caption").waitFor();
+    await page.waitForTimeout(3500);
+    assert.equal(await stepOf(fig), "Step 1 of 5", "never advances on its own");
+    await fig.getByRole("button", { name: "Play" }).click();
+    await page.waitForFunction(() => document.querySelector(".step-diagram__count")?.textContent?.includes("Step 2"), null, { timeout: 6000 });
+    await fig.getByRole("button", { name: "Pause" }).click();
+    const paused = await stepOf(fig);
+    await page.waitForTimeout(3500);
+    assert.equal(await stepOf(fig), paused, "stays put after Pause");
+    noProblems(problems);
+  });
+
+  it("offers no Play button and no transitions under reduced motion, and works in the light theme", async () => {
+    const { page, problems } = await h.newPage({ colorScheme: "light" });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(LESSON);
+    const fig = page.locator(".step-diagram").first();
+    await fig.locator(".step-diagram__caption").waitFor();
+    assert.equal(await fig.getByRole("button", { name: /Play/ }).count(), 0);
+    await fig.getByRole("button", { name: "Next" }).click();
+    assert.equal(await stepOf(fig), "Step 2 of 5");
+    const duration = await fig.locator("[data-step]").first().evaluate((el) => parseFloat(getComputedStyle(el).transitionDuration));
+    assert.ok(duration < 0.01, `transition should be instant under reduced motion, got ${duration}s`);
+    assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), "light");
+    await fig.screenshot({ path: join(SHOTS, "step-diagram-light.png") });
+    noProblems(problems);
+  });
+
+  it("scrolls inside its frame on a phone instead of widening the page", async () => {
+    const { page, problems } = await h.newPage({ mobile: true });
+    await page.goto(LESSON);
+    const fig = page.locator(".step-diagram").first();
+    await fig.locator(".step-diagram__caption").waitFor();
+    const box = fig.locator(".figure__scroll");
+    assert.ok(await box.evaluate((el) => el.scrollWidth > el.clientWidth), "the figure keeps a readable minimum width");
+    assert.equal(await box.getAttribute("tabindex"), "0", "the scrolling area is keyboard-focusable");
+    await fig.screenshot({ path: join(SHOTS, "step-diagram-mobile.png") });
     noProblems(problems);
   });
 });

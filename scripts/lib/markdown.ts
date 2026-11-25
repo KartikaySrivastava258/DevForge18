@@ -6,10 +6,12 @@
  *   - raw HTML in Markdown is escaped (rendered as visible text), never passed through;
  *   - links are restricted to https:, http:, mailto:, relative paths and #anchors;
  *   - images are restricted to https: and relative paths;
+ *   - media: figures and ```diagram step-throughs are resolved by the content
+ *     loader (scripts/lib/media.ts), whose SVGs pass a strict allowlist;
  *   - code is highlighted with highlight.js, which escapes its input.
  * Because the output is produced at build time, no Markdown parser ships to the browser.
  */
-import { Marked, type Tokens } from "marked";
+import { Marked, type Token, type Tokens } from "marked";
 import hljs from "highlight.js/lib/core";
 import bash from "highlight.js/lib/languages/bash";
 import dockerfile from "highlight.js/lib/languages/dockerfile";
@@ -77,11 +79,39 @@ export interface RenderResult {
   html: string;
   toc: { id: string; text: string }[];
   wordCount: number;
+  /** Problems with media references; the content loader turns them into build errors. */
+  problems: string[];
+  /** Number of figures and step-throughs rendered. */
+  figures: number;
 }
 
-export function renderMarkdown(source: string): RenderResult {
+/** Turns media references into HTML; it throws an Error explaining any bad reference. */
+export interface MediaResolver {
+  figure(ref: string, alt: string, caption: string | null): string;
+  stepDiagram(ref: string): string;
+}
+
+const isMediaImage = (t: Token) => t.type === "image" && (t as Tokens.Image).href.startsWith("media:");
+
+export function renderMarkdown(source: string, options: { media?: MediaResolver } = {}): RenderResult {
   const toc: { id: string; text: string }[] = [];
   const usedIds = new Map<string, number>();
+  const problems: string[] = [];
+  let figures = 0;
+  const media = (render: (m: MediaResolver) => string, what: string): string => {
+    if (!options.media) {
+      problems.push(`${what}: media references are resolved only when lessons are built by the content loader`);
+      return "";
+    }
+    try {
+      const html = render(options.media);
+      figures++;
+      return html;
+    } catch (err) {
+      problems.push((err as Error).message);
+      return "";
+    }
+  };
 
   const marked = new Marked({ gfm: true, async: false });
   marked.use({
@@ -99,8 +129,24 @@ export function renderMarkdown(source: string): RenderResult {
         if (depth === 2) toc.push({ id, text: plain });
         return `<h${depth} id="${id}"><a class="heading-anchor" href="#${id}" aria-hidden="true" tabindex="-1">#</a>${inner}</h${depth}>\n`;
       },
+      paragraph({ tokens }: Tokens.Paragraph): string {
+        // A figure is a block: render it without the surrounding <p>, which cannot contain <figure>.
+        const content = tokens.filter((t) => !(t.type === "text" && t.raw.trim() === ""));
+        if (content.length === 1 && content[0] && isMediaImage(content[0])) return this.parser.parseInline(content);
+        if (content.some(isMediaImage)) problems.push("a media: figure must be on a line of its own");
+        return `<p>${this.parser.parseInline(tokens)}</p>\n`;
+      },
       code({ text, lang }: Tokens.Code): string {
         const words = (lang ?? "").trim().toLowerCase().split(/\s+/);
+        if (words[0] === "diagram") {
+          const ref = /^steps=([a-z0-9-]+\/[a-z0-9-]+)$/.exec(words[1] ?? "")?.[1];
+          if (!ref || words.length !== 2) {
+            problems.push(`a diagram fence must be written \`\`\`diagram steps=<track>/<name>, found "${lang}"`);
+            return "";
+          }
+          if (text.trim()) problems.push(`the diagram fence for ${ref} must be empty; steps live in content/media/${ref}.steps.yaml`);
+          return media((m) => m.stepDiagram(ref), `diagram steps=${ref}`);
+        }
         const requested = words[0] ?? "";
         const isOutput = words.includes("output");
         const language = isOutput ? "plaintext" : (ALIASES[requested] ?? (requested in LANGUAGES ? requested : "plaintext"));
@@ -122,6 +168,7 @@ export function renderMarkdown(source: string): RenderResult {
         return `<a href="${escapeHtml(href)}"${titleAttr}${rel}>${inner}${external ? '<span class="sr-only"> (opens in a new tab)</span>' : ""}</a>`;
       },
       image({ href, title, text }: Tokens.Image): string {
+        if (href.startsWith("media:")) return media((m) => m.figure(href.slice("media:".length), text, title ?? null), href);
         const ok = /^https:\/\//i.test(href) || (!/^[a-z][a-z0-9+.-]*:/i.test(href) && !href.startsWith("//"));
         if (!ok) return escapeHtml(text);
         const titleAttr = title ? ` title="${escapeHtml(title)}"` : "";
@@ -135,7 +182,7 @@ export function renderMarkdown(source: string): RenderResult {
     .replace(/```[\s\S]*?```/g, " ")
     .split(/\s+/)
     .filter(Boolean).length;
-  return { html, toc, wordCount };
+  return { html, toc, wordCount, problems, figures };
 }
 
 /** Split a Markdown file into YAML front matter and body. */

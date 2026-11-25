@@ -51,6 +51,23 @@ docker run --name devforge-pg -e POSTGRES_PASSWORD=devforge -p 127.0.0.1:5432:54
 PGHOST=localhost PGUSER=postgres PGPASSWORD=devforge npm run lessons:record -- --all
 ```
 
+## Figures and step-through diagrams
+
+Every "How it works" section needs a picture (REMAINING_WORK.md §4.2). Figures are SVG files that are validated and inlined at build time ([ADR 0007](adr/0007-inline-svg-figures.md)):
+
+```text
+content/media/<track>/<name>.svg          the drawing
+content/media/<track>/<name>.yaml         alt, caption, credit, licence (project-content, or a licence plus source_url)
+content/media/<track>/<name>.steps.yaml   optional: a step-through over one figure in the same folder
+```
+
+- **Static figure:** put `![](media:<track>/<name>.svg)` on a line of its own. The alt text and caption come from the sidecar; Markdown alt text and a quoted title override them for one lesson.
+- **Step-through:** write an empty fence ```` ```diagram steps=<track>/<name> ````. In the SVG, `data-step="N"` makes an element appear at step N (and highlights it while N is current); `data-until="M"` hides it after step M. Every step after the first must change the picture, and each step's caption is a full sentence, because the captions are also the text alternative ("All steps as text"). A figure that uses `data-until` can only be shown as a step-through.
+- **Drawing rules** (the build rejects anything else): `svg`, `g`, `defs`, `marker`, `path`, `rect`, `circle`, `ellipse`, `line`, `polyline`, `polygon`, `text`, `tspan`; no `style` attributes, scripts, links or images; colours only through the classes listed in `docs/design-system.md`; ids only `a-z0-9-`. Draw arrow heads as `polygon` elements inside the same `g` as their line, so they highlight with it.
+- **Size:** design at a `viewBox` about 640 units wide with 12–14 px text. Figures never shrink below 30rem; on phones they scroll sideways inside their frame.
+- Keep text in the SVG short (labels, not sentences); explanations belong in the caption and the lesson.
+- Check the result in both themes and on mobile (`npm run test:e2e` writes screenshots to `build/screenshots/`).
+
 ## Lesson structure
 
 File: `content/lessons/<track>/<lesson-id>.md`; the id must equal the file name. Use the exemplar `content/lessons/docker/docker-images-vs-containers.md` as the model. A lesson should include, as `##` sections where they apply:
@@ -58,7 +75,7 @@ File: `content/lessons/<track>/<lesson-id>.md`; the id must equal the file name.
 1. **The idea in one sentence** — precise definition.
 2. **Explain it like I'm twelve** — an analogy, plus where the analogy breaks.
 3. **What problem it solves**.
-4. **How it works** — diagram and step-by-step flow; beginner, intermediate and advanced depth.
+4. **How it works** — a figure or step-through (see above) and step-by-step flow; beginner, intermediate and advanced depth.
 5. **Try it yourself** — labelled local lab or read-through; exact commands; what each flag does; expected output; Windows/macOS/Linux differences; cleanup.
 6. **Common mistakes**.
 7. **Where this fits in a real system** — connect to other tracks.

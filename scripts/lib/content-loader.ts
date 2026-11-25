@@ -16,6 +16,7 @@ import {
   type Track,
 } from "../../shared/content-schema.ts";
 import { extractRunBlocks } from "./lesson-runner.ts";
+import { loadMedia, mediaResolver } from "./media.ts";
 import { parseYaml } from "./yaml.ts";
 import { renderMarkdown, splitFrontMatter } from "./markdown.ts";
 
@@ -131,6 +132,10 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   }
   paths.sort((a, b) => a.number - b.number);
 
+  // ---- Figures and step-throughs -----------------------------------------
+  const media = loadMedia(root, trackSlugs, errors);
+  const usedMedia = new Set<string>();
+
   // ---- Lessons ------------------------------------------------------------
   const lessons: CompiledLesson[] = [];
   const lessonsDir = join(root, "lessons");
@@ -165,7 +170,8 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       if (meta.verification.method === "executed" && runBlocks === 0) errors.push(`${rel}: verification "executed" requires at least one \`\`\`bash run block`);
       if (meta.verification.method === "docs-checked" && runBlocks > 0) errors.push(`${rel}: has run blocks, so verification.method must be "executed" or "pending"`);
       if (meta.verification.method === "pending" && runBlocks === 0) errors.push(`${rel}: verification "pending" requires run blocks`);
-      const rendered = renderMarkdown(split.body);
+      const rendered = renderMarkdown(split.body, { media: mediaResolver(media, usedMedia) });
+      for (const problem of rendered.problems) errors.push(`${rel}: ${problem}`);
       if (rendered.toc.length < 2) warnings.push(`${rel}: fewer than two "##" sections — consider structuring the lesson`);
       lessons.push({ ...meta, html: rendered.html, toc: rendered.toc, word_count: rendered.wordCount });
     }
@@ -185,6 +191,8 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
     }
   }
   lessons.sort((a, b) => (a.track === b.track ? a.order - b.order : a.track.localeCompare(b.track)));
+  for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson`);
+  for (const key of media.diagrams.keys()) if (!usedMedia.has(`diagram:${key}`)) warnings.push(`media/${key}.steps.yaml is not used by any lesson`);
 
   return {
     bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons },

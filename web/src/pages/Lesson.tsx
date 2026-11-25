@@ -1,7 +1,9 @@
 import { memo, useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
+import { createPortal } from "react-dom";
 import { BookmarkButton } from "../components/BookmarkButton.tsx";
 import { Crumbs } from "../components/Crumbs.tsx";
 import { SelfCheck } from "../components/SelfCheck.tsx";
+import { StepDiagram } from "../components/StepDiagram.tsx";
 import { ErrorState, Loading, NotFoundState } from "../components/States.tsx";
 import { LevelTag } from "../components/Tags.tsx";
 import { api } from "../lib/api.ts";
@@ -38,6 +40,8 @@ export function LessonPage({ trackSlug, lessonId }: { trackSlug: string; lessonI
   const { data, error, loading, reload } = useApi<LessonResponse>(`/api/lessons/${encodeURIComponent(lessonId)}`, { cache: true });
   const [announce, setAnnounce] = useState("");
   const started = useRef<string | null>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const [diagrams, setDiagrams] = useState<HTMLElement[]>([]);
   useTitle(data?.lesson.title);
   const tocIds = data?.lesson.toc.map((t) => t.id) ?? [];
   const active = useScrollSpy(tocIds, Boolean(data));
@@ -48,6 +52,12 @@ export function LessonPage({ trackSlug, lessonId }: { trackSlug: string; lessonI
     started.current = data.lesson.id;
     api(`/api/lessons/${data.lesson.id}/start`, { method: "POST" }).catch(() => undefined);
   }, [user, data]);
+
+  // Step-through diagrams arrive as static HTML; give each one its controls.
+  const loadedLessonId = data?.lesson.id;
+  useEffect(() => {
+    setDiagrams(Array.from(bodyRef.current?.querySelectorAll<HTMLElement>("[data-step-diagram]") ?? []));
+  }, [loadedLessonId]);
 
   const onArticleClick = useCallback(async (e: MouseEvent<HTMLElement>) => {
     const button = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-copy]");
@@ -128,7 +138,13 @@ export function LessonPage({ trackSlug, lessonId }: { trackSlug: string; lessonI
             </ul>
           </section>
 
-          <LessonBody html={lesson.html} onClick={onArticleClick} />
+          <div ref={bodyRef}>
+            <LessonBody html={lesson.html} onClick={onArticleClick} />
+          </div>
+          {diagrams.map((root) => {
+            const slot = root.querySelector("[data-controls]");
+            return slot ? createPortal(<StepDiagram root={root} />, slot, root.id) : null;
+          })}
           <p className="sr-only" aria-live="polite">
             {announce}
           </p>

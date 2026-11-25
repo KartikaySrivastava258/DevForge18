@@ -85,12 +85,9 @@ Saving a file only keeps its latest state. Committing keeps every meaningful sta
 
 ## How it works
 
-`git status` is your dashboard. It reports each file's state:
+`git status` is your dashboard. It reports each file's state. Step through the diagram to follow one file round the loop:
 
-```text
- untracked ──git add──▶ staged ──git commit──▶ committed (unmodified)
-                          ▲                          │
-                          └───────git add─── modified ◀── you edit the file
+```diagram steps=git-github/commit-cycle
 ```
 
 - **Untracked**: in the folder, but Git has never been told to track it.
