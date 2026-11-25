@@ -122,6 +122,7 @@ describe("background servers", () => {
     assert.deepEqual(lessonNeeds("nginx", 2), { api: true, apiPort: 8080, timeoutMs: 60_000 });
     assert.deepEqual(lessonNeeds("nginx", 1), { api: false, apiPort: 0, timeoutMs: 60_000 });
     assert.equal(lessonNeeds("kubernetes", 1).timeoutMs, 900_000);
+    assert.equal(lessonNeeds("airflow", 3).timeoutMs, 420_000);
   });
 });
 

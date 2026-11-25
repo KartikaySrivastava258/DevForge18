@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300">
+  <!-- The parts of Airflow 3, from DAGs, tasks and runs. -->
+  <rect class="f-box-faint" x="16" y="24" width="132" height="56" rx="8"/>
+  <text class="f-strong" x="82" y="48" text-anchor="middle">DAG files</text>
+  <text class="f-small f-muted" x="82" y="66" text-anchor="middle">dags/*.py</text>
+  <rect class="f-box" x="196" y="24" width="132" height="56" rx="8"/>
+  <text class="f-strong" x="262" y="48" text-anchor="middle">DAG processor</text>
+  <text class="f-small f-muted" x="262" y="66" text-anchor="middle">parses the files</text>
+  <rect class="f-box-accent" x="376" y="24" width="248" height="56" rx="8"/>
+  <text class="f-strong" x="500" y="48" text-anchor="middle">metadata database</text>
+  <text class="f-small f-muted" x="500" y="66" text-anchor="middle">DAGs, runs, task states</text>
+  <rect class="f-box" x="196" y="140" width="132" height="56" rx="8"/>
+  <text class="f-strong" x="262" y="164" text-anchor="middle">scheduler</text>
+  <text class="f-small f-muted" x="262" y="182" text-anchor="middle">+ executor</text>
+  <rect class="f-box" x="16" y="236" width="132" height="56" rx="8"/>
+  <text class="f-strong" x="82" y="260" text-anchor="middle">worker</text>
+  <text class="f-small f-muted" x="82" y="278" text-anchor="middle">a process per task</text>
+  <rect class="f-box" x="376" y="140" width="248" height="56" rx="8"/>
+  <text class="f-strong" x="500" y="164" text-anchor="middle">API server</text>
+  <text class="f-small f-muted" x="500" y="182" text-anchor="middle">web interface + REST API</text>
+  <rect class="f-box-faint" x="376" y="236" width="248" height="56" rx="8"/>
+  <text class="f-strong" x="500" y="260" text-anchor="middle">you</text>
+  <text class="f-small f-muted" x="500" y="278" text-anchor="middle">browser or curl</text>
+  <g>
+    <path class="f-arrow" d="M148 52 L186 52"/>
+    <polygon class="f-head" points="194,52 186,56.5 186,47.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M328 52 L366 52"/>
+    <polygon class="f-head" points="374,52 366,56.5 366,47.5"/>
+  </g>
+  <text class="f-small f-muted" x="351" y="44" text-anchor="middle">stores</text>
+  <g>
+    <path class="f-arrow" d="M400 82 L400 112 L262 112 L262 130"/>
+    <polygon class="f-head" points="262,138 257.5,130 266.5,130"/>
+  </g>
+  <text class="f-small f-muted" x="331" y="106" text-anchor="middle">reads</text>
+  <g>
+    <path class="f-arrow" d="M194 168 L82 168 L82 226"/>
+    <polygon class="f-head" points="82,234 77.5,226 86.5,226"/>
+  </g>
+  <text class="f-small f-muted" x="90" y="206">ready tasks</text>
+  <g>
+    <path class="f-arrow-accent" d="M148 264 L350 264 L350 176 L366 176"/>
+    <polygon class="f-head-accent" points="374,176 366,180.5 366,171.5"/>
+  </g>
+  <text class="f-small f-accent" x="160" y="256">task states, results</text>
+  <line class="f-line" x1="500" y1="138" x2="500" y2="82"/>
+  <g>
+    <path class="f-arrow" d="M500 234 L500 208"/>
+    <polygon class="f-head" points="500,200 504.5,208 495.5,208"/>
+  </g>
+</svg>

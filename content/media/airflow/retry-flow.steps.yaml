@@ -1,0 +1,8 @@
+figure: retry-flow.svg
+title: 'The payments run, step by step'
+steps:
+  - caption: 'The run starts. charge and refund_check depend on nothing, so both start: try 1.'
+  - caption: 'Both fail on try 1. charge has retries left, so it becomes up_for_retry and waits retry_delay. refund_check has no retries: it is failed.'
+  - caption: 'notify_finance needed refund_check to succeed (the default all_success rule). It never starts: upstream_failed.'
+  - caption: 'After the delay, charge runs again — try 2 — and succeeds. Now send_receipt can run, and succeeds too.'
+  - caption: 'Every task has finished, but one of the last ones did not succeed, so the run is failed.'

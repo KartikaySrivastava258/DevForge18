@@ -24,4 +24,5 @@ export const SIMULATIONS: Record<string, () => Promise<{ default: SimulationEntr
   "prometheus-scrape-and-rate": () => import("./PromScrape.tsx"),
   "opentelemetry-trace-waterfall": () => import("./TraceWaterfall.tsx"),
   "kafka-consumer-groups": () => import("./KafkaGroups.tsx"),
+  "airflow-scheduler-timeline": () => import("./AirflowTimeline.tsx"),
 };

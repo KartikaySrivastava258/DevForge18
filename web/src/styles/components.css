@@ -438,3 +438,16 @@
 .kafka-sim__members ul { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
 .kafka-sim__members li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); font-size: 0.9375rem; }
 @media (max-width: 40rem) { .kafka-sim__partition { grid-template-columns: 1fr; } }
+.airflow-sim__runs { width: 100%; border-collapse: collapse; margin: 0 0 var(--space-2); font-size: 0.9375rem; }
+.airflow-sim__runs th, .airflow-sim__runs td { padding: 4px var(--space-2); border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+.airflow-sim__runs thead th { font-size: var(--step--1); color: var(--muted); font-weight: 500; }
+.airflow-sim__runs tbody th { font-weight: 500; white-space: nowrap; }
+.airflow-sim__state { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 0.8125rem; border: 1px solid var(--line); }
+.airflow-sim__state[data-state="success"] { border-color: var(--ok); background: var(--ok-soft); }
+.airflow-sim__state[data-state="failed"] { border-color: var(--danger); background: var(--danger-soft); }
+.airflow-sim__detail { font-size: 0.8125rem; color: var(--muted); white-space: nowrap; }
+.airflow-sim__rows { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.airflow-sim__rows--wrong { color: var(--danger); font-weight: 600; }
+.airflow-sim__backfill { border: 1px solid var(--line); border-radius: var(--radius-s); padding: var(--space-2) var(--space-3) 0; margin: 0 0 var(--space-3); }
+.airflow-sim__backfill legend { font-weight: 600; padding: 0 var(--space-1); }
+@media (max-width: 40rem) { .airflow-sim__runs { font-size: 0.8125rem; } .airflow-sim__runs th, .airflow-sim__runs td { padding: 4px; } .airflow-sim__detail { display: block; } }

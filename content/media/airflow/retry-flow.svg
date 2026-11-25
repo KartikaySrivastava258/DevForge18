@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 230">
+  <!-- The payments run, task by task, from Retries, failures and safe re-runs. -->
+  <rect class="f-box-faint" x="16" y="40" width="200" height="56" rx="8"/>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-accent" x="16" y="40" width="200" height="56" rx="8"/>
+    <text class="f-small" x="116" y="84" text-anchor="middle">running · try 1</text>
+  </g>
+  <g data-step="2" data-until="3">
+    <rect class="f-box-warn" x="16" y="40" width="200" height="56" rx="8"/>
+    <text class="f-small" x="116" y="84" text-anchor="middle">up_for_retry</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-ok" x="16" y="40" width="200" height="56" rx="8"/>
+    <text class="f-small" x="116" y="84" text-anchor="middle">success · try 2</text>
+  </g>
+  <text class="f-strong f-mono" x="116" y="64" text-anchor="middle">charge</text>
+  <rect class="f-box-faint" x="336" y="40" width="200" height="56" rx="8"/>
+  <g data-step="4">
+    <rect class="f-box-ok" x="336" y="40" width="200" height="56" rx="8"/>
+    <text class="f-small" x="436" y="84" text-anchor="middle">success</text>
+  </g>
+  <text class="f-strong f-mono" x="436" y="64" text-anchor="middle">send_receipt</text>
+  <rect class="f-box-faint" x="16" y="150" width="200" height="56" rx="8"/>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-accent" x="16" y="150" width="200" height="56" rx="8"/>
+    <text class="f-small" x="116" y="194" text-anchor="middle">running · try 1</text>
+  </g>
+  <g data-step="2">
+    <rect class="f-box-danger" x="16" y="150" width="200" height="56" rx="8"/>
+    <text class="f-small" x="116" y="194" text-anchor="middle">failed</text>
+  </g>
+  <text class="f-strong f-mono" x="116" y="174" text-anchor="middle">refund_check</text>
+  <rect class="f-box-faint" x="336" y="150" width="200" height="56" rx="8"/>
+  <g data-step="3">
+    <rect class="f-box-danger" x="336" y="150" width="200" height="56" rx="8"/>
+    <text class="f-small" x="436" y="194" text-anchor="middle">upstream_failed</text>
+  </g>
+  <text class="f-strong f-mono" x="436" y="174" text-anchor="middle">notify_finance</text>
+  <g>
+    <path class="f-arrow" d="M218 68 L326 68"/>
+    <polygon class="f-head" points="334,68 326,72.5 326,63.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M218 178 L326 178"/>
+    <polygon class="f-head" points="334,178 326,182.5 326,173.5"/>
+  </g>
+  <g data-step="2" data-until="3">
+    <text class="f-small f-warn" x="116" y="118" text-anchor="middle">waits retry_delay (3 s)</text>
+  </g>
+  <g data-step="5">
+    <rect class="f-box-danger" x="560" y="92" width="64" height="46" rx="8"/>
+    <text class="f-small" x="592" y="112" text-anchor="middle">run</text>
+    <text class="f-small f-strong" x="592" y="128" text-anchor="middle">failed</text>
+  </g>
+</svg>

@@ -16,6 +16,8 @@ import { WaterfallActionSchema, WaterfallScenarioSchema } from "./opentelemetry/
 import { traceWaterfall } from "./opentelemetry/trace-waterfall.ts";
 import { consumerGroups } from "./kafka/consumer-groups.ts";
 import { KafkaActionSchema, KafkaScenarioSchema } from "./kafka/schema.ts";
+import { AirflowActionSchema, AirflowScenarioSchema } from "./airflow/schema.ts";
+import { schedulerTimeline } from "./airflow/scheduler-timeline.ts";
 import type { SimulationModel } from "./types.ts";
 
 // Each model has its own state, action and scenario types; callers validate
@@ -28,4 +30,5 @@ export const MODELS: Readonly<Record<string, AnyModel>> = {
   [scrapeAndRate.id]: { ...scrapeAndRate, scenarioSchema: PromScenarioSchema, actionSchema: PromActionSchema },
   [traceWaterfall.id]: { ...traceWaterfall, scenarioSchema: WaterfallScenarioSchema, actionSchema: WaterfallActionSchema },
   [consumerGroups.id]: { ...consumerGroups, scenarioSchema: KafkaScenarioSchema, actionSchema: KafkaActionSchema },
+  [schedulerTimeline.id]: { ...schedulerTimeline, scenarioSchema: AirflowScenarioSchema, actionSchema: AirflowActionSchema },
 };

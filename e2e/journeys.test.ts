@@ -262,7 +262,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("every page has exactly one h1 and every form control has a label", async () => {
     const { page } = await h.newPage();
-    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers"]) {
+    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       await page.waitForLoadState("networkidle");
@@ -279,7 +279,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -537,6 +537,35 @@ describe("simulations", () => {
     await sim.getByLabel("Scenario").selectOption("four-partitions");
     await sim.getByRole("button", { name: "Add a consumer" }).click();
     assert.match(await sim.locator(".kafka-sim__members").innerText(), /consumer-5: idle — no partition/);
+    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    noProblems(problems);
+  });
+
+  it("Airflow: retries rescue a flaky week; a backfill only repairs the data once the task is safe to repeat", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/airflow/simulations/airflow-scheduler-timeline");
+    const sim = page.locator(".sim");
+    await sim.locator(".airflow-sim").waitFor();
+    const runs = sim.locator(".airflow-sim__runs tbody tr");
+    await sim.getByLabel("Retries").selectOption("1");
+    for (let i = 0; i < 6; i++) await sim.getByRole("button", { name: "Step" }).click();
+    assert.equal(await runs.count(), 7);
+    assert.match(await runs.nth(2).innerText(), /success\s+scheduled · 2 tries/);
+    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+
+    await sim.getByLabel("Scenario").selectOption("broken-week");
+    assert.match(await runs.nth(4).innerText(), /failed/);
+    assert.match(await runs.nth(4).innerText(), /6 \/ 13 — wrong/);
+    // Re-running the failed dates while the task appends adds the rows on top of the half-written ones.
+    await sim.getByLabel("Reprocess").selectOption("failed");
+    await sim.getByRole("button", { name: "Create backfill" }).click();
+    assert.match(await runs.nth(4).innerText(), /success\s+backfill/);
+    assert.match(await runs.nth(4).innerText(), /19 \/ 13 — wrong/);
+    assert.doesNotMatch(await sim.locator(".sim__status").innerText(), /^Solved/, "appending again is not a fix");
+    await sim.getByLabel("Load task writes by").selectOption("replace");
+    await sim.getByLabel("Reprocess").selectOption("completed");
+    await sim.getByRole("button", { name: "Create backfill" }).click();
+    assert.equal(await sim.locator(".airflow-sim__rows--wrong").count(), 0);
     await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
     noProblems(problems);
   });

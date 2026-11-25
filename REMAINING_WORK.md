@@ -306,8 +306,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.16 Apache Airflow
 
-- **Lessons:** DAGs, tasks and dependencies · Scheduling, logical dates and catchup · Retries, timeouts and failure callbacks · Passing data between tasks (and why XCom is for small values) · Building an idempotent ETL · Backfills and data-quality checks (advanced) · Deployment and executors (advanced).
-- **Simulation — scheduler timeline:** a DAG with schedule and start date; move "now" forward and see which runs are created, how catchup behaves, and what happens when a task fails and retries. **Challenge:** backfill a week without duplicating data (idempotency).
+- **Lessons:** ✅ DAGs, tasks and runs · ✅ Schedules, logical dates and catchup · ✅ Retries, failures and safe re-runs · Timeouts and failure callbacks · Passing data between tasks (and why XCom is for small values) · Building an idempotent ETL · Backfills and data-quality checks (advanced) · Deployment and executors (advanced).
+- ✅ **Simulation — scheduler timeline:** a DAG with schedule and start date; move "now" forward and see which runs are created, how catchup behaves, and what happens when a task fails and retries. **Challenge:** backfill a week without duplicating data (idempotency).
 - **Labs:** `airflow standalone` in a pinned container; trigger a DAG and check task states through the REST API (executed in CI, generous time limit).
 - **Real world:** Airflow was created at Airbnb in 2014 and became an Apache top-level project. Sources: airflow.apache.org, Airbnb's engineering blog.
 - **Alternatives:** Dagster, Prefect, Argo Workflows, Luigi, cloud schedulers (AWS Step Functions, Google Cloud Composer — itself managed Airflow).

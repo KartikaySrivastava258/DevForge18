@@ -1,0 +1,4 @@
+alt: 'Four tasks: charge leads to send_receipt, and refund_check leads to notify_finance. Charge fails on try 1, waits the retry delay, and succeeds on try 2, after which send_receipt succeeds. Refund_check fails with no retries, so notify_finance is marked upstream_failed and never runs. The run ends failed.'
+caption: 'Retries rescue a temporary failure; a permanent one stops the tasks after it and fails the run.'
+credit: DevForge 18 content team
+licence: project-content

@@ -1,0 +1,4 @@
+alt: 'A timeline from 1 to 5 January, with now in November marked on the right. With catchup=True there is a scheduled run on each of the five days. With catchup=False the five days have no runs. A note says end_date is 5 January, so no schedule times are left after it — and without catchup only the most recent schedule time, last midnight, would be run.'
+caption: 'Catchup creates the runs a DAG missed in the past. Without it — the Airflow 3 default — only the most recent schedule time is run, and here that is after end_date.'
+credit: DevForge 18 content team
+licence: project-content

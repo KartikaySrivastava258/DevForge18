@@ -1,0 +1,4 @@
+alt: 'DAG files in the dags folder are read by the DAG processor, which stores the DAGs in the metadata database. The scheduler reads the database and, through its executor, sends ready tasks to a worker, which runs each task in its own process. Tasks report their states and results to the API server, which is connected to the metadata database. You talk to the API server with a browser or curl.'
+caption: 'In Airflow 3, task code reports to the API server instead of touching the database; the scheduler and the DAG processor are separate processes.'
+credit: DevForge 18 content team
+licence: project-content

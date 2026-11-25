@@ -1,0 +1,61 @@
+id: airflow-scheduler-timeline
+track: airflow
+title: Scheduler timeline and backfills
+concept: A daily DAG gets one run per logical date. Catchup and backfills create runs for past dates, retries rescue temporary failures, and how the task writes its data decides whether running a date again is safe.
+learning_objectives:
+  - Predict which runs the scheduler creates with and without catchup, and as time passes.
+  - Use retries to get through a temporary outage, and see what a failed attempt can leave behind.
+  - Backfill a week so that every date is loaded exactly once, by making the load task safe to repeat.
+simplifications:
+  - Time moves in whole days and every run finishes instantly; real runs take time and can overlap.
+  - When a date is run again, the view shows only its latest run. Airflow keeps a record of each one.
+  - The source is down only for the first attempt on a flaky day, so any later attempt succeeds.
+  - In replace mode the delete and the insert happen in one transaction, so a failed attempt leaves the table as it was. In append mode a failed attempt leaves the rows it inserted before failing.
+text_alternative: For every date from start_date to today, whether it has a run, the run's kind, state and number of tries, and how many rows the table holds for that date compared with the right number. Every new day, retry, clear and backfill is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: flaky-week
+    title: A week with a flaky source
+    description: The DAG starts on 1 January and is deployed that day. The source will time out on 3 and 6 January, and the task has no retries.
+    params: { start: 0, deployed: 0, now: 0, retries: 0, flaky: [2, 5] }
+  - id: deployed-late
+    title: Deployed a week late, without catchup
+    description: The DAG's start_date is 1 January, but it was deployed on 8 January with catchup off, so only 8 January has run.
+    params: { start: 0, deployed: 7, now: 7, retries: 1 }
+  - id: catchup-on
+    title: Deployed a week late, with catchup
+    description: The same late deployment, but with catchup=True.
+    params: { start: 0, deployed: 7, now: 7, catchup: true, retries: 1 }
+  - id: broken-week
+    title: A broken week with an appending task
+    description: It is 8 January. The source timed out on 4 and 5 January, the task had no retries, and the load task appends rows — so those failed runs left half-written data behind.
+    params: { start: 0, deployed: 0, now: 7, retries: 0, write: append, flaky: [3, 4] }
+challenges:
+  - id: flaky-week
+    title: Get through a flaky week
+    goal: Make every run from 1 to 7 January succeed.
+    scenario: flaky-week
+    check: week-all-success
+    hint: The outages are temporary — trying again a moment later works. Which task setting makes Airflow try again by itself?
+    solution:
+      - { type: setRetries, retries: 1 }
+      - { type: tick, count: 6 }
+  - id: fill-missed-days
+    title: Fill in the missed days
+    goal: Give every date from 1 to 7 January a successful run with the right data.
+    scenario: deployed-late
+    check: week-correct
+    hint: Catchup only applies when the DAG is deployed. To process past dates afterwards, create a backfill for them.
+    solution:
+      - { type: backfill, from: 0, to: 6, reprocess: none }
+  - id: backfill-without-duplicates
+    title: Backfill without duplicates
+    goal: Repair 1 to 7 January so that every date has a successful run and exactly the right rows — no duplicates.
+    scenario: broken-week
+    check: week-correct
+    hint: Re-running the failed dates is not enough while the task appends — the half-written rows stay, and the new rows are added on top. Make the task safe to repeat first.
+    solution:
+      - { type: setWrite, mode: replace }
+      - { type: backfill, from: 0, to: 6, reprocess: failed }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

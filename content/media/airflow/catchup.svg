@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 230">
+  <!-- Catchup on and off for the same five days, from Schedules, logical dates and catchup. -->
+  <line class="f-line" x1="120" y1="196" x2="612" y2="196"/>
+  <text class="f-small f-muted" x="158" y="214" text-anchor="middle">1 Jan</text>
+  <text class="f-small f-muted" x="218" y="214" text-anchor="middle">2 Jan</text>
+  <text class="f-small f-muted" x="278" y="214" text-anchor="middle">3 Jan</text>
+  <text class="f-small f-muted" x="338" y="214" text-anchor="middle">4 Jan</text>
+  <text class="f-small f-muted" x="398" y="214" text-anchor="middle">5 Jan</text>
+  <text class="f-small f-strong" x="560" y="214" text-anchor="middle">now (Nov)</text>
+  <line class="f-line-accent f-dashed" x1="560" y1="26" x2="560" y2="198"/>
+  <text class="f-mono f-small" x="16" y="60">catchup=True</text>
+  <rect class="f-box-ok" x="130" y="40" width="56" height="36" rx="4"/>
+  <text class="f-small f-strong" x="158" y="63" text-anchor="middle">run</text>
+  <rect class="f-box-ok" x="190" y="40" width="56" height="36" rx="4"/>
+  <text class="f-small f-strong" x="218" y="63" text-anchor="middle">run</text>
+  <rect class="f-box-ok" x="250" y="40" width="56" height="36" rx="4"/>
+  <text class="f-small f-strong" x="278" y="63" text-anchor="middle">run</text>
+  <rect class="f-box-ok" x="310" y="40" width="56" height="36" rx="4"/>
+  <text class="f-small f-strong" x="338" y="63" text-anchor="middle">run</text>
+  <rect class="f-box-ok" x="370" y="40" width="56" height="36" rx="4"/>
+  <text class="f-small f-strong" x="398" y="63" text-anchor="middle">run</text>
+  <text class="f-small" x="440" y="63">5 scheduled runs</text>
+  <text class="f-mono f-small" x="16" y="136">catchup=False</text>
+  <rect class="f-box-faint" x="130" y="116" width="56" height="36" rx="4"/>
+  <text class="f-small f-faint" x="158" y="139" text-anchor="middle">—</text>
+  <rect class="f-box-faint" x="190" y="116" width="56" height="36" rx="4"/>
+  <text class="f-small f-faint" x="218" y="139" text-anchor="middle">—</text>
+  <rect class="f-box-faint" x="250" y="116" width="56" height="36" rx="4"/>
+  <text class="f-small f-faint" x="278" y="139" text-anchor="middle">—</text>
+  <rect class="f-box-faint" x="310" y="116" width="56" height="36" rx="4"/>
+  <text class="f-small f-faint" x="338" y="139" text-anchor="middle">—</text>
+  <rect class="f-box-faint" x="370" y="116" width="56" height="36" rx="4"/>
+  <text class="f-small f-faint" x="398" y="139" text-anchor="middle">—</text>
+  <text class="f-small" x="440" y="139">no runs</text>
+  <text class="f-small f-muted" x="278" y="178" text-anchor="middle">end_date 5 Jan: no schedule times left after it</text>
+</svg>

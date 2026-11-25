@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **5 in progress — Kafka done** (REMAINING_WORK.md §7) · Next: **Airflow**
+Last updated: 2026-11-25 · Milestone: **5 in progress — Kafka and Airflow done** (REMAINING_WORK.md §7) · Next: **MLflow**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 30 published across 13 tracks, **all executed** (the 3 Kafka lessons recorded against a real broker locally; CI confirmation in progress) |
+| Lessons | ✅ 33 published across 14 tracks, **all executed** (Kafka confirmed in CI; the 3 Airflow lessons recorded against a real Airflow locally, CI confirmation in progress) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 22 figures in all 21 lessons (no ASCII diagrams left), a step-through in each of the 10 tracks with lessons; tested |
-| Simulations | 🟡 Framework done and tested; 5 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka), with server-verified challenges |
+| Figures and step-through diagrams | ✅ 34 figures across all 33 lessons (no ASCII diagrams left), 14 of them step-throughs — one in each of the 14 tracks with lessons; tested |
+| Simulations | 🟡 Framework done and tested; 6 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow), with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -205,10 +205,22 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Runner:** Docker gating now also looks at prerequisite lessons (lessons 2–3 use a `kafka` function defined in lesson 1), in both the tests and `lessons:record`; containers a lesson starts with `docker run --name` are removed by the cleanup trap (tested with a stub).
 - **Simulation** *Partitions and consumer groups* (§5.10): lag, uneven keys (two members are not enough because one owns both busy partitions), idle members, crashes, added partitions moving keys, and resets refused while members are active. 9 model tests; three server-verified challenges; a browser test; embedded in lesson 3.
 - Figures: a topic's partitions, offsets and lag (step-through), a group's assignment.
+- **CI:** confirmed in run 45681887774 (262 tests, 27 browser journeys), after a fix: lesson 1's first `docker run` printed pull progress on a cold cache, so it now pulls quietly first (checked locally after removing the image).
+
+### Milestone 5 — Airflow (2026-11-25)
+
+- **Version:** Apache Airflow **3.4.0**, from the official `apache/airflow:slim-3.4.0-python3.12` image pinned by digest `sha256:2d3e42b9…`, run as `airflow standalone` (the quick start's development mode: every component plus SQLite). The REST API is used with a token from `/auth/token`, using the password the simple auth manager generates in the container.
+- **Lessons:** *DAGs, tasks and runs* (a TaskFlow DAG, a run triggered through the REST API, task states, an XCom value); *Schedules, logical dates and catchup* (five catch-up runs for 1–5 January, none without catchup); *Retries, failures and safe re-runs* (a task that succeeds on try 2, a failure that leaves its downstream task `upstream_failed`, and why tasks must be safe to repeat).
+- **Behaviour found by running 3.4.0 first:** the scheduler is healthy after about 15 s; a manual run finishes in about 9 s; with `@daily`, start 1 January, end 5 January and catchup, there are 5 runs whose data interval starts and ends at the logical date (the trigger timetable); without catchup, none. A new DAG file was picked up within seconds although `refresh_interval` defaults to 300 s — the lessons wait for the DAG instead of assuming a delay.
+- **A correction from the documentation:** the first draft said that without catchup "past times are skipped". The timetables page says the trigger timetable runs the **most recent** schedule time straight away; the lesson's DAG gets no run only because its `end_date` is in the past. Lesson 2, its self-check and the figure caption now say so.
+- **Facts** checked against the Airflow 3.4 documentation on 2026-11-25 (UTC): the architecture (task code reports through the API server and never reaches the metadata database; the DAG processor is a separate process; the executor runs inside the scheduler), logical dates and data intervals, `catchup_by_default=False`, `upstream_failed` and the `all_success` default, XComs for small data, the best-practice that tasks produce the same outcome on every re-run, and backfill reprocess behaviours (`none`, `failed`, `completed`).
+- **Runner:** an Airflow lesson may take up to 420 s (pull, start-up and catch-up; the three ran in 3 m 20 s from a cold image cache locally).
+- **Simulation** *Scheduler timeline and backfills* (§5.16): a daily DAG whose load task appends or replaces each day's rows; catchup on deployment, a flaky source, retries, clears and backfills with the three reprocess behaviours; the table shows each day's rows against the right number, so a successful run with duplicated data is visible. 17 model tests; three server-verified challenges (get through a flaky week; fill in missed days; backfill a broken week without duplicates — re-running failed dates while the task appends is shown to be wrong); a browser test; embedded in lessons 2 and 3. A browser test caught that the backfill range kept the first scenario's dates after switching scenarios; it now follows the scenario until the learner picks dates.
+- Figures: the parts of Airflow 3, catchup on and off, the payments run (step-through).
 
 ## Current work
 
-Milestone 5 of REMAINING_WORK.md §7: Kafka is done; next Airflow, then MLflow, LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
+Milestone 5 of REMAINING_WORK.md §7: Kafka and Airflow are done; next MLflow, then LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
 
 ## Pending work (ordered)
 
@@ -250,9 +262,9 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 30 lessons across 13 tracks | 5 tracks show outline only | Milestone 5 |
+| 33 lessons across 14 tracks | 4 tracks show outline only | Milestone 5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
-| Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine` and `alpine:3.20` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
+| Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka` and `apache/airflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
 | No lesson currently uses `pending` or `docs-checked`, and no resource is unverified | Those UI states ("Automated test pending.", "Link not yet verified") are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such content exists, or test the states with fixture content |
 
 ## Decisions made
