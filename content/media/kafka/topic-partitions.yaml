@@ -1,0 +1,4 @@
+alt: 'A producer sends events with the keys asha, ravi and meera to the topic orders, which has three partitions drawn as rows of boxes. Partition 0 holds asha 1, ravi 2, asha 3, ravi 5 and asha 6 at offsets 0 to 4; partition 1 is empty; partition 2 holds meera 4 at offset 0. Each row ends with an empty slot for the next event. A note says a hash of the key picks the partition.'
+caption: 'Each key always lands in the same partition, and each partition is an ordered, append-only log with offsets 0, 1, 2…'
+credit: DevForge 18 content team
+licence: project-content

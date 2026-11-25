@@ -1,0 +1,7 @@
+figure: offsets-and-lag.svg
+title: 'A group''s position in one partition'
+steps:
+  - caption: 'The group billing has read offsets 0 to 4 of partition 0, so its committed offset — the next event it will read — is 5. The log ends at 5, so the lag is 0.'
+  - caption: 'Two new events are written at offsets 5 and 6. The log end moves to 7; the group has not read them yet, so its lag is 2.'
+  - caption: 'A member of the group reads the two new events and commits: the group''s offset is now 7 and the lag is 0 again.'
+  - caption: 'Resetting the group''s offsets to the earliest moves its bookmark back to 0. Nothing was deleted, so all 7 events will be read again: the lag is 7.'

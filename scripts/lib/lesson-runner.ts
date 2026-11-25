@@ -140,7 +140,7 @@ export function usesDocker(blocks: RunBlock[]): boolean {
  */
 export function lessonNeeds(track: string, order: number): { api: boolean; apiPort: number; timeoutMs: number } {
   const nginxProxy = track === "nginx" && order > 1;
-  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 180_000, opentelemetry: 180_000 };
+  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 180_000, opentelemetry: 180_000, kafka: 300_000 };
   return {
     api: track === "postman" || track === "prometheus-grafana" || nginxProxy,
     apiPort: nginxProxy ? 8080 : 0,
@@ -202,6 +202,10 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   }
   if (usesNginx(blocks)) {
     cleanup.push(`for f in $(find "${work}" -name nginx.pid 2>/dev/null); do kill "$(cat "$f")" 2>/dev/null || true; done`);
+  }
+  // Remove containers a lesson starts with docker run --name, so the next run can reuse the name.
+  for (const name of new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bdocker run\b[^\n]*?--name[ =]([a-zA-Z0-9][\w.-]*)/g)].map((m) => m[1] ?? "")))) {
+    if (name) cleanup.push(`docker rm -f ${name} >/dev/null 2>&1 || true`);
   }
   // Stop servers a lesson started in the background (prometheus … &), even if a later block fails.
   if (blocks.some((b) => /&\s*$/m.test(b.code))) cleanup.push(`for p in $(jobs -p); do kill "$p" 2>/dev/null || true; done; wait 2>/dev/null || true`);

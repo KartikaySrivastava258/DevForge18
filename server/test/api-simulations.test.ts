@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import { Client, STRONG_PASSWORD, startTestServer, type TestServer } from "./helpers.ts";
+import { Client, STRONG_PASSWORD, startTestServer, testContent, type TestServer } from "./helpers.ts";
 
 const GIT = "/api/simulations/git-commit-graph";
 const UNDO = `${GIT}/challenges/undo-pushed-commit/verify`;
@@ -30,8 +30,10 @@ describe("simulation content API", () => {
   it("lists a track's simulations on the track", async () => {
     const res = await anonymous.get("/api/tracks/kubernetes");
     assert.deepEqual(res.json.simulations.map((s: { id: string }) => s.id), ["kubernetes-reconciliation"]);
-    const none = await anonymous.get("/api/tracks/kafka");
-    assert.deepEqual(none.json.simulations, []);
+    // Any track that has no simulation yet lists none (picked from the content, so the test survives new simulations).
+    const content = testContent();
+    const without = content.listTracks().find((t) => content.simulationsFor(t.slug).length === 0);
+    if (without) assert.deepEqual((await anonymous.get(`/api/tracks/${without.slug}`)).json.simulations, []);
   });
   it("404s for unknown simulations and challenges", async () => {
     assert.equal((await anonymous.get("/api/simulations/nope")).status, 404);

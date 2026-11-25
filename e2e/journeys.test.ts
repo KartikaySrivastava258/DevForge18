@@ -279,7 +279,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -519,6 +519,28 @@ describe("simulations", () => {
     noProblems(problems);
   });
 
+  it("Kafka: uneven keys make two members too few; three drain the lag; a fifth member is idle", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/kafka/simulations/kafka-consumer-groups");
+    const sim = page.locator(".sim");
+    await sim.locator(".kafka-sim").waitFor();
+    const lag = async () => Number((await sim.locator(".k8s-sim__summary").innerText()).match(/Total lag\s+(\d+)/)?.[1]);
+    assert.equal(await lag(), 10);
+    await sim.getByRole("button", { name: "Add a consumer" }).click();
+    for (let i = 0; i < 3; i++) await sim.getByRole("button", { name: "Step" }).click();
+    assert.ok((await lag()) > 10, "two members: one of them owns both busy partitions");
+    assert.match(await sim.locator(".kafka-sim__members").innerText(), /consumer-2: P1/);
+    await sim.getByRole("button", { name: "Add a consumer" }).click();
+    for (let i = 0; i < 20 && (await lag()) > 0; i++) await sim.getByRole("button", { name: "Step" }).click();
+    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+
+    await sim.getByLabel("Scenario").selectOption("four-partitions");
+    await sim.getByRole("button", { name: "Add a consumer" }).click();
+    assert.match(await sim.locator(".kafka-sim__members").innerText(), /consumer-5: idle — no partition/);
+    await sim.locator(".sim__status", { hasText: "Solved" }).waitFor();
+    noProblems(problems);
+  });
+
   it("is embedded in its lessons and listed on the track page with a working link", async () => {
     const { page, problems } = await h.newPage();
     await page.goto("/tracks/kubernetes/lessons/kubernetes-services-and-rollouts");
@@ -534,8 +556,15 @@ describe("simulations", () => {
     await page.locator("#simulations").getByRole("link", { name: "The reconciliation loop" }).click();
     await page.waitForURL("**/tracks/kubernetes/simulations/kubernetes-reconciliation");
     await page.getByRole("heading", { level: 1, name: "The reconciliation loop" }).waitFor();
-    await page.goto("/tracks/kafka");
-    assert.match(await page.locator("#simulations").innerText(), /No simulation is published for this track yet/);
+    // A track without a simulation says so (found through the API, so the test survives new simulations).
+    const { tracks } = (await (await fetch(`${h.url}/api/tracks`)).json()) as { tracks: { slug: string }[] };
+    for (const { slug } of tracks) {
+      const { simulations } = (await (await fetch(`${h.url}/api/tracks/${slug}`)).json()) as { simulations: unknown[] };
+      if (simulations.length) continue;
+      await page.goto(`/tracks/${slug}`);
+      assert.match(await page.locator("#simulations").innerText(), /No simulation is published for this track yet/);
+      break;
+    }
     noProblems(problems);
   });
 });

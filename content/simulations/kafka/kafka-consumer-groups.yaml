@@ -1,0 +1,60 @@
+id: kafka-consumer-groups
+track: kafka
+title: Partitions and consumer groups
+concept: A consumer group shares a topic's partitions among its members, one partition to one member at a time. How fast the group keeps up depends on how many members it has, how the keys spread over the partitions, and what happens when a member crashes.
+learning_objectives:
+  - Watch lag grow when a group is too small and drain when it is big enough.
+  - Explain why members beyond the number of partitions stay idle, and why uneven keys can make a member idle too.
+  - See a group rebalance after a crash, and what it takes to catch up again.
+simplifications:
+  - Keys are mapped to partitions with a simple hash, not Kafka's murmur2, so a key lands in a different partition than it would on a real broker. The rule is the same — one key, one partition.
+  - Partitions are dealt to members round-robin in the order they joined; Kafka's assignors are smarter about balance and about moving as few partitions as possible.
+  - Rebalances happen instantly, and every member processes exactly the same number of events per tick.
+  - Offsets are committed after every event, so a crash never makes the group read an event twice; in reality events processed but not yet committed are read again.
+text_alternative: For each partition, the number of events, the group's committed offset, the lag and which member reads it; the members and their partitions; the total lag. Every tick, burst, join, crash and partition change is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: falling-behind
+    title: One consumer, falling behind
+    description: Four events arrive every tick (keys asha, ravi, meera and nikhil). One member can process three per tick, so the lag grows.
+    params: { partitions: 3, consumers: 1 }
+  - id: four-partitions
+    title: Four partitions, four members
+    description: A topic with four partitions is read by a group of four members, one partition each.
+    params: { partitions: 4, consumers: 4, warmup: 0 }
+  - id: healthy-group
+    title: A healthy group of three
+    description: Three members, one partition each, keep up with the traffic. Then one of them crashes.
+    params: { partitions: 3, consumers: 3, warmup: 5 }
+challenges:
+  - id: lag-to-zero
+    title: Get the lag to zero
+    goal: Add members until the group processes every event, then let time pass until the total lag is 0.
+    scenario: falling-behind
+    check: lag-to-zero
+    hint: Try two members and watch which partitions each one gets — the keys do not spread evenly. A partition can only be read by one member, so the busy partitions need a member each.
+    solution:
+      - { type: addConsumer }
+      - { type: addConsumer }
+      - { type: tick, count: 20 }
+  - id: idle-member
+    title: A member with nothing to do
+    goal: Show that a group can have a member that receives no partition at all.
+    scenario: four-partitions
+    check: idle-member
+    hint: Each partition goes to exactly one member of the group. What happens to a fifth member when there are only four partitions?
+    solution:
+      - { type: addConsumer }
+  - id: recover-from-crash
+    title: Recover from a crash
+    goal: Crash a member, then get the group back to zero lag.
+    scenario: healthy-group
+    check: recover-from-crash
+    hint: After the crash, the remaining members inherit its partition. Can two members handle four events per tick? If not, bring the group back to full strength.
+    solution:
+      - { type: crashConsumer, name: consumer-2 }
+      - { type: tick, count: 5 }
+      - { type: addConsumer }
+      - { type: tick, count: 20 }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

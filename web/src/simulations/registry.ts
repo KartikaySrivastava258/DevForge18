@@ -23,4 +23,5 @@ export const SIMULATIONS: Record<string, () => Promise<{ default: SimulationEntr
   "kubernetes-reconciliation": () => import("./K8sCluster.tsx"),
   "prometheus-scrape-and-rate": () => import("./PromScrape.tsx"),
   "opentelemetry-trace-waterfall": () => import("./TraceWaterfall.tsx"),
+  "kafka-consumer-groups": () => import("./KafkaGroups.tsx"),
 };

@@ -125,6 +125,22 @@ describe("background servers", () => {
   });
 });
 
+describe("docker containers", () => {
+  it("started with docker run --name are removed by the cleanup trap even when a later block fails", () => {
+    const bin = mkdtempSync(join(tmpdir(), "devforge-dockerstub-"));
+    const log = join(bin, "calls.log");
+    writeFileSync(join(bin, "docker"), `#!/bin/bash\necho "docker $*" >> "${log}"\n`);
+    chmodSync(join(bin, "docker"), 0o755);
+    try {
+      const run = runLesson(extractRunBlocks("```bash run\ndocker run -d --name devforge-lab -p 127.0.0.1:9092:9092 image:1\n```\n```bash run\nfalse\n```"), { path: `${bin}:${process.env.PATH}` });
+      assert.ok(run.failure !== undefined);
+      assert.deepEqual(readFileSync(log, "utf8").trim().split("\n"), ["docker run -d --name devforge-lab -p 127.0.0.1:9092:9092 image:1", "docker rm -f devforge-lab"]);
+    } finally {
+      rmSync(bin, { recursive: true, force: true });
+    }
+  });
+});
+
 describe("kind clusters", () => {
   it("are deleted by the cleanup trap even when a later block fails", () => {
     const bin = mkdtempSync(join(tmpdir(), "devforge-kindstub-"));
@@ -174,7 +190,6 @@ describe("executed lessons reproduce their documented output", () => {
   for (const lesson of bundle.lessons.filter((l) => l.verification.method !== "docs-checked")) {
     const needsGit = ["git-github", "github-actions", "jenkins"].includes(lesson.track);
     const ownBlocks = extractRunBlocks(splitFrontMatter(readFileSync(join(contentRoot, "lessons", lesson.track, `${lesson.id}.md`), "utf8"))?.body ?? "");
-    const needsDocker = lesson.track === "docker" || usesDocker(ownBlocks);
     const needsPg = lesson.track === "postgresql";
     const needsNginx = lesson.track === "nginx";
     const { api: needsApi, apiPort, timeoutMs } = lessonNeeds(lesson.track, lesson.order);
@@ -190,6 +205,8 @@ describe("executed lessons reproduce their documented output", () => {
     };
     lesson.prerequisites.forEach(visit);
     const setupBlocks = chain.flatMap((id) => blocksOf(id, bundle.lessons.find((x) => x.id === id)?.track ?? lesson.track));
+    // A lesson that continues from a Docker lesson replays its docker commands too, so it needs the same opt-in.
+    const needsDocker = lesson.track === "docker" || usesDocker([...setupBlocks, ...ownBlocks]);
     const missingTools = toolsUsed([...setupBlocks, ...ownBlocks]).filter((tool) => !hasCommand(tool) || (tool === "grafana" && !process.env.GRAFANA_HOME));
     const needsRedis = lesson.track === "redis";
     const skip =

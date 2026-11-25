@@ -1,0 +1,4 @@
+alt: 'The topic orders has three partitions. The group shipping has four members. Arrows assign partition 0 to member 1, partition 1 to member 2 and partition 2 to member 3. Member 4 has no partition and is idle. A note says each partition goes to one member per group.'
+caption: 'A group can use at most as many members as the topic has partitions; the rest wait as standbys.'
+credit: DevForge 18 content team
+licence: project-content

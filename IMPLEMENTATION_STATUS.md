@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **4 — Path 2 complete** (REMAINING_WORK.md §7) · Next: **Milestone 5 — beginner lessons and a simulation for Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira**
+Last updated: 2026-11-25 · Milestone: **5 in progress — Kafka done** (REMAINING_WORK.md §7) · Next: **Airflow**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 27 published across 12 tracks, **all executed** and confirmed in CI (none pending) |
+| Lessons | ✅ 30 published across 13 tracks, **all executed** (the 3 Kafka lessons recorded against a real broker locally; CI confirmation in progress) |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
 | Figures and step-through diagrams | ✅ 22 figures in all 21 lessons (no ASCII diagrams left), a step-through in each of the 10 tracks with lessons; tested |
-| Simulations | 🟡 Framework done and tested; 4 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry), with server-verified challenges |
+| Simulations | 🟡 Framework done and tested; 5 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka), with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -196,9 +196,19 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Runner:** optional tools (prometheus, promtool, grafana, otelcol, jaeger) are detected from a lesson's and its prerequisites' commands by `toolsUsed()` (tested), replacing per-tool special cases.
 - **Simulation** *Trace waterfall* (§5.15): gateway → api → cache, database, payment; added latency, cache hit/miss, sequential or parallel calls; self time and critical path. 8 model tests with hand-worked timings (109 ms sequential, 84 ms parallel or cached, 209 ms with a slow database). Two challenges: find the slow span (largest own time — the long parent bars are only waiting), and get checkout under 150 ms without touching the database's latency (the check enforces that condition, which the first draft only stated). Embedded in lesson 1; a browser test covers both challenges and the critical path moving to the database.
 
+### Milestone 5 — Kafka (2026-11-25)
+
+- **Version:** Apache Kafka **4.4.0** (2026-10-22, the latest release on Apache's download site), run from the official `apache/kafka:4.4.0` image pinned by its multi-architecture digest `sha256:833b867a…`, as Kafka's own quickstart does. A container (not a native install) because Kafka needs Java; the tools run inside the container, so the localhost problem that ruled out containers for Prometheus does not arise.
+- **Lessons:** *Events, topics and partitions* (KRaft broker, a 3-partition topic, keyed events landing in one partition each, per-partition order); *Consumer groups, offsets and lag* (committed offsets, lag rising and falling, `__consumer_offsets`, replay with `--reset-offsets`); *Scaling consumers and rebalancing* (four members for three partitions — one idle — and a rebalance when one leaves, with the newer KIP-848 protocol).
+- **Behaviour found by running 4.4.0 first, and taught accordingly:** `--property` and `--consumer-property` are deprecated (now `--reader-property`, `--formatter-property`, `--command-property`); without `--execute`, `--reset-offsets` warns that Kafka 5.0 will require `--dry-run` or `--execute`; a reset is refused for an active group with an exact message; group membership takes seconds to settle, so lesson 3 waits for a settled group and summarises it (member IDs are random) — and its leaving member's timeout was raised from 20 s to 45 s after the group took 17 s to settle locally.
+- **Facts** checked against the Kafka 4.4 documentation on 2026-11-26 (local date; content dated 2026-11-25 to match UTC): keys and ordering, the default partitioner, one consumer per partition per group, 168-hour default retention and that reading does not delete, the removal of ZooKeeper, KIP-848 GA but opt-in. Two points the pages read did not state (the `__consumer_offsets` name, idle members) are shown from real output instead of asserted.
+- **Runner:** Docker gating now also looks at prerequisite lessons (lessons 2–3 use a `kafka` function defined in lesson 1), in both the tests and `lessons:record`; containers a lesson starts with `docker run --name` are removed by the cleanup trap (tested with a stub).
+- **Simulation** *Partitions and consumer groups* (§5.10): lag, uneven keys (two members are not enough because one owns both busy partitions), idle members, crashes, added partitions moving keys, and resets refused while members are active. 9 model tests; three server-verified challenges; a browser test; embedded in lesson 3.
+- Figures: a topic's partitions, offsets and lag (step-through), a group's assignment.
+
 ## Current work
 
-Milestone 5 of REMAINING_WORK.md §7: beginner lessons and a simulation for Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira.
+Milestone 5 of REMAINING_WORK.md §7: Kafka is done; next Airflow, then MLflow, LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
 
 ## Pending work (ordered)
 
@@ -240,7 +250,7 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 27 lessons across 12 tracks | 6 tracks show outline only | Milestone 5 |
+| 30 lessons across 13 tracks | 5 tracks show outline only | Milestone 5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine` and `alpine:3.20` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |
 | No lesson currently uses `pending` or `docs-checked`, and no resource is unverified | Those UI states ("Automated test pending.", "Link not yet verified") are no longer exercised by the browser tests (still validated by the content schema and loader) | Re-add e2e assertions when such content exists, or test the states with fixture content |

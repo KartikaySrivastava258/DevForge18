@@ -1,0 +1,4 @@
+alt: 'One partition drawn as a row of events with offsets 0 to 6. Markers show the group billing''s committed offset and the log-end offset. First both are at 5 with no lag; then two new events make the log end 7 and the lag 2; after the group catches up its offset is 7 and the lag is 0; after a reset to earliest its offset is 0 and the lag is 7.'
+caption: 'The committed offset is a group''s bookmark; the lag is how far it is behind the end of the log.'
+credit: DevForge 18 content team
+licence: project-content

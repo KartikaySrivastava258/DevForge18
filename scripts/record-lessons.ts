@@ -54,7 +54,7 @@ for (const lesson of targets) {
     await api?.close();
     continue;
   }
-  if ((lesson.track === "docker" || lesson.track === "kubernetes" || usesDocker(blocksOf(lesson.id))) && !dockerTestingEnabled()) {
+  if ((lesson.track === "docker" || lesson.track === "kubernetes" || usesDocker([...setup, ...own])) && !dockerTestingEnabled()) {
     console.error(`${lesson.id}: skipped. Docker lessons force-remove containers and volumes with fixed names; run them only on a disposable Docker engine with DEVFORGE_DOCKER_TEST=1.`);
     process.exitCode = 1;
     await api?.close();

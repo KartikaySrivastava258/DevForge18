@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250">
+  <!-- A topic with three partitions, from Events, topics and partitions. -->
+  <rect class="f-box" x="16" y="72" width="118" height="92" rx="8"/>
+  <text class="f-strong" x="75" y="98" text-anchor="middle">producer</text>
+  <text class="f-small f-mono" x="75" y="120" text-anchor="middle">key asha</text>
+  <text class="f-small f-mono" x="75" y="136" text-anchor="middle">key ravi</text>
+  <text class="f-small f-mono" x="75" y="152" text-anchor="middle">key meera</text>
+  <rect class="f-box-faint" x="176" y="14" width="448" height="222" rx="8"/>
+  <text class="f-mono" x="190" y="34">topic orders</text>
+  <text class="f-small f-muted" x="190" y="78">partition 0</text>
+  <rect class="f-box-accent" x="272" y="58" width="50" height="34" rx="4"/>
+  <text class="f-small" x="297" y="80" text-anchor="middle">asha 1</text>
+  <text class="f-small f-faint" x="297" y="104" text-anchor="middle">offset 0</text>
+  <rect class="f-box-accent" x="328" y="58" width="50" height="34" rx="4"/>
+  <text class="f-small" x="353" y="80" text-anchor="middle">ravi 2</text>
+  <text class="f-small f-faint" x="353" y="104" text-anchor="middle">offset 1</text>
+  <rect class="f-box-accent" x="384" y="58" width="50" height="34" rx="4"/>
+  <text class="f-small" x="409" y="80" text-anchor="middle">asha 3</text>
+  <text class="f-small f-faint" x="409" y="104" text-anchor="middle">offset 2</text>
+  <rect class="f-box-accent" x="440" y="58" width="50" height="34" rx="4"/>
+  <text class="f-small" x="465" y="80" text-anchor="middle">ravi 5</text>
+  <text class="f-small f-faint" x="465" y="104" text-anchor="middle">offset 3</text>
+  <rect class="f-box-accent" x="496" y="58" width="50" height="34" rx="4"/>
+  <text class="f-small" x="521" y="80" text-anchor="middle">asha 6</text>
+  <text class="f-small f-faint" x="521" y="104" text-anchor="middle">offset 4</text>
+  <rect class="f-box-faint" x="552" y="58" width="50" height="34" rx="4"/>
+  <text class="f-small f-faint" x="577" y="80" text-anchor="middle">next</text>
+  <text class="f-small f-muted" x="190" y="138">partition 1</text>
+  <rect class="f-box-faint" x="272" y="118" width="50" height="34" rx="4"/>
+  <text class="f-small f-faint" x="297" y="140" text-anchor="middle">next</text>
+  <text class="f-small f-muted" x="190" y="198">partition 2</text>
+  <rect class="f-box-accent" x="272" y="178" width="50" height="34" rx="4"/>
+  <text class="f-small" x="297" y="200" text-anchor="middle">meera 4</text>
+  <text class="f-small f-faint" x="297" y="224" text-anchor="middle">offset 0</text>
+  <rect class="f-box-faint" x="328" y="178" width="50" height="34" rx="4"/>
+  <text class="f-small f-faint" x="353" y="200" text-anchor="middle">next</text>
+  <g>
+    <path class="f-arrow" d="M136 104 L169.4 80.6"/>
+    <polygon class="f-head" points="176,76 172.0,84.3 166.9,76.9"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M136 118 L172.3 188.9"/>
+    <polygon class="f-head" points="176,196 168.4,190.9 176.3,186.8"/>
+  </g>
+  <text class="f-small f-muted" x="156" y="236" text-anchor="middle">hash(key) picks the partition</text>
+</svg>

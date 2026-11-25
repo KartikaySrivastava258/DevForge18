@@ -14,6 +14,8 @@ import { PromActionSchema, PromScenarioSchema } from "./prometheus/schema.ts";
 import { scrapeAndRate } from "./prometheus/scrape-and-rate.ts";
 import { WaterfallActionSchema, WaterfallScenarioSchema } from "./opentelemetry/schema.ts";
 import { traceWaterfall } from "./opentelemetry/trace-waterfall.ts";
+import { consumerGroups } from "./kafka/consumer-groups.ts";
+import { KafkaActionSchema, KafkaScenarioSchema } from "./kafka/schema.ts";
 import type { SimulationModel } from "./types.ts";
 
 // Each model has its own state, action and scenario types; callers validate
@@ -25,4 +27,5 @@ export const MODELS: Readonly<Record<string, AnyModel>> = {
   [reconciliation.id]: { ...reconciliation, scenarioSchema: K8sScenarioSchema, actionSchema: K8sActionSchema },
   [scrapeAndRate.id]: { ...scrapeAndRate, scenarioSchema: PromScenarioSchema, actionSchema: PromActionSchema },
   [traceWaterfall.id]: { ...traceWaterfall, scenarioSchema: WaterfallScenarioSchema, actionSchema: WaterfallActionSchema },
+  [consumerGroups.id]: { ...consumerGroups, scenarioSchema: KafkaScenarioSchema, actionSchema: KafkaActionSchema },
 };
