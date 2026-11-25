@@ -140,7 +140,7 @@ export function usesDocker(blocks: RunBlock[]): boolean {
  */
 export function lessonNeeds(track: string, order: number): { api: boolean; apiPort: number; timeoutMs: number } {
   const nginxProxy = track === "nginx" && order > 1;
-  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 180_000, opentelemetry: 180_000, kafka: 300_000, airflow: 420_000, mlflow: 300_000, "langchain-llamaindex": 300_000 };
+  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 180_000, opentelemetry: 180_000, kafka: 300_000, airflow: 420_000, mlflow: 300_000, "langchain-llamaindex": 300_000, n8n: 300_000 };
   return {
     api: track === "postman" || track === "prometheus-grafana" || nginxProxy,
     apiPort: nginxProxy ? 8080 : 0,
@@ -208,7 +208,15 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
     if (name) cleanup.push(`docker rm -f ${name} >/dev/null 2>&1 || true`);
   }
   // Stop servers a lesson started in the background (prometheus … &), even if a later block fails.
-  if (blocks.some((b) => /&\s*$/m.test(b.code))) cleanup.push(`for p in $(jobs -p); do kill "$p" 2>/dev/null || true; done; wait 2>/dev/null || true`);
+  // The job list is read in this shell, not in a $(…) subshell (CI once saw a background job survive
+  // that way and hold the output pipe open until the timeout); pkill -P then catches any child left.
+  if (blocks.some((b) => /&\s*$/m.test(b.code))) {
+    cleanup.push(
+      `devforge_jobs="$(mktemp)" && jobs -p > "$devforge_jobs" && while read -r p; do kill "$p" 2>/dev/null || true; done < "$devforge_jobs"; rm -f "$devforge_jobs"`,
+      `{ command -v pkill > /dev/null && pkill -TERM -P $$; } 2>/dev/null || true`,
+      `wait 2>/dev/null || true`,
+    );
+  }
   const script = [
     "exec 2>&1",
     "set -e",

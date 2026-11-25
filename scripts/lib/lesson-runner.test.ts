@@ -125,6 +125,7 @@ describe("background servers", () => {
     assert.equal(lessonNeeds("airflow", 3).timeoutMs, 420_000);
     assert.equal(lessonNeeds("mlflow", 1).timeoutMs, 300_000);
     assert.equal(lessonNeeds("langchain-llamaindex", 3).timeoutMs, 300_000);
+    assert.equal(lessonNeeds("n8n", 3).timeoutMs, 300_000);
   });
 });
 
