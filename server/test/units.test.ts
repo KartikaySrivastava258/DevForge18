@@ -34,7 +34,7 @@ describe("migrations", () => {
   it("are idempotent and detect edited migrations", () => {
     const db = openDatabase(":memory:");
     const first = migrate(db);
-    assert.deepEqual(first.applied, ["0001_initial.sql"]);
+    assert.deepEqual(first.applied, ["0001_initial.sql", "0002_simulation_progress.sql"]);
     assert.equal(migrate(db).applied.length, 0);
     const dir = mkdtempSync(join(tmpdir(), "mig-"));
     try {
@@ -53,6 +53,14 @@ describe("migrations", () => {
     );
     assert.throws(() =>
       db.prepare("INSERT INTO users (id,email,display_name,password_hash,role,created_at,updated_at) VALUES ('1','a@b','a','h','superuser','t','t')").run(),
+    );
+    // Simulation progress belongs to a real user and records at least one action.
+    assert.throws(() =>
+      db.prepare("INSERT INTO simulation_progress (user_id,simulation_id,challenge_id,track_slug,actions,completed_at) VALUES ('missing','s','c','t',1,'t')").run(),
+    );
+    db.prepare("INSERT INTO users (id,email,display_name,password_hash,role,created_at,updated_at) VALUES ('u1','u@b','u','h','student','t','t')").run();
+    assert.throws(() =>
+      db.prepare("INSERT INTO simulation_progress (user_id,simulation_id,challenge_id,track_slug,actions,completed_at) VALUES ('u1','s','c','t',0,'t')").run(),
     );
     db.close();
   });

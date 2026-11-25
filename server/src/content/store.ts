@@ -8,6 +8,7 @@ import {
   type CompiledLesson,
   type ContentBundle,
   type LearningPath,
+  type Simulation,
   type Track,
 } from "../../../shared/content-schema.ts";
 import { buildSearchDocs, buildSearchIndex, search, type SearchDocType, type SearchHit, type SearchIndex } from "../../../shared/search.ts";
@@ -55,6 +56,7 @@ export class ContentStore {
   private readonly paths = new Map<string, LearningPath>();
   private readonly lessons = new Map<string, CompiledLesson>();
   private readonly lessonsByTrack = new Map<string, CompiledLesson[]>();
+  private readonly simulations = new Map<string, Simulation>();
   private readonly index: SearchIndex;
 
   constructor(bundle: ContentBundle) {
@@ -69,6 +71,7 @@ export class ContentStore {
       this.lessonsByTrack.set(l.track, list);
     }
     for (const list of this.lessonsByTrack.values()) list.sort((a, b) => a.order - b.order);
+    for (const s of bundle.simulations ?? []) this.simulations.set(s.id, s);
     this.index = buildSearchIndex(buildSearchDocs(bundle));
   }
 
@@ -88,6 +91,28 @@ export class ContentStore {
   getPath(slug: string): LearningPath | undefined { return this.paths.get(slug); }
   getLesson(id: string): CompiledLesson | undefined { return this.lessons.get(id); }
   lessonsFor(track: string): CompiledLesson[] { return this.lessonsByTrack.get(track) ?? []; }
+  getSimulation(id: string): Simulation | undefined { return this.simulations.get(id); }
+  simulationsFor(track: string): Simulation[] { return [...this.simulations.values()].filter((s) => s.track === track); }
+
+  simulationSummary(s: Simulation) {
+    return { id: s.id, track: s.track, title: s.title, concept: s.concept, challengeCount: s.challenges.length, scenarioCount: s.scenarios.length };
+  }
+
+  /** The simulation as sent to browsers: reference solutions removed (like self-check answers). */
+  publicSimulation(s: Simulation) {
+    return {
+      id: s.id,
+      track: s.track,
+      title: s.title,
+      concept: s.concept,
+      learningObjectives: s.learning_objectives,
+      simplifications: s.simplifications,
+      textAlternative: s.text_alternative,
+      scenarios: s.scenarios,
+      challenges: s.challenges.map((c) => ({ id: c.id, title: c.title, goal: c.goal, scenario: c.scenario, hint: c.hint })),
+      lastReviewed: s.last_reviewed,
+    };
+  }
   hasItem(type: "track" | "lesson" | "path", id: string): boolean {
     return type === "track" ? this.tracks.has(id) : type === "lesson" ? this.lessons.has(id) : this.paths.has(id);
   }

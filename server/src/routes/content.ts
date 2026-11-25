@@ -24,6 +24,7 @@ export function registerContentRoutes(router: Router, { content }: AppDeps): voi
       track,
       summary: content.summarise(track),
       lessons: content.lessonsFor(track.slug).map((l) => content.lessonSummary(l)),
+      simulations: content.simulationsFor(track.slug).map((s) => content.simulationSummary(s)),
       prerequisites: track.prerequisites.map(summary).filter(Boolean),
       related: track.related.map((r) => ({ why: r.why, track: summary(r.slug) })).filter((r) => r.track),
       paths: content
