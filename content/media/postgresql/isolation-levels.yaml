@@ -1,0 +1,4 @@
+alt: 'A table. Read committed, the default: nonrepeatable reads, phantom reads and serialization anomalies are possible. Repeatable read: no nonrepeatable reads, no phantom reads in PostgreSQL, serialization anomalies possible. Serializable: none of them. A note says dirty reads never happen in PostgreSQL, where read uncommitted behaves like read committed.'
+caption: 'Each stricter level removes another kind of surprise — at the price of transactions that may have to be retried.'
+credit: DevForge 18 content team
+licence: project-content

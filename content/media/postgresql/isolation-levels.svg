@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 250">
+  <!-- Which anomalies each isolation level allows in PostgreSQL, from Isolation levels and concurrency anomalies. -->
+  <rect class="f-box-faint" x="10" y="14" width="176" height="40" rx="8"/>
+  <text class="f-small f-strong" x="98" y="39" text-anchor="middle">level</text>
+  <rect class="f-box-faint" x="190" y="14" width="166" height="40" rx="8"/>
+  <text class="f-small f-strong" x="273" y="39" text-anchor="middle">nonrepeatable read</text>
+  <rect class="f-box-faint" x="360" y="14" width="156" height="40" rx="8"/>
+  <text class="f-small f-strong" x="438" y="39" text-anchor="middle">phantom read</text>
+  <rect class="f-box-faint" x="520" y="14" width="170" height="40" rx="8"/>
+  <text class="f-small f-strong" x="605" y="39" text-anchor="middle">serialization anomaly</text>
+  <rect class="f-box" x="10" y="64" width="176" height="46" rx="8"/>
+  <text class="f-small" x="98" y="92" text-anchor="middle">read committed (default)</text>
+  <rect class="f-box-warn" x="190" y="64" width="166" height="46" rx="8"/>
+  <text class="f-small" x="273" y="92" text-anchor="middle">possible</text>
+  <rect class="f-box-warn" x="360" y="64" width="156" height="46" rx="8"/>
+  <text class="f-small" x="438" y="92" text-anchor="middle">possible</text>
+  <rect class="f-box-warn" x="520" y="64" width="170" height="46" rx="8"/>
+  <text class="f-small" x="605" y="92" text-anchor="middle">possible</text>
+  <rect class="f-box" x="10" y="120" width="176" height="46" rx="8"/>
+  <text class="f-small" x="98" y="148" text-anchor="middle">repeatable read</text>
+  <rect class="f-box-ok" x="190" y="120" width="166" height="46" rx="8"/>
+  <text class="f-small" x="273" y="148" text-anchor="middle">no</text>
+  <rect class="f-box-ok" x="360" y="120" width="156" height="46" rx="8"/>
+  <text class="f-small" x="438" y="148" text-anchor="middle">no (in PostgreSQL)</text>
+  <rect class="f-box-warn" x="520" y="120" width="170" height="46" rx="8"/>
+  <text class="f-small" x="605" y="148" text-anchor="middle">possible</text>
+  <rect class="f-box" x="10" y="176" width="176" height="46" rx="8"/>
+  <text class="f-small" x="98" y="204" text-anchor="middle">serializable</text>
+  <rect class="f-box-ok" x="190" y="176" width="166" height="46" rx="8"/>
+  <text class="f-small" x="273" y="204" text-anchor="middle">no</text>
+  <rect class="f-box-ok" x="360" y="176" width="156" height="46" rx="8"/>
+  <text class="f-small" x="438" y="204" text-anchor="middle">no</text>
+  <rect class="f-box-ok" x="520" y="176" width="170" height="46" rx="8"/>
+  <text class="f-small" x="605" y="204" text-anchor="middle">no</text>
+  <text class="f-small f-muted" x="350" y="240" text-anchor="middle">Dirty reads never happen in PostgreSQL; read uncommitted behaves like read committed.</text>
+</svg>
