@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 48 published across all 18 tracks; 46 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Latest additions (Kubernetes and PostgreSQL lesson 3): CI confirmation in progress |
+| Lessons | ✅ 49 published across all 18 tracks; 47 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Latest additions (Kubernetes, PostgreSQL and Terraform lesson 3): CI confirmation in progress |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 49 figures across all 48 lessons (no ASCII diagrams left), 21 of them step-throughs — at least one in every track; tested |
-| Simulations | 🟡 Framework done and tested; 12 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira, Docker, PostgreSQL), with server-verified challenges |
+| Figures and step-through diagrams | ✅ 50 figures across all 49 lessons (no ASCII diagrams left), 21 of them step-throughs — at least one in every track; tested |
+| Simulations | 🟡 Framework done and tested; 13 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira, Docker, PostgreSQL, Terraform), with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -288,9 +288,16 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Simulation** *Query planner and indexes* (§5.4): three queries on 100,000 orders with known distributions; create and drop one- or two-column B-tree indexes; EXPLAIN compares a sequential scan with every usable index (leading columns only) by an invented, labelled cost model and shows rows touched. 8 model tests; two server-verified challenges (touch fewer than 1 % of rows for the customer query; for the pending-on-day query, where an index on status alone is not used); a browser test; embedded in lesson 3.
 - Figure: sequential scan or index (step-through).
 
+### Milestone 5 — Terraform lesson 3 and simulation (2026-11-26)
+
+- **Lesson** *Modules, reuse and safe refactoring* (executed with Terraform 1.15.6 and hashicorp/local): one file resource; the same file moved into a child module, where the plan wants to destroy and re-create it because its address changed; a `moved` block that turns that into "has moved to" with 0 to add, change or destroy; a second call of the module adding one file; clean-up. Recorded locally with CI's Terraform version (checksum-verified, in a scratch folder); a second recording changed nothing.
+- **Facts** checked against HashiCorp's documentation on 2026-11-26 (modules, root and child modules, local `source` paths and `terraform init`, the default destroy-and-create on a changed address, `moved` blocks and keeping them, `path.module` vs `path.root` — the module writes under `path.root` because the documentation advises against `path.module` for writes — plan symbols, planning modes and drift). The documentation pages are the latest (1.17) versions; the behaviour shown is from 1.15.6.
+- **Simulation** *Configuration, state and the real world* (§5.5): an invented "server" resource (name forces replacement, size updates in place); edit the configuration, change or delete real objects "by hand", rename addresses, add moved blocks and apply; the plan refreshes from the real world, shows drift, and lists each change with its symbol. 11 model tests; two server-verified challenges (rename without destroying; resolve drift); a browser test, which caught that the moved block was built from the already-renamed address — it now records the last rename; embedded in lesson 3.
+- Figure: a module called twice and a moved block.
+
 ### Milestone 5 — what remains
 
-Six tracks still have two lessons and no simulation: Terraform, GitHub Actions, Redis, Jenkins, Postman and Nginx.
+Five tracks still have two lessons and no simulation: GitHub Actions, Redis, Jenkins, Postman and Nginx.
 
 ## Current work
 
@@ -336,7 +343,7 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 48 lessons across 18 tracks | 6 tracks have two lessons and no simulation | Milestone 5 |
+| 49 lessons across 18 tracks | 5 tracks have two lessons and no simulation | Milestone 5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Python packages for the LangChain + LlamaIndex lessons | Only the top-level packages are pinned; a new release of one of their dependencies could change behaviour or break the install in CI | If it happens: pin the full set with a constraints file generated by `pip freeze` in the lesson container |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka`, `apache/airflow`, `n8nio/n8n`, `python:3.12-slim` and (from GitHub's registry) `ghcr.io/mlflow/mlflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |

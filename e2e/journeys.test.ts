@@ -265,7 +265,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("every page has exactly one h1 and every form control has a label", async () => {
     const { page } = await h.newPage();
-    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner"]) {
+    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       await page.waitForLoadState("networkidle");
@@ -282,7 +282,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -703,6 +703,29 @@ describe("simulations", () => {
     await sim.getByRole("button", { name: "Run EXPLAIN" }).click();
     assert.match(await summary.innerText(), /Index Scan using orders_status_day_idx/);
     assert.match(await summary.innerText(), /Rows touched\s+27 \(0\.03 %\)/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("Terraform: a rename plans destroy and create until a moved block makes it a move; drift is reverted by apply", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/terraform/simulations/terraform-plan-diff");
+    const sim = page.locator(".sim");
+    await sim.locator(".tfplan-sim").waitFor();
+    const planBox = sim.locator(".tfplan-sim__plan");
+    await sim.getByRole("button", { name: "Rename", exact: true }).click();
+    assert.match(await planBox.innerText(), /Plan: 1 to add, 0 to change, 1 to destroy/);
+    await sim.getByRole("button", { name: "Add moved block (server.web → server.frontend)" }).click();
+    assert.match(await planBox.innerText(), /Plan: 0 to add, 0 to change, 0 to destroy/);
+    assert.match(await planBox.innerText(), /has moved to server\.frontend/);
+    await sim.getByRole("button", { name: "terraform apply" }).click();
+    assert.match(await planBox.innerText(), /No changes/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+
+    await sim.getByLabel("Scenario").selectOption("drift");
+    assert.match(await planBox.innerText(), /size changed outside Terraform: medium → large/);
+    await sim.getByRole("button", { name: "terraform apply" }).click();
+    assert.match(await planBox.innerText(), /No changes/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });

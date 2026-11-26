@@ -1,0 +1,4 @@
+alt: 'The root module, main.tf, calls the child module modules/course twice: module cs101 with code CS101 and 30 students, and module db201 with code DB201 and 25 students. The child module has the inputs code and students, a local_file resource named roster and an output file. It produces rosters/cs101.txt and rosters/db201.txt. A moved block in the root module, from local_file.cs101 to module.cs101''s roster, keeps the existing cs101 file under its new address, so the plan destroys nothing.'
+caption: 'One module, two uses; a moved block lets existing resources move into it without being destroyed.'
+credit: DevForge 18 content team
+licence: project-content

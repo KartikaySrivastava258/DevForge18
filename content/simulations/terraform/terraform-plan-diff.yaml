@@ -1,0 +1,48 @@
+id: terraform-plan-diff
+track: terraform
+title: Configuration, state and the real world
+concept: A plan compares three things — the configuration you wrote, the state Terraform recorded, and the real objects. It refreshes the state from the real world (and notices drift), then proposes the changes that would make reality match the configuration. Renames change addresses, and without a moved block a new address means destroy and create.
+learning_objectives:
+  - Predict the plan symbols (+, -, ~, -/+) for a change to the configuration.
+  - Rename a resource without destroying the real object, using a moved block.
+  - Recognise drift — a change made outside Terraform — and decide how to resolve it.
+simplifications:
+  - There is one invented resource type, "server", with two arguments; changing name forces a replacement and changing size is an in-place update. Real providers decide this per argument.
+  - Real object IDs are simple counters (srv-1, srv-2 …), and applies always succeed.
+  - The state and the real world are shown side by side; in reality the real objects live in a cloud and the state in a file or a remote backend.
+text_alternative: The configuration with each server's address, name and size and any moved blocks; the state with each address and its real object ID; the real objects; and the current plan with one line per change and its symbol. Every edit, outside change and apply is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: rename
+    title: Rename a resource
+    description: Two servers were applied earlier. The team wants server.web to be called server.frontend in the code.
+    params:
+      servers: [{ address: server.web, name: web, size: small }, { address: server.db, name: db, size: medium }]
+      drift: []
+  - id: drift
+    title: Someone changed it by hand
+    description: After the last apply, someone resized the database server to large in the cloud console.
+    params:
+      servers: [{ address: server.web, name: web, size: small }, { address: server.db, name: db, size: medium }]
+      drift: [{ address: server.db, size: large }]
+challenges:
+  - id: rename-no-destroy
+    title: Rename without destroying
+    goal: Rename server.web to server.frontend in the configuration and apply it — without destroying the real server.
+    scenario: rename
+    check: rename-no-destroy
+    hint: Rename it and read the plan before applying. Terraform tracks objects by address; tell it where the object went.
+    solution:
+      - { type: rename, from: server.web, to: server.frontend }
+      - { type: addMoved, from: server.web, to: server.frontend }
+      - { type: apply }
+  - id: drift-fixed
+    title: Resolve the drift
+    goal: Get back to a plan with no changes, without destroying anything.
+    scenario: drift
+    check: drift-fixed
+    hint: Either apply — and Terraform resizes the server back to what the code says — or change the code to the new size if the change was right, then apply.
+    solution:
+      - { type: apply }
+owner: content-team
+last_reviewed: 2026-11-26
+content_version: 1

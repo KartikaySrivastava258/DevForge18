@@ -512,3 +512,15 @@
 .planner-sim__sql code { display: block; padding: var(--space-2) var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg); overflow-wrap: anywhere; }
 .planner-sim__bar { height: 10px; border-radius: 5px; background: var(--line); margin: 0 0 var(--space-3); overflow: hidden; }
 .planner-sim__bar span { display: block; height: 100%; background: var(--accent); }
+.tfplan-sim__panels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); margin: 0 0 var(--space-3); }
+.tfplan-sim__panel { border: 1px solid var(--line); border-radius: var(--radius-s); padding: var(--space-2); background: var(--bg); }
+.tfplan-sim__panel h4 { margin: 0 0 var(--space-2); font-size: var(--step--1); }
+.tfplan-sim__panel ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.tfplan-sim__panel li { font-size: 0.875rem; }
+.tfplan-sim__panel .airflow-sim__detail { display: block; white-space: normal; }
+.tfplan-sim__plan { border: 1px solid var(--line); border-radius: var(--radius-s); padding: var(--space-3); margin: 0 0 var(--space-3); }
+.tfplan-sim__plan ul { list-style: none; margin: var(--space-2) 0; padding: 0; font-size: 0.875rem; }
+.tfplan-sim__plan li[data-action="destroy"] code, .tfplan-sim__plan li[data-action="replace"] code { color: var(--danger); }
+.tfplan-sim__plan li[data-action="create"] code { color: var(--ok); }
+.tfplan-sim__plan li[data-action="update"] code, .tfplan-sim__plan li[data-action="drift"] code { color: var(--warn); }
+@media (max-width: 48rem) { .tfplan-sim__panels { grid-template-columns: 1fr; } }
