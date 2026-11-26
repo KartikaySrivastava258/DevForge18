@@ -133,7 +133,7 @@ deployment.apps/crasher created
 deployment.apps/greedy created
 ```
 
-Every `apply` succeeded: Kubernetes accepted the *desired state*. Whether it can be *reached* only shows up afterwards. (The lab waits for each Pod to reach its failure state before looking, so the output is the same on every run.)
+Every `apply` succeeded: Kubernetes accepted the *desired state*. Whether it can be *reached* only shows up afterwards. (The lab waits for each Pod to reach its failure state before looking. The crasher's STATUS alternates: `Error` right after each crash, then `CrashLoopBackOff` while Kubernetes waits before the next restart.)
 
 ```bash run
 n="-n debug-lab"
@@ -145,7 +145,7 @@ kubectl $n get pods
 
 ```text output
 NAME   …   READY   STATUS   …
-crasher-…   0/1     CrashLoopBackOff   …
+crasher-…   0/1     …
 greedy-…    0/1     Pending   …
 typo-…      0/1     ImagePullBackOff   …
 ```
@@ -165,7 +165,12 @@ Failed to pull image "nginx:1.27-alpne": … not found
 ## Case 2: CrashLoopBackOff
 
 ```bash run
-kubectl -n debug-lab logs deploy/crasher --previous
+for i in $(seq 1 15); do
+  logs=$(kubectl -n debug-lab logs deploy/crasher --previous 2>&1)
+  echo "$logs" | grep -q "is not set" && break
+  sleep 2
+done
+echo "$logs"
 kubectl -n debug-lab get pod -l app=crasher -o jsonpath='phase: {.items[0].status.phase}, last exit code: {.items[0].status.containerStatuses[0].lastState.terminated.exitCode}{"\n"}'
 ```
 
@@ -174,6 +179,8 @@ reading DATABASE_URL
 DATABASE_URL is not set
 phase: Running, last exit code: 1
 ```
+
+(The loop retries for a moment: while Kubernetes is restarting the container, the previous run's logs can be briefly unavailable.)
 
 The image pulled and the container started — then the program exited with code 1. Kubernetes restarts it, it fails again, and the delays grow: a crash *loop*. `--previous` shows the output of the run that crashed. Note the **phase**: Running.
 
