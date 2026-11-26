@@ -1,0 +1,41 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: Redpanda
+  category: Kafka-compatible streaming
+  url: https://www.redpanda.com/
+  licence: Redpanda Community Edition License (source-available, not OSI open source)
+  licence_source: https://www.redpanda.com/legal/redpanda-community-edition-license
+  choose_when: You want the Kafka API from a single binary without the JVM, and the licence terms fit your use.
+  avoid_when: You need an open-source licence, or rely on Kafka-ecosystem features that Redpanda does not implement.
+  note: The licence changed recently (licence page last updated 2026-11-05) and the GitHub repository is archived;
+    re-check before relying on it.
+- name: Apache Pulsar
+  category: streaming & messaging
+  url: https://pulsar.apache.org/
+  licence: Apache-2.0
+  licence_source: https://github.com/apache/pulsar/blob/master/LICENSE
+  choose_when: You need built-in multi-tenancy, geo-replication, or both streaming and queue-style consumption in
+    one system.
+  avoid_when: Your team wants the largest ecosystem of connectors and know-how, or a simpler architecture (Pulsar
+    separates brokers and BookKeeper storage).
+- name: RabbitMQ
+  category: message broker
+  url: https://www.rabbitmq.com/
+  licence: MPL-2.0 (server and core plugins)
+  licence_source: https://github.com/rabbitmq/rabbitmq-server/blob/main/LICENSE
+  choose_when: You need task queues with flexible routing, per-message acknowledgements and work distribution.
+  avoid_when: You need a long-retained, replayable event log for many independent consumers.
+- name: NATS JetStream
+  category: messaging
+  url: https://docs.nats.io/concepts/jetstream
+  licence: Apache-2.0 (nats-server)
+  licence_source: https://github.com/nats-io/nats-server/blob/main/LICENSE
+  choose_when: You want lightweight messaging with optional persistence, simple operation, and edge or IoT deployments.
+  avoid_when: You depend on the Kafka ecosystem (Kafka Connect, Kafka Streams, existing Kafka clients).
+- name: Amazon Kinesis / Google Cloud Pub/Sub
+  category: managed streaming
+  url: https://aws.amazon.com/kinesis/
+  licence: Not checked (managed cloud services)
+  choose_when: You are on that cloud and want streaming without operating brokers.
+  avoid_when: You need portability across clouds or on-premises, or Kafka API compatibility for existing tools.

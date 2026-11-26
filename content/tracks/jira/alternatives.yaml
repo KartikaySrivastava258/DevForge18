@@ -1,0 +1,41 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: GitHub Projects (with GitHub Issues)
+  category: Issue tracking
+  url: https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects
+  licence: Not checked (hosted commercial service)
+  choose_when: The code already lives on GitHub and the team wants issues, pull requests and planning boards in
+    one place with little setup.
+  avoid_when: Planning spans many non-engineering teams, or needs deep workflow customisation and portfolio reporting
+    across many projects.
+- name: GitLab issues and boards
+  category: DevOps platform
+  url: https://about.gitlab.com/
+  licence: 'Open core: MIT Expat outside ee/; ee/ has its own licence'
+  licence_source: https://github.com/gitlabhq/gitlabhq/blob/master/LICENSE
+  choose_when: The team uses GitLab for code and CI/CD and wants planning in the same platform, possibly self-hosted.
+  avoid_when: The organisation is standardised on another code host, or needs the advanced planning features of
+    paid tiers it cannot buy.
+  note: Which planning features are in the open-source part was not checked.
+- name: Linear
+  category: Issue tracking
+  url: https://linear.app/
+  licence: Not checked (hosted commercial service)
+  choose_when: A product and engineering team wants a fast, opinionated tracker with little configuration.
+  avoid_when: The organisation needs heavily customised workflows, self-hosting, or the same tool for many non-software
+    teams.
+- name: YouTrack
+  category: Issue tracking
+  url: https://www.jetbrains.com/youtrack/
+  licence: Not checked (commercial product)
+  choose_when: A team wants configurable workflows and agile boards, and may prefer a vendor that offers a self-hosted
+    option.
+  avoid_when: The team relies on integrations built mainly for the Atlassian ecosystem, or new hires are mostly
+    used to Jira.
+- name: Azure Boards
+  category: Work tracking
+  url: https://azure.microsoft.com/en-us/products/devops/boards
+  licence: Not checked (hosted commercial service)
+  choose_when: The organisation already uses Azure DevOps (Repos, Pipelines) and Microsoft identity management.
+  avoid_when: The team's code and CI live elsewhere, so linking work to commits would mean extra integration.

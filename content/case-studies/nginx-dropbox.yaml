@@ -1,0 +1,43 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: nginx-dropbox
+organisation: Dropbox
+tracks:
+- nginx
+summary: Dropbox ran its edge proxy tier on Nginx and published detailed tuning advice. Later it moved to Envoy
+  because Nginx no longer fit its development practices.
+claims:
+- text: Dropbox's edge network was built on Nginx.
+  quote: The Dropbox edge network is an nginx-based proxy tier designed to handle both latency-sensitive metadata
+    transactions and high-throughput data transfers.
+  source_url: https://dropbox.tech/infrastructure/optimizing-web-servers-for-high-throughput-and-low-latency
+  source_title: Optimizing web servers for high throughput and low latency
+  publisher: Dropbox (dropbox.tech)
+  published: '2017-09-06'
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: The post says it expands a talk given at NginxConf 2017 on September 6, 2017.
+- text: Dropbox warns against copying tuning settings without measuring their effect.
+  quote: Please do not cargo-cult them. For the sake of the scientific method, apply them one-by-one, measure their
+    effect, and decide whether they are indeed useful in your environment.
+  source_url: https://dropbox.tech/infrastructure/optimizing-web-servers-for-high-throughput-and-low-latency
+  source_title: Optimizing web servers for high throughput and low latency
+  publisher: Dropbox (dropbox.tech)
+  published: '2017-09-06'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: After running Nginx for about ten years, Dropbox later moved its traffic infrastructure to Envoy.
+  quote: 'Nginx served us well for almost a decade. But it didn’t adapt to our current development best-practices:'
+  source_url: https://dropbox.tech/infrastructure/how-we-migrated-dropbox-from-nginx-to-envoy
+  source_title: How we migrated Dropbox from Nginx to Envoy
+  publisher: Dropbox (dropbox.tech)
+  published: '2020-07-30'
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: 'The same post includes this disclaimer: "Disclaimer: although we’ve tried to remain objective, quite a
+    few of these comparisons are specific to Dropbox". Also verified verbatim.'
+lessons_learned:
+- Tune one setting at a time and measure the result; don't copy settings from others.
+- A tool can serve well for years and still stop fitting as the organisation's stack changes. Dropbox itself says
+  its comparison is specific to Dropbox.
+owner: content-team
+last_reviewed: '2026-11-26'

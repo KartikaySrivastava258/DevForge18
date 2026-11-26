@@ -12,7 +12,7 @@ learning_objectives:
   - Explain what happens when a container goes over its memory or CPU limit.
 resources:
   - title: Liveness, readiness and startup probes
-    url: https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/
+    url: https://kubernetes.io/docs/concepts/workloads/pods/probes/
     publisher: The Kubernetes Authors
     type: documentation
     level: beginner

@@ -1,0 +1,44 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: n8n-the-stepstone-group
+organisation: The Stepstone Group
+tracks:
+- n8n
+summary: At Stepstone, n8n started with one engineer, then grew on the Community Edition until access control and
+  monitoring needs pushed the company to Enterprise. It is now rolling n8n out company-wide with user training.
+claims:
+- text: n8n came into Stepstone through one engineer, not a top-down decision.
+  quote: 'n8n arrived at Stepstone in 2021 the way a lot of good tools arrive at companies: through one curious
+    engineer.'
+  source_url: https://n8n.io/case-studies/stepstone/
+  source_title: How The Stepstone Group scales automation across a 3,000-person organization with n8n
+  publisher: n8n
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: n8n's narrative text.
+- text: Under heavy use, the free Community Edition became too limited for Stepstone.
+  quote: While the Community Edition is effective for initial use, it quickly becomes restrictive under a heavy
+    workload.
+  source_url: https://n8n.io/case-studies/stepstone/
+  source_title: How The Stepstone Group scales automation across a 3,000-person organization with n8n
+  publisher: n8n
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Luka Pilic, Tech Lead of Marketplace Management, Stepstone. He goes on to mention credential and
+    workflow permissions, execution monitoring, and problems with a shared master account.
+- text: Stepstone says self-service automation only works if users take part and are trained.
+  quote: However, like any self-service model, its success requires active participation and user education to realize
+    the full benefits.
+  source_url: https://n8n.io/case-studies/stepstone/
+  source_title: How The Stepstone Group scales automation across a 3,000-person organization with n8n
+  publisher: n8n
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Luka Pilic, Stepstone.
+lessons_learned:
+- Bottom-up adoption on a shared instance eventually needs proper credentials, permissions and monitoring.
+- Giving everyone automation tools is not enough without onboarding and education.
+owner: content-team
+last_reviewed: '2026-11-26'

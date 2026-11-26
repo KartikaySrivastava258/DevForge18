@@ -1,7 +1,7 @@
 /** API response shapes (mirrors server/src/routes). */
-import type { LearningPath, Resource, Track } from "../../../shared/content-schema.ts";
+import type { CaseStudy, LearningPath, Resource, Track } from "../../../shared/content-schema.ts";
 
-export type { LearningPath, Resource, Track };
+export type { CaseStudy, LearningPath, Resource, Track };
 export type Level = "beginner" | "intermediate" | "advanced";
 export type Role = "student" | "faculty" | "admin";
 
@@ -51,6 +51,7 @@ export interface TrackResponse {
   summary: TrackSummary;
   lessons: LessonSummary[];
   simulations: SimulationSummary[];
+  caseStudies: CaseStudy[];
   prerequisites: TrackSummary[];
   related: { why: string; track: TrackSummary }[];
   paths: { slug: string; title: string; number: number }[];

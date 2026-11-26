@@ -1,0 +1,43 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: Podman
+  category: Container engine
+  url: https://podman.io/
+  licence: Apache-2.0
+  licence_source: https://github.com/podman-container-tools/podman/blob/main/LICENSE
+  choose_when: When you want daemonless or rootless containers, or you work on distributions where Podman is the
+    default.
+  avoid_when: When your workflow depends on Docker-specific features or tools that do not fully support Podman.
+- name: containerd + nerdctl
+  category: Container runtime + CLI
+  url: https://containerd.io/
+  licence: Apache-2.0 (both)
+  licence_source: https://github.com/containerd/containerd/blob/main/LICENSE
+  choose_when: When you want to work directly with the runtime that many Kubernetes nodes use, through a Docker-like
+    CLI.
+  avoid_when: When beginners need the integrated, widely documented Docker experience (Desktop, Compose, plenty
+    of tutorials).
+- name: Buildah
+  category: Image builder
+  url: https://buildah.io/
+  licence: Apache-2.0
+  licence_source: https://github.com/podman-container-tools/buildah/blob/main/LICENSE
+  choose_when: When you need to build OCI images without a daemon, for example in locked-down CI runners, or want
+    scripted image builds.
+  avoid_when: When you also need to run containers day to day and a single all-in-one tool is simpler.
+- name: Lima
+  category: Local Linux VMs
+  url: https://lima-vm.io/
+  licence: Apache-2.0
+  licence_source: https://github.com/lima-vm/lima/blob/master/LICENSE
+  choose_when: When you are on macOS and want a lightweight Linux VM to run containerd/nerdctl or other Linux tools.
+  avoid_when: When you are already on Linux (containers run natively) or prefer a packaged GUI product.
+- name: Colima
+  category: Local container runtime
+  url: https://github.com/abiosoft/colima
+  licence: MIT
+  licence_source: https://github.com/abiosoft/colima/blob/main/LICENSE
+  choose_when: When you want a command-line way to run containers on macOS (or Linux), built on Lima, as a substitute
+    for Docker Desktop.
+  avoid_when: When you need a GUI or vendor support, or your team standardises on a different local setup.

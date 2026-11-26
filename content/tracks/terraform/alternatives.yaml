@@ -1,0 +1,43 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: OpenTofu
+  category: IaC tool (Terraform fork)
+  url: https://opentofu.org/
+  licence: MPL-2.0
+  licence_source: https://github.com/opentofu/opentofu/blob/main/LICENSE
+  choose_when: When you want Terraform-style HCL workflows under an open-source licence with community governance.
+  avoid_when: When you depend on HashiCorp/IBM-only features, commercial products or support tied to Terraform itself.
+- name: Pulumi
+  category: IaC (general-purpose languages)
+  url: https://www.pulumi.com/
+  licence: Apache-2.0 (engine and CLI)
+  licence_source: https://github.com/pulumi/pulumi/blob/master/LICENSE
+  choose_when: When your team prefers writing infrastructure in languages such as TypeScript, Python or Go, with
+    loops, tests and abstractions.
+  avoid_when: When you want a restricted declarative language that non-programmers can review, or your team's skills
+    are already in HCL.
+- name: AWS CloudFormation (and AWS CDK)
+  category: AWS-native IaC
+  url: https://aws.amazon.com/cloudformation/
+  licence: 'CDK: Apache-2.0. CloudFormation service: not checked'
+  licence_source: https://github.com/aws/aws-cdk/blob/main/LICENSE
+  choose_when: When you work only on AWS and want a service managed by the provider, with no separate state file
+    to look after.
+  avoid_when: When you manage resources across several clouds or SaaS providers; Slack's post above gives this reason
+    for choosing Terraform.
+- name: Azure Bicep
+  category: Azure-native IaC
+  url: https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview
+  licence: MIT
+  licence_source: https://github.com/Azure/bicep/blob/main/LICENSE
+  choose_when: When you deploy only to Azure and want a concise language that compiles to ARM templates.
+  avoid_when: When your infrastructure spans other clouds or providers.
+- name: Crossplane
+  category: Kubernetes-based IaC
+  url: https://www.crossplane.io/
+  licence: Apache-2.0
+  licence_source: https://github.com/crossplane/crossplane/blob/main/LICENSE
+  choose_when: When you already run Kubernetes and want cloud resources reconciled continuously through Kubernetes
+    APIs and controllers.
+  avoid_when: When you do not run Kubernetes, or a plan/apply CLI workflow is simpler for your team.

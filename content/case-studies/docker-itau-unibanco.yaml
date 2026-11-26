@@ -1,0 +1,43 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: docker-itau-unibanco
+organisation: Itaú Unibanco
+tracks:
+- docker
+summary: Itaú Unibanco standardised developer workstations on Docker for security and consistency. It uses Docker
+  Compose (with LocalStack) to run local copies of cloud services for development and testing.
+claims:
+- text: The bank chose Docker because it met its security requirements.
+  quote: Docker has proven to be an effective solution for achieving the level of security and virtualization that
+    meets our institution’s requirements.
+  source_url: https://www.docker.com/customer-stories/itau-unibanco/
+  source_title: 'Case Study: Itaú Unibanco and Docker'
+  publisher: Docker, Inc.
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: No date is shown on the page; its metadata gives 2025-10-01.
+- text: Developers use Docker Compose with LocalStack to run copies of cloud services locally.
+  quote: Docker Compose and Docker’s integration with LocalStack enabled Itaú to virtualize entire environments
+    including AWS services, like databases and caches, without provisioning cloud resources.
+  source_url: https://www.docker.com/customer-stories/itau-unibanco/
+  source_title: 'Case Study: Itaú Unibanco and Docker'
+  publisher: Docker, Inc.
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: No date is shown on the page; its metadata gives 2025-10-01.
+- text: Before standardising, each team's environment worked differently.
+  quote: Environments became fragmented across teams, and container standards became inconsistent.
+  source_url: https://www.docker.com/customer-stories/itau-unibanco/
+  source_title: 'Case Study: Itaú Unibanco and Docker'
+  publisher: Docker, Inc.
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: No date is shown on the page; its metadata gives 2025-10-01.
+lessons_learned:
+- Standardising container tooling and base images across teams reduces environment drift.
+- Compose-based local environments let developers test against realistic dependencies without creating cloud resources.
+caveat: Vendor marketing page with vendor-reported figures (not used). It also describes paid Docker Business features.
+owner: content-team
+last_reviewed: '2026-11-26'

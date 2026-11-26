@@ -1,0 +1,41 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: Insomnia
+  category: API client
+  url: https://insomnia.rest/
+  licence: Apache-2.0
+  licence_source: https://github.com/Kong/insomnia/blob/develop/LICENSE
+  choose_when: You want a desktop GUI client for REST, GraphQL or gRPC with an open-source codebase.
+  avoid_when: The team depends on Postman-specific collaboration features or an existing library of Postman collections
+    and monitors.
+- name: Bruno
+  category: API client
+  url: https://www.usebruno.com/
+  licence: MIT
+  licence_source: https://github.com/usebruno/bruno/blob/main/license.md
+  choose_when: You want API requests stored as plain files in the Git repo and reviewed like code.
+  avoid_when: The team needs cloud workspaces, hosted monitors or mock servers managed by a vendor.
+- name: Hoppscotch
+  category: API client
+  url: https://hoppscotch.io/
+  licence: MIT
+  licence_source: https://github.com/hoppscotch/hoppscotch/blob/main/LICENSE
+  choose_when: You want a lightweight client that runs in the browser, or a self-hosted, open-source team instance.
+  avoid_when: You rely on an ecosystem of published collections or on enterprise governance features from another
+    platform.
+- name: HTTPie
+  category: HTTP client
+  url: https://httpie.io/
+  licence: BSD-3-Clause (CLI)
+  licence_source: https://github.com/httpie/cli/blob/master/LICENSE
+  choose_when: You want readable HTTP requests from the terminal for quick checks and scripts.
+  avoid_when: You need shared GUI collections, test suites run on a schedule, or team collaboration.
+  note: The licence of HTTPie's desktop and web apps was not checked.
+- name: curl
+  category: CLI transfer
+  url: https://curl.se/
+  licence: curl licence (MIT-style)
+  licence_source: https://github.com/curl/curl/blob/master/COPYING
+  choose_when: You need a universally available tool for scripts, CI jobs, debugging, or reproducing a request exactly.
+  avoid_when: You want organised collections, environments, assertions and reports without writing your own scripts.

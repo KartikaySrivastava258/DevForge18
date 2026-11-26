@@ -1,0 +1,40 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: postgresql-notion
+organisation: Notion
+tracks:
+- postgresql
+summary: Notion moved from one PostgreSQL database to an application-level sharded fleet after VACUUM began stalling
+  and transaction-ID wraparound became a risk. It chose its own sharding scheme to keep control over where data
+  lives.
+claims:
+- text: Notion split its single PostgreSQL database into many shards.
+  quote: sharding Notion’s PostgreSQL monolith into a horizontally-partitioned database fleet
+  source_url: https://www.notion.com/blog/sharding-postgres-at-notion
+  source_title: 'Herding elephants: Lessons learned from sharding Postgres at Notion'
+  publisher: Notion (Notion blog, Tech)
+  published: '2021-10-06'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: The trigger was that VACUUM, Postgres's cleanup process, kept stalling.
+  quote: the inflection point arrived when the Postgres VACUUM process began to stall consistently
+  source_url: https://www.notion.com/blog/sharding-postgres-at-notion
+  source_title: 'Herding elephants: Lessons learned from sharding Postgres at Notion'
+  publisher: Notion (Notion blog, Tech)
+  published: '2021-10-06'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: In hindsight, Notion says it waited too long to shard.
+  quote: we waited until our existing database was heavily strained, which meant we had to be very frugal with migrations
+    lest we add even more load.
+  source_url: https://www.notion.com/blog/sharding-postgres-at-notion
+  source_title: 'Herding elephants: Lessons learned from sharding Postgres at Notion'
+  publisher: Notion (Notion blog, Tech)
+  published: '2021-10-06'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Watch database maintenance health (VACUUM, transaction-ID wraparound), not just CPU, as an early warning of scaling
+  limits.
+- Plan big data migrations before the database is under heavy strain; migrating under load leaves little room.
+owner: content-team
+last_reviewed: '2026-11-26'

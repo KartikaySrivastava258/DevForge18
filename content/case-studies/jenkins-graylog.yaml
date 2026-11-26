@@ -1,0 +1,38 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: jenkins-graylog
+organisation: Graylog
+tracks:
+- jenkins
+summary: Graylog modernised a Jenkins setup that had not changed for years. It used Terraform and Ansible for infrastructure,
+  a Docker image for Jenkins, JCasC for configuration, and declarative pipelines with a shared library.
+claims:
+- text: Graylog's Jenkins setup had not been changed for years and needed upgrading.
+  quote: The infrastructure was well designed, but it also hadn't been changed in about four years, so it was time
+    for an upgrade.
+  source_url: https://stories.jenkins.io/user-story/to-build-industry-leading-log-management/
+  source_title: Jenkins is the way to build industry-leading log management
+  publisher: Jenkins project, "Jenkins Is The Way" user stories (author Donald Morton, Graylog)
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: They manage Jenkins configuration as code with JCasC.
+  quote: The configuration of Jenkins is handled through the JCasC plugin.
+  source_url: https://stories.jenkins.io/user-story/to-build-industry-leading-log-management/
+  source_title: Jenkins is the way to build industry-leading log management
+  publisher: Jenkins project
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Old freestyle jobs became declarative pipelines that share common logic through a shared library.
+  quote: we have a shared library so that all our repos could take advantage of the same pipeline logic.
+  source_url: https://stories.jenkins.io/user-story/to-build-industry-leading-log-management/
+  source_title: Jenkins is the way to build industry-leading log management
+  publisher: Jenkins project
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Treating Jenkins itself as code (Docker image + JCasC) turns upgrades into a rebuild instead of manual work.
+- Shared libraries keep pipeline logic consistent across many repositories.
+owner: content-team
+last_reviewed: '2026-11-26'

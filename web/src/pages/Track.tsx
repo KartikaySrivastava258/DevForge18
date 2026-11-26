@@ -17,6 +17,8 @@ const SECTIONS = [
   { id: "simulations", label: "Simulations" },
   { id: "practice", label: "Labs" },
   { id: "projects", label: "Projects" },
+  { id: "who-uses", label: "Who uses it" },
+  { id: "alternatives", label: "Alternatives" },
   { id: "resources", label: "Official resources" },
   { id: "about", label: "About this track" },
 ];
@@ -56,7 +58,7 @@ export function TrackPage({ slug }: { slug: string }) {
 
   if (error) return <div className="page"><ErrorState error={error} onRetry={reload} /></div>;
   if (loading || !data) return <div className="page"><Loading label="Loading track" /></div>;
-  const { track, summary, lessons, simulations, prerequisites, related, paths } = data;
+  const { track, summary, lessons, simulations, caseStudies, prerequisites, related, paths } = data;
 
   return (
     <div className="page">
@@ -293,6 +295,102 @@ export function TrackPage({ slug }: { slug: string }) {
                 </li>
               ))}
             </ul>
+          </section>
+
+          <section id="who-uses" className="section" aria-labelledby="who-uses-h">
+            <h2 id="who-uses-h">Who uses this and why</h2>
+            {caseStudies.length ? (
+              <>
+                <p className="muted">
+                  Every statement quotes its source word for word and links to it. <strong>Confirmed</strong> means the organisation or its own staff
+                  say it; <strong>inferred</strong> means it comes from someone else’s account, often the vendor’s customer story.
+                </p>
+                <div className="case-studies">
+                  {caseStudies.map((c) => (
+                    <article key={c.id} className="case-study" aria-labelledby={`cs-${c.id}`}>
+                      <h3 id={`cs-${c.id}`}>{c.organisation}</h3>
+                      <p>{c.summary}</p>
+                      <ul className="case-study__claims">
+                        {c.claims.map((cl, i) => (
+                          <li key={i}>
+                            <p className="case-study__claim">
+                              <span className={`tag ${cl.kind === "confirmed" ? "tag--done" : ""}`}>{cl.kind === "confirmed" ? "Confirmed" : "Inferred"}</span> {cl.text}
+                            </p>
+                            <blockquote className="case-study__quote">
+                              <p>“{cl.quote}”</p>
+                            </blockquote>
+                            <p className="small muted">
+                              <a href={cl.source_url} rel="noopener noreferrer" target="_blank">
+                                {cl.source_title}
+                              </a>{" "}
+                              — {cl.publisher}
+                              {cl.published !== "not stated" ? `, ${formatDate(cl.published)}` : ", date not shown"}. Checked {formatDate(cl.checked_on)}.
+                              {cl.note ? ` ${cl.note}` : ""}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                      <h4 className="case-study__h">What to take from it</h4>
+                      <ul>
+                        {c.lessons_learned.map((l) => (
+                          <li key={l}>{l}</li>
+                        ))}
+                      </ul>
+                      {c.caveat ? <p className="small muted">Keep in mind: {c.caveat}</p> : null}
+                    </article>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <p className="muted">No sourced case study is published for this track yet.</p>
+            )}
+          </section>
+
+          <section id="alternatives" className="section" aria-labelledby="alternatives-h">
+            <h2 id="alternatives-h">Alternatives and how to choose</h2>
+            {track.alternatives?.length ? (
+              <>
+                <p className="muted">
+                  No tool is best everywhere, only a better fit for a context. Licences are as stated by each project where we read them
+                  {track.alternatives_checked_on ? ` (checked ${formatDate(track.alternatives_checked_on)})` : ""}; check them for your own use.
+                </p>
+                <ul className="alternatives">
+                  {track.alternatives.map((a) => (
+                    <li key={a.name} className="alternative">
+                      <h3 className="alternative__name">
+                        {a.url ? (
+                          <a href={a.url} rel="noopener noreferrer" target="_blank">
+                            {a.name}
+                          </a>
+                        ) : (
+                          a.name
+                        )}{" "}
+                        <span className="tag">{a.category}</span>
+                      </h3>
+                      <dl className="alternative__facts">
+                        <dt>Choose it when</dt>
+                        <dd>{a.choose_when}</dd>
+                        <dt>Look elsewhere when</dt>
+                        <dd>{a.avoid_when}</dd>
+                        <dt>Licence</dt>
+                        <dd>
+                          {a.licence_source ? (
+                            <a href={a.licence_source} rel="noopener noreferrer" target="_blank">
+                              {a.licence}
+                            </a>
+                          ) : (
+                            a.licence
+                          )}
+                          {a.note ? <span className="muted"> — {a.note}</span> : null}
+                        </dd>
+                      </dl>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="muted">The comparison with alternatives is still being written.</p>
+            )}
           </section>
 
           <section id="resources" className="section" aria-labelledby="resources-h">

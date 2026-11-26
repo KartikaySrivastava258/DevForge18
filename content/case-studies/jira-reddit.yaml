@@ -1,0 +1,41 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: jira-reddit
+organisation: Reddit
+tracks:
+- jira
+summary: Reddit moved teams from many separate tools onto Jira (and other Atlassian tools) to reduce cost and security
+  risk. Its developer teams rely on Jira every day.
+claims:
+- text: Reddit's developer teams do their day-to-day work in Jira.
+  quote: Usage has really grown over the years. Our dev teams live and breathe in Jira.
+  source_url: https://www.atlassian.com/customers/reddit
+  source_title: How Reddit saved over $300k/yr using Jira and Confluence
+  publisher: Atlassian
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Matt Chester, Senior System Engineer, Reddit.
+- text: Reddit standardised on fewer tools to control cost and security risk.
+  quote: Sean has a vision to standardize tooling to stop the sprawl from a cost and security perspective,
+  source_url: https://www.atlassian.com/customers/reddit
+  source_title: How Reddit saved over $300k/yr using Jira and Confluence
+  publisher: Atlassian
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Matt Chester (Reddit), describing Sean Joerg, Senior Director of Corporate Technology.
+- text: Each team can keep its own Jira settings if it follows a shared framework for reporting.
+  quote: One unique thing about Jira is it’s flexible enough that each team can have their own unique settings as
+    long as they’re following the rough framework to make reporting easier,
+  source_url: https://www.atlassian.com/customers/reddit
+  source_title: How Reddit saved over $300k/yr using Jira and Confluence
+  publisher: Atlassian
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Standardising on one tool works best with a light shared framework, so teams can customise and reports still line
+  up.
+- Too many tools is a cost problem and a security problem, not only an inconvenience.
+owner: content-team
+last_reviewed: '2026-11-26'

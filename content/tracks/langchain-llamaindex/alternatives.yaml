@@ -1,0 +1,45 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: Haystack
+  category: LLM framework
+  url: https://haystack.deepset.ai/
+  licence: Apache-2.0
+  licence_source: https://github.com/deepset-ai/haystack/blob/main/LICENSE
+  choose_when: You are building retrieval/search-centred pipelines and like explicit, composable pipeline components.
+  avoid_when: You depend on integrations or community examples that exist mainly for LangChain or LlamaIndex.
+- name: Semantic Kernel
+  category: LLM SDK
+  url: https://learn.microsoft.com/en-us/semantic-kernel/
+  licence: MIT
+  licence_source: https://github.com/microsoft/semantic-kernel/blob/main/LICENSE
+  choose_when: Your team works in C#/.NET (it also has Python/Java) or is heavily invested in Microsoft/Azure.
+  avoid_when: You are Python-first and want the broadest set of community retrieval integrations.
+- name: DSPy
+  category: prompt programming
+  url: https://dspy.ai/
+  licence: MIT
+  licence_source: https://github.com/stanfordnlp/dspy/blob/main/LICENSE
+  choose_when: You want to optimise prompts and pipelines systematically against an evaluation metric instead of
+    hand-tuning prompts.
+  avoid_when: You need a quick prototype or lack a labelled evaluation set; its value depends on having a metric
+    to optimise.
+- name: Direct use of model SDKs (e.g. OpenAI Python SDK, Anthropic Python SDK)
+  category: provider SDK
+  url: https://github.com/openai/openai-python
+  licence: Apache-2.0 (both SDKs)
+  licence_source: https://github.com/openai/openai-python/blob/main/LICENSE
+  choose_when: The application is small or well understood, and you want fewer dependencies, full control and easier
+    debugging.
+  avoid_when: You need many ready-made connectors, retrievers or agent patterns, or must switch between providers
+    often.
+- name: pgvector
+  category: vector store
+  url: https://github.com/pgvector/pgvector
+  licence: Permissive, PostgreSQL-style notice (not named in the repository)
+  licence_source: https://github.com/pgvector/pgvector/blob/master/LICENSE
+  choose_when: You already run PostgreSQL and want vectors next to your relational data, with transactions and SQL
+    filters.
+  avoid_when: You need a dedicated vector service with features or scaling behaviour beyond what your PostgreSQL
+    setup provides.
+  note: GitHub does not recognise the licence by name; read the LICENSE file before relying on it.

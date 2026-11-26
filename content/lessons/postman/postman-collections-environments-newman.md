@@ -28,7 +28,7 @@ resources:
     why: Variable syntax, scopes and which value wins when names clash.
     verification: { status: verified, checked_on: 2026-11-26 }
   - title: Manage environments
-    url: https://learning.postman.com/docs/postman/variables-and-environments/managing-environments/
+    url: https://learning.postman.com/docs/use/send-requests/variables/managing-environments/
     publisher: Postman
     type: documentation
     level: beginner

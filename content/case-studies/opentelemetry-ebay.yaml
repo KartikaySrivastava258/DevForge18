@@ -1,0 +1,41 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: opentelemetry-ebay
+organisation: eBay
+tracks:
+- opentelemetry
+summary: eBay adopted the OpenTelemetry Collector for tracing and then migrated its large Prometheus metrics scraping
+  from Metricbeat to the Collector. It kept the annotations its teams already used.
+claims:
+- text: eBay chose the OpenTelemetry Collector and SDK for distributed tracing.
+  quote: We chose OpenTelemetry Collector, along with the OpenTelemetry SDK, for our adoption of distributed tracing.
+  source_url: https://opentelemetry.io/blog/2022/why-and-how-ebay-pivoted-to-opentelemetry/
+  source_title: Why and How eBay Pivoted to OpenTelemetry
+  publisher: OpenTelemetry project blog (author Vijay Samuel, eBay)
+  published: '2022-12-19'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: eBay then moved its metrics scraping from Elastic Metricbeat to the OpenTelemetry Collector.
+  quote: In the beginning of 2022, we began the difficult undertaking of moving metrics scraping into OpenTelemetry
+    Collector.
+  source_url: https://opentelemetry.io/blog/2022/why-and-how-ebay-pivoted-to-opentelemetry/
+  source_title: Why and How eBay Pivoted to OpenTelemetry
+  publisher: OpenTelemetry project blog
+  published: '2022-12-19'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Keeping the same interface for application teams let eBay swap the agent underneath.
+  quote: we were able to keep the end user contract of Pod/Namespace annotations the same and simply swap the agent
+    under the hood.
+  source_url: https://opentelemetry.io/blog/2022/why-and-how-ebay-pivoted-to-opentelemetry/
+  source_title: Why and How eBay Pivoted to OpenTelemetry
+  publisher: OpenTelemetry project blog
+  published: '2022-12-19'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Separating service discovery and configuration from the agent made replacing the agent feasible.
+- Migrations between telemetry agents are slowed by small differences in meaning between tools (for example, label
+  sanitising), not only by missing features.
+caveat: The page itself warns that it is more than a year old and may be outdated.
+owner: content-team
+last_reviewed: '2026-11-26'

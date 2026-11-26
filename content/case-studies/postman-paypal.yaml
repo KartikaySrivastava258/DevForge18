@@ -1,0 +1,43 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: postman-paypal
+organisation: PayPal
+tracks:
+- postman
+summary: PayPal uses Postman inside the company and publishes a public collection to help outside developers start
+  using its APIs. It measures how long it takes a new developer to make a first successful call.
+claims:
+- text: PayPal publishes a public Postman Collection so outside developers can try its APIs.
+  quote: In April 2022, PayPal launched its first Public Postman Collection for developers of all kinds, which has
+    seen great success since.
+  source_url: https://www.postman.com/customer-stories/paypal/
+  source_title: PayPal API Case Study | Postman API Platform
+  publisher: Postman
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: Postman's narrative text; the launch date is in the quote.
+- text: PayPal staff describe Postman as a governed space for finding and testing PayPal's APIs.
+  quote: Postman is a playground—with governance—that allows developers to discover, test and execute PayPal APIs
+    quickly.
+  source_url: https://www.postman.com/customer-stories/paypal/
+  source_title: PayPal API Case Study | Postman API Platform
+  publisher: Postman
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Christina Monti, Senior Technical Product Manager, Developer Relations, PayPal.
+- text: PayPal tracks 'time to first call' as a measure of how easy its APIs are to start using.
+  quote: One metric that PayPal continually seeks to decrease is the Time To First Call (TTFC). This is the time
+    it takes from signing up to making an API call
+  source_url: https://www.postman.com/customer-stories/paypal/
+  source_title: PayPal API Case Study | Postman API Platform
+  publisher: Postman
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: Postman's narrative text.
+lessons_learned:
+- Developer onboarding can be measured; 'time to first call' is one concrete metric.
+- A ready-to-run, shared collection lowers the barrier for people trying an API for the first time.
+owner: content-team
+last_reviewed: '2026-11-26'

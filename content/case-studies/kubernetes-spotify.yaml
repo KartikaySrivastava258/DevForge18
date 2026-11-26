@@ -1,0 +1,39 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: kubernetes-spotify
+organisation: Spotify
+tracks:
+- kubernetes
+summary: Spotify moved from its own container orchestrator, Helios, to Kubernetes to benefit from a larger community.
+  It ran both systems side by side during the migration.
+claims:
+- text: Spotify replaced its in-house orchestrator (Helios) because a community project was more efficient than
+    maintaining its own.
+  quote: having a small team working on the Helios features was just not as efficient as adopting something that
+    was supported by a much bigger community
+  source_url: https://www.cncf.io/case-studies/spotify/
+  source_title: How Spotify increased velocity replacing home-grown orchestration with Kubernetes
+  publisher: Cloud Native Computing Foundation (CNCF)
+  published: '2019-06-27'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Kubernetes ran alongside the old system during migration to reduce risk.
+  quote: we could have it running alongside Helios to mitigate the risks
+  source_url: https://www.cncf.io/case-studies/spotify/
+  source_title: How Spotify increased velocity replacing home-grown orchestration with Kubernetes
+  publisher: Cloud Native Computing Foundation (CNCF)
+  published: '2019-06-27'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Teams could create a new service much faster on Kubernetes.
+  quote: with Kubernetes, they can do that on the order of seconds and minutes
+  source_url: https://www.cncf.io/case-studies/spotify/
+  source_title: How Spotify increased velocity replacing home-grown orchestration with Kubernetes
+  publisher: Cloud Native Computing Foundation (CNCF)
+  published: '2019-06-27'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Maintaining an in-house platform can cost more than adopting a widely supported open-source one.
+- Running the old and new systems in parallel lets you validate under real load before you switch over.
+owner: content-team
+last_reviewed: '2026-11-26'

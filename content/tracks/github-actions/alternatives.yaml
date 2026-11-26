@@ -1,0 +1,39 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: GitLab CI/CD
+  category: Integrated CI/CD
+  url: https://docs.gitlab.com/ci/
+  licence: 'Open core: MIT Expat outside ee/; ee/ has its own licence'
+  licence_source: https://gitlab.com/gitlab-org/gitlab/-/raw/master/LICENSE
+  choose_when: When your code is hosted on GitLab, or you want CI built into a self-hosted forge.
+  avoid_when: When your repositories and community live on GitHub and you want CI next to them without extra integration.
+- name: CircleCI
+  category: Hosted CI/CD
+  url: https://circleci.com/
+  licence: Not checked (hosted commercial service)
+  choose_when: When you want a dedicated CI service that works with several Git hosts and has its own runner and
+    caching options.
+  avoid_when: When you prefer CI built into your Git host, or must run everything on infrastructure you control.
+- name: Jenkins
+  category: Self-hosted automation server
+  url: https://www.jenkins.io/
+  licence: MIT
+  licence_source: https://github.com/jenkinsci/jenkins/blob/master/LICENSE.txt
+  choose_when: When you need full control on your own servers, a large plugin ecosystem, or integration with existing
+    on-premise systems.
+  avoid_when: When you do not want to operate, patch and secure the CI server and its plugins yourself.
+- name: Buildkite
+  category: Hybrid CI/CD
+  url: https://buildkite.com/
+  licence: 'Agent: MIT. Hosted service: not checked'
+  licence_source: https://github.com/buildkite/agent/blob/main/LICENSE.txt
+  choose_when: When you want a hosted control plane but need builds to run on your own machines (agents).
+  avoid_when: When you do not want to run build agents yourself, or a CI built into your Git host is enough.
+- name: Azure Pipelines
+  category: Hosted CI/CD
+  url: https://azure.microsoft.com/en-us/products/devops/pipelines
+  licence: 'Agent: MIT. Hosted service: not checked'
+  licence_source: https://github.com/microsoft/azure-pipelines-agent/blob/master/LICENSE
+  choose_when: When your organisation already uses Azure DevOps (Boards, Repos) or deploys mainly to Azure.
+  avoid_when: When your work is centred on GitHub and you want the simplest built-in option there.

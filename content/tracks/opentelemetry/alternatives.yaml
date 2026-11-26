@@ -1,0 +1,44 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: Datadog Agent (vendor agent)
+  category: vendor agent
+  url: https://www.datadoghq.com/
+  licence: 'Agent: Apache-2.0. Service: not checked'
+  licence_source: https://github.com/DataDog/datadog-agent/blob/main/LICENSE
+  choose_when: You are committed to Datadog as a backend and want its native features with the least setup.
+  avoid_when: You want to keep the option to change backends without re-instrumenting your code.
+- name: New Relic agents (vendor agent)
+  category: vendor agent
+  url: https://newrelic.com/
+  licence: 'Agents: Apache-2.0 (e.g. Java). Service: not checked'
+  licence_source: https://github.com/newrelic/newrelic-java-agent/blob/main/LICENSE
+  choose_when: You use New Relic and want its automatic instrumentation with vendor support.
+  avoid_when: You need vendor-neutral telemetry that several backends can receive.
+- name: Dynatrace OneAgent (vendor agent)
+  category: vendor agent
+  url: https://www.dynatrace.com/
+  licence: Not checked (commercial product)
+  choose_when: Your organisation already uses Dynatrace and wants automatic, broad instrumentation managed by the
+    vendor.
+  avoid_when: You need open, portable instrumentation or want to avoid tying instrumentation to one commercial platform.
+- name: Zipkin and Jaeger client libraries (historical)
+  category: tracing libraries
+  url: https://zipkin.io/
+  licence: Apache-2.0
+  licence_source: https://github.com/openzipkin/zipkin/blob/master/LICENSE
+  choose_when: You maintain an existing system already instrumented with them and only need to understand or keep
+    it running (and teach the history).
+  avoid_when: Any new instrumentation work; the Jaeger project itself points users to OpenTelemetry.
+  note: 'The Jaeger client libraries are deprecated; their README says: "We urge all users to migrate to OpenTelemetry".'
+- name: eBPF auto-instrumentation (Grafana Beyla, now OpenTelemetry OBI)
+  category: eBPF instrumentation
+  url: https://grafana.com/oss/beyla-ebpf/
+  licence: Apache-2.0
+  licence_source: https://github.com/grafana/beyla/blob/main/LICENSE
+  choose_when: You need basic request metrics or traces from services you cannot or do not want to change in code,
+    on Linux.
+  avoid_when: You need custom spans, business attributes, or support for non-Linux environments; in-code SDK instrumentation
+    gives more detail.
+  note: Grafana Beyla was donated to OpenTelemetry as OpenTelemetry eBPF Instrumentation (OBI), so this is now partly
+    part of OpenTelemetry.

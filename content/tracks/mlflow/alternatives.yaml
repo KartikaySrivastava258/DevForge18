@@ -1,0 +1,34 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: Weights & Biases
+  category: Experiment tracking
+  url: https://wandb.ai/site
+  licence: 'Client library: MIT. Hosted platform: not checked'
+  licence_source: https://github.com/wandb/wandb/blob/main/LICENSE
+  choose_when: You want a hosted tracker with rich dashboards and collaboration, and are comfortable with a vendor
+    service.
+  avoid_when: Everything must be self-hosted open source, or budget rules out a commercial service.
+- name: Kubeflow
+  category: ML on Kubernetes
+  url: https://www.kubeflow.org/
+  licence: Apache-2.0 (kubeflow/kubeflow)
+  licence_source: https://github.com/kubeflow/kubeflow/blob/master/LICENSE
+  choose_when: The organisation runs Kubernetes and wants pipelines, training and serving as cluster-native components.
+  avoid_when: A small team without Kubernetes expertise that mainly needs experiment tracking.
+  note: Kubeflow is several sub-projects; only the main repository's licence was checked.
+- name: DVC
+  category: Data versioning
+  url: https://dvc.org/
+  licence: Apache-2.0
+  licence_source: https://github.com/treeverse/dvc/blob/main/LICENSE
+  choose_when: You want data, models and pipelines versioned alongside Git in a reproducible, file-based way.
+  avoid_when: You need a central server with a UI for comparing runs, or a model registry for teams that don't work
+    through Git.
+- name: Cloud ML platforms (e.g. Amazon SageMaker)
+  category: Managed ML platform
+  url: https://aws.amazon.com/sagemaker/
+  licence: Not checked (managed cloud services)
+  choose_when: The organisation is committed to one cloud and wants training, tracking and serving managed in one
+    place.
+  avoid_when: You need portability across clouds or on-premises, or want to avoid depending on one vendor's APIs.

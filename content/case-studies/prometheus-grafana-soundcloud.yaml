@@ -1,0 +1,41 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: prometheus-grafana-soundcloud
+organisation: SoundCloud
+tracks:
+- prometheus-grafana
+summary: SoundCloud moved to microservices and found its StatsD/Graphite monitoring could not keep up, so it turned
+  a colleague's project into Prometheus and made it its standard monitoring system.
+claims:
+- text: SoundCloud built Prometheus because its earlier monitoring hit limits once it had many microservices.
+  quote: With our existing monitoring set-up, mostly based on StatsD and Graphite, we ran into a number of serious
+    limitations.
+  source_url: https://developers.soundcloud.com/blog/prometheus-monitoring-at-soundcloud/
+  source_title: 'Prometheus: Monitoring at SoundCloud'
+  publisher: SoundCloud (developers.soundcloud.com blog; authors Julius Volz, Björn Rabenstein)
+  published: '2015-01-26'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Prometheus became SoundCloud's standard monitoring tool.
+  quote: Prometheus has become the standard monitoring solution at SoundCloud.
+  source_url: https://developers.soundcloud.com/blog/prometheus-monitoring-at-soundcloud/
+  source_title: 'Prometheus: Monitoring at SoundCloud'
+  publisher: SoundCloud
+  published: '2015-01-26'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: SoundCloud instrumented its internal deployment platform with Prometheus to find resource problems.
+  quote: we have instrumented Bazooka, our internal Heroku-style deployment system, with Prometheus.
+  source_url: https://developers.soundcloud.com/blog/prometheus-monitoring-at-soundcloud/
+  source_title: 'Prometheus: Monitoring at SoundCloud'
+  publisher: SoundCloud
+  published: '2015-01-26'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- A multi-dimensional, label-based data model was the key need that older StatsD/Graphite setups did not meet for
+  many changing service instances.
+- Labelling metrics by application, environment and instance makes cluster-wide questions (such as finding misconfigured
+  apps) answerable with one query.
+caveat: Historical (2015). It mentions PromDash and Nagios-based alerting; do not present these as current practice.
+owner: content-team
+last_reviewed: '2026-11-26'

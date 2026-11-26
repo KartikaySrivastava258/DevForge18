@@ -63,6 +63,9 @@ describe("content API", () => {
     assert.equal(res.json.lessons[0].id, "docker-images-vs-containers");
     assert.ok(res.json.related.some((r: { track: { slug: string } }) => r.track.slug === "kubernetes"));
     assert.ok(res.json.paths.some((p: { slug: string }) => p.slug === "backend-foundations"));
+    assert.ok(res.json.caseStudies.length >= 2);
+    for (const c of res.json.caseStudies) assert.ok(c.tracks.includes("docker") && c.claims[0].quote && c.claims[0].source_url);
+    assert.ok(res.json.track.alternatives.some((a: { name: string }) => a.name === "Podman"));
   });
 
   it("returns 404 for unknown tracks and rejects path-like parameters", async () => {

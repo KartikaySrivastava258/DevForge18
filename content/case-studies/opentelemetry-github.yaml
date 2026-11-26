@@ -1,0 +1,43 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: opentelemetry-github
+organisation: GitHub
+tracks:
+- opentelemetry
+summary: GitHub had statsd metrics, syslog logs and OpenTracing traces that were hard to correlate. It adopted OpenTelemetry
+  to standardise telemetry, starting with tracing.
+claims:
+- text: Before OpenTelemetry, GitHub used several separate telemetry formats and tools.
+  quote: We mostly make use of statsd for metrics, the syslog format for plain text logs and OpenTracing for request
+    traces.
+  source_url: https://github.blog/engineering/why-and-how-github-is-adopting-opentelemetry/
+  source_title: Why (and how) GitHub is adopting OpenTelemetry
+  publisher: GitHub Blog (authors Wolfgang Hennerbichler & Andrew Hayworth)
+  published: '2021-05-26'
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Updated 2021-09-22.
+- text: GitHub adopted OpenTelemetry to standardise telemetry and make instrumentation easy for developers.
+  quote: We needed a solution that would allow us to standardize telemetry usage at GitHub, while making it easy
+    for developers around the organization to instrument their code.
+  source_url: https://github.blog/engineering/why-and-how-github-is-adopting-opentelemetry/
+  source_title: Why (and how) GitHub is adopting OpenTelemetry
+  publisher: GitHub Blog
+  published: '2021-05-26'
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Updated 2021-09-22.
+- text: Using the OpenTelemetry SDKs means they can change backend without re-instrumenting their applications.
+  quote: allows engineers to avoid re-instrumenting their applications if we need to change our telemetry collection
+    backend
+  source_url: https://github.blog/engineering/why-and-how-github-is-adopting-opentelemetry/
+  source_title: Why (and how) GitHub is adopting OpenTelemetry
+  publisher: GitHub Blog
+  published: '2021-05-26'
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Updated 2021-09-22.
+lessons_learned:
+- A vendor-neutral instrumentation layer separates application code from the choice of backend.
+- Adopting signal by signal (GitHub started with tracing) is a workable migration path.
+owner: content-team
+last_reviewed: '2026-11-26'

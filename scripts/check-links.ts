@@ -19,6 +19,12 @@ const urls = new Map<string, string[]>();
 const add = (url: string, where: string) => urls.set(url, [...(urls.get(url) ?? []), where]);
 for (const t of bundle.tracks) for (const r of t.resources) add(r.url, `track ${t.slug}`);
 for (const l of bundle.lessons) for (const r of l.resources) add(r.url, `lesson ${l.id}`);
+for (const c of bundle.case_studies ?? []) for (const cl of c.claims) add(cl.source_url, `case study ${c.id}`);
+for (const t of bundle.tracks)
+  for (const a of t.alternatives ?? []) {
+    if (a.url) add(a.url, `alternative ${a.name} (${t.slug})`);
+    if (a.licence_source) add(a.licence_source, `licence of ${a.name} (${t.slug})`);
+  }
 
 async function check(url: string): Promise<{ status: number | string; finalUrl: string }> {
   for (const method of ["HEAD", "GET"]) {

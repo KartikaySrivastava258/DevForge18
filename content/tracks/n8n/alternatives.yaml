@@ -1,0 +1,36 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: Zapier
+  category: No-code automation
+  url: https://zapier.com/
+  licence: Not checked (hosted commercial service)
+  choose_when: Non-developers need quick automations between popular SaaS apps with no hosting to manage.
+  avoid_when: Data must stay on your own infrastructure, or workflows need custom code and complex branching.
+- name: Make
+  category: No-code automation
+  url: https://www.make.com/
+  licence: Not checked (hosted commercial service)
+  choose_when: You want a visual builder for multi-step SaaS scenarios, hosted by the vendor.
+  avoid_when: Self-hosting, full source access, or version-controlled workflows are required.
+- name: Node-RED
+  category: Flow programming
+  url: https://nodered.org/
+  licence: Apache-2.0
+  licence_source: https://github.com/node-red/node-red/blob/main/LICENSE
+  choose_when: IoT, devices and event-driven flows, especially on edge hardware, where an open-source visual tool
+    fits.
+  avoid_when: You mainly need ready-made SaaS business integrations with credential management for many users.
+- name: Apache Airflow (for data pipelines)
+  category: Workflow orchestrator
+  url: https://airflow.apache.org/
+  licence: Apache-2.0
+  licence_source: https://github.com/apache/airflow/blob/main/LICENSE
+  choose_when: Scheduled batch data pipelines with dependencies, backfills and code review of the pipeline code.
+  avoid_when: Event-triggered business automations built by non-developers in a visual editor.
+- name: Custom code
+  category: Build yourself
+  licence: Not applicable
+  choose_when: The logic is core to the product, needs full testing and control, or no platform fits the requirements.
+  avoid_when: The task is plain glue between existing services, where a platform saves building and maintaining
+    connectors.

@@ -4,6 +4,7 @@
  */
 import { readFileSync } from "node:fs";
 import {
+  type CaseStudy,
   CATEGORIES,
   type CompiledLesson,
   type ContentBundle,
@@ -92,6 +93,7 @@ export class ContentStore {
   getLesson(id: string): CompiledLesson | undefined { return this.lessons.get(id); }
   lessonsFor(track: string): CompiledLesson[] { return this.lessonsByTrack.get(track) ?? []; }
   getSimulation(id: string): Simulation | undefined { return this.simulations.get(id); }
+  caseStudiesFor(track: string): CaseStudy[] { return (this.bundle.case_studies ?? []).filter((c) => c.tracks.includes(track)); }
   simulationsFor(track: string): Simulation[] { return [...this.simulations.values()].filter((s) => s.track === track); }
 
   simulationSummary(s: Simulation) {

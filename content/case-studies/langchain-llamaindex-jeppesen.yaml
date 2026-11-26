@@ -1,0 +1,44 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: langchain-llamaindex-jeppesen
+organisation: Jeppesen (a Boeing Company)
+tracks:
+- langchain-llamaindex
+summary: To stop teams building duplicate chatbots, Jeppesen's frameworks team built a shared, templated agent framework
+  on LlamaIndex's open-source workflows, chosen after comparing other frameworks.
+claims:
+- text: Teams at Jeppesen were each building their own chatbots and duplicating work.
+  quote: Everyone was building their own bots. Some teams were ahead, some just starting. We wanted to create a
+    shared foundation that made it easier to build and learn together.
+  source_url: https://www.llamaindex.ai/customers/jeppesen-a-boeing-company-saves-2-000-engineering-hours-with-unified-chat-framework
+  source_title: Jeppesen (a Boeing Company) Saves ~2,000 Engineering Hours with Unified Chat Framework
+  publisher: LlamaIndex (vendor customer story)
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Quote attributed to Divya Basu, AI Architect, Jeppesen. No date is shown on the page; its metadata gives
+    2025-09-03.
+- text: Jeppesen built a shared internal agent framework on LlamaIndex's open-source workflows.
+  quote: 'At the heart of the solution: LlamaIndex''s flexible, open-source, event-driven agent workflows.'
+  source_url: https://www.llamaindex.ai/customers/jeppesen-a-boeing-company-saves-2-000-engineering-hours-with-unified-chat-framework
+  source_title: Jeppesen (a Boeing Company) Saves ~2,000 Engineering Hours with Unified Chat Framework
+  publisher: LlamaIndex
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: Vendor narrative. No date is shown on the page; its metadata gives 2025-09-03.
+- text: They compared frameworks and chose LlamaIndex for its control over workflow state.
+  quote: We explored more rigid graph-based frameworks. But it was LlamaIndex's event-driven workflows and full
+    control over state transitions that won us over.
+  source_url: https://www.llamaindex.ai/customers/jeppesen-a-boeing-company-saves-2-000-engineering-hours-with-unified-chat-framework
+  source_title: Jeppesen (a Boeing Company) Saves ~2,000 Engineering Hours with Unified Chat Framework
+  publisher: LlamaIndex
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Quote attributed to Divya Basu, Jeppesen. No date is shown on the page; its metadata gives 2025-09-03.
+lessons_learned:
+- A shared internal platform can reduce duplicated LLM work across teams.
+- Framework choice was driven by control over agent state and flow, which the team judged after comparing options.
+caveat: Vendor marketing page; the headline and body include savings figures that DevForge has not verified and does not use.
+owner: content-team
+last_reviewed: '2026-11-26'

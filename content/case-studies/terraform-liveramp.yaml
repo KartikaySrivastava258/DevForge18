@@ -1,0 +1,42 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: terraform-liveramp
+organisation: LiveRamp
+tracks:
+- terraform
+summary: LiveRamp moved from scattered Terraform repositories to a single infrastructure monorepo. Atlantis runs
+  the Terraform workflows, CODEOWNERS gives each team ownership of its folder, and each team's workflow uses credentials
+  limited to that team.
+claims:
+- text: LiveRamp manages most infrastructure from one Terraform monorepo, automated with Atlantis.
+  quote: Today at LiveRamp, we use a monorepo with Atlantis to manage the majority of infrastructure automation.
+  source_url: https://liveramp.es/developers/blog/scaling-cloud-infrastructure-with-terraform/
+  source_title: Scaling Cloud Infrastructure with Terraform
+  publisher: LiveRamp (developers blog)
+  published: '2020-06-18'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Letting each team keep Terraform wherever it liked led to drift.
+  quote: In practice, this leads to issues with infrastructure drift as changes would be made to infrastructure
+    without corresponding changes to the code.
+  source_url: https://liveramp.es/developers/blog/scaling-cloud-infrastructure-with-terraform/
+  source_title: Scaling Cloud Infrastructure with Terraform
+  publisher: LiveRamp (developers blog)
+  published: '2020-06-18'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Each team owns its own folder, and changes need that team's review.
+  quote: Every team received a CODEOWNER owned folder in the monorepo; any changes to team’s folder required a code
+    review from the team
+  source_url: https://liveramp.es/developers/blog/scaling-cloud-infrastructure-with-terraform/
+  source_title: Scaling Cloud Infrastructure with Terraform
+  publisher: LiveRamp (developers blog)
+  published: '2020-06-18'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Centralising IaC with per-team ownership improves discoverability and auditability and reduces drift.
+- A successful plan does not guarantee a successful apply; add validation around the plan stage.
+caveat: The post is published on LiveRamp's liveramp.es developer blog and uses Terraform 0.12, which is now old;
+  the practices still apply.
+owner: content-team
+last_reviewed: '2026-11-26'

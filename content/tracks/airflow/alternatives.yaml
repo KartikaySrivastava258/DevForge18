@@ -1,0 +1,41 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: Dagster
+  category: Data orchestrator
+  url: https://dagster.io/
+  licence: Apache-2.0
+  licence_source: https://github.com/dagster-io/dagster/blob/master/LICENSE
+  choose_when: You prefer to model pipelines around the data assets they produce, with typed, testable definitions.
+  avoid_when: The team already has many Airflow DAGs and operators, and migrating them would cost more than it gains.
+- name: Prefect
+  category: Workflow orchestrator
+  url: https://www.prefect.io/
+  licence: Apache-2.0
+  licence_source: https://github.com/PrefectHQ/prefect/blob/main/LICENSE
+  choose_when: You want to turn ordinary Python functions into orchestrated flows with little boilerplate, including
+    dynamic workflows.
+  avoid_when: You need Airflow's large catalogue of provider operators, or a managed Airflow service your organisation
+    already pays for.
+- name: Argo Workflows
+  category: Kubernetes workflows
+  url: https://argoproj.github.io/workflows/
+  licence: Apache-2.0
+  licence_source: https://github.com/argoproj/argo-workflows/blob/main/LICENSE
+  choose_when: Every step already runs as a container on Kubernetes and you want workflows defined as Kubernetes
+    resources.
+  avoid_when: There is no Kubernetes cluster, or authors prefer to write pipelines in Python rather than YAML.
+- name: Luigi
+  category: Python pipelines
+  url: https://github.com/spotify/luigi
+  licence: Apache-2.0
+  licence_source: https://github.com/spotify/luigi/blob/master/LICENSE
+  choose_when: Simple batch pipelines of dependent tasks, where a lightweight Python library is enough.
+  avoid_when: You need a built-in scheduler, a rich UI, or a broad ecosystem of integrations.
+- name: Cloud schedulers (e.g. AWS Step Functions; Google Cloud Composer)
+  category: Managed orchestration
+  url: https://aws.amazon.com/step-functions/
+  licence: Not checked (managed cloud services)
+  choose_when: You want the provider to run the infrastructure and your workloads already run on that cloud.
+  avoid_when: You need portability across clouds or on-premises, or want to avoid lock-in to one provider.
+  note: On 2026-11-26 cloud.google.com/composer redirected to a page titled "Managed Service for Apache Airflow".

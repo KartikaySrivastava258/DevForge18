@@ -1,0 +1,43 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: prometheus-grafana-asos
+organisation: ASOS
+tracks:
+- prometheus-grafana
+summary: ASOS began using open-source Grafana to visualise telemetry it already had in Azure, and it spread to become
+  the main dashboarding tool. ASOS later moved to the hosted Grafana Cloud to avoid running the platform itself.
+claims:
+- text: ASOS adopted open-source Grafana to get near real-time visibility of its telemetry.
+  quote: the team turned to Grafana OSS in 2017.
+  source_url: https://grafana.com/success/asos/
+  source_title: 'Reducing MTTR with Grafana Cloud: Inside ASOS'' observability stack'
+  publisher: Grafana Labs (vendor case study)
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: Vendor narrative, not a direct quote from ASOS.
+- text: Grafana's support for many data sources, including Azure Monitor, was a reason for choosing it.
+  quote: it helped that Grafana supports such a wide range of data sources — including one, notably, for Azure Monitor
+  source_url: https://grafana.com/success/asos/
+  source_title: 'Reducing MTTR with Grafana Cloud: Inside ASOS'' observability stack'
+  publisher: Grafana Labs
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: Vendor narrative.
+- text: Grafana became the main dashboarding tool across ASOS.
+  quote: People started adopting it as their primary dashboarding solution for displaying telemetry.
+  source_url: https://grafana.com/success/asos/
+  source_title: 'Reducing MTTR with Grafana Cloud: Inside ASOS'' observability stack'
+  publisher: Grafana Labs
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Direct quote attributed to Morley of ASOS.
+lessons_learned:
+- Grafana's value comes partly from querying data where it already lives (many data-source plugins), not only from
+  Prometheus.
+- 'Self-hosting brings maintenance overhead, which is a common reason teams later weigh a managed service (ASOS:
+  "focus on the observability — getting the best out of the platform — without running it").'
+caveat: Vendor marketing page; it also promotes the paid Grafana Cloud.
+owner: content-team
+last_reviewed: '2026-11-26'

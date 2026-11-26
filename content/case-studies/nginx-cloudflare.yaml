@@ -1,0 +1,42 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: nginx-cloudflare
+organisation: Cloudflare
+tracks:
+- nginx
+summary: Cloudflare relied on NGINX for years. Limits of its per-worker design at Cloudflare's scale eventually
+  led it to build its own proxy, Pingora, in Rust.
+claims:
+- text: Cloudflare used NGINX for many years, then outgrew it at its scale.
+  quote: As Cloudflare has scaled we’ve outgrown NGINX. It was great for many years, but over time its limitations
+    at our scale meant building something new made sense.
+  source_url: https://blog.cloudflare.com/how-we-built-pingora-the-proxy-that-connects-cloudflare-to-the-internet/
+  source_title: How we built Pingora, the proxy that connects Cloudflare to the Internet
+  publisher: Cloudflare Blog
+  published: '2022-09-14'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Because NGINX keeps a separate connection pool per worker, connection reuse was poor at Cloudflare's scale.
+  quote: However, the NGINX connection pool is per worker. When a request lands on a certain worker, it can only
+    reuse the connections within that worker.
+  source_url: https://blog.cloudflare.com/how-we-built-pingora-the-proxy-that-connects-cloudflare-to-the-internet/
+  source_title: How we built Pingora, the proxy that connects Cloudflare to the Internet
+  publisher: Cloudflare Blog
+  published: '2022-09-14'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: For years Cloudflare regularly compared three options (fork NGINX, switch to another proxy, or build its
+    own) before deciding.
+  quote: We evaluated each of these options every quarter for the past few years. There is no obvious formula to
+    tell which choice is the best.
+  source_url: https://blog.cloudflare.com/how-we-built-pingora-the-proxy-that-connects-cloudflare-to-the-internet/
+  source_title: How we built Pingora, the proxy that connects Cloudflare to the Internet
+  publisher: Cloudflare Blog
+  published: '2022-09-14'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Learn the architecture (worker processes, per-worker connection pools); it decides how a proxy behaves under very
+  high load.
+- Replacing core infrastructure is a trade-off to re-evaluate over time, not a one-off obvious choice.
+owner: content-team
+last_reviewed: '2026-11-26'

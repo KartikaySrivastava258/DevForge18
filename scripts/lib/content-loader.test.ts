@@ -56,6 +56,20 @@ describe("repository content", () => {
       assert.ok(levels.has("beginner") && levels.has("intermediate") && levels.has("advanced"), track.slug);
     }
   });
+  it("gives every track at least two sourced case studies and two alternatives", () => {
+    for (const track of bundle.tracks) {
+      const studies = bundle.case_studies.filter((c) => c.tracks.includes(track.slug));
+      assert.ok(studies.length >= 2, `${track.slug}: ${studies.length} case studies`);
+      assert.ok((track.alternatives ?? []).length >= 2, `${track.slug}: alternatives`);
+    }
+  });
+  it("quotes a primary source, with a check date, for every case-study claim", () => {
+    for (const c of bundle.case_studies)
+      for (const claim of c.claims) {
+        assert.ok(claim.quote.length >= 10 && claim.source_url.startsWith("https://"), c.id);
+        assert.match(claim.checked_on, /^\d{4}-\d{2}-\d{2}$/, c.id);
+      }
+  });
   it("never marks an unchecked link as verified", () => {
     for (const track of bundle.tracks) {
       for (const r of track.resources) {
@@ -98,6 +112,31 @@ describe("validation catches authoring mistakes", () => {
     const { errors } = loadContent(contentRoot, new Date("2026-01-01T00:00:00Z"));
     assert.ok(errors.some((e) => e.includes("last_reviewed is in the future")));
   });
+  it("rejects a case study for an unknown track, a future check date and a missing quote", () => {
+    const dir = copyContent();
+    const file = join(dir, "case-studies", "kafka-linkedin.yaml");
+    const original = readFileSync(file, "utf8");
+    writeFileSync(file, original.replace("- kafka\n", "- cobol\n").replace("checked_on: '2026-11-26'", "checked_on: '2099-01-01'"));
+    let { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes('kafka-linkedin.yaml: unknown track "cobol"')), errors.join("\n"));
+    assert.ok(errors.some((e) => e.includes("kafka-linkedin.yaml: a claim's checked_on is in the future")), errors.join("\n"));
+    writeFileSync(file, original.replace(/  quote: [^\n]*\n/, ""));
+    ({ errors } = loadContent(dir));
+    assert.ok(errors.some((e) => e.includes("kafka-linkedin.yaml") && e.includes("quote")), errors.join("\n"));
+  });
+
+  it("rejects an alternative with a non-https link or the same name twice", () => {
+    const dir = copyContent();
+    const file = join(dir, "tracks", "redis", "alternatives.yaml");
+    const original = readFileSync(file, "utf8");
+    writeFileSync(file, original.replace("url: https://valkey.io/", "url: http://valkey.io/"));
+    let { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes("tracks/redis/alternatives.yaml") && e.includes("https")), errors.join("\n"));
+    writeFileSync(file, original.replace("- name: Memcached", "- name: Valkey"));
+    ({ errors } = loadContent(dir));
+    assert.ok(errors.some((e) => e.includes('"Valkey" is listed twice')), errors.join("\n"));
+  });
+
   it("detects prerequisite cycles", () => {
     const dir = copyContent();
     const file = join(dir, "tracks", "docker", "track.yaml");

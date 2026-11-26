@@ -1,0 +1,44 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: git-github-duolingo
+organisation: Duolingo
+tracks:
+- git-github
+summary: Duolingo moved off separate third-party review tools and standardised its pull-request workflow on GitHub.
+  Where needed, it uses the GitHub API to automate its own processes.
+claims:
+- text: Using different code-review tools in different repositories caused inconsistent workflows.
+  quote: this left the company’s three primary repositories with widely varying cultures and pull request processes
+  source_url: https://github.com/customer-stories/duolingo
+  source_title: Duolingo · GitHub (customer story)
+  publisher: GitHub
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: No date is shown on the page; its metadata gives 2023-03-06.
+- text: Duolingo uses GitHub to keep one standard engineering workflow.
+  quote: GitHub enables us to enforce consistency and a standardized engineering culture that makes internal mobility
+    easier
+  source_url: https://github.com/customer-stories/duolingo
+  source_title: Duolingo · GitHub (customer story)
+  publisher: GitHub
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: No date is shown on the page; its metadata gives 2023-03-06.
+- text: Duolingo builds its own workflow automation on the GitHub API.
+  quote: It allows us to build whatever we need ourselves so that we can focus on our actual business needs and
+    business logic
+  source_url: https://github.com/customer-stories/duolingo
+  source_title: Duolingo · GitHub (customer story)
+  publisher: GitHub
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: No date is shown on the page; its metadata gives 2023-03-06.
+lessons_learned:
+- A single, consistent pull-request process across repositories makes it easier for engineers to move between projects.
+- Use the hosting platform's API to automate the team's own conventions instead of building separate infrastructure.
+caveat: Vendor (GitHub) marketing page; the page also promotes Copilot/Codespaces and contains vendor-reported figures,
+  which are not used here.
+owner: content-team
+last_reviewed: '2026-11-26'

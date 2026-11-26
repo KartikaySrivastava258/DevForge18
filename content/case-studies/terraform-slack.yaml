@@ -1,0 +1,40 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: terraform-slack
+organisation: Slack
+tracks:
+- terraform
+summary: Slack manages infrastructure across AWS, DigitalOcean, NS1 and GCP with Terraform. It keeps state remotely
+  in S3 with DynamoDB locking and splits state into smaller files owned by service teams.
+claims:
+- text: Slack uses Terraform rather than AWS CloudFormation so that one tool covers several cloud providers.
+  quote: we have chosen to use Terraform as opposed to using an AWS-native service such as CloudFormation so that
+    we can use a single tool across all of our infrastructure service providers.
+  source_url: https://slack.engineering/how-we-use-terraform-at-slack/
+  source_title: How We Use Terraform At Slack
+  publisher: Slack Engineering
+  published: '2022-10-25'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Terraform state is stored remotely in a versioned S3 bucket.
+  quote: We use Terraform’s AWS S3 backend to store all our Terraform states in a version-controlled S3 bucket under
+    different paths.
+  source_url: https://slack.engineering/how-we-use-terraform-at-slack/
+  source_title: How We Use Terraform At Slack
+  publisher: Slack Engineering
+  published: '2022-10-25'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Slack keeps state files small to make changes faster and safer.
+  quote: This speeds up the deployment time and is safer to make changes to smaller state files as the number of
+    impacted resources is lower.
+  source_url: https://slack.engineering/how-we-use-terraform-at-slack/
+  source_title: How We Use Terraform At Slack
+  publisher: Slack Engineering
+  published: '2022-10-25'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Use a remote backend with versioning and locking so state can be shared safely and rolled back.
+- Split state into smaller units to reduce how much each change can affect.
+owner: content-team
+last_reviewed: '2026-11-26'

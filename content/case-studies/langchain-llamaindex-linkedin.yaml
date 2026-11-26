@@ -1,0 +1,41 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: langchain-llamaindex-linkedin
+organisation: LinkedIn
+tracks:
+- langchain-llamaindex
+summary: LinkedIn moved GenAI serving from Java to Python and standardised on an internal framework built on LangChain.
+  That framework is mandated for new GenAI applications and was rolled out step by step.
+claims:
+- text: After using LangChain offline, LinkedIn decided to use it in production serving too.
+  quote: convinced us to use it for online serving as well.
+  source_url: https://www.linkedin.com/blog/engineering/generative-ai/behind-the-platform-the-journey-to-create-the-linkedin-genai-application-tech-stack
+  source_title: 'Behind the platform: the journey to create the LinkedIn GenAI application tech stack'
+  publisher: LinkedIn Engineering Blog (author Karthik R.; co-authors Xiaofeng Wang, Sandeep J.)
+  published: '2024-11-26'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: LinkedIn's internal GenAI framework is a thin layer on top of LangChain that connects it to LinkedIn's own
+    infrastructure.
+  quote: Our GenAI application framework is now a thin wrapper atop LangChain, bridging it with LinkedIn infrastructure
+    for logging, instrumentation, storage access and more.
+  source_url: https://www.linkedin.com/blog/engineering/generative-ai/behind-the-platform-the-journey-to-create-the-linkedin-genai-application-tech-stack
+  source_title: 'Behind the platform: the journey to create the LinkedIn GenAI application tech stack'
+  publisher: LinkedIn Engineering Blog
+  published: '2024-11-26'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: LinkedIn migrated to it gradually, one component at a time.
+  quote: Rather than do a big bang migration of all components, we decided to migrate individual components one
+    by one.
+  source_url: https://www.linkedin.com/blog/engineering/generative-ai/behind-the-platform-the-journey-to-create-the-linkedin-genai-application-tech-stack
+  source_title: 'Behind the platform: the journey to create the LinkedIn GenAI application tech stack'
+  publisher: LinkedIn Engineering Blog
+  published: '2024-11-26'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Organisations often wrap a framework like LangChain in a thin internal layer to connect it with their own logging,
+  storage and tooling.
+- An incremental, component-by-component migration lowered the risk of changing the stack.
+owner: content-team
+last_reviewed: '2026-11-26'

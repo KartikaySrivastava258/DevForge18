@@ -1,0 +1,41 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: github-actions-buffer
+organisation: Buffer
+tracks:
+- github-actions
+summary: Buffer uses GitHub Actions for automated checks, releases and Slack notifications. A weekly scheduled (cron)
+  workflow flags outdated dependencies.
+claims:
+- text: Buffer uses GitHub Actions for most of its automation.
+  quote: We’re pretty much using Actions for everything
+  source_url: https://github.com/customer-stories/buffer
+  source_title: Buffer · GitHub (customer story)
+  publisher: GitHub
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: No date is shown on the page; its metadata gives 2022-08-03.
+- text: A scheduled workflow checks for outdated dependencies each week.
+  quote: Buffer runs Cron scheduling every Wednesday to check if any of its dependencies are out of date
+  source_url: https://github.com/customer-stories/buffer
+  source_title: Buffer · GitHub (customer story)
+  publisher: GitHub
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: No date is shown on the page; its metadata gives 2022-08-03.
+- text: Actions has made releasing much simpler.
+  quote: Actions has made their release flow as simple as pushing a button.
+  source_url: https://github.com/customer-stories/buffer
+  source_title: Buffer · GitHub (customer story)
+  publisher: GitHub
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: No date is shown on the page; its metadata gives 2022-08-03.
+lessons_learned:
+- Scheduled workflows can automate routine maintenance, such as dependency checks, that people forget to do by hand.
+- Automating the release flow reduces manual steps and lets more of the team ship.
+caveat: Vendor (GitHub) marketing page.
+owner: content-team
+last_reviewed: '2026-11-26'

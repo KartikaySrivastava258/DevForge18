@@ -42,7 +42,8 @@ DevForge 18 is an interactive developer engineering academy. It teaches 18 indus
 | Accounts, sign-in, progress tracking (a lesson completes only when its self-check is passed), bookmarks, dashboard | Working |
 | Roles (student, faculty, admin), admin user management with an audit log, faculty aggregate statistics | API working; admin/faculty screens not built yet |
 | Dark and light themes, keyboard navigation, mobile layout | Working |
-| Labs, simulations for the other 16 tracks, capstone projects, quizzes, architecture studio, case studies, cohorts | Planned (see roadmap) |
+| Who uses each tool and why: two sourced case studies per track, every claim with a verbatim quote, its source and the date checked; alternatives with when to choose them and their licences | Working (36 case studies, 89 alternatives) |
+| Labs, capstone projects, quizzes, architecture studio, cohorts | Planned (see roadmap) |
 
 ## The 18 tracks
 

@@ -20,7 +20,7 @@ resources:
     why: Cache keys, restore keys, cache hits, eviction and security notes.
     verification: { status: verified, checked_on: 2026-11-26 }
   - title: Store and share data with workflow artifacts
-    url: https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow
+    url: https://docs.github.com/en/actions/tutorials/store-and-share-data
     publisher: GitHub
     type: documentation
     level: beginner

@@ -1,0 +1,44 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: mlflow-mondelez-international
+organisation: Mondelēz International
+tracks:
+- mlflow
+summary: Mondelēz moved from separate local model development to a central platform. On that platform, MLflow tracks
+  experiments and the Model Registry records each model's status.
+claims:
+- text: Mondelēz manages model experiments and training with MLflow and tracks its models in the MLflow Model Registry.
+  quote: Model experimentation and training are managed through MLflow, with thousands of models tracked using MLflow
+    Model Registry.
+  source_url: https://www.databricks.com/customers/mondelez
+  source_title: Facilitating model experimentation at enterprise scale | Databricks
+  publisher: Databricks
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: Databricks' narrative text. This is MLflow on the Databricks platform (managed); whether it is the same
+    as self-hosted open-source MLflow is not stated.
+- text: The registry shows which models are in production and which are experimental.
+  quote: Now, we can centrally see which models are in production, which are experimental and which are not production-grade.
+  source_url: https://www.databricks.com/customers/mondelez
+  source_title: Facilitating model experimentation at enterprise scale | Databricks
+  publisher: Databricks
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Sachin Kulshrestha, Global ML Engineering and Ops Lead, Mondelēz. The quote does not name MLflow;
+    the link to the registry comes from the surrounding text.
+- text: Before the change, Mondelēz teams built models separately with no standard platform.
+  quote: Teams developed models in silos, often using local environments such as Anaconda, with no standardized
+    platform or way to monitor models at scale.
+  source_url: https://www.databricks.com/customers/mondelez
+  source_title: Facilitating model experimentation at enterprise scale | Databricks
+  publisher: Databricks
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: Databricks' narrative text.
+lessons_learned:
+- A central model registry answers 'which models are in production?' when many teams build models.
+- Separate local environments lead to duplicated work and models nobody can see or monitor.
+owner: content-team
+last_reviewed: '2026-11-26'

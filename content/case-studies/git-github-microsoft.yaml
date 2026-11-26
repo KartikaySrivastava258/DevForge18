@@ -1,0 +1,42 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: git-github-microsoft
+organisation: Microsoft
+tracks:
+- git-github
+summary: Microsoft moved the Windows codebase and its engineers from the older Source Depot system to Git. To make
+  Git work at that size, it added a virtual file system (GVFS) and enhancements to Git.
+claims:
+- text: Microsoft moved the Windows engineering team onto Git.
+  quote: Over the past 3 months, we have largely completed the rollout of Git/GVFS to the Windows team at Microsoft.
+  source_url: https://devblogs.microsoft.com/bharry/the-largest-git-repo-on-the-planet/
+  source_title: The largest Git repo on the planet
+  publisher: Microsoft (Microsoft DevBlogs, Brian Harry's Blog)
+  published: '2017-05-24'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Plain Git was not enough for a repository this large, so Microsoft added a virtual file system (GVFS) and
+    Git enhancements.
+  quote: GVFS, together with a set of enhancements to Git, enables Git to scale to VERY large repos by virtualizing
+    both the .git folder and the working directory.
+  source_url: https://devblogs.microsoft.com/bharry/the-largest-git-repo-on-the-planet/
+  source_title: The largest Git repo on the planet
+  publisher: Microsoft (Microsoft DevBlogs, Brian Harry's Blog)
+  published: '2017-05-24'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Their pull-request and merge-conflict tools at first could not handle very large merges.
+  quote: We discovered that first week that our UI for pull requests and merge conflict resolution simply didn’t
+    scale to changes that large.
+  source_url: https://devblogs.microsoft.com/bharry/the-largest-git-repo-on-the-planet/
+  source_title: The largest Git repo on the planet
+  publisher: Microsoft (Microsoft DevBlogs, Brian Harry's Blog)
+  published: '2017-05-24'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- At very large scale, Git itself may need extra tooling (such as virtualising the .git folder and working tree),
+  not just a migration.
+- Tooling around Git, such as pull-request and merge-conflict interfaces, also has to scale; test it with realistic
+  merges before rollout.
+owner: content-team
+last_reviewed: '2026-11-26'

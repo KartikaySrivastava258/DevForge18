@@ -1,0 +1,45 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: MySQL
+  category: Relational database
+  url: https://www.mysql.com/
+  licence: GPL-2.0 with additional permissions (Community)
+  licence_source: https://github.com/mysql/mysql-server/blob/trunk/LICENSE
+  choose_when: When your stack, hosting or team experience is already built around MySQL, such as many common web
+    applications.
+  avoid_when: When you rely on PostgreSQL-specific features or extensions.
+- name: MariaDB
+  category: Relational database
+  url: https://mariadb.org/
+  licence: GPL-2.0
+  licence_source: https://mariadb.org/about/
+  choose_when: When you want a MySQL-compatible server developed by a community foundation.
+  avoid_when: When you need PostgreSQL features, or exact compatibility with recent MySQL-only features (check per
+    version).
+- name: SQLite
+  category: Embedded database
+  url: https://www.sqlite.org/
+  licence: Public domain
+  licence_source: https://www.sqlite.org/copyright.html
+  choose_when: When one application needs a local, file-based database with no server; DevForge itself uses it.
+  avoid_when: When many clients write at the same time over a network, or you need roles and server-side administration.
+- name: CockroachDB
+  category: Distributed SQL
+  url: https://www.cockroachlabs.com/
+  licence: CockroachDB Software License (not OSI open source)
+  licence_source: https://docs.cockroachlabs.com/docs/stable/licensing-faqs
+  choose_when: When you need a SQL database that spreads across regions and survives node failures, with PostgreSQL
+    wire compatibility.
+  avoid_when: When one PostgreSQL server (plus replicas) is enough, or the licence terms do not suit you. Figma
+    evaluated it and stayed on Postgres; see the case study above.
+  note: Versions from 24.3.0 are under the CockroachDB Software License; check the terms for your use.
+- name: YugabyteDB
+  category: Distributed SQL
+  url: https://www.yugabyte.com/
+  licence: Apache-2.0 core; some components Polyform Free Trial 1.0.0
+  licence_source: https://github.com/yugabyte/yugabyte-db/blob/master/LICENSE.md
+  choose_when: When you want a distributed, PostgreSQL-compatible database (it reuses a modified PostgreSQL fork
+    for its SQL layer).
+  avoid_when: When a single PostgreSQL instance is enough; distributed databases add operational complexity and
+    latency trade-offs.

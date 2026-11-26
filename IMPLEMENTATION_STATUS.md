@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-26 · Milestone: **5 — every track has three beginner lessons and a simulation** (REMAINING_WORK.md §7; CI confirmation of the last commit in progress) · Next: **6 — real-world context (case studies and alternatives)**
+Last updated: 2026-11-26 · Milestone: **6 — real-world context (case studies and alternatives)** (REMAINING_WORK.md §7; CI confirmation of the last commit in progress) · Next: **7 — labs**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -16,7 +16,8 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
 | Figures and step-through diagrams | ✅ 55 figures across all 54 lessons (no ASCII diagrams left), 22 of them step-throughs — at least one in every track; tested |
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
-| Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
+| Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
+| Labs, projects, quizzes, glossary, architecture studio | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
 
@@ -312,9 +313,23 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 
 Every track has at least three beginner lessons and a simulation (54 lessons, 18 simulations). Deviations recorded above: the Postman simulation models the API instead of sending live requests; Kubernetes needed a third lesson that §7 did not list. Owner decisions still open: the project licence; whether to delete the redundant copy in `~/Downloads/devforge18`.
 
+### Milestone 5 — CI
+
+Commit 9e1d0b0 (GitHub Actions, Redis, Nginx, Postman, Jenkins): CI run 45765786888.
+
+### Milestone 6 — real-world context (2026-11-26)
+
+- **Content types.** `content/case-studies/<id>.yaml` (schema `CaseStudySchema`): organisation, tracks, summary, claims, lessons learned, an optional caveat. Every claim has the verbatim `quote` that supports it, `source_url`, `source_title`, `publisher`, `published` (a date, or "not stated" when the page shows none), `checked_on` and `kind` — **confirmed** when the organisation or its own staff say it, **inferred** when it is someone else's account (usually the vendor's customer-story page). `content/tracks/<slug>/alternatives.yaml`: name, category, homepage, licence, where the licence was read, an optional status note, when to choose it and when to look elsewhere.
+- **Loader checks.** Unknown tracks, dates in the future, a claim published after it was checked, an id that does not match its file, duplicate alternatives, non-https links. The link checker now covers every case-study source, alternative homepage and licence source.
+- **Content.** 36 case studies (two per track) and 89 alternatives. Research was done in three parallel passes: each source page was downloaded and every quote checked by script as an exact substring of the page text (all 133 checks matched, which include all 108 claims used here). Licences were read from each project's LICENSE file or official licence page; hosted commercial services say "Not checked". Figures and savings claims on vendor pages are deliberately not used.
+- **Editorial decisions.** Neptune was dropped from the MLflow alternatives: its hosted service ended on 2026-03-05 (docs.neptune.ai/transition_hub). Where REMAINING_WORK listed more than five alternatives, the extra ones were left out (Trello, cloud load balancers, Docker Compose, managed PostgreSQL) or merged (Thanos/Cortex/Mimir; Kinesis/Pub/Sub). Recent licence changes are flagged on the page (Redpanda, Dragonfly). Jaeger client libraries and Grafana Beyla are shown with their status (deprecated; donated to OpenTelemetry as OBI). HashiCorp's own case studies could not be read (HTTP 429/500), so Terraform uses Slack's and LiveRamp's engineering blogs.
+- **Track page.** New sections *Who uses this and why* (claims with tags, quotes, source links and dates, "What to take from it", caveats) and *Alternatives and how to choose* (cards, not a table, so they work on a phone), both in the page's table of contents.
+- **Tests.** 4 loader tests (every track has at least two case studies and two alternatives; each claim has a quote, an https source and a check date; bad case studies and alternatives are rejected), an API assertion, a browser test (Kafka: LinkedIn quote, source link, Confirmed tag, Apache Pulsar licence link, TOC link), and the required-sections and mobile-overflow tests now include the new sections.
+- **Link check (2026-11-26).** 314 links: Azure Pipelines returned 503 and Uber's blog 406 to the automated checker (both load in a browser); every other link resolved. Redirected lesson resources were updated to their new addresses (Kubernetes probes, GitHub Actions artefacts, Postman environments).
+
 ## Current work
 
-Milestone 5 of REMAINING_WORK.md §7 is done; next is milestone 6 (case studies and alternatives), after the remaining LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
+Milestone 6 is done; next is milestone 7 (labs).
 
 ## Pending work (ordered)
 
@@ -392,7 +407,7 @@ npm run db:backup -- ./backups/manual.db
 
 The full plan for all remaining work is in [`REMAINING_WORK.md`](REMAINING_WORK.md); [`MASTER_PROMPT.md`](MASTER_PROMPT.md) is a ready-made prompt for continuing with a coding agent.
 
-1. Milestone 5 — beginner lessons and a simulation for Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira (§5.8, §5.10, §5.12, §5.16–5.18). Done when all 18 tracks have at least three beginner lessons and one simulation, which also means a third beginner lesson for each Path 1 track that has two.
-2. Milestone 6 — case studies and alternatives for every track.
+1. Milestone 7 — labs: lab pages, verification scripts, lab progress; at least two labs per track.
+2. Re-check the case studies flagged as fast-changing (Redpanda and Dragonfly licences) before each release.
 3. Re-run the *Link check* workflow monthly; a person re-confirms each page before updating `checked_on`.
 4. Update this file after each milestone.

@@ -1,0 +1,44 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: jira-cisco-networking
+organisation: Cisco Networking (business unit of Cisco)
+tracks:
+- jira
+summary: When Cisco Networking had to leave Rally, it moved its teams to Atlassian. Status reporting moved out of
+  slide decks into live Jira data.
+claims:
+- text: Cisco Networking moved to Atlassian after a company decision to stop using Rally, its previous work-management
+    tool.
+  quote: Faced with a corporate decision to exit Rally, the company's legacy work management product, Cisco Networking
+    saw an opportunity.
+  source_url: https://www.atlassian.com/customers/cisco
+  source_title: Cisco Networking halved TCO by centralizing teams on one Atlassian cloud platform
+  publisher: Atlassian
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: Atlassian's narrative text, not a quote from Cisco staff.
+- text: Teams now give status updates in Jira instead of in PowerPoint slides.
+  quote: Getting teams to do their status updates in Jira instead of PowerPoint and creating real-time reports and
+    dashboards has been really powerful.
+  source_url: https://www.atlassian.com/customers/cisco
+  source_title: Cisco Networking halved TCO by centralizing teams on one Atlassian cloud platform
+  publisher: Atlassian
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Amy Hauth, Senior Director of Business Operations, Cisco.
+- text: Sharing one process, workflow set and vocabulary made collaboration easier.
+  quote: We’re all using the same process, the same workflows, and the same language, so we can collaborate better
+    together.
+  source_url: https://www.atlassian.com/customers/cisco
+  source_title: Cisco Networking halved TCO by centralizing teams on one Atlassian cloud platform
+  publisher: Atlassian
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Amy Hauth, Cisco.
+lessons_learned:
+- Reporting in the tracker itself, instead of copying status into slides, keeps reports current.
+- Agreeing on shared workflows and terms across teams is what makes cross-team tracking work.
+owner: content-team
+last_reviewed: '2026-11-26'

@@ -1,0 +1,41 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: postgresql-figma
+organisation: Figma
+tracks:
+- postgresql
+summary: Figma scaled PostgreSQL on Amazon RDS first by vertical partitioning, then by horizontal sharding built
+  on its existing Postgres stack. It evaluated CockroachDB, TiDB, Spanner and Vitess and chose to stay on Postgres
+  to limit risk.
+claims:
+- text: Figma first split related tables into separate databases (vertical partitioning).
+  quote: Vertical partitioning was a relatively easy and very impactful scaling lever that bought us significant
+    runway quickly.
+  source_url: https://www.figma.com/blog/how-figmas-databases-team-lived-to-tell-the-scale/
+  source_title: How Figma's Databases Team Lived to Tell the Scale
+  publisher: Figma (Figma Blog)
+  published: '2024-03-14'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Figma chose to shard its existing PostgreSQL setup rather than switch to a different database.
+  quote: We favored known low-risk solutions over potentially easier options with much higher uncertainty, where
+    we had less control over the outcome.
+  source_url: https://www.figma.com/blog/how-figmas-databases-team-lived-to-tell-the-scale/
+  source_title: How Figma's Databases Team Lived to Tell the Scale
+  publisher: Figma (Figma Blog)
+  published: '2024-03-14'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Sharding removes some guarantees that a single Postgres database gives you.
+  quote: Foreign keys and globally unique indexes can no longer be enforced by Postgres.
+  source_url: https://www.figma.com/blog/how-figmas-databases-team-lived-to-tell-the-scale/
+  source_title: How Figma's Databases Team Lived to Tell the Scale
+  publisher: Figma (Figma Blog)
+  published: '2024-03-14'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Exhaust simpler steps (read replicas, caching, vertical partitioning) before horizontal sharding.
+- 'Sharding has costs: foreign keys, unique indexes and transactions across shards are no longer enforced by the
+  database.'
+owner: content-team
+last_reviewed: '2026-11-26'

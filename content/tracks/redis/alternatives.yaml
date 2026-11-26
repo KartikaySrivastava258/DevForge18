@@ -1,0 +1,43 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: Valkey
+  category: key-value store
+  url: https://valkey.io/
+  licence: BSD-3-Clause
+  licence_source: https://github.com/valkey-io/valkey/blob/unstable/COPYING
+  choose_when: You want a Redis-compatible server under a permissive open-source licence with community (Linux Foundation)
+    governance.
+  avoid_when: You depend on features or modules found only in current Redis releases or Redis's commercial products.
+- name: Memcached
+  category: cache
+  url: https://memcached.org/
+  licence: BSD-3-Clause
+  licence_source: https://github.com/memcached/memcached/blob/master/LICENSE
+  choose_when: You need only a simple, multi-threaded key-value cache of strings or blobs.
+  avoid_when: You need data structures (lists, sets, streams), persistence, pub/sub or replication.
+- name: KeyDB
+  category: key-value store
+  url: https://docs.keydb.dev/
+  licence: BSD-3-Clause
+  licence_source: https://github.com/Snapchat/KeyDB/blob/main/COPYING
+  choose_when: You want a multi-threaded fork that stays compatible with the Redis protocol.
+  avoid_when: You want the most widely adopted, actively governed option.
+  note: Check its recent release activity before choosing it.
+- name: Dragonfly
+  category: in-memory store
+  url: https://www.dragonflydb.io/
+  licence: Dragonfly Source-Available License (not OSI open source)
+  licence_source: https://github.com/dragonflydb/dragonfly/blob/main/LICENSE.md
+  choose_when: You need a Redis/Memcached-compatible API and want to evaluate a multi-threaded design on large single
+    machines.
+  avoid_when: You need an OSI-approved open-source licence, or your production use may exceed the licence limits.
+  note: The licence file changed on 2026-11-03; production use is limited to 100 vCPUs under its terms. Re-check
+    before relying on it.
+- name: Amazon ElastiCache
+  category: managed service
+  url: https://aws.amazon.com/elasticache/
+  licence: Not checked (managed AWS service)
+  choose_when: You run on AWS and want patching, failover and backups handled for you.
+  avoid_when: You need multi-cloud portability, cannot accept the service's version/feature limits, or want the
+    cheapest option for a small workload.

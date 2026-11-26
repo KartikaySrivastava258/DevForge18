@@ -1,0 +1,40 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: GitHub Actions
+  category: hosted CI/CD
+  url: https://github.com/features/actions
+  licence: 'Runner: MIT. Hosted service: not checked'
+  licence_source: https://github.com/actions/runner/blob/main/LICENSE
+  choose_when: Your code is on GitHub and you want CI with no server to run, plus a large marketplace of reusable
+    actions.
+  avoid_when: Your code is not on GitHub, or you need fully on-premises control of the whole CI system.
+- name: GitLab CI/CD
+  category: integrated CI/CD
+  url: https://docs.gitlab.com/ci/
+  licence: 'Open core: MIT Expat outside ee/; ee/ has its own licence'
+  licence_source: https://github.com/gitlabhq/gitlabhq/blob/master/LICENSE
+  choose_when: You want source hosting, CI/CD and issue tracking in one product, self-hosted or SaaS.
+  avoid_when: You are standardised on another code host, or need Jenkins-level plugin breadth for unusual integrations.
+- name: TeamCity
+  category: CI server
+  url: https://www.jetbrains.com/teamcity/
+  licence: Not checked (commercial product)
+  choose_when: You want a polished self-hosted or cloud CI server with strong built-in features, especially in JetBrains
+    or .NET environments.
+  avoid_when: You need a fully open-source tool, or licence costs are a constraint.
+- name: Buildkite
+  category: hybrid CI
+  url: https://buildkite.com/
+  licence: 'Agent: MIT. Hosted service: not checked'
+  licence_source: https://github.com/buildkite/agent/blob/main/LICENSE.txt
+  choose_when: You want a hosted control plane while builds run on your own machines (for example, for security
+    or special hardware).
+  avoid_when: You want a fully self-hosted, open-source system, or have no need to run your own agents.
+- name: Tekton
+  category: Kubernetes-native CI/CD
+  url: https://tekton.dev/
+  licence: Apache-2.0
+  licence_source: https://github.com/tektoncd/pipeline/blob/main/LICENSE
+  choose_when: You already run Kubernetes and want pipelines as Kubernetes resources, built into a platform.
+  avoid_when: You lack Kubernetes expertise or want a ready-made UI and plugin ecosystem out of the box.

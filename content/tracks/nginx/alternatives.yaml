@@ -1,0 +1,41 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: HAProxy
+  category: Load balancer
+  url: https://www.haproxy.org/
+  licence: GPL-2.0 core; LGPL for exportable include files
+  licence_source: https://github.com/haproxy/haproxy/blob/master/LICENSE
+  choose_when: You mainly need TCP/HTTP load balancing with detailed health checks and traffic control.
+  avoid_when: You also need to serve static files or run a general web server in the same process.
+  note: Read from the GitHub repository, which appears to be a mirror of git.haproxy.org.
+- name: Caddy
+  category: Web server
+  url: https://caddyserver.com/
+  licence: Apache-2.0
+  licence_source: https://github.com/caddyserver/caddy/blob/master/LICENSE
+  choose_when: You want simple configuration and automatic HTTPS certificates for small and medium sites.
+  avoid_when: The team already has deep Nginx expertise, existing configs, or relies on specific Nginx modules.
+- name: Envoy
+  category: Service proxy
+  url: https://www.envoyproxy.io/
+  licence: Apache-2.0
+  licence_source: https://github.com/envoyproxy/envoy/blob/main/LICENSE
+  choose_when: You need dynamic configuration through APIs, rich metrics, gRPC support, or a service-mesh data plane.
+  avoid_when: A simple static site or single reverse proxy, where Envoy's configuration complexity is not worth
+    it.
+- name: Traefik
+  category: Reverse proxy
+  url: https://traefik.io/traefik/
+  licence: MIT
+  licence_source: https://github.com/traefik/traefik/blob/master/LICENSE.md
+  choose_when: Routes should be discovered automatically from Docker or Kubernetes labels and resources.
+  avoid_when: Static, hand-written configuration on a single server, or high-throughput static file serving is the
+    main job.
+- name: Apache HTTP Server
+  category: Web server
+  url: https://httpd.apache.org/
+  licence: Apache-2.0
+  licence_source: https://github.com/apache/httpd/blob/trunk/LICENSE
+  choose_when: You need per-directory .htaccess overrides, or modules and hosting setups built around Apache.
+  avoid_when: You want a lean reverse proxy or load balancer in front of application servers.

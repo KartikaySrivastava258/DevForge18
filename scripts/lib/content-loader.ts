@@ -7,9 +7,12 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import type { ZodError } from "zod/v4";
 import {
+  AlternativesFileSchema,
+  CaseStudySchema,
   LessonMetaSchema,
   PathSchema,
   TrackSchema,
+  type CaseStudy,
   type CompiledLesson,
   type ContentBundle,
   type LearningPath,
@@ -80,7 +83,25 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
     }
     if (parsed.data.slug !== dirName) errors.push(`${rel}: slug "${parsed.data.slug}" must match directory "${dirName}"`);
     if (parsed.data.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
-    tracks.push(parsed.data);
+    const track: Track = parsed.data;
+    const altFile = join(tracksDir, dirName, "alternatives.yaml");
+    if (existsSync(altFile)) {
+      const altRel = relative(root, altFile);
+      const altRaw = readYaml(altFile, errors, root);
+      const alt = altRaw === undefined ? undefined : AlternativesFileSchema.safeParse(altRaw);
+      if (alt && !alt.success) errors.push(...formatZod(altRel, alt.error));
+      else if (alt) {
+        if (alt.data.checked_on > today) errors.push(`${altRel}: checked_on is in the future`);
+        const names = new Set<string>();
+        for (const a of alt.data.alternatives) {
+          if (names.has(a.name)) errors.push(`${altRel}: "${a.name}" is listed twice`);
+          names.add(a.name);
+        }
+        track.alternatives = alt.data.alternatives;
+        track.alternatives_checked_on = alt.data.checked_on;
+      }
+    }
+    tracks.push(track);
   }
   tracks.sort((a, b) => a.number - b.number);
 
@@ -203,8 +224,33 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson`);
   for (const key of media.diagrams.keys()) if (!usedMedia.has(`diagram:${key}`)) warnings.push(`media/${key}.steps.yaml is not used by any lesson`);
 
+  // ---- Case studies -------------------------------------------------------
+  const caseStudies: CaseStudy[] = [];
+  const csDir = join(root, "case-studies");
+  for (const fileName of listFiles(csDir, ".yaml")) {
+    const file = join(csDir, fileName);
+    const rel = relative(root, file);
+    const raw = readYaml(file, errors, root);
+    if (raw === undefined) continue;
+    const parsed = CaseStudySchema.safeParse(raw);
+    if (!parsed.success) {
+      errors.push(...formatZod(rel, parsed.error));
+      continue;
+    }
+    const cs = parsed.data;
+    if (`${cs.id}.yaml` !== fileName) errors.push(`${rel}: id must match file name`);
+    if (cs.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+    for (const t of cs.tracks) if (!trackSlugs.has(t)) errors.push(`${rel}: unknown track "${t}"`);
+    for (const claim of cs.claims) {
+      if (claim.checked_on > today) errors.push(`${rel}: a claim's checked_on is in the future`);
+      if (claim.published !== "not stated" && claim.published > claim.checked_on) errors.push(`${rel}: a claim was published after it was checked`);
+    }
+    caseStudies.push(cs);
+  }
+  caseStudies.sort((a, b) => a.id.localeCompare(b.id));
+
   return {
-    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations },
+    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies },
     errors,
     warnings,
   };

@@ -1,0 +1,47 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: VictoriaMetrics
+  category: time-series database
+  url: https://victoriametrics.com/
+  licence: Apache-2.0
+  licence_source: https://github.com/VictoriaMetrics/VictoriaMetrics/blob/master/LICENSE
+  choose_when: You need a Prometheus-compatible store with long retention and want a single, simpler component to
+    operate.
+  avoid_when: You are happy with plain Prometheus retention, or your team wants to stay on the CNCF reference implementation
+    and its ecosystem defaults.
+- name: Thanos / Cortex / Grafana Mimir
+  category: long-term storage
+  url: https://thanos.io/
+  licence: 'Thanos, Cortex: Apache-2.0. Mimir: AGPL-3.0-only'
+  licence_source: https://github.com/thanos-io/thanos/blob/main/LICENSE
+  choose_when: You need a global query view across many Prometheus servers, high availability, or retention backed
+    by object storage.
+  avoid_when: You run one or a few Prometheus servers with short retention; these add many moving parts. Check whether
+    AGPL suits your organisation before choosing Mimir.
+  note: Check whether AGPL suits your organisation before choosing Mimir.
+- name: InfluxDB
+  category: time-series database
+  url: https://www.influxdata.com/
+  licence: MIT or Apache-2.0, at the user's choice (open-source repository)
+  licence_source: https://github.com/influxdata/influxdb
+  choose_when: You store general time-series or event data (IoT, sensors, analytics) that is pushed in, not scraped.
+  avoid_when: Your main need is Kubernetes/service monitoring with PromQL, alerting rules and the Prometheus exporter
+    ecosystem.
+  note: Licence terms differ between InfluxDB versions and commercial editions; check the version you use.
+- name: Datadog
+  category: hosted observability
+  url: https://www.datadoghq.com/
+  licence: 'Agent: Apache-2.0. Service: not checked'
+  licence_source: https://github.com/DataDog/datadog-agent/blob/main/LICENSE
+  choose_when: You want a managed, all-in-one product (metrics, logs, traces, dashboards) and prefer paying a vendor
+    to running monitoring infrastructure.
+  avoid_when: Cost predictability, data residency, or avoiding vendor lock-in matter more than convenience.
+- name: New Relic
+  category: hosted observability
+  url: https://newrelic.com/
+  licence: 'Agents: Apache-2.0 (e.g. Java). Service: not checked'
+  licence_source: https://github.com/newrelic/newrelic-java-agent/blob/main/LICENSE
+  choose_when: You want hosted application performance monitoring with little setup, and your team is not resourced
+    to run its own stack.
+  avoid_when: You need full control of your telemetry data and storage, or want to stay on open-source tooling only.

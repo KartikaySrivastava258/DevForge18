@@ -1,0 +1,39 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: HashiCorp Nomad
+  category: Workload orchestrator
+  url: https://developer.hashicorp.com/nomad
+  licence: Business Source License (1.7.0 and later)
+  licence_source: https://github.com/hashicorp/nomad/blob/main/LICENSE
+  choose_when: When you want a simpler single-binary scheduler that can also run non-container workloads (such as
+    plain binaries or VMs).
+  avoid_when: When you need the Kubernetes ecosystem (operators, Helm charts, managed offerings), or the source-available
+    licence does not suit your use.
+- name: Docker Swarm mode
+  category: Container orchestrator
+  url: https://docs.docker.com/engine/swarm/
+  licence: Apache-2.0 (SwarmKit and Moby)
+  licence_source: https://github.com/moby/swarmkit/blob/master/LICENSE
+  choose_when: When you have a small cluster, already know Docker and Compose files, and want minimal extra setup.
+  avoid_when: When you need Kubernetes' wider ecosystem, finer-grained scheduling or managed cloud offerings.
+- name: Amazon ECS
+  category: Managed containers (AWS)
+  url: https://aws.amazon.com/ecs/
+  licence: Not checked (managed AWS service)
+  choose_when: When you run only on AWS and want container orchestration without operating a Kubernetes control
+    plane.
+  avoid_when: When you need portability across clouds or Kubernetes-native tooling.
+- name: Google Cloud Run
+  category: Serverless containers
+  url: https://cloud.google.com/run
+  licence: Not checked (managed Google Cloud service)
+  choose_when: When you run stateless HTTP services or jobs and want scaling handled for you, including scaling
+    to zero.
+  avoid_when: When workloads need long-lived state, special networking or fine control over nodes.
+- name: Azure Container Apps
+  category: Serverless containers
+  url: https://azure.microsoft.com/en-us/products/container-apps
+  licence: Not checked (managed Azure service)
+  choose_when: When you are on Azure and want to run containerised apps and microservices without managing a cluster.
+  avoid_when: When you need full Kubernetes API access or portability to other providers.

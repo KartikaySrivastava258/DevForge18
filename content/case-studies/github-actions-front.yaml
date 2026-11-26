@@ -1,0 +1,42 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: github-actions-front
+organisation: Front
+tracks:
+- github-actions
+summary: Front brought its build, test and deploy pipeline into GitHub and uses GitHub Actions to stage and deploy
+  to Kubernetes. Its infrastructure code (Kubernetes, Terraform) also lives on GitHub.
+claims:
+- text: Front moved its CI/CD onto GitHub.
+  quote: using GitHub Team has also meant consolidating Front’s CI/CD pipeline on a single platform.
+  source_url: https://github.com/customer-stories/front
+  source_title: Front · GitHub (customer story)
+  publisher: GitHub
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: No date is shown on the page; its metadata gives 2022-08-03.
+- text: Front uses GitHub Actions to deploy to Kubernetes, including test environments.
+  quote: Developers combine Kubernetes with GitHub Actions to automate every step—staging in Kubernetes, then deploying
+    new testing environments and eventual updates.
+  source_url: https://github.com/customer-stories/front
+  source_title: Front · GitHub (customer story)
+  publisher: GitHub
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: No date is shown on the page; its metadata gives 2022-08-03.
+- text: Engineers find deploys simple to trigger.
+  quote: GitHub Actions makes it as easy as clicking a link on a page.
+  source_url: https://github.com/customer-stories/front
+  source_title: Front · GitHub (customer story)
+  publisher: GitHub
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: No date is shown on the page; its metadata gives 2022-08-03.
+lessons_learned:
+- Keeping code, review and CI/CD on one platform cuts down on switching between tools.
+- CI workflows can create test environments on demand as well as run tests.
+caveat: Vendor (GitHub) marketing page; it contains vendor-reported speed figures, which are not used here.
+owner: content-team
+last_reviewed: '2026-11-26'

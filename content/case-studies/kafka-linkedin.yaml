@@ -1,0 +1,41 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: kafka-linkedin
+organisation: LinkedIn
+tracks:
+- kafka
+summary: At LinkedIn, where Kafka was created, it carries queuing, metrics, logging and tracking data in separate
+  clusters, with mirroring between data centres and an audit system that checks completeness.
+claims:
+- text: Kafka carries almost every kind of data between LinkedIn's systems.
+  quote: We use Kafka for moving every type of data around between systems, and it touches virtually every server,
+    every day.
+  source_url: https://engineering.linkedin.com/kafka/running-kafka-scale
+  source_title: Running Kafka At Scale
+  publisher: LinkedIn Engineering (author Todd Palino)
+  published: '2015-03-20'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: LinkedIn separates different types of messages into different clusters.
+  quote: 'LinkedIn goes one step further, and defines four categories of messages: queuing, metrics, logs and tracking
+    data that each live in their own cluster.'
+  source_url: https://engineering.linkedin.com/kafka/running-kafka-scale
+  source_title: Running Kafka At Scale
+  publisher: LinkedIn Engineering
+  published: '2015-03-20'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: LinkedIn built an audit tool to check no messages are lost between tiers.
+  quote: Kafka Audit is an internal tool at LinkedIn that helps to make sure all messages produced are copied to
+    every tier without loss.
+  source_url: https://engineering.linkedin.com/kafka/running-kafka-scale
+  source_title: Running Kafka At Scale
+  publisher: LinkedIn Engineering
+  published: '2015-03-20'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Splitting traffic by message type into separate clusters isolates very different workloads.
+- Multi-tier pipelines need end-to-end auditing because each extra component is a place where messages can be lost.
+caveat: Historical (2015).
+owner: content-team
+last_reviewed: '2026-11-26'

@@ -1,0 +1,40 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: mlflow-cash-app
+organisation: Cash App (Block, Inc.)
+tracks:
+- mlflow
+summary: Cash App's ML team added a model-review step before deployment. The review is based on MLflow Tracking
+  runs that are logged automatically from shared training code.
+claims:
+- text: Cash App's shared training code logs every experiment to MLflow automatically.
+  quote: We embed MLflow Tracking commands throughout this shared training code, so that experiment record keeping
+    happens automatically (this is key) and in a standardized way.
+  source_url: https://ai.cash.app/model-review
+  source_title: Model Review
+  publisher: Cash App (ai.cash.app; footer credits Block, Inc)
+  published: '2022-08-29'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Team members share links to MLflow runs to review how a model was trained.
+  quote: We can send each other URL links to MLflow Runs, and see all the details about how the model was trained
+    and what its offline performance was.
+  source_url: https://ai.cash.app/model-review
+  source_title: Model Review
+  publisher: Cash App (ai.cash.app; footer credits Block, Inc)
+  published: '2022-08-29'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: The team found notebooks were not a reliable record of how a model was produced.
+  quote: Jupyter Notebooks are not a foolproof way to record anything programmatic, since there is no guarantee
+    that the cells were actually run in order
+  source_url: https://ai.cash.app/model-review
+  source_title: Model Review
+  publisher: Cash App (ai.cash.app; footer credits Block, Inc)
+  published: '2022-08-29'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Make experiment logging automatic in shared code; manual record-keeping is inconsistent.
+- A linkable experiment record supports a review process for models, much like code review.
+owner: content-team
+last_reviewed: '2026-11-26'

@@ -1,0 +1,41 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: postman-whatsapp
+organisation: WhatsApp (WhatsApp Business Platform, Meta)
+tracks:
+- postman
+summary: The WhatsApp Business Platform team publishes its Cloud API through a public Postman workspace. The goal
+  is to make onboarding easier for developers.
+claims:
+- text: When designing its Cloud API, the WhatsApp team focused on the developer experience.
+  quote: When planning the Cloud API, the WhatsApp product development team focused on creating a quality developer
+    experience.
+  source_url: https://www.postman.com/customer-stories/whatsapp/
+  source_title: WhatsApp API Case Study | Postman API Platform
+  publisher: Postman
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: Postman's narrative text.
+- text: The Cloud API uses a public Postman workspace to add to its documentation.
+  quote: To fuel collaboration, the Cloud API uses a public Postman workspace that augments documentation.
+  source_url: https://www.postman.com/customer-stories/whatsapp/
+  source_title: WhatsApp API Case Study | Postman API Platform
+  publisher: Postman
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: Postman's narrative text.
+- text: WhatsApp's product lead says Postman makes it easier to publish APIs.
+  quote: With Postman, we are able to more easily make APIs available to the world.
+  source_url: https://www.postman.com/customer-stories/whatsapp/
+  source_title: WhatsApp API Case Study | Postman API Platform
+  publisher: Postman
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Marco Wirasinghe, Head of Product and Developer Experience, WhatsApp Business Platform.
+lessons_learned:
+- Runnable examples next to the docs (collections and workspaces) help developers more than prose alone.
+- Treat developer experience as a design requirement from the start, not an afterthought.
+owner: content-team
+last_reviewed: '2026-11-26'

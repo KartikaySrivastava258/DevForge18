@@ -1,0 +1,40 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: docker-shopify
+organisation: Shopify
+tracks:
+- docker
+summary: Shopify containerised its production storefront with Docker, using thin containers built from one shared
+  base image. Services such as log indexing and statistics run once per host instead of in every container.
+claims:
+- text: Shopify moved its production environment to Docker containers.
+  quote: describing our evolution of Shopify toward a Docker-powered, containerized data center
+  source_url: https://shopify.engineering/docker-at-shopify-how-we-built-containers-that-power-over-100-000-online-shops
+  source_title: 'Docker at Shopify: How We Built Containers that Power Over 100,000 Online Shops'
+  publisher: Shopify Engineering
+  published: '2014-11-18'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Shopify chose small single-purpose ('thin') containers over VM-like ones.
+  quote: We chose to follow the 'thin' container path and eliminate all extraneous machinery from inside the containers.
+  source_url: https://shopify.engineering/docker-at-shopify-how-we-built-containers-that-power-over-100-000-online-shops
+  source_title: 'Docker at Shopify: How We Built Containers that Power Over 100,000 Online Shops'
+  publisher: Shopify Engineering
+  published: '2014-11-18'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Shared services such as logging and metrics run once per host, not inside every container.
+  quote: ask yourself if you really need 100 copies of a given service running, or if it's better to invest the
+    effort to share a single host-provided copy.
+  source_url: https://shopify.engineering/docker-at-shopify-how-we-built-containers-that-power-over-100-000-online-shops
+  source_title: 'Docker at Shopify: How We Built Containers that Power Over 100,000 Online Shops'
+  publisher: Shopify Engineering
+  published: '2014-11-18'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- 'Keep containers thin: put only the application and what it needs inside, and share host-level services.'
+- Ask whether a service really needs a copy in every container (Shopify's '100 rule') before you add it to an image.
+caveat: 2014 post; specific tools it mentions (Ubuntu 14.04, Chef, Vagrant) are dated, but the design principles
+  still apply.
+owner: content-team
+last_reviewed: '2026-11-26'

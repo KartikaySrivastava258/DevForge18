@@ -1,0 +1,44 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: n8n-vodafone-uk
+organisation: Vodafone UK
+tracks:
+- n8n
+summary: Vodafone UK's security engineering team compared SOAR tools and chose n8n for workflow automation. It builds
+  workflows as reusable modules.
+claims:
+- text: Before choosing n8n, Vodafone tried proofs of concept with other security-automation (SOAR) tools.
+  quote: Vodafone considered various approaches to its security orchestration, automation, and response (SOAR),
+    including proof of concepts with traditional tools like IBM Resilient and Tines.
+  source_url: https://n8n.io/case-studies/vodafone/
+  source_title: Case study Vodafone
+  publisher: n8n
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: inferred
+  note: 'n8n''s narrative text. Page headline: ''How n8n revolutionized threat intelligence at Vodafone and saved
+    £2.2 million''.'
+- text: Vodafone chose n8n because it combines low-code workflows with the option to write code.
+  quote: It provides SOAR capability and a workflow capability in a low-code model, as well as the ability to code
+    for more complex workflows and integrations.
+  source_url: https://n8n.io/case-studies/vodafone/
+  source_title: Case study Vodafone
+  publisher: n8n
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Claire Van Hinsbergh, Engineering Manager, Vodafone.
+- text: Vodafone splits its workflows into reusable modules.
+  quote: We broke down our workflows and looked at what we could reuse in other teams or spaces, like an email module
+    – once you’ve got it, it can be used anywhere.
+  source_url: https://n8n.io/case-studies/vodafone/
+  source_title: Case study Vodafone
+  publisher: n8n
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Said by Claire Van Hinsbergh, Vodafone.
+lessons_learned:
+- Run proofs of concept against alternatives before committing to an automation platform.
+- Designing workflows as reusable modules lets other teams build on what already exists.
+owner: content-team
+last_reviewed: '2026-11-26'

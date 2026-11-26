@@ -1,0 +1,41 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: airflow-adobe
+organisation: Adobe (Adobe Experience Platform)
+tracks:
+- airflow
+summary: Adobe Experience Platform built an orchestration service on top of Airflow. It exposes the service through
+  its own API and extends it with custom operators.
+claims:
+- text: Adobe Experience Platform's orchestration service uses Airflow to schedule and run workflows.
+  quote: Adobe Experience Platform orchestration service leverages Apache Airflow execution engine for scheduling
+    and executing various workflows.
+  source_url: https://airflow.apache.org/use-cases/adobe/
+  source_title: Adobe | Apache Airflow
+  publisher: The Apache Software Foundation (Apache Airflow website)
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Written in Adobe's first-person voice; the testimonial is attributed to Raman Gupta.
+- text: Adobe hides Airflow behind its own API so other services don't call it directly.
+  quote: leverage an off-the-shelf, open-source orchestration engine that is abstracted to other services through
+    an API and extendable to any application through a pluggable framework.
+  source_url: https://airflow.apache.org/use-cases/adobe/
+  source_title: Adobe | Apache Airflow
+  publisher: The Apache Software Foundation (Apache Airflow website)
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Adobe writes custom operators through Airflow's plugin interface.
+  quote: Adobe Experience Platform is using Apache Airflow’s plugin interface to write custom operators to meet
+    our use cases.
+  source_url: https://airflow.apache.org/use-cases/adobe/
+  source_title: Adobe | Apache Airflow
+  publisher: The Apache Software Foundation (Apache Airflow website)
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Putting your own API in front of the orchestrator keeps the rest of the platform independent of the engine.
+- Plugins and custom operators let you adapt an off-the-shelf orchestrator instead of building one.
+owner: content-team
+last_reviewed: '2026-11-26'

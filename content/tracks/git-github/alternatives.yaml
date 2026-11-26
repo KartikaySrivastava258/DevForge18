@@ -1,0 +1,44 @@
+# Licences as stated by each project where it was read; "not stated" means it was not checked.
+checked_on: '2026-11-26'
+alternatives:
+- name: Mercurial
+  category: Distributed VCS
+  url: https://www.mercurial-scm.org/
+  licence: GPL-2.0 or later
+  licence_source: https://wiki.mercurial-scm.org/License
+  choose_when: When a project or organisation already uses Mercurial, or wants its simpler, consistent command set
+    and extension model.
+  avoid_when: When you need the wide ecosystem of hosting services, CI integrations and learning material built
+    around Git.
+- name: GitLab
+  category: Git hosting / DevOps platform
+  url: https://about.gitlab.com/
+  licence: 'Open core: MIT Expat outside ee/; ee/ has its own licence'
+  licence_source: https://gitlab.com/gitlab-org/gitlab/-/raw/master/LICENSE
+  choose_when: When you want Git hosting, CI/CD and issue tracking in one product, including the option to self-host.
+  avoid_when: When your team and integrations are already centred on another platform, or the features you need
+    are only in paid tiers.
+- name: Bitbucket
+  category: Git hosting (SaaS)
+  url: https://bitbucket.org/product/
+  licence: Not checked (hosted commercial service)
+  choose_when: When your organisation already relies on Atlassian tools such as Jira and wants close integration
+    with them.
+  avoid_when: When you need a self-hosted open-source forge, or most of your community and tooling is on another
+    platform.
+- name: Gitea
+  category: Self-hosted Git forge
+  url: https://about.gitea.com/
+  licence: MIT
+  licence_source: https://github.com/go-gitea/gitea/blob/main/LICENSE
+  choose_when: When you want a lightweight, self-hosted Git service for a small team, a lab or a classroom server.
+  avoid_when: When you need a large managed platform with built-in enterprise features and no server to run yourself.
+- name: Forgejo
+  category: Self-hosted Git forge
+  url: https://forgejo.org/
+  licence: GPL-3.0
+  licence_source: https://codeberg.org/forgejo/forgejo/raw/branch/forgejo/LICENSE
+  choose_when: When you want a community-governed, copyleft, self-hosted forge (it is hosted under Codeberg e.V.,
+    a non-profit).
+  avoid_when: When copyleft licensing does not fit your plans to modify and redistribute the software, or you prefer
+    a managed service.

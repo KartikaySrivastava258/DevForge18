@@ -67,7 +67,7 @@ describe("discovery (anonymous visitor)", () => {
     const { page, problems } = await h.newPage();
     await page.goto("/tracks/docker");
     await page.getByRole("heading", { level: 1 }).waitFor();
-    for (const name of ["Understand it", "How it connects", "Curriculum", "Lessons", "Labs", "Projects", "Official resources", "About this track"]) {
+    for (const name of ["Understand it", "How it connects", "Curriculum", "Lessons", "Labs", "Projects", "Who uses this and why", "Alternatives and how to choose", "Official resources", "About this track"]) {
       assert.ok(await page.getByRole("heading", { level: 2, name }).isVisible(), name);
     }
     // The count comes from the API, so the test survives new lessons.
@@ -80,6 +80,27 @@ describe("discovery (anonymous visitor)", () => {
     assert.equal(await page.getByText("Link not yet verified").count(), 0);
     assert.ok(await page.getByRole("link", { name: "Images vs Containers" }).isVisible());
     await page.screenshot({ path: join(SHOTS, "track-docker.png"), fullPage: true });
+    noProblems(problems);
+  });
+
+  it("track page shows sourced case studies and alternatives with licences", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/kafka");
+    await page.getByRole("heading", { level: 2, name: "Who uses this and why" }).waitFor();
+    const studies = page.locator(".case-study");
+    assert.ok((await studies.count()) >= 2);
+    const linkedin = page.getByRole("article", { name: "LinkedIn" });
+    assert.match(await linkedin.locator("blockquote").first().innerText(), /^“We use Kafka for moving every type of data around/);
+    assert.equal(await linkedin.getByRole("link", { name: "Running Kafka At Scale" }).first().getAttribute("href"), "https://engineering.linkedin.com/kafka/running-kafka-scale");
+    assert.ok(await linkedin.getByText("Confirmed").first().isVisible());
+    assert.ok(await page.getByRole("heading", { level: 2, name: "Alternatives and how to choose" }).isVisible());
+    const pulsar = page.locator(".alternative", { has: page.getByRole("link", { name: "Apache Pulsar" }) });
+    assert.ok(await pulsar.getByText("Choose it when").isVisible());
+    assert.equal(await pulsar.getByRole("link", { name: "Apache-2.0" }).getAttribute("href"), "https://github.com/apache/pulsar/blob/master/LICENSE");
+    // The table of contents links to both new sections.
+    await page.getByRole("link", { name: "Alternatives", exact: true }).first().click();
+    await page.waitForURL("**#alternatives");
+    await page.screenshot({ path: join(SHOTS, "track-kafka-case-studies.png"), fullPage: true });
     noProblems(problems);
   });
 

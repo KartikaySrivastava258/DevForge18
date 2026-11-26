@@ -1,0 +1,40 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: airflow-sift
+organisation: Sift
+tracks:
+- airflow
+summary: Sift moved its machine-learning training and ETL jobs from cron to Airflow DAGs. This gave it explicit
+  dependencies, including dependencies between DAGs, and a single UI to track and retry failures.
+claims:
+- text: Sift replaced rigid cron jobs with Airflow DAGs that have explicit dependencies.
+  quote: we used Airflow to replace rigid crons with well-defined DAG dependencies, to build isolated ML experiments
+    using short-lived DAGs, and to track our pipelines’ successes and failures.
+  source_url: https://airflow.apache.org/use-cases/sift/
+  source_title: Sift | Apache Airflow
+  publisher: The Apache Software Foundation (Apache Airflow website)
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Written in Sift's first-person voice; attributed to Handong Park.
+- text: Sift links separate DAGs to each other with ExternalTaskSensor.
+  quote: We even define dependencies between separate DAGs by using Airflow’s ExternalTaskSensor.
+  source_url: https://airflow.apache.org/use-cases/sift/
+  source_title: Sift | Apache Airflow
+  publisher: The Apache Software Foundation (Apache Airflow website)
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Sift retries failed tasks, branches or whole DAGs from the Airflow UI.
+  quote: that same UI also allows us to easily retry single tasks, branches of a DAG, or entire DAGs.
+  source_url: https://airflow.apache.org/use-cases/sift/
+  source_title: Sift | Apache Airflow
+  publisher: The Apache Software Foundation (Apache Airflow website)
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Cron schedules jobs but does not express dependencies between them; a DAG makes them explicit.
+- Keeping each DAG small and linking DAGs keeps each pipeline focused, but adds dependencies between DAGs that you
+  have to manage.
+owner: content-team
+last_reviewed: '2026-11-26'

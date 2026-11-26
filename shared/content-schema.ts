@@ -94,6 +94,28 @@ const PlannedWorkSchema = z
   })
   .strict();
 
+// ---- Alternatives (content/tracks/<slug>/alternatives.yaml) — REMAINING_WORK.md §5 ------------------
+export const AlternativeSchema = z
+  .object({
+    name: z.string().min(2).max(80),
+    category: z.string().min(2).max(40),
+    /** Official homepage; omitted for options that are not a product ("custom code"). */
+    url: httpsUrl.optional(),
+    /** As stated by the project; "not stated" when no licence was read (e.g. hosted services). */
+    licence: z.string().min(2).max(240),
+    /** Where the licence was read (official site or repository). */
+    licence_source: httpsUrl.optional(),
+    /** Status a learner must know (deprecations, recent licence changes, uncertainty). */
+    note: z.string().min(10).max(400).optional(),
+    choose_when: z.string().min(15),
+    avoid_when: z.string().min(15),
+  })
+  .strict();
+export type Alternative = z.infer<typeof AlternativeSchema>;
+export const AlternativesFileSchema = z
+  .object({ checked_on: isoDate, alternatives: z.array(AlternativeSchema).min(2).max(6) })
+  .strict();
+
 export const TrackSchema = z
   .object({
     slug,
@@ -126,7 +148,8 @@ export const TrackSchema = z
     content_version: z.number().int().positive(),
   })
   .strict();
-export type Track = z.infer<typeof TrackSchema>;
+/** A track as served: track.yaml plus its alternatives.yaml (when present). */
+export type Track = z.infer<typeof TrackSchema> & { alternatives?: Alternative[]; alternatives_checked_on?: string };
 
 export const PathSchema = z
   .object({
@@ -267,6 +290,46 @@ export const SimulationSchema = z
   .strict();
 export type Simulation = z.infer<typeof SimulationSchema>;
 
+// ---- Case studies (content/case-studies/<id>.yaml) — REMAINING_WORK.md §3 ----------------------------
+/**
+ * Every claim about a real organisation carries its primary source: the
+ * verbatim quote that supports it, where it was published, and when it was
+ * checked. "confirmed" means the organisation or its own staff say it;
+ * "inferred" means it is the narrative of someone else (often the vendor's
+ * customer-story page) or follows from the source without being said.
+ */
+export const ClaimSchema = z
+  .object({
+    text: z.string().min(15),
+    quote: z.string().min(10, "quote the source's own words").max(400),
+    source_url: httpsUrl,
+    source_title: z.string().min(3),
+    publisher: z.string().min(2),
+    published: z.union([isoDate, z.literal("not stated")]),
+    checked_on: isoDate,
+    kind: z.enum(["confirmed", "inferred"]),
+    /** Who said it, or how the date was found. */
+    note: z.string().min(5).max(400).optional(),
+  })
+  .strict();
+export type Claim = z.infer<typeof ClaimSchema>;
+
+export const CaseStudySchema = z
+  .object({
+    id: slug,
+    organisation: z.string().min(2),
+    tracks: z.array(slug).min(1),
+    summary: z.string().min(30),
+    claims: z.array(ClaimSchema).min(1),
+    lessons_learned: z.array(z.string().min(15)).min(1),
+    /** What a reader should keep in mind (vendor page, historical post…). */
+    caveat: z.string().min(10).optional(),
+    owner: z.string().min(2),
+    last_reviewed: isoDate,
+  })
+  .strict();
+export type CaseStudy = z.infer<typeof CaseStudySchema>;
+
 /** A lesson after compilation: Markdown rendered to safe HTML plus a table of contents. */
 export interface CompiledLesson extends LessonMeta {
   html: string;
@@ -283,4 +346,5 @@ export interface ContentBundle {
   lessons: CompiledLesson[];
   /** Scenario params are normalised by the model's schema; solutions stay server-side. */
   simulations: Simulation[];
+  case_studies: CaseStudy[];
 }

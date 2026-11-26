@@ -1,0 +1,41 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: jenkins-kp-labs
+organisation: KP Labs
+tracks:
+- jenkins
+summary: KP Labs builds onboard-computer software for a CubeSat with a multibranch Jenkinsfile pipeline. It uses
+  agent labels to send CPU-heavy work and hardware tests to the right machines, and locks to queue access to limited
+  hardware.
+claims:
+- text: KP Labs runs hardware-in-the-loop tests for satellite software as part of continuous integration.
+  quote: it is necessary to include hardware-based testing in a continuous integration process to catch potential
+    hardware incompatibilities early.
+  source_url: https://stories.jenkins.io/user-story/to-space/
+  source_title: Jenkins is the way to space
+  publisher: Jenkins project, "Jenkins Is The Way" user stories (author Maciej Nowak, KP Labs)
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Agent labels decide which machines run which pipeline stages.
+  quote: Node management for each stage is based on labels.
+  source_url: https://stories.jenkins.io/user-story/to-space/
+  source_title: Jenkins is the way to space
+  publisher: Jenkins project
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Locks make jobs queue for scarce hardware.
+  quote: Access to hardware components is protected using lock resource capability in Jenkins, which forces jobs
+    to queue while waiting for the previous job to finish.
+  source_url: https://stories.jenkins.io/user-story/to-space/
+  source_title: Jenkins is the way to space
+  publisher: Jenkins project
+  published: not stated
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Labels plus resource locks are a practical way to share scarce agents or hardware among jobs (this matches the
+  DevForge queue/executor simulation).
+- A versioned Jenkinsfile lets developers test pipeline changes on a branch without disrupting others.
+owner: content-team
+last_reviewed: '2026-11-26'

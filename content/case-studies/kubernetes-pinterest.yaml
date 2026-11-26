@@ -1,0 +1,38 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: kubernetes-pinterest
+organisation: Pinterest
+tracks:
+- kubernetes
+summary: Pinterest moved services into Docker containers first, then evaluated orchestrators and chose Kubernetes.
+  It started with Jenkins build workloads, whose demand rises and falls during the day.
+claims:
+- text: Pinterest containerised its services first, then adopted orchestration.
+  quote: we standardized the packaging mechanism and then moved that to the container on top of the VM
+  source_url: https://www.cncf.io/case-studies/pinterest/
+  source_title: 'Pinterest: Pinning its past, present, and future on cloud native'
+  publisher: Cloud Native Computing Foundation (CNCF)
+  published: '2018-07-16'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Pinterest chose Kubernetes after a formal evaluation.
+  quote: In July 2017, after an eight-week evaluation period, the team chose Kubernetes over other orchestration
+    platforms.
+  source_url: https://www.cncf.io/case-studies/pinterest/
+  source_title: 'Pinterest: Pinning its past, present, and future on cloud native'
+  publisher: Cloud Native Computing Foundation (CNCF)
+  published: '2018-07-16'
+  checked_on: '2026-11-26'
+  kind: inferred
+- text: The first workload on Kubernetes was Jenkins builds, chosen for elastic capacity.
+  quote: especially the elasticity around how we can configure our Jenkins workloads on Kubernetes shared cluster
+  source_url: https://www.cncf.io/case-studies/pinterest/
+  source_title: 'Pinterest: Pinning its past, present, and future on cloud native'
+  publisher: Cloud Native Computing Foundation (CNCF)
+  published: '2018-07-16'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- 'Adopt in stages: standardise packaging in containers before adding orchestration.'
+- Start with a workload whose variable demand shows a clear benefit (here, CI builds).
+owner: content-team
+last_reviewed: '2026-11-26'

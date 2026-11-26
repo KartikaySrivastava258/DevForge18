@@ -1,0 +1,40 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: kafka-cloudflare
+organisation: Cloudflare
+tracks:
+- kafka
+summary: Cloudflare uses Kafka as a shared message bus between microservices, with an internal client library, a
+  connector framework and strict protobuf schemas.
+claims:
+- text: Cloudflare has run Kafka in production since 2014.
+  quote: Cloudflare has been using Kafka in production since 2014.
+  source_url: https://blog.cloudflare.com/using-apache-kafka-to-process-1-trillion-messages/
+  source_title: Using Apache Kafka to process 1 trillion inter-service messages
+  publisher: Cloudflare Blog (author Matt Boyle)
+  published: '2022-07-19'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Cloudflare uses Kafka to decouple microservices.
+  quote: Cloudflare uses Kafka to decouple microservices and communicate the creation, change or deletion of various
+    resources via a common data format in a fault-tolerant manner.
+  source_url: https://blog.cloudflare.com/using-apache-kafka-to-process-1-trillion-messages/
+  source_title: Using Apache Kafka to process 1 trillion inter-service messages
+  publisher: Cloudflare Blog
+  published: '2022-07-19'
+  checked_on: '2026-11-26'
+  kind: confirmed
+- text: Hiding Kafka's concepts behind an internal client caused problems such as partition skew.
+  quote: we also abstracted some core concepts of Kafka a little too much, meaning that small unassuming configuration
+    changes could have a big impact.
+  source_url: https://blog.cloudflare.com/using-apache-kafka-to-process-1-trillion-messages/
+  source_title: Using Apache Kafka to process 1 trillion inter-service messages
+  publisher: Cloudflare Blog
+  published: '2022-07-19'
+  checked_on: '2026-11-26'
+  kind: confirmed
+lessons_learned:
+- Wrapper libraries speed adoption, but teams still need to understand partitions; Cloudflare saw partition skew
+  from a small configuration change.
+- 'Strict, versioned schemas help: "For message format, we use protobuf and have been very happy with that decision."'
+owner: content-team
+last_reviewed: '2026-11-26'

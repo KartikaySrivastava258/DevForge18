@@ -1,0 +1,43 @@
+# Every quote was checked word for word against the source page on 2026-11-26.
+id: redis-github
+organisation: GitHub
+tracks:
+- redis
+summary: GitHub used Redis both as a cache and as a persistent store. It kept the cache role but moved persistent
+  data to MySQL to reduce operational complexity, using dual writes and feature flags.
+claims:
+- text: GitHub used Redis as a cache for results of expensive computations.
+  quote: We used it as an LRU cache to conveniently store the results of expensive computations over data originally
+    persisted in Git repositories or MySQL.
+  source_url: https://github.blog/engineering/infrastructure/moving-persistent-data-out-of-redis/
+  source_title: Moving persistent data out of Redis
+  publisher: GitHub Blog (author Bryana Knight)
+  published: '2017-01-10'
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Updated 2024-09-25.
+- text: GitHub stopped using Redis as the place where data is permanently stored.
+  quote: Recently we made the decision to disable persistence in Redis and stop using it as a source of truth for
+    our data.
+  source_url: https://github.blog/engineering/infrastructure/moving-persistent-data-out-of-redis/
+  source_title: Moving persistent data out of Redis
+  publisher: GitHub Blog
+  published: '2017-01-10'
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Updated 2024-09-25.
+- text: They used feature flags so they could roll back safely during the migration.
+  quote: We had feature flags in place that enabled writes to MySQL, while still writing to persistent Redis, so
+    that we wouldn't disrupt user experience if we had to roll back.
+  source_url: https://github.blog/engineering/infrastructure/moving-persistent-data-out-of-redis/
+  source_title: Moving persistent data out of Redis
+  publisher: GitHub Blog
+  published: '2017-01-10'
+  checked_on: '2026-11-26'
+  kind: confirmed
+  note: Updated 2024-09-25.
+lessons_learned:
+- Redis is an excellent cache, but using it as the source of truth adds operational cost; decide its role explicitly.
+- Dual writes behind feature flags let you migrate data stores and roll back safely.
+owner: content-team
+last_reviewed: '2026-11-26'
