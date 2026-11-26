@@ -1,0 +1,4 @@
+alt: 'Two panels. Persistence on one server: RDB takes snapshots every so often into dump.rdb and may lose the last minutes; AOF logs every write and, with fsync every second, may lose about one second; with neither, data lives only in memory and a restart starts empty. Replication across two servers: a primary handles reads and writes and sends its changes to a read-only replica, asynchronously by default; WAIT asks for acknowledgements.'
+caption: 'Persistence protects against a restart; replication protects against losing the server. Neither protects against a bad command — that needs backups.'
+credit: DevForge 18 content team
+licence: project-content

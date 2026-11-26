@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260">
+  <!-- Persistence keeps data across restarts; replication keeps a copy on another server. From Persistence and replication. -->
+  <rect class="f-box-faint" x="10" y="14" width="330" height="232" rx="8"/>
+  <text class="f-small f-strong" x="175" y="38" text-anchor="middle">persistence (one server)</text>
+  <rect class="f-box" x="30" y="56" width="290" height="50" rx="8"/>
+  <text class="f-small" x="175" y="78" text-anchor="middle">RDB: snapshot every so often</text>
+  <text class="f-small f-muted" x="175" y="96" text-anchor="middle">dump.rdb — may lose the last minutes</text>
+  <rect class="f-box-ok" x="30" y="116" width="290" height="50" rx="8"/>
+  <text class="f-small" x="175" y="138" text-anchor="middle">AOF: log every write</text>
+  <text class="f-small f-muted" x="175" y="156" text-anchor="middle">fsync every second — may lose ~1 second</text>
+  <rect class="f-box-warn" x="30" y="176" width="290" height="50" rx="8"/>
+  <text class="f-small" x="175" y="198" text-anchor="middle">neither: data lives only in memory</text>
+  <text class="f-small f-muted" x="175" y="216" text-anchor="middle">a restart starts empty</text>
+  <rect class="f-box-faint" x="360" y="14" width="350" height="232" rx="8"/>
+  <text class="f-small f-strong" x="535" y="38" text-anchor="middle">replication (two servers)</text>
+  <rect class="f-box-ok" x="380" y="80" width="140" height="80" rx="8"/>
+  <text class="f-small f-strong" x="450" y="112" text-anchor="middle">primary</text>
+  <text class="f-small" x="450" y="134" text-anchor="middle">reads + writes</text>
+  <rect class="f-box" x="550" y="80" width="140" height="80" rx="8"/>
+  <text class="f-small f-strong" x="620" y="112" text-anchor="middle">replica</text>
+  <text class="f-small" x="620" y="134" text-anchor="middle">read-only</text>
+  <g>
+    <path class="f-arrow-accent" d="M522 120 L540 120"/>
+    <polygon class="f-head-accent" points="548,120 540,124.5 540,115.5"/>
+  </g>
+  <text class="f-small f-muted" x="535" y="186" text-anchor="middle">asynchronous by default;</text>
+  <text class="f-small f-muted" x="535" y="204" text-anchor="middle">WAIT asks for acknowledgements</text>
+</svg>
