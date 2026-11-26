@@ -1,0 +1,4 @@
+alt: 'Two panels. API key: the client sends X-API-Key with a long-lived key, and the API checks it; simple, valid until someone revokes it, often all-or-nothing. OAuth 2.0 client credentials with a bearer token: 1, the client posts its client ID, secret and a scope to the token endpoint; 2, it receives a signed, scoped access token that expires; 3, it sends Authorization: Bearer with the token. A valid token with the right scope gets 200; an invalid or expired token gets 401; the wrong scope gets 403.'
+caption: 'An API key says who is calling; a short-lived, scoped token also says what the caller may do, and for how long.'
+credit: DevForge 18 content team
+licence: project-content

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 280">
+  <!-- An API key versus a token from the OAuth client credentials flow, from Authentication flows. -->
+  <rect class="f-box-faint" x="10" y="14" width="250" height="250" rx="8"/>
+  <text class="f-small f-strong" x="135" y="40" text-anchor="middle">API key</text>
+  <rect class="f-box" x="30" y="60" width="210" height="40" rx="8"/>
+  <text class="f-small f-mono" x="135" y="85" text-anchor="middle">X-API-Key: &lt;key&gt;</text>
+  <g>
+    <path class="f-arrow" d="M135 102 L135 122"/>
+    <polygon class="f-head" points="135,130 130.5,122 139.5,122"/>
+  </g>
+  <rect class="f-box-ok" x="30" y="132" width="210" height="40" rx="8"/>
+  <text class="f-small" x="135" y="157" text-anchor="middle">API checks the key</text>
+  <text class="f-small f-muted" x="135" y="200" text-anchor="middle">simple; valid until someone</text>
+  <text class="f-small f-muted" x="135" y="218" text-anchor="middle">revokes it; often all-or-nothing</text>
+  <rect class="f-box-faint" x="270" y="14" width="420" height="250" rx="8"/>
+  <text class="f-small f-strong" x="480" y="40" text-anchor="middle">OAuth 2.0 client credentials + bearer token</text>
+  <rect class="f-box" x="290" y="60" width="180" height="52" rx="8"/>
+  <text class="f-small f-mono" x="380" y="82" text-anchor="middle">1. POST /oauth/token</text>
+  <text class="f-small" x="380" y="101" text-anchor="middle">client id + secret, scope</text>
+  <rect class="f-box-accent" x="490" y="60" width="180" height="52" rx="8"/>
+  <text class="f-small f-strong" x="580" y="82" text-anchor="middle">2. access token</text>
+  <text class="f-small" x="580" y="101" text-anchor="middle">signed, scoped, expires</text>
+  <g>
+    <path class="f-arrow" d="M472 86 L480 86"/>
+    <polygon class="f-head" points="488,86 480,90.5 480,81.5"/>
+  </g>
+  <rect class="f-box" x="290" y="140" width="380" height="44" rx="8"/>
+  <text class="f-small f-mono" x="480" y="167" text-anchor="middle">3. Authorization: Bearer &lt;token&gt;</text>
+  <g>
+    <path class="f-arrow" d="M580 114 L580 130"/>
+    <polygon class="f-head" points="580,138 575.5,130 584.5,130"/>
+  </g>
+  <rect class="f-box-ok" x="290" y="200" width="180" height="46" rx="8"/>
+  <text class="f-small" x="380" y="227" text-anchor="middle">valid + scope → 200</text>
+  <rect class="f-box-warn" x="490" y="200" width="180" height="46" rx="8"/>
+  <text class="f-small" x="580" y="220" text-anchor="middle">invalid/expired → 401</text>
+  <text class="f-small" x="580" y="238" text-anchor="middle">wrong scope → 403</text>
+  <g>
+    <path class="f-arrow" d="M400 186 L386.9 193.9"/>
+    <polygon class="f-head" points="380,198 384.6,190.0 389.2,197.7"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M560 186 L573.1 193.9"/>
+    <polygon class="f-head" points="580,198 570.8,197.7 575.4,190.0"/>
+  </g>
+</svg>
