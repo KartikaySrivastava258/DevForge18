@@ -216,7 +216,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.6 GitHub Actions
 
-- **Lessons:** ✅ First workflow · ✅ Pull requests, required checks and safe workflows · ✅ Caching and artifacts · Building and pushing container images · Reusable workflows and composite actions · Environments, approvals and deployments · OIDC for cloud access without long-lived secrets (advanced) · Supply-chain hardening: pinning SHAs, Dependabot, provenance (advanced).
+- **Lessons:** ✅ First workflow · ✅ Pull requests, required checks and safe workflows · ✅ Caching and artifacts · ✅ Building and pushing container images · ✅ Reusable workflows and composite actions · ✅ Environments, approvals and deployments · ✅ OIDC for cloud access without long-lived secrets (advanced) · ✅ Supply-chain hardening: pinning SHAs, Dependabot, provenance (advanced).
 - ✅ **Simulation — workflow run visualiser:** model jobs with `needs`, matrices and steps; run the DAG with simulated durations and failures; show parallelism and how a failing step stops a job. **Challenge:** reduce total run time by parallelising independent jobs.
 - **Labs:** add caching and measure the difference (read-through with real logs from this repository's CI); write a matrix workflow (validated by the checker).
 - **Real world:** GitHub Actions became generally available in 2019. Sources: GitHub's changelog and blog; DevForge's own `ci.yml` is a documented case study.
@@ -384,7 +384,7 @@ Each milestone ends with CI green and `IMPLEMENTATION_STATUS.md` updated.
 5. **Remaining tracks, beginner level.** Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira: lessons, setup guide, one simulation each. *Done when:* all 18 tracks have at least three beginner lessons and one simulation. Status (2026-11-26): done — every track has at least three beginner lessons and a simulation.
 6. ✅ Done (2026-11-26). **Real-world context.** Case-study and alternatives content types; at least two sourced case studies and an alternatives table per track. Status: 36 case studies and 89 alternatives, every quote checked against its source page; see IMPLEMENTATION_STATUS.md.
 7. ✅ Done (2026-11-26). **Labs.** Lab pages, verification scripts, lab progress; at least two labs per track, executed in CI where the tool allows. Status: 36 labs (18 local with check scripts, 17 simulation, 1 read-through); 19 executed in CI; see IMPLEMENTATION_STATUS.md.
-8. **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first. Status (2026-11-26): in progress — Path 1 done (Git and PostgreSQL 8 lessons each; Postman, Redis, Nginx and Docker 7 each) Terraform (7) and Kubernetes (8); 35 new executed lessons; the other 10 tracks next.
+8. **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first. Status (2026-11-26): in progress — Path 1 done (Git and PostgreSQL 8 lessons each; Postman, Redis, Nginx and Docker 7 each) Terraform (7), Kubernetes (8) and GitHub Actions (8); 40 new executed lessons; the other 9 tracks next.
 9. **Quizzes and projects.** New question types, per-track quizzes, mini-project pages with rubrics and starter templates.
 10. **Capstones A–G and integration lessons.** Including the architecture studio and the full relationship graph.
 11. **Institutional features and hardening.** Section 6.3 and 6.4.

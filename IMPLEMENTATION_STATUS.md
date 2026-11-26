@@ -4,7 +4,7 @@ Last updated: 2026-11-26 (UTC) · Milestone: **8 — intermediate and advanced l
 
 ## Session handoff
 
-- **Where I stopped:** Kubernetes track complete (8 lessons); next track is GitHub Actions (lessons 4–8), then Jenkins, Prometheus + Grafana, OpenTelemetry, and the Path 3+ tracks.
+- **Where I stopped:** GitHub Actions track complete (8 lessons); next: Jenkins (lessons 4+), then Prometheus + Grafana, OpenTelemetry, and the Path 3+ tracks.
 - **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC.
 - **Open issue:** `n8n-workflows-nodes-and-items` failed once in CI (run 45886569745): the n8n container stopped after a workflow import. Not reproduced locally in 3 runs under full CPU load. The runner now prints each container's state, OOM flag and last log lines when a lesson stops early, so the next occurrence shows the cause.
 - **How to work fast:** `npm run new:lesson -- <track> <id>` scaffolds; `npm run ci:record -- <id>` records in CI (no local tool downloads); `npm run lessons:stress -- <id>` reproduces timing failures; figures are `scripts/figures/<track>/<name>.py` (helper `scripts/figures/figlib.py`); research per track in `docs/research/<track>.md`.
@@ -379,6 +379,7 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-26 | Decisions: licences, duplicate folder | 10 | 0 | |
 | 2026-11-26 | Speed-ups 1–5 | 60 | 10 | waiting = local stress runs of the n8n lesson |
 | 2026-11-26 | Kubernetes lessons 7–8 (research, prototypes, recording, 2 test runs each) | 55 | 25 | waiting = kind runs; first CI recording round-trip took 5 min |
+| 2026-11-26 | GitHub Actions lessons 4–8 (one research pass, checker extended for composite actions and reusable calls) | 95 | 10 | local recording (no heavy images); one root-cause hunt (git ls-remote relative path) |
 
 ## Current work
 

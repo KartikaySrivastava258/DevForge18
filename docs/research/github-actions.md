@@ -31,3 +31,10 @@ Checked 2026-11-26 (UTC). Reuse these in lessons; add to them instead of researc
 - Dependabot for actions (…/code-security/dependabot/…/keeping-your-actions-up-to-date-with-dependabot): `.github/dependabot.yml`, `package-ecosystem: "github-actions"`, `directory: "/"`, `schedule.interval`.
 - Artifact attestations (…/use-artifact-attestations): permissions `id-token: write`, `contents: read`, `attestations: write`; verify with `gh attestation verify PATH -R ORG/REPO` (and `oci://` image references).
 - Secrets (…/use-secrets): secrets cannot be referenced directly in `if:` conditionals.
+
+## Observed while building lessons
+
+- Pinned SHAs (checked with `git ls-remote` on 2026-11-26; all three are lightweight tags): actions/checkout v7.0.1 → 3d3c42e5aac5ba805825da76410c181273ba90b1; actions/setup-node v7.1.0 → 949feb2413d6458794dcd2491c4babbbce0c15c1; actions/attest v4.2.2 → 1e69f48acb82d1966a394da916b4c1698aa569d6.
+- `registry:3` (released 2026-11-05) pinned as `registry@sha256:82f6ff4a7f982960c8aa51617fea3aabc485df6e55cce80d22deb1de36f1bc3c`; the registry's tags/list JSON ends with a newline.
+- Inside a subfolder of another repository, `git ls-remote ./relative/repo` failed ("does not appear to be a git repository") while `git -C` worked; use an absolute path (`"$PWD/…"`).
+- aws-actions/configure-aws-credentials: input `audience` defaults to `sts.amazonaws.com` (action.yml at v6.3.0).
