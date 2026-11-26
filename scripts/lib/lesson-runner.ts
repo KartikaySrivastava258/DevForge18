@@ -14,7 +14,7 @@
  * Add "fails" to the fence (```bash run fails) for a command that is meant to error.
  */
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Marked, type Token, type Tokens } from "marked";
@@ -165,9 +165,13 @@ export function usesNginx(blocks: RunBlock[]): boolean {
   return blocks.some((b) => /\bnginx -p\b/.test(b.code));
 }
 
-/** Lessons that touch Redis: redis blocks, or bash blocks calling redis-cli. */
+/**
+ * Lessons that touch the host's Redis: redis blocks, or bash blocks calling redis-cli as a command.
+ * redis-cli run inside a container (docker run/exec …) or quoted in a file (a Compose health check)
+ * talks to a containerised Redis, so it does not count.
+ */
 export function usesRedis(blocks: RunBlock[]): boolean {
-  return blocks.some((b) => b.kind === "redis" || /\bredis-cli\b/.test(b.code));
+  return blocks.some((b) => b.kind === "redis" || b.code.split("\n").some((line) => /(^|[\s;&|(])redis-cli(\s|$)/.test(line) && !/\bdocker\s+(run|exec|compose)\b/.test(line)));
 }
 
 export function usesPostgres(blocks: RunBlock[]): boolean {
@@ -196,6 +200,13 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   const work = join(root, "work");
   mkdirSync(home);
   mkdirSync(work);
+  // Docker CLI plugins (such as Compose) may be installed per user in ~/.docker/cli-plugins. Link only
+  // that folder into the isolated HOME — never ~/.docker/config.json, which can hold registry credentials.
+  const userPlugins = process.env.HOME ? join(process.env.HOME, ".docker", "cli-plugins") : "";
+  if (usesDocker(blocks) && userPlugins && existsSync(userPlugins)) {
+    mkdirSync(join(home, ".docker"));
+    symlinkSync(userPlugins, join(home, ".docker", "cli-plugins"));
+  }
   const needsDb = usesPostgres(blocks);
   // Cleanup runs even when a block fails, so nothing outlives the lesson run.
   const cleanup: string[] = [];
@@ -210,6 +221,13 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   // Remove containers a lesson starts with docker run --name, so the next run can reuse the name.
   for (const name of new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bdocker run\b[^\n]*?--name[ =]([a-zA-Z0-9][\w.-]*)/g)].map((m) => m[1] ?? "")))) {
     if (name) cleanup.push(`docker rm -f ${name} >/dev/null 2>&1 || true`);
+  }
+  // Take down Compose projects (docker compose -p name …) with their volumes, then user-defined networks.
+  for (const name of new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bdocker compose -p ([a-z0-9][a-z0-9_-]*)/g)].map((m) => m[1] ?? "")))) {
+    if (name) cleanup.push(`docker compose -p ${name} down -v --remove-orphans >/dev/null 2>&1 || true`);
+  }
+  for (const name of new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bdocker network create ([a-zA-Z0-9][\w.-]*)/g)].map((m) => m[1] ?? "")))) {
+    if (name) cleanup.push(`docker network rm ${name} >/dev/null 2>&1 || true`);
   }
   // Stop servers a lesson started in the background (prometheus … &), even if a later block fails.
   // The job list is read in this shell, not in a $(…) subshell (CI once saw a background job survive

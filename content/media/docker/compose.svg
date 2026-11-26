@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260">
+  <!-- A two-service Compose project, from Networks and Docker Compose. -->
+  <rect class="f-box" x="10" y="95" width="120" height="64" rx="8"/>
+  <text class="f-small f-strong" x="70" y="120" text-anchor="middle">curl</text>
+  <text class="f-small f-mono" x="70" y="140" text-anchor="middle">127.0.0.1:8096</text>
+  <rect class="f-box-faint" x="170" y="20" width="400" height="200" rx="8"/>
+  <text class="f-small f-strong f-mono" x="370" y="42" text-anchor="middle">network devforge-lab_default</text>
+  <rect class="f-box-accent" x="190" y="80" width="160" height="90" rx="8"/>
+  <text class="f-small f-strong" x="270" y="104" text-anchor="middle">api</text>
+  <text class="f-small f-mono" x="270" y="126" text-anchor="middle">node:22-alpine</text>
+  <text class="f-small f-mono" x="270" y="148" text-anchor="middle">REDIS_HOST=cache</text>
+  <rect class="f-box-ok" x="400" y="80" width="150" height="90" rx="8"/>
+  <text class="f-small f-strong" x="475" y="104" text-anchor="middle">cache</text>
+  <text class="f-small f-mono" x="475" y="126" text-anchor="middle">redis:7.4-alpine</text>
+  <text class="f-small" x="475" y="148" text-anchor="middle">ping health check</text>
+  <text class="f-small f-muted" x="375" y="200" text-anchor="middle">api starts only after cache is healthy</text>
+  <rect class="f-box-warn" x="600" y="95" width="110" height="64" rx="8"/>
+  <text class="f-small f-strong" x="655" y="120" text-anchor="middle">volume</text>
+  <text class="f-small f-mono" x="655" y="140" text-anchor="middle">cache-data</text>
+  <g>
+    <path class="f-arrow" d="M132 127 L180 127"/>
+    <polygon class="f-head" points="188,127 180,131.5 180,122.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M352 115 L390 115"/>
+    <polygon class="f-head" points="398,115 390,119.5 390,110.5"/>
+  </g>
+  <text class="f-small f-muted" x="375" y="72" text-anchor="middle">by name</text>
+  <g>
+    <path class="f-arrow" d="M552 127 L590 127"/>
+    <polygon class="f-head" points="598,127 590,131.5 590,122.5"/>
+  </g>
+</svg>

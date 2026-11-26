@@ -146,6 +146,20 @@ describe("docker containers", () => {
       rmSync(bin, { recursive: true, force: true });
     }
   });
+
+  it("Compose projects and user-defined networks are taken down by the cleanup trap, containers first", () => {
+    const bin = mkdtempSync(join(tmpdir(), "devforge-dockerstub-"));
+    const log = join(bin, "calls.log");
+    writeFileSync(join(bin, "docker"), `#!/bin/bash\necho "docker $*" >> "${log}"\n`);
+    chmodSync(join(bin, "docker"), 0o755);
+    try {
+      const run = runLesson(extractRunBlocks("```bash run\ndocker network create lab-net\ndocker run -d --name c1 --network lab-net image:1\ndocker compose -p lab up -d\n```\n```bash run\nfalse\n```"), { path: `${bin}:${process.env.PATH}` });
+      assert.ok(run.failure !== undefined);
+      assert.deepEqual(readFileSync(log, "utf8").trim().split("\n").slice(3), ["docker rm -f c1", "docker compose -p lab down -v --remove-orphans", "docker network rm lab-net"]);
+    } finally {
+      rmSync(bin, { recursive: true, force: true });
+    }
+  });
 });
 
 describe("kind clusters", () => {
@@ -170,6 +184,8 @@ describe("Redis blocks", () => {
     assert.ok(usesRedis(blocks));
     assert.throws(() => runLesson(blocks), /Refusing to run a Redis lesson/);
     assert.ok(usesRedis(extractRunBlocks("```bash run\nredis-cli GET x\n```")), "bash blocks that call redis-cli count too");
+    assert.ok(usesRedis(extractRunBlocks("```bash run\nv=$(redis-cli GET x)\n```")), "including inside $(…)");
+    assert.ok(!usesRedis(extractRunBlocks("```bash run\ndocker run --rm redis:7.4-alpine redis-cli -h cache ping\ndocker exec c redis-cli ping\ncat > compose.yaml <<'EOF'\n      test: [\"CMD\", \"redis-cli\", \"ping\"]\nEOF\n```")), "redis-cli inside a container is not the host's Redis");
   });
   it("flush first, then pipe commands to redis-cli --no-raw", () => {
     const bin = mkdtempSync(join(tmpdir(), "devforge-redisstub-"));

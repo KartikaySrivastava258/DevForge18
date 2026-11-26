@@ -1,0 +1,4 @@
+alt: 'A Compose project. curl on the host reaches the api service, published on 127.0.0.1 port 8096. The api and cache services share the project network devforge-lab_default; api reaches Redis by the service name cache, set in REDIS_HOST. The cache service runs redis:7.4-alpine with the health check redis-cli ping, and api starts only after cache is healthy. Redis stores its data in the named volume cache-data, outside the containers.'
+caption: 'Compose gives services one network where names resolve, orders startup by health, and keeps data in named volumes.'
+credit: DevForge 18 content team
+licence: project-content
