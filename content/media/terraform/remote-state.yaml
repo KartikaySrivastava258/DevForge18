@@ -1,0 +1,4 @@
+alt: 'An engineer and a CI job both run terraform apply against one pg backend. The engineer''s run holds the lock; the CI job''s run waits, with -lock-timeout, or fails because the state is locked. The backend keeps state in the schema terraform_remote_state, in a table states with one row per workspace, and takes an advisory lock for each run. Two workspaces, default and staging, each manage their own file: out/default.txt and out/staging.txt.'
+caption: 'One shared copy of the state, one writer at a time, and a separate state per workspace.'
+credit: DevForge 18 content team
+licence: project-content
