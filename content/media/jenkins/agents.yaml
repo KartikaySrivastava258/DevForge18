@@ -1,0 +1,4 @@
+alt: 'The controller''s built-in node has 0 executors, so it only schedules. Its queue holds the needs-windows build, waiting because there are no nodes with the label windows. agent-1, a container with the label linux and 1 executor, runs on-agent build 1. It connects in to the controller over WebSocket on port 8080 with its secret. Labels route stages to agents; disposable container or Kubernetes agents keep builds clean.'
+caption: 'The controller schedules; labelled agents build; the queue says why work waits.'
+credit: DevForge 18 content team
+licence: project-content

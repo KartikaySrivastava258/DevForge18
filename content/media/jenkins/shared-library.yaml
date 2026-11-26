@@ -1,0 +1,4 @@
+alt: 'The Git repository devforge-lib contains vars/greet.groovy, vars/standardBuild.groovy and classes under src/org/devforge, with tags v1.0 and v1.1; JCasC sets the default version to v1.0. The course-site pipeline uses @Library(''devforge-lib'') and gets v1.0 with toolchain 1.0. The course-site-next pipeline uses @Library(''devforge-lib@v1.1'') and gets toolchain 1.1. Each build log records the tag and commit it resolved.'
+caption: 'Shared steps in one versioned repository; each pipeline chooses when to move.'
+credit: DevForge 18 content team
+licence: project-content

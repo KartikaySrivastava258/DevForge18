@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270">
+  <!-- One library, many pipelines, from Shared libraries. -->
+  <rect class="f-box-accent" x="10" y="40" width="230" height="160" rx="8"/>
+  <text class="f-small f-strong" x="125" y="64" text-anchor="middle">devforge-lib (Git)</text>
+  <text class="f-small f-mono" x="125" y="88" text-anchor="middle">vars/greet.groovy</text>
+  <text class="f-small f-mono" x="125" y="108" text-anchor="middle">vars/standardBuild.groovy</text>
+  <text class="f-small f-mono" x="125" y="128" text-anchor="middle">src/org/devforge/…</text>
+  <text class="f-small f-mono" x="125" y="156" text-anchor="middle">tags: v1.0, v1.1</text>
+  <text class="f-small" x="125" y="180" text-anchor="middle">default: v1.0 (JCasC)</text>
+  <rect class="f-box-ok" x="330" y="30" width="380" height="80" rx="8"/>
+  <text class="f-small f-strong f-mono" x="520" y="54" text-anchor="middle">course-site</text>
+  <text class="f-small f-mono" x="520" y="76" text-anchor="middle">@Library('devforge-lib') _</text>
+  <text class="f-small" x="520" y="96" text-anchor="middle">→ v1.0, toolchain 1.0</text>
+  <rect class="f-box-warn" x="330" y="140" width="380" height="80" rx="8"/>
+  <text class="f-small f-strong f-mono" x="520" y="164" text-anchor="middle">course-site-next</text>
+  <text class="f-small f-mono" x="520" y="186" text-anchor="middle">@Library('devforge-lib@v1.1') _</text>
+  <text class="f-small" x="520" y="206" text-anchor="middle">→ v1.1, toolchain 1.1</text>
+  <g>
+    <path class="f-arrow" d="M242 100 L320.4 74.5"/>
+    <polygon class="f-head" points="328,72 321.8,78.8 319.0,70.2"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M242 150 L320.4 177.4"/>
+    <polygon class="f-head" points="328,180 319.0,181.6 321.9,173.1"/>
+  </g>
+  <text class="f-small f-muted" x="360" y="255" text-anchor="middle">each build log records the tag and commit it resolved</text>
+</svg>
