@@ -17,9 +17,11 @@ on:
 permissions:
   contents: read
 
+# Pull requests cancel superseded runs; pushes to main queue instead. Lesson selection compares with the last
+# fully successful run on main, so a cancelled or skipped run never leaves a change unverified.
 concurrency:
   group: ci-${{ github.ref }}-${{ github.event_name }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   verify:
@@ -73,6 +75,9 @@ jobs:
           retention-days: 7
 
   lessons:
+    permissions:
+      contents: read
+      actions: read   # to find the last successful run on main
     # Every command in every selected lesson and local lab runs against the real tool, and its output is
     # compared with the lesson. Lessons replay their own prerequisites, so the shards are independent.
     name: Executed lessons (shard ${{ matrix.shard }} of 3)
@@ -125,15 +130,23 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci --no-audit --no-fund
-      - name: Which files changed (pushes and pull requests); everything otherwise
+      - name: Which files changed since main last passed (pushes), or against the base (pull requests)
         env:
           EVENT: ${{ github.event_name }}
-          BEFORE: ${{ github.event.before }}
           AFTER: ${{ github.sha }}
           BASE: ${{ github.event.pull_request.base.sha }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if [ "$EVENT" = push ] && [ -n "$BEFORE" ] && git cat-file -e "${BEFORE}^{commit}" 2> /dev/null; then
-            git diff --name-only "$BEFORE" "$AFTER" > changed.txt
+          # The newest commit on main whose CI run succeeded in full; changes since then are tested.
+          LAST_GREEN=""
+          if [ "$EVENT" = push ]; then
+            LAST_GREEN=$(gh run list --workflow ci.yml --branch main --event push --status success --limit 20 \
+              --json headSha -q '.[].headSha' | while read -r sha; do
+                git merge-base --is-ancestor "$sha" "$AFTER" 2> /dev/null && { echo "$sha"; break; }; done || true)
+          fi
+          if [ "$EVENT" = push ] && [ -n "$LAST_GREEN" ]; then
+            echo "comparing with the last fully successful run on main: $LAST_GREEN"
+            git diff --name-only "$LAST_GREEN" "$AFTER" > changed.txt
           elif [ "$EVENT" = pull_request ] && [ -n "$BASE" ]; then
             git diff --name-only "$BASE" "$AFTER" > changed.txt
           else

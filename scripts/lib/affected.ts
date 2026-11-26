@@ -17,6 +17,7 @@ const IRRELEVANT = [
   /^web\//,
   /^e2e\//,
   /^content\/media\//,
+  /^scripts\/figures\//,
   /^[^/]+\.md$/,
   /^LICENSE/,
   /^\.github\/workflows\/(link-check|record-lessons)\.yml$/,

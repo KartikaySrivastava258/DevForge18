@@ -115,8 +115,9 @@ Giving every Service its own public load balancer is expensive and hard to manag
 ### 1. Start cloud-provider-kind
 
 ```bash run
-docker run -d --name devforge-cpk --network kind -v /var/run/docker.sock:/var/run/docker.sock \
-  registry.k8s.io/cloud-provider-kind/cloud-controller-manager:v0.12.0@sha256:1b97632e5dfec8f83c7e970cf18cedb9e6b707e272011d712cabf6ab59d323c9 > /dev/null
+CPK=registry.k8s.io/cloud-provider-kind/cloud-controller-manager:v0.12.0@sha256:1b97632e5dfec8f83c7e970cf18cedb9e6b707e272011d712cabf6ab59d323c9
+docker pull -q "$CPK" > /dev/null   # pull first, so docker run prints no download progress
+docker run -d --name devforge-cpk --network kind -v /var/run/docker.sock:/var/run/docker.sock "$CPK" > /dev/null
 for i in $(seq 1 60); do kubectl get gatewayclass cloud-provider-kind > /dev/null 2>&1 && break; sleep 2; done
 kubectl get gatewayclass -o custom-columns=NAME:.metadata.name,CONTROLLER:.spec.controllerName
 kubectl get ingressclass -o custom-columns=NAME:.metadata.name,CONTROLLER:.spec.controller

@@ -116,8 +116,9 @@ Images built by hand on laptops are hard to trace (which commit is this?) and ea
 
 ```bash run
 mkdir -p images-lab && cd images-lab
-docker run -d --name devforge-registry -p 127.0.0.1:5055:5000 \
-  registry:3@sha256:82f6ff4a7f982960c8aa51617fea3aabc485df6e55cce80d22deb1de36f1bc3c > /dev/null
+REGISTRY_IMAGE=registry:3@sha256:82f6ff4a7f982960c8aa51617fea3aabc485df6e55cce80d22deb1de36f1bc3c
+docker pull -q "$REGISTRY_IMAGE" > /dev/null   # pull first, so docker run prints no download progress
+docker run -d --name devforge-registry -p 127.0.0.1:5055:5000 "$REGISTRY_IMAGE" > /dev/null
 for i in $(seq 1 30); do curl -sf http://127.0.0.1:5055/v2/ > /dev/null && break; sleep 0.5; done
 curl -s -o /dev/null -w 'registry: HTTP %{http_code}\n' http://127.0.0.1:5055/v2/
 git init -q

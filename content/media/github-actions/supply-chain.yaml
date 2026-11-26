@@ -1,0 +1,4 @@
+alt: 'Top left, uses: org/action@v2 relies on a tag that can be moved to other code. Bottom left, uses: org/action@ followed by a commit SHA, with the comment # v2.1.0, names exactly one commit. Dependabot opens pull requests that bump the SHA and the comment together. actions/attest signs provenance stating which workflow, repository and commit built a release, which gh attestation verify checks. Workflow dependency lockfiles, made with gh actions-lock, also pin the actions your actions use.'
+caption: 'Pin what you run, update it through review, and prove what you release.'
+credit: DevForge 18 content team
+licence: project-content
