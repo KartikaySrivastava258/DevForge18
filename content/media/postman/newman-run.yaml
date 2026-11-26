@@ -1,0 +1,4 @@
+alt: 'A collection with two requests that use the variables baseUrl and trackSlug, and pm.test checks, plus an environment named local that sets baseUrl to the API address and trackSlug to kafka, both go into newman run, which can also take --env-var overrides. Newman sends real requests to the DevForge API, prints each check with a tick, and exits with code 0 — or a non-zero code if any check fails.'
+caption: 'Newman fills a collection''s {{variables}} from an environment, runs every request and test, and reports with its exit code.'
+credit: DevForge 18 content team
+licence: project-content

@@ -265,7 +265,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("every page has exactly one h1 and every form control has a label", async () => {
     const { page } = await h.newPage();
-    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff"]) {
+    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff", "/tracks/github-actions/simulations/github-actions-workflow-run", "/tracks/redis/simulations/redis-cache-load", "/tracks/nginx/simulations/nginx-location-matcher", "/tracks/postman/simulations/postman-request-builder", "/tracks/jenkins/simulations/jenkins-build-queue"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       await page.waitForLoadState("networkidle");
@@ -282,7 +282,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff", "/tracks/github-actions/simulations/github-actions-workflow-run", "/tracks/redis/simulations/redis-cache-load", "/tracks/nginx/simulations/nginx-location-matcher", "/tracks/postman/simulations/postman-request-builder", "/tracks/jenkins/simulations/jenkins-build-queue", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -726,6 +726,91 @@ describe("simulations", () => {
     assert.match(await planBox.innerText(), /size changed outside Terraform: medium → large/);
     await sim.getByRole("button", { name: "terraform apply" }).click();
     assert.match(await planBox.innerText(), /No changes/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("GitHub Actions: removing needs that are not real cuts the run to 12 minutes", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/github-actions/simulations/github-actions-workflow-run");
+    const sim = page.locator(".sim");
+    await sim.locator(".ghrun-sim").waitFor();
+    const summary = sim.locator(".k8s-sim__summary");
+    await sim.getByRole("button", { name: "Run the workflow" }).click();
+    assert.match(await summary.innerText(), /22 min/);
+    const row = (job: string) => sim.locator(".ghrun-sim__needs tbody tr", { has: page.locator(`th:text-is("${job}")`).or(page.locator("th", { hasText: new RegExp(`^${job}`) })) });
+    for (const [job, on] of [["build", "lint"], ["e2e", "unit"], ["e2e", "build"], ["docs", "e2e"], ["deploy", "docs"], ["deploy", "unit"], ["deploy", "e2e"]]) await row(job!).getByLabel(on!, { exact: true }).click();
+    await sim.getByRole("button", { name: "Run the workflow" }).click();
+    assert.match(await summary.innerText(), /12 min/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("Redis: the hot key's expiry stampedes the database until single flight is on", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/redis/simulations/redis-cache-load");
+    const sim = page.locator(".sim");
+    await sim.locator(".cache-sim").waitFor();
+    const summary = sim.locator(".k8s-sim__summary");
+    await sim.getByRole("button", { name: "Run the rest of the minute" }).click();
+    assert.match(await summary.innerText(), /272 \/ s/);
+    await sim.getByRole("button", { name: "Reset" }).click();
+    await sim.getByLabel("Single flight").check();
+    await sim.getByRole("button", { name: "Run the rest of the minute" }).click();
+    assert.match(await summary.innerText(), /9 \/ s/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("Nginx: a regex beats a plain prefix; ^~ serves the docs statically", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/nginx/simulations/nginx-location-matcher");
+    const sim = page.locator(".sim");
+    await sim.locator(".ngx-sim").waitFor();
+    await sim.getByRole("button", { name: "Send request" }).click();
+    assert.match(await sim.locator(".ngx-sim__log").innerText(), /\/api\/docs\/index\.html → location ~ \\\.html\$ \(app\)/);
+    await sim.getByLabel("Add a location").selectOption("api-docs-stop");
+    await sim.getByRole("button", { name: "Add", exact: true }).click();
+    await sim.getByRole("button", { name: "Send request" }).click();
+    assert.match(await sim.locator(".ngx-sim__log").innerText(), /location \^~ \/api\/docs\/ \(static\)/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("Postman: sign in with the CSRF header, bookmark with the cookie, read it back", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/postman/simulations/postman-request-builder");
+    const sim = page.locator(".sim");
+    await sim.locator(".req-sim").waitFor();
+    const send = async (endpoint: string, body: string, csrf: boolean, cookie: boolean) => {
+      await sim.getByLabel("Request", { exact: true }).selectOption({ label: endpoint });
+      await sim.getByLabel("Body").selectOption(body);
+      await sim.getByLabel("X-DevForge-CSRF header").setChecked(csrf);
+      await sim.getByLabel("Send the session cookie").setChecked(cookie);
+      await sim.getByRole("button", { name: "Send", exact: true }).click();
+      return sim.locator(".req-sim__response").innerText();
+    };
+    assert.match(await send("POST /api/auth/login", "valid login", false, false), /→ 403/);
+    assert.match(await send("POST /api/auth/login", "valid login", true, false), /→ 200/);
+    assert.match(await send("PUT /api/me/bookmarks/track/kafka", "none", true, true), /→ 200/);
+    assert.match(await send("GET /api/me/bookmarks", "none", false, true), /kafka/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("Jenkins: builds wait for an agent with their label; two docker executors keep the queue short", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/jenkins/simulations/jenkins-build-queue");
+    const sim = page.locator(".sim");
+    await sim.locator(".queue-sim").waitFor();
+    const summary = sim.locator(".k8s-sim__summary");
+    await sim.getByRole("button", { name: "Run the half hour" }).click();
+    assert.match(await summary.innerText(), /Longest wait\s+30 min/);
+    await sim.getByRole("button", { name: "Reset" }).click();
+    await sim.getByLabel("Executors").selectOption("2");
+    await sim.getByRole("button", { name: "Add agent" }).click();
+    await sim.getByRole("button", { name: "Run the half hour" }).click();
+    assert.match(await summary.innerText(), /Longest wait\s+0 min/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });

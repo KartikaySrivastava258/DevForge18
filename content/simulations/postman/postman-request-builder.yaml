@@ -1,0 +1,43 @@
+id: postman-request-builder
+track: postman
+title: Request builder
+concept: Every HTTP answer tells you something. A 200 means it worked; 401 means "who are you?" (no valid session); 403 means "not allowed like that" (here, the missing CSRF header); 404 means the URL names nothing; 400 means the request itself is malformed. Building requests and reading the answers is the core of working with an API.
+learning_objectives:
+  - Build requests with the right method, header, cookie and body, and predict the status code.
+  - Explain the difference between 400, 401, 403 and 404.
+  - Chain requests — sign in, act, read back — using the session cookie.
+simplifications:
+  - It is a model of a small part of DevForge's own API — the same status codes and error codes — not live requests; the lessons send the real ones.
+  - Bodies are chosen from four examples instead of typed, and there is one test account.
+  - Only the listed endpoints exist; everything else about the real API (rate limits, validation details) is left out.
+text_alternative: Whether you hold a session cookie and your bookmarks; the request you build (endpoint, body, CSRF header, cookie); and for each response its status, body and an explanation. Every request is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: signed-out
+    title: Not signed in yet
+    description: You have the test account but no session.
+    params: { signedIn: false }
+challenges:
+  - id: bookmark-saved
+    title: Bookmark the Kafka track
+    goal: Bookmark the Kafka track, then read your bookmarks back and see it there.
+    scenario: signed-out
+    check: bookmark-saved
+    hint: Personal endpoints need a session — sign in first (writes need the CSRF header), then send the cookie with every personal request.
+    solution:
+      - { type: send, request: { endpoint: 3, csrf: true, cookie: false, body: valid login } }
+      - { type: send, request: { endpoint: 5, csrf: true, cookie: true, body: none } }
+      - { type: send, request: { endpoint: 4, csrf: false, cookie: true, body: none } }
+  - id: four-codes
+    title: Collect four codes
+    goal: Get a 401, a 403 and a 404 — and then make a write succeed.
+    scenario: signed-out
+    check: four-codes
+    hint: Ask for something personal without a session; leave the CSRF header off a write; ask for a track that does not exist. Then sign in properly.
+    solution:
+      - { type: send, request: { endpoint: 4, csrf: false, cookie: false, body: none } }
+      - { type: send, request: { endpoint: 3, csrf: false, cookie: false, body: valid login } }
+      - { type: send, request: { endpoint: 2, csrf: false, cookie: false, body: none } }
+      - { type: send, request: { endpoint: 3, csrf: true, cookie: false, body: valid login } }
+owner: content-team
+last_reviewed: 2026-11-26
+content_version: 1

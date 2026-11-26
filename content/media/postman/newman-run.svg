@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 230">
+  <!-- Newman running a collection with an environment, from Collections, environments and Newman. -->
+  <rect class="f-box" x="16" y="20" width="190" height="110" rx="8"/>
+  <text class="f-small f-strong" x="111" y="42" text-anchor="middle">collection</text>
+  <text class="f-small" x="111" y="64" text-anchor="middle">GET {{baseUrl}}/api/health</text>
+  <text class="f-small" x="111" y="82" text-anchor="middle">GET {{baseUrl}}/api/tracks/</text>
+  <text class="f-small f-mono" x="111" y="98" text-anchor="middle">{{trackSlug}}</text>
+  <text class="f-small f-muted" x="111" y="118" text-anchor="middle">+ pm.test checks</text>
+  <rect class="f-box-accent" x="16" y="146" width="190" height="70" rx="8"/>
+  <text class="f-small f-strong" x="111" y="168" text-anchor="middle">environment: local</text>
+  <text class="f-small f-mono" x="111" y="188" text-anchor="middle">baseUrl = $API</text>
+  <text class="f-small f-mono" x="111" y="204" text-anchor="middle">trackSlug = kafka</text>
+  <rect class="f-box" x="250" y="70" width="130" height="90" rx="8"/>
+  <text class="f-strong f-mono" x="315" y="100" text-anchor="middle">newman run</text>
+  <text class="f-small f-mono" x="315" y="120" text-anchor="middle">-e local…</text>
+  <text class="f-small f-mono" x="315" y="140" text-anchor="middle">--env-var …</text>
+  <g>
+    <path class="f-arrow" d="M208 76 L241.1 95.9"/>
+    <polygon class="f-head" points="248,100 238.8,99.7 243.4,92.0"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M208 180 L242.3 145.7"/>
+    <polygon class="f-head" points="248,140 245.5,148.8 239.2,142.5"/>
+  </g>
+  <rect class="f-box-ok" x="424" y="40" width="200" height="70" rx="8"/>
+  <text class="f-small f-strong" x="524" y="62" text-anchor="middle">DevForge API</text>
+  <text class="f-small" x="524" y="82" text-anchor="middle">real requests,</text>
+  <text class="f-small" x="524" y="98" text-anchor="middle">real responses</text>
+  <g>
+    <path class="f-arrow" d="M382 100 L414.8 83.6"/>
+    <polygon class="f-head" points="422,80 416.8,87.6 412.8,79.6"/>
+  </g>
+  <rect class="f-box" x="424" y="130" width="200" height="86" rx="8"/>
+  <text class="f-small f-ok" x="524" y="152" text-anchor="middle">✓ status is 200</text>
+  <text class="f-small f-ok" x="524" y="170" text-anchor="middle">✓ is the requested track</text>
+  <text class="f-small f-mono" x="524" y="190" text-anchor="middle">exit code 0 — or not 0</text>
+  <text class="f-small f-muted" x="524" y="206" text-anchor="middle">if any check fails</text>
+  <g>
+    <path class="f-arrow" d="M382 130 L415.6 155.2"/>
+    <polygon class="f-head" points="422,160 412.9,158.8 418.3,151.6"/>
+  </g>
+</svg>

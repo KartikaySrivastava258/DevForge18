@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250">
+  <!-- A cache between runs and an artifact between jobs, from Caching and artifacts. -->
+  <rect class="f-box-faint" x="16" y="16" width="290" height="150" rx="8"/>
+  <text class="f-small f-strong" x="161" y="38" text-anchor="middle">run on Monday</text>
+  <rect class="f-box" x="32" y="54" width="120" height="96" rx="8"/>
+  <text class="f-small f-strong f-mono" x="92" y="76" text-anchor="middle">job build</text>
+  <text class="f-small" x="92" y="96" text-anchor="middle">restore cache</text>
+  <text class="f-small" x="92" y="114" text-anchor="middle">npm ci, build</text>
+  <text class="f-small" x="92" y="132" text-anchor="middle">upload dist/</text>
+  <rect class="f-box" x="178" y="54" width="112" height="96" rx="8"/>
+  <text class="f-small f-strong f-mono" x="234" y="76" text-anchor="middle">job test</text>
+  <text class="f-small f-muted" x="234" y="96" text-anchor="middle">needs: build</text>
+  <text class="f-small" x="234" y="114" text-anchor="middle">download dist/</text>
+  <text class="f-small" x="234" y="132" text-anchor="middle">check it</text>
+  <g>
+    <path class="f-arrow-accent" d="M154 132 L168 132"/>
+    <polygon class="f-head-accent" points="176,132 168,136.5 168,127.5"/>
+  </g>
+  <text class="f-small f-accent" x="165" y="164" text-anchor="middle">artifact: site</text>
+  <rect class="f-box-faint" x="334" y="16" width="290" height="150" rx="8"/>
+  <text class="f-small f-strong" x="479" y="38" text-anchor="middle">run on Tuesday</text>
+  <rect class="f-box" x="350" y="54" width="120" height="96" rx="8"/>
+  <text class="f-small f-strong f-mono" x="410" y="76" text-anchor="middle">job build</text>
+  <text class="f-small f-ok" x="410" y="96" text-anchor="middle">cache hit!</text>
+  <text class="f-small" x="410" y="114" text-anchor="middle">npm ci (fast)</text>
+  <text class="f-small" x="410" y="132" text-anchor="middle">upload dist/</text>
+  <rect class="f-box" x="496" y="54" width="112" height="96" rx="8"/>
+  <text class="f-small f-strong f-mono" x="552" y="76" text-anchor="middle">job test</text>
+  <text class="f-small f-muted" x="552" y="96" text-anchor="middle">needs: build</text>
+  <text class="f-small" x="552" y="114" text-anchor="middle">download dist/</text>
+  <rect class="f-box-accent" x="160" y="196" width="320" height="40" rx="8"/>
+  <text class="f-small" x="320" y="214" text-anchor="middle">cache npm-Linux-&lt;hash of package-lock.json&gt;</text>
+  <text class="f-small f-muted" x="320" y="230" text-anchor="middle">kept between runs; unused 7 days → removed</text>
+  <g>
+    <path class="f-arrow" d="M92 152 L92 216 L150 216"/>
+    <polygon class="f-head" points="158,216 150,220.5 150,211.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M482 216 L540 216 L540 160 L420.0 152.5"/>
+    <polygon class="f-head" points="412,152 420.3,148.0 419.7,157.0"/>
+  </g>
+</svg>

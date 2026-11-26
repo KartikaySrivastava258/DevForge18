@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 230">
+  <!-- Three eviction policies at the memory limit, from Memory limits and eviction policies. -->
+  <rect class="f-box-faint" x="16" y="14" width="184" height="200" rx="8"/>
+  <text class="f-small f-strong f-mono" x="108" y="36" text-anchor="middle">noeviction</text>
+  <rect class="f-box-faint" x="228" y="14" width="184" height="200" rx="8"/>
+  <text class="f-small f-strong f-mono" x="320" y="36" text-anchor="middle">allkeys-lru</text>
+  <rect class="f-box-faint" x="440" y="14" width="184" height="200" rx="8"/>
+  <text class="f-small f-strong f-mono" x="532" y="36" text-anchor="middle">volatile-lru</text>
+  <rect class="f-box" x="28" y="52" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="108" y="67" text-anchor="middle">page:1 (oldest use)</text>
+  <rect class="f-box" x="28" y="78" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="108" y="93" text-anchor="middle">page:2</text>
+  <rect class="f-box" x="28" y="104" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="108" y="119" text-anchor="middle">page:3</text>
+  <rect class="f-box" x="28" y="130" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="108" y="145" text-anchor="middle">page:4 (newest)</text>
+  <text class="f-small f-mono" x="108" y="172" text-anchor="middle">SET page:5 →</text>
+  <text class="f-small f-danger" x="108" y="190" text-anchor="middle">OOM error, refused</text>
+  <rect class="f-box-danger" x="240" y="52" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="320" y="67" text-anchor="middle">page:1 — evicted</text>
+  <rect class="f-box" x="240" y="78" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="320" y="93" text-anchor="middle">page:2</text>
+  <rect class="f-box" x="240" y="104" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="320" y="119" text-anchor="middle">page:3</text>
+  <rect class="f-box" x="240" y="130" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="320" y="145" text-anchor="middle">page:4</text>
+  <text class="f-small f-mono" x="320" y="172" text-anchor="middle">SET page:5 → OK</text>
+  <text class="f-small f-ok" x="320" y="190" text-anchor="middle">least recently used goes</text>
+  <rect class="f-box" x="452" y="52" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="532" y="67" text-anchor="middle">page:1 (no TTL)</text>
+  <rect class="f-box" x="452" y="78" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="532" y="93" text-anchor="middle">page:2 (no TTL)</text>
+  <rect class="f-box-danger" x="452" y="104" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="532" y="119" text-anchor="middle">temp:1 (TTL) — evicted</text>
+  <rect class="f-box" x="452" y="130" width="160" height="22" rx="3"/>
+  <text class="f-small f-mono" x="532" y="145" text-anchor="middle">page:4 (no TTL)</text>
+  <text class="f-small" x="532" y="172" text-anchor="middle">only keys with a TTL</text>
+  <text class="f-small f-muted" x="532" y="190" text-anchor="middle">can be evicted</text>
+  <text class="f-small f-muted" x="320" y="226" text-anchor="middle">memory full: a new key arrives</text>
+</svg>

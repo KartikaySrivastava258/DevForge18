@@ -1,0 +1,4 @@
+alt: 'Five steps on the left: 1, an exact = location that matches is used and the search stops; 2, among prefixes the longest match is remembered, whatever the file order; 3, if that prefix has ^~ it is used and regular expressions are skipped; 4, regular expressions are tried in file order and the first match is used; 5, if none matched, the remembered prefix is used. On the right, an example for each step from the lesson: / goes to A (= /); /api/v1/users to D (the longest prefix /api/v1/); /static/logo.png to E (^~ /static/); /api/v1/logo.png to F (the regex \.png$); /about to B (prefix /).'
+caption: 'Exact, longest prefix, ^~, regular expressions in order, then the remembered prefix.'
+credit: DevForge 18 content team
+licence: project-content

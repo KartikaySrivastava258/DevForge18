@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-25 · Milestone: **5 in progress — the six new tracks done (Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira)** (REMAINING_WORK.md §7) · Next: **a third lesson and a simulation for the Path 1 tracks**
+Last updated: 2026-11-26 · Milestone: **5 — every track has three beginner lessons and a simulation** (REMAINING_WORK.md §7; CI confirmation of the last commit in progress) · Next: **6 — real-world context (case studies and alternatives)**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 49 published across all 18 tracks; 47 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Latest additions (Kubernetes, PostgreSQL and Terraform lesson 3): CI confirmation in progress |
+| Lessons | ✅ 54 published, at least 3 in every track; 52 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Latest additions (GitHub Actions, Redis, Nginx, Postman and Jenkins lesson 3): CI confirmation in progress |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 50 figures across all 49 lessons (no ASCII diagrams left), 21 of them step-throughs — at least one in every track; tested |
-| Simulations | 🟡 Framework done and tested; 13 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira, Docker, PostgreSQL, Terraform), with server-verified challenges |
+| Figures and step-through diagrams | ✅ 55 figures across all 54 lessons (no ASCII diagrams left), 22 of them step-throughs — at least one in every track; tested |
+| Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -295,13 +295,26 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - **Simulation** *Configuration, state and the real world* (§5.5): an invented "server" resource (name forces replacement, size updates in place); edit the configuration, change or delete real objects "by hand", rename addresses, add moved blocks and apply; the plan refreshes from the real world, shows drift, and lists each change with its symbol. 11 model tests; two server-verified challenges (rename without destroying; resolve drift); a browser test, which caught that the moved block was built from the already-renamed address — it now records the last rename; embedded in lesson 3.
 - Figure: a module called twice and a moved block.
 
-### Milestone 5 — what remains
+### Milestone 5 — GitHub Actions, Redis, Nginx and Postman (2026-11-26)
 
-Five tracks still have two lessons and no simulation: GitHub Actions, Redis, Jenkins, Postman and Nginx.
+- **GitHub Actions** — *Caching and artifacts* (executed locally; the workflow is validated by the workflow checker, its behaviour on GitHub checked against GitHub Docs): `actions/cache@v6` keyed on the lockfile's hash, `upload-artifact@v7` / `download-artifact@v8` between jobs, and a local stand-in for `hashFiles` showing when the key changes. Simulation *Workflow run visualiser*: jobs, needs, a matrix and failures; challenges cut a 22-minute chain to 12 minutes without breaking real dependencies, and test three Node versions as a matrix.
+- **Redis** — *Memory limits and eviction policies* (executed against Redis 7): `noeviction` refusing writes with OOM, `allkeys-lru` evicting, `volatile-lru` behaving like `noeviction` when no key has a TTL, and restoring the defaults (CI's Redis is shared by lessons). Counts that depend on memory overhead are shown as `…` with yes/no checks instead. Simulation *A cache under load*: cache-aside, TTL and single flight under a traffic spike; a hot key expiring mid-spike sends 240–272 queries in one second, and single flight keeps the peak at 9–41.
+- **Nginx** — *Location matching rules in depth* (executed with Nginx 1.24 on port 8089): nine paths answered by seven labelled locations, then a regex swapped to show that only regex order matters. The runner's assumption that every Nginx lesson after the first proxies to an API on port 8080 was narrowed to lesson 2 (tested). Simulation *Location matcher*: locations from a fixed palette (no user-supplied regular expressions are compiled on the server); its tests assert the same answers real Nginx gave, and a real `nginx -t` confirmed the duplicate-location rule it applies.
+- **Postman** — *Collections, environments and Newman* (executed against a real DevForge server with Newman 6.2.3): a v2.1 collection with `{{variables}}` and `pm.test` checks, an environment file, `--env-var` overrides, and a failing run with its exit code. Simulation *Request builder*: a model of part of DevForge's own API with its real status and error codes (checked against the live server). Deviation from §5.13, which suggests a live playground: challenges are verified by replaying actions on the server, which needs a deterministic model; the lesson sends the real requests.
+- **Facts** checked on 2026-11-26 against GitHub Docs, the Redis documentation, nginx.org and Postman's documentation and the Newman README; points those pages did not state (Newman's exit code on failure, Redis's default policy) are shown from real output rather than asserted.
+
+### Milestone 5 — Jenkins (2026-11-26)
+
+- **Lesson** *Parallel stages, artefacts and test reports* (executed in the practice repository; every Jenkinsfile checked by the Jenkinsfile checker; running it in Jenkins checked against the Jenkins documentation, not executed): a test script that writes JUnit XML, and a Jenkinsfile with parallel stages, `archiveArtifacts` with fingerprints, and `junit` in `post { always }`.
+- **Simulation** *Build queue and executors* (§5.11): 12 builds needing `docker` or `linux` agents over 30 minutes; with only a Linux agent the docker builds never start and more Linux capacity changes nothing; one docker executor leaves a 12-minute wait, two keep it at zero. 4 model tests, two server-verified challenges, a browser test. The documentation pages read describe executors and labels but not the queue itself, so the queue rule is labelled as the model's.
+
+### Milestone 5 — done
+
+Every track has at least three beginner lessons and a simulation (54 lessons, 18 simulations). Deviations recorded above: the Postman simulation models the API instead of sending live requests; Kubernetes needed a third lesson that §7 did not list. Owner decisions still open: the project licence; whether to delete the redundant copy in `~/Downloads/devforge18`.
 
 ## Current work
 
-Milestone 5 of REMAINING_WORK.md §7: the six new tracks are done; next LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
+Milestone 5 of REMAINING_WORK.md §7 is done; next is milestone 6 (case studies and alternatives), after the remaining LangChain + LlamaIndex, n8n and Jira, then a third lesson and a simulation for each Path 1 track that lacks them.
 
 ## Pending work (ordered)
 
@@ -343,7 +356,7 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 49 lessons across 18 tracks | 5 tracks have two lessons and no simulation | Milestone 5 |
+| 54 beginner lessons | No intermediate or advanced lessons yet; labs and projects listed as planned | Milestones 7–9 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Python packages for the LangChain + LlamaIndex lessons | Only the top-level packages are pinned; a new release of one of their dependencies could change behaviour or break the install in CI | If it happens: pin the full set with a constraints file generated by `pip freeze` in the lesson container |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka`, `apache/airflow`, `n8nio/n8n`, `python:3.12-slim` and (from GitHub's registry) `ghcr.io/mlflow/mlflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |

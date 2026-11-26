@@ -1,0 +1,46 @@
+id: nginx-location-matcher
+track: nginx
+title: Location matcher
+concept: Nginx chooses exactly one location block per request, by a fixed order — exact match, longest prefix, ^~, then regular expressions in file order. Most "why did this request go there?" puzzles are this order at work.
+learning_objectives:
+  - Predict which location answers a request, and explain why.
+  - See that prefix order in the file never matters, while regular expression order does.
+  - Use ^~ and exact matches to route paths that a regular expression would otherwise catch.
+simplifications:
+  - Locations are chosen from a palette rather than typed; there are no nested locations.
+  - Prefix matching is case-sensitive, as on Linux; the newer "predicate" locations are not modelled.
+  - Each location only has a target name (app, api, static, health) instead of real directives.
+text_alternative: The server block's locations in file order with their targets; for the path you type, the steps Nginx takes to choose a location and the winner; and the last requests you sent with the location that answered. Every change is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: docs
+    title: API docs as static files
+    description: The app handles /, the API handles /api/, and a regular expression sends .html pages to the app. The API's documentation lives in /api/docs/ as static files.
+    params: { locations: [root, api, html] }
+  - id: lesson
+    title: The lesson's seven locations
+    description: The configuration from the lesson, A to G. Try the same paths, then move the regular expressions around.
+    params: { locations: [exact-root, root, api, api-v1, static-stop, png, api-json] }
+  - id: health
+    title: A health check
+    description: The app and the API. A load balancer will ask for /health every few seconds.
+    params: { locations: [root, api] }
+challenges:
+  - id: docs-static
+    title: Docs are static, the API is not
+    goal: Make /api/docs/index.html and /api/docs/logo.png be served statically, while /api/v1/users and /api/v1/report.json still reach the API and / the app.
+    scenario: docs
+    check: docs-static
+    hint: Send /api/docs/index.html first. A plain prefix for /api/docs/ is the longest prefix — but which rule comes after prefixes?
+    solution:
+      - { type: add, id: api-docs-stop }
+  - id: health-exact
+    title: An exact health check
+    goal: Answer /health from its own location — without catching /healthz or anything else.
+    scenario: health
+    check: health-exact
+    hint: Which modifier matches one URI exactly, and ends the search at once?
+    solution:
+      - { type: add, id: health }
+owner: content-team
+last_reviewed: 2026-11-26
+content_version: 1

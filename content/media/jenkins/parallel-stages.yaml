@@ -1,0 +1,4 @@
+alt: 'A stage named Checks runs two stages in parallel, each on its own executor: Notes check, and Tests, which writes reports/*.xml. When both pass, the stage Package runs archiveArtifacts on dist/notes.tar.gz. A post always block publishes the test report with junit whatever the outcome; a failing test marks the build unstable.'
+caption: 'Independent checks run side by side; the package is archived; the test report is published whatever happens.'
+credit: DevForge 18 content team
+licence: project-content

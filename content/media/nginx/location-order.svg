@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250">
+  <!-- How Nginx chooses a location, from Location matching rules in depth. -->
+  <g data-step="1">
+    <rect class="f-box" x="16" y="14" width="300" height="40" rx="6"/>
+    <text class="f-strong" x="34" y="39">1</text>
+    <text class="f-small f-mono" x="56" y="32">exact  location = …</text>
+    <text class="f-small f-muted" x="56" y="47">matches? → use it, stop</text>
+    <g>
+      <path class="f-arrow" d="M166 55 L166 51"/>
+      <polygon class="f-head" points="166,59 161.5,51 170.5,51"/>
+    </g>
+  </g>
+  <g data-step="2">
+    <rect class="f-box" x="16" y="60" width="300" height="40" rx="6"/>
+    <text class="f-strong" x="34" y="85">2</text>
+    <text class="f-small f-mono" x="56" y="78">prefixes: the longest</text>
+    <text class="f-small f-muted" x="56" y="93">is remembered (file order ignored)</text>
+    <g>
+      <path class="f-arrow" d="M166 101 L166 97"/>
+      <polygon class="f-head" points="166,105 161.5,97 170.5,97"/>
+    </g>
+  </g>
+  <g data-step="3">
+    <rect class="f-box" x="16" y="106" width="300" height="40" rx="6"/>
+    <text class="f-strong" x="34" y="131">3</text>
+    <text class="f-small f-mono" x="56" y="124">longest prefix has ^~?</text>
+    <text class="f-small f-muted" x="56" y="139">→ use it, skip regexes</text>
+    <g>
+      <path class="f-arrow" d="M166 147 L166 143"/>
+      <polygon class="f-head" points="166,151 161.5,143 170.5,143"/>
+    </g>
+  </g>
+  <g data-step="4">
+    <rect class="f-box" x="16" y="152" width="300" height="40" rx="6"/>
+    <text class="f-strong" x="34" y="177">4</text>
+    <text class="f-small f-mono" x="56" y="170">regexes ~ / ~*, in file order</text>
+    <text class="f-small f-muted" x="56" y="185">first match → use it</text>
+    <g>
+      <path class="f-arrow" d="M166 193 L166 189"/>
+      <polygon class="f-head" points="166,197 161.5,189 170.5,189"/>
+    </g>
+  </g>
+  <g data-step="5">
+    <rect class="f-box" x="16" y="198" width="300" height="40" rx="6"/>
+    <text class="f-strong" x="34" y="223">5</text>
+    <text class="f-small f-mono" x="56" y="216">no regex matched</text>
+    <text class="f-small f-muted" x="56" y="231">→ the remembered prefix</text>
+  </g>
+  <g data-step="1">
+    <rect class="f-box-accent" x="350" y="14" width="274" height="40" rx="6"/>
+    <text class="f-small f-mono f-strong" x="362" y="32">/</text>
+    <text class="f-small" x="362" y="47">→ A  = /</text>
+  </g>
+  <g data-step="2">
+    <rect class="f-box-accent" x="350" y="60" width="274" height="40" rx="6"/>
+    <text class="f-small f-mono f-strong" x="362" y="78">/api/v1/users</text>
+    <text class="f-small" x="362" y="93">→ D  /api/v1/ (longest prefix)</text>
+  </g>
+  <g data-step="3">
+    <rect class="f-box-accent" x="350" y="106" width="274" height="40" rx="6"/>
+    <text class="f-small f-mono f-strong" x="362" y="124">/static/logo.png</text>
+    <text class="f-small" x="362" y="139">→ E  ^~ /static/</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-accent" x="350" y="152" width="274" height="40" rx="6"/>
+    <text class="f-small f-mono f-strong" x="362" y="170">/api/v1/logo.png</text>
+    <text class="f-small" x="362" y="185">→ F  regex \.png$</text>
+  </g>
+  <g data-step="5">
+    <rect class="f-box-accent" x="350" y="198" width="274" height="40" rx="6"/>
+    <text class="f-small f-mono f-strong" x="362" y="216">/about</text>
+    <text class="f-small" x="362" y="231">→ B  prefix /</text>
+  </g>
+</svg>

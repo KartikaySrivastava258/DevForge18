@@ -1,0 +1,4 @@
+alt: 'Three columns, each showing a Redis instance whose memory is full with four keys when SET page:5 arrives. With noeviction, the write is refused with an OOM error. With allkeys-lru, page:1, the least recently used key, is evicted and the write succeeds. With volatile-lru, only temp:1, the one key with a TTL, can be evicted; keys without a TTL are never chosen.'
+caption: 'At the limit: noeviction refuses writes, allkeys-lru drops the least recently used key, volatile policies only drop keys that have a TTL.'
+credit: DevForge 18 content team
+licence: project-content

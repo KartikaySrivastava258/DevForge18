@@ -1,0 +1,8 @@
+figure: location-order.svg
+title: 'How Nginx chooses a location'
+steps:
+  - caption: 'An exact location = … that matches the URI is used at once: / goes to A.'
+  - caption: 'Otherwise Nginx finds the longest matching prefix and remembers it — /api/v1/ for /api/v1/users, even though /api/ comes first in the file.'
+  - caption: 'If that longest prefix has ^~, it is used and regular expressions are never checked: /static/logo.png goes to E.'
+  - caption: 'Otherwise regular expressions are tried in file order; the first match wins over the remembered prefix: /api/v1/logo.png goes to F.'
+  - caption: 'If no regular expression matches, the remembered prefix is used: /about goes to B.'

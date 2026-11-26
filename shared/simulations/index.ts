@@ -32,6 +32,16 @@ import { queryPlanner } from "./postgresql/query-planner.ts";
 import { PlannerActionSchema, PlannerScenarioSchema } from "./postgresql/schema.ts";
 import { planDiff } from "./terraform/plan-diff.ts";
 import { PlanActionSchema, PlanScenarioSchema } from "./terraform/schema.ts";
+import { workflowRun } from "./github-actions/workflow-run.ts";
+import { WorkflowRunActionSchema, WorkflowRunScenarioSchema } from "./github-actions/schema.ts";
+import { cacheLoad } from "./redis/cache-load.ts";
+import { CacheActionSchema, CacheScenarioSchema } from "./redis/schema.ts";
+import { locationMatcher } from "./nginx/location-matcher.ts";
+import { MatcherActionSchema, MatcherScenarioSchema } from "./nginx/schema.ts";
+import { requestBuilder } from "./postman/request-builder.ts";
+import { BuilderActionSchema, BuilderScenarioSchema } from "./postman/schema.ts";
+import { buildQueue } from "./jenkins/build-queue.ts";
+import { QueueActionSchema, QueueScenarioSchema } from "./jenkins/schema.ts";
 import type { SimulationModel } from "./types.ts";
 
 // Each model has its own state, action and scenario types; callers validate
@@ -52,4 +62,9 @@ export const MODELS: Readonly<Record<string, AnyModel>> = {
   [layerCache.id]: { ...layerCache, scenarioSchema: LayerScenarioSchema, actionSchema: LayerActionSchema },
   [queryPlanner.id]: { ...queryPlanner, scenarioSchema: PlannerScenarioSchema, actionSchema: PlannerActionSchema },
   [planDiff.id]: { ...planDiff, scenarioSchema: PlanScenarioSchema, actionSchema: PlanActionSchema },
+  [workflowRun.id]: { ...workflowRun, scenarioSchema: WorkflowRunScenarioSchema, actionSchema: WorkflowRunActionSchema },
+  [cacheLoad.id]: { ...cacheLoad, scenarioSchema: CacheScenarioSchema, actionSchema: CacheActionSchema },
+  [locationMatcher.id]: { ...locationMatcher, scenarioSchema: MatcherScenarioSchema, actionSchema: MatcherActionSchema },
+  [requestBuilder.id]: { ...requestBuilder, scenarioSchema: BuilderScenarioSchema, actionSchema: BuilderActionSchema },
+  [buildQueue.id]: { ...buildQueue, scenarioSchema: QueueScenarioSchema, actionSchema: QueueActionSchema },
 };

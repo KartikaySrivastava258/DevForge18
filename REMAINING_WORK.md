@@ -216,8 +216,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.6 GitHub Actions
 
-- **Lessons:** ✅ First workflow · ✅ Pull requests, required checks and safe workflows · Caching and artifacts · Building and pushing container images · Reusable workflows and composite actions · Environments, approvals and deployments · OIDC for cloud access without long-lived secrets (advanced) · Supply-chain hardening: pinning SHAs, Dependabot, provenance (advanced).
-- **Simulation — workflow run visualiser:** model jobs with `needs`, matrices and steps; run the DAG with simulated durations and failures; show parallelism and how a failing step stops a job. **Challenge:** reduce total run time by parallelising independent jobs.
+- **Lessons:** ✅ First workflow · ✅ Pull requests, required checks and safe workflows · ✅ Caching and artifacts · Building and pushing container images · Reusable workflows and composite actions · Environments, approvals and deployments · OIDC for cloud access without long-lived secrets (advanced) · Supply-chain hardening: pinning SHAs, Dependabot, provenance (advanced).
+- ✅ **Simulation — workflow run visualiser:** model jobs with `needs`, matrices and steps; run the DAG with simulated durations and failures; show parallelism and how a failing step stops a job. **Challenge:** reduce total run time by parallelising independent jobs.
 - **Labs:** add caching and measure the difference (read-through with real logs from this repository's CI); write a matrix workflow (validated by the checker).
 - **Real world:** GitHub Actions became generally available in 2019. Sources: GitHub's changelog and blog; DevForge's own `ci.yml` is a documented case study.
 - **Alternatives:** GitLab CI, CircleCI, Jenkins, Buildkite, Azure Pipelines.
@@ -243,8 +243,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.9 Redis
 
-- **Lessons:** ✅ Keys, values and data structures · ✅ Caching and rate limiting · Eviction policies and memory · Pub/Sub versus Streams · Transactions and Lua scripts · Persistence (RDB/AOF) and replication (advanced) · Cache stampede and other failure modes (advanced).
-- **Simulation — cache under load:** requests arrive over time; toggle cache-aside, TTL length and eviction policy; show hit ratio, database load and what happens when a hot key expires (stampede). **Challenge:** keep database load under a limit during a traffic spike.
+- **Lessons:** ✅ Keys, values and data structures · ✅ Caching and rate limiting · ✅ Eviction policies and memory · Pub/Sub versus Streams · Transactions and Lua scripts · Persistence (RDB/AOF) and replication (advanced) · Cache stampede and other failure modes (advanced).
+- ✅ **Simulation — cache under load:** requests arrive over time; toggle cache-aside, TTL length and eviction policy; show hit ratio, database load and what happens when a hot key expires (stampede). **Challenge:** keep database load under a limit during a traffic spike.
 - **Labs:** LRU eviction with a small `maxmemory` (executed in CI); a stream consumer group (executed).
 - **Real world:** Redis was created by Salvatore Sanfilippo in 2009. Its licence changed in 2024 and Valkey was forked under the Linux Foundation. Sources: redis.io, valkey.io, company engineering blogs.
 - **Alternatives:** Valkey, Memcached, KeyDB, Dragonfly; managed services such as Amazon ElastiCache.
@@ -261,8 +261,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.11 Jenkins
 
-- **Lessons:** ✅ Jenkins in Docker · ✅ Pipeline as code with a Jenkinsfile · Agents and running builds in containers · Parallel stages, artefacts and test reports · Shared libraries · Configuration as Code (JCasC) and plugin management (advanced) · Securing Jenkins (advanced).
-- **Simulation — controller, queue and executors:** jobs enter a queue, agents with labels and executors pick them up; show waiting time when executors are scarce. **Challenge:** cut queue time by adding an agent with the right label.
+- **Lessons:** ✅ Jenkins in Docker · ✅ Pipeline as code with a Jenkinsfile · Agents and running builds in containers · ✅ Parallel stages, artefacts and test reports · Shared libraries · Configuration as Code (JCasC) and plugin management (advanced) · Securing Jenkins (advanced).
+- ✅ **Simulation — controller, queue and executors:** jobs enter a queue, agents with labels and executors pick them up; show waiting time when executors are scarce. **Challenge:** cut queue time by adding an agent with the right label.
 - **Labs:** a Jenkins built from a pinned image with plugins installed by `jenkins-plugin-cli` and a job created by JCasC, then a pipeline run triggered and checked through the REST API (executed in CI).
 - **Real world:** Jenkins was forked from Hudson in 2011; Hudson was started by Kohsuke Kawaguchi at Sun Microsystems. Sources: jenkins.io history and blog.
 - **Alternatives:** GitHub Actions, GitLab CI, TeamCity, Buildkite, Tekton.
@@ -279,8 +279,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.13 Postman
 
-- **Lessons:** ✅ HTTP requests and responses · ✅ Sessions, chained requests and API tests · Environments and variables in depth · Authentication flows (API keys, bearer tokens, OAuth concepts) · Mock servers and API documentation · Running collections in CI with the Postman CLI or Newman (advanced) · Contract testing concepts (advanced).
-- **Simulation — request builder against DevForge:** this one can be *real*: a built-in request playground that sends requests to the learner's own DevForge API (same origin, CSRF header handled) and shows status, headers and body, plus a "what went wrong" explainer for 4xx codes. Label it as a playground, rate-limit it, and allow only DevForge's own endpoints.
+- **Lessons:** ✅ HTTP requests and responses · ✅ Sessions, chained requests and API tests · ✅ Environments and variables in depth (collections and Newman) · Authentication flows (API keys, bearer tokens, OAuth concepts) · Mock servers and API documentation · Running collections in CI with the Postman CLI or Newman (advanced) · Contract testing concepts (advanced).
+- ✅ **Simulation — request builder against DevForge:** this one can be *real*: a built-in request playground that sends requests to the learner's own DevForge API (same origin, CSRF header handled) and shows status, headers and body, plus a "what went wrong" explainer for 4xx codes. Label it as a playground, rate-limit it, and allow only DevForge's own endpoints.
 - **Labs:** export a collection and run it with Newman in CI (executed, pinned Newman version, against the practice server).
 - **Real world:** Postman began in 2012 as a Chrome extension created by Abhinav Asthana. Sources: Postman's website and blog.
 - **Alternatives:** Insomnia, Bruno, Hoppscotch, HTTPie, curl.
@@ -288,8 +288,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.14 Nginx
 
-- **Lessons:** ✅ Configuration and static files · ✅ Reverse proxy, 502 errors and load balancing · Location matching rules in depth · Caching and compression · TLS termination with a local certificate · Rate limiting and access control · Upstream health and failure handling (advanced).
-- **Simulation — location matcher:** type a request path; the model applies Nginx's location-matching order (exact `=`, longest prefix, `^~`, regular expressions in order) and highlights the winning block with the reason. **Challenge:** write locations so `/api/v1/` goes to the API but `/api/docs` is served statically. Unit-test the model against real Nginx in CI by generating configurations and comparing which block answers.
+- **Lessons:** ✅ Configuration and static files · ✅ Reverse proxy, 502 errors and load balancing · ✅ Location matching rules in depth · Caching and compression · TLS termination with a local certificate · Rate limiting and access control · Upstream health and failure handling (advanced).
+- ✅ **Simulation — location matcher:** type a request path; the model applies Nginx's location-matching order (exact `=`, longest prefix, `^~`, regular expressions in order) and highlights the winning block with the reason. **Challenge:** write locations so `/api/v1/` goes to the API but `/api/docs` is served statically. Unit-test the model against real Nginx in CI by generating configurations and comparing which block answers.
 - **Labs:** TLS with a self-signed certificate (executed); `limit_req` returning 503s under load (executed with a burst of curl requests).
 - **Real world:** Nginx was written by Igor Sysoev and first released publicly in 2004. Sources: nginx.org, F5/NGINX blog, company engineering blogs.
 - **Alternatives:** HAProxy, Caddy, Envoy, Traefik, Apache HTTP Server; cloud load balancers.
@@ -381,7 +381,7 @@ Each milestone ends with CI green and `IMPLEMENTATION_STATUS.md` updated.
 2. ✅ Done (verified in CI on 2026-11-25, run 45650635699). **Visual learning system.** Media pipeline (`media:` paths, figures, captions, dark/light SVGs), `StepDiagram`, animation guidelines; convert the ASCII diagrams in the existing 21 lessons into SVG figures, and add a step-through to at least one lesson per track. *Done when:* every existing lesson has at least one real figure, and browser tests cover a step-through with keyboard and reduced motion.
 3. ✅ Done (verified in CI on 2026-11-25, run 45655582859). **Simulation framework plus two exemplars.** `SimulationShell`, the model/view split, challenges and progress; build the Git commit-graph and the Kubernetes reconciliation simulations first. *Done when:* both have unit-tested models with invariants, browser tests, and are embedded in their lessons.
 4. ✅ Done (verified in CI on 2026-11-25, run 45675259630). **Complete Path 2.** Prometheus + Grafana and OpenTelemetry beginner lessons (executed in CI) and their simulations.
-5. **Remaining tracks, beginner level.** Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira: lessons, setup guide, one simulation each. *Done when:* all 18 tracks have at least three beginner lessons and one simulation. Status (2026-11-26): the six tracks, Docker, PostgreSQL, Kubernetes and Terraform are done; GitHub Actions, Redis, Jenkins, Postman and Nginx remain.
+5. **Remaining tracks, beginner level.** Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira: lessons, setup guide, one simulation each. *Done when:* all 18 tracks have at least three beginner lessons and one simulation. Status (2026-11-26): done — every track has at least three beginner lessons and a simulation.
 6. **Real-world context.** Case-study and alternatives content types; at least two sourced case studies and an alternatives table per track.
 7. **Labs.** Lab pages, verification scripts, lab progress; at least two labs per track, executed in CI where the tool allows.
 8. **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first.

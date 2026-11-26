@@ -1,0 +1,45 @@
+id: redis-cache-load
+track: redis
+title: A cache under load
+concept: A cache takes load off the database only while its keys are there. When a key that many requests want expires — or before the cache has warmed up — every one of those requests misses at the same moment and goes to the database. A high hit ratio can hide that spike.
+learning_objectives:
+  - See how cache-aside and the TTL change database load and the hit ratio.
+  - Recognise a cache stampede when a hot key expires during a traffic spike.
+  - Keep database load under a limit by letting only one request refill an expired key.
+simplifications:
+  - Time moves in whole seconds, every request in a second arrives at once, and the database answers within the second.
+  - Traffic is fixed — 100 requests a second, 400 from second 20 to 39 — with 60 % asking for one hot key and the rest spread evenly over 40 others.
+  - The cache never runs out of memory, and "single flight" (one request refills, the others wait) is modelled as working perfectly.
+text_alternative: The current second, the hit ratio and the peak database load against the limit; the settings (cache-aside, TTL, single flight); and a chart of database queries per second against requests per second, also available as a list in text mode. Every second is explained in the event log.
+scenarios:
+  - id: stampede
+    title: The hot key expires in the spike
+    description: Cache-aside with a 10-second TTL. The hot key happens to expire at second 25, in the middle of the spike. The database copes with 60 queries a second.
+    params: { cacheOn: true, ttl: 10, singleFlight: false, limit: 60, hotExpiresAt: 25 }
+  - id: no-cache
+    title: No cache yet
+    description: Every request reads the database, which copes with 60 queries a second. The cache starts empty when you turn it on.
+    params: { cacheOn: false, ttl: 10, singleFlight: false, limit: 60, hotExpiresAt: null }
+challenges:
+  - id: survive-the-spike
+    title: Survive the spike
+    goal: Run the whole minute without the database ever going over 60 queries a second.
+    scenario: stampede
+    check: under-the-limit
+    hint: Run it once and look at second 25. A longer TTL only moves the problem. What if only one of the 240 requests went to the database?
+    solution:
+      - { type: setSingleFlight, on: true }
+      - { type: tick, count: 60 }
+  - id: from-cold
+    title: From a cold start
+    goal: Turn the cache on and keep the database at or under 60 queries a second for the whole minute — including the first second, when the cache is empty.
+    scenario: no-cache
+    check: under-the-limit
+    hint: An empty cache misses on everything at once. The same fix as a stampede helps here.
+    solution:
+      - { type: setCache, on: true }
+      - { type: setSingleFlight, on: true }
+      - { type: tick, count: 60 }
+owner: content-team
+last_reviewed: 2026-11-26
+content_version: 1

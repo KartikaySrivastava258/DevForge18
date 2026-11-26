@@ -1,0 +1,4 @@
+alt: 'Two runs side by side. In Monday''s run, the build job restores the cache, runs npm ci and the build, and uploads dist/ as the artifact site; the test job, which needs build, downloads dist/ and checks it. The build job saves the npm cache under a key made from the hash of package-lock.json. In Tuesday''s run, the build job gets a cache hit, so npm ci is fast. A note says caches are kept between runs and removed after 7 days unused.'
+caption: 'An artifact carries a run''s output from job to job; a cache carries dependencies from one run to the next.'
+credit: DevForge 18 content team
+licence: project-content

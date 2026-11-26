@@ -1,0 +1,55 @@
+id: github-actions-workflow-run
+track: github-actions
+title: Workflow run visualiser
+concept: Jobs in a workflow run in parallel unless one needs another. Every unnecessary needs makes the run longer; every missing one lets a job start before what it uses exists. A matrix runs one job per combination, side by side.
+learning_objectives:
+  - Predict when each job starts from its needs, and the run's total time.
+  - Remove dependencies that are not real without breaking the ones that are.
+  - Use a matrix to test several versions without making the run longer, and see how a failure skips the jobs that need it.
+simplifications:
+  - Durations are fixed whole minutes (lint 2, build 4, unit 5 per Node version, e2e 6, docs 3, deploy 2), and runners are always free; real runs also queue and set up.
+  - The real dependencies are fixed — unit and e2e use the build, deploy ships tested work — and a missing one is flagged rather than failing at random.
+text_alternative: Each job with its duration, the jobs it needs and whether it is set to fail; whether unit runs as a matrix; after a run, each job's start and end minute or that it was skipped, and the total time. Every change and run is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: chained
+    title: Everything in a line
+    description: Each job needs the one before it, so nothing runs in parallel.
+    params:
+      needs: { lint: [], build: [lint], unit: [build], e2e: [unit], docs: [e2e], deploy: [docs] }
+      unitMode: matrix
+      failing: []
+  - id: three-versions
+    title: Testing three Node versions
+    description: Only the real dependencies, but the unit job tests Node 20, 22 and 24 one after another.
+    params:
+      needs: { lint: [], build: [], unit: [build], e2e: [build], docs: [], deploy: [unit, e2e] }
+      unitMode: sequential
+      failing: []
+challenges:
+  - id: fast-and-correct
+    title: Twelve minutes, still correct
+    goal: Make the run take 12 minutes or less — while unit and e2e still wait for the build, and deploy still waits for both tests.
+    scenario: chained
+    check: fast-and-correct
+    hint: Which jobs use another job's output? Only those need it. lint and docs need nothing; e2e needs the build, not the unit tests.
+    solution:
+      - { type: toggleNeed, job: build, on: lint }
+      - { type: toggleNeed, job: e2e, on: unit }
+      - { type: toggleNeed, job: e2e, on: build }
+      - { type: toggleNeed, job: docs, on: e2e }
+      - { type: toggleNeed, job: deploy, on: docs }
+      - { type: toggleNeed, job: deploy, on: unit }
+      - { type: toggleNeed, job: deploy, on: e2e }
+      - { type: run }
+  - id: three-versions-fast
+    title: Three versions, no slower
+    goal: Test all three Node versions and keep the run at 12 minutes or less.
+    scenario: three-versions
+    check: three-versions-fast
+    hint: One job that tests three versions in turn takes three times as long. What runs a job once per version, side by side?
+    solution:
+      - { type: setUnitMode, mode: matrix }
+      - { type: run }
+owner: content-team
+last_reviewed: 2026-11-26
+content_version: 1

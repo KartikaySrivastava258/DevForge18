@@ -32,4 +32,9 @@ export const SIMULATIONS: Record<string, () => Promise<{ default: SimulationEntr
   "docker-layer-cache": () => import("./LayerCache.tsx"),
   "postgresql-query-planner": () => import("./QueryPlanner.tsx"),
   "terraform-plan-diff": () => import("./PlanDiff.tsx"),
+  "github-actions-workflow-run": () => import("./WorkflowRun.tsx"),
+  "redis-cache-load": () => import("./CacheLoad.tsx"),
+  "nginx-location-matcher": () => import("./LocationMatcher.tsx"),
+  "postman-request-builder": () => import("./RequestBuilder.tsx"),
+  "jenkins-build-queue": () => import("./BuildQueue.tsx"),
 };

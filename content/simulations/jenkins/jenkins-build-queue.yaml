@@ -1,0 +1,44 @@
+id: jenkins-build-queue
+track: jenkins
+title: Build queue and executors
+concept: A build can only run on an agent with the label it asks for, and only when one of that agent's executors is free. Builds that find none wait in the queue. Adding capacity helps only if it has the right label.
+learning_objectives:
+  - See builds wait when no free executor has the label they need.
+  - Explain why adding agents with the wrong label does not shorten the queue.
+  - Size agents and executors so builds start within a couple of minutes.
+simplifications:
+  - Arrivals and durations are fixed — 12 builds over 30 minutes, 8 needing docker (5 min each) and 4 needing linux (2 min each) — and builds start on whole minutes.
+  - Each agent has one label and each build needs one; the controller runs no builds.
+  - The queue simply starts the oldest waiting build first; Jenkins' real scheduler has more rules.
+text_alternative: The minute, the longest wait and how many builds have finished; the agents with their labels and executors; and every build with its label, arrival, where and when it ran, and how long it waited. Every minute is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: no-docker
+    title: Only a Linux agent
+    description: One agent, label linux, one executor. Most builds need docker.
+    params: { agents: [{ name: linux-1, label: linux, executors: 1 }] }
+  - id: one-docker
+    title: One docker executor
+    description: A linux agent and a docker agent with one executor each.
+    params: { agents: [{ name: linux-1, label: linux, executors: 1 }, { name: docker-1, label: docker, executors: 1 }] }
+challenges:
+  - id: no-docker
+    title: The right label
+    goal: Make every build finish within the half hour, with no build waiting more than 2 minutes.
+    scenario: no-docker
+    check: short-queue
+    hint: Run it once and look at which builds wait. Would another linux agent help them?
+    solution:
+      - { type: addAgent, label: docker, executors: 2 }
+      - { type: tick, count: 30 }
+  - id: one-docker
+    title: Enough executors
+    goal: The same goal, starting with one docker executor.
+    scenario: one-docker
+    check: short-queue
+    hint: Docker builds take 5 minutes and arrive every 2 to 4 minutes. How many can one executor handle?
+    solution:
+      - { type: addAgent, label: docker, executors: 1 }
+      - { type: tick, count: 30 }
+owner: content-team
+last_reviewed: 2026-11-26
+content_version: 1
