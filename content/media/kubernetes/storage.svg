@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270">
+  <!-- Claims, volumes and a StatefulSet, from Persistent volumes and StatefulSets. -->
+  <rect class="f-box" x="10" y="30" width="170" height="70" rx="8"/>
+  <text class="f-small f-strong f-mono" x="95" y="56" text-anchor="middle">Pod writer</text>
+  <text class="f-small" x="95" y="80" text-anchor="middle">replaced: data stays</text>
+  <rect class="f-box-accent" x="230" y="30" width="200" height="70" rx="8"/>
+  <text class="f-small f-strong f-mono" x="330" y="56" text-anchor="middle">PVC notes 64Mi</text>
+  <text class="f-small" x="330" y="80" text-anchor="middle">Pending until used</text>
+  <rect class="f-box-ok" x="480" y="30" width="230" height="70" rx="8"/>
+  <text class="f-small f-strong" x="595" y="56" text-anchor="middle">PV (provisioned)</text>
+  <text class="f-small f-mono" x="595" y="80" text-anchor="middle">StorageClass standard</text>
+  <g>
+    <path class="f-arrow" d="M182 65 L220 65"/>
+    <polygon class="f-head" points="228,65 220,69.5 220,60.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M432 65 L470 65"/>
+    <polygon class="f-head" points="478,65 470,69.5 470,60.5"/>
+  </g>
+  <text class="f-small f-danger" x="595" y="118" text-anchor="middle">reclaim Delete: claim gone, data gone</text>
+  <rect class="f-box-faint" x="10" y="150" width="700" height="110" rx="8"/>
+  <text class="f-small f-strong f-mono" x="360" y="172" text-anchor="middle">StatefulSet db + headless Service db</text>
+  <rect class="f-box" x="40" y="186" width="140" height="56" rx="8"/>
+  <text class="f-small f-strong f-mono" x="110" y="208" text-anchor="middle">db-0</text>
+  <text class="f-small f-mono" x="110" y="228" text-anchor="middle">db-0.db</text>
+  <rect class="f-box-ok" x="220" y="186" width="130" height="56" rx="8"/>
+  <text class="f-small f-mono" x="285" y="208" text-anchor="middle">data-db-0</text>
+  <text class="f-small" x="285" y="228" text-anchor="middle">own claim</text>
+  <g>
+    <path class="f-arrow" d="M182 214 L210 214"/>
+    <polygon class="f-head" points="218,214 210,218.5 210,209.5"/>
+  </g>
+  <rect class="f-box" x="380" y="186" width="140" height="56" rx="8"/>
+  <text class="f-small f-strong f-mono" x="450" y="208" text-anchor="middle">db-1</text>
+  <text class="f-small f-mono" x="450" y="228" text-anchor="middle">db-1.db</text>
+  <rect class="f-box-ok" x="560" y="186" width="130" height="56" rx="8"/>
+  <text class="f-small f-mono" x="625" y="208" text-anchor="middle">data-db-1</text>
+  <text class="f-small" x="625" y="228" text-anchor="middle">own claim</text>
+  <g>
+    <path class="f-arrow" d="M522 214 L550 214"/>
+    <polygon class="f-head" points="558,214 550,218.5 550,209.5"/>
+  </g>
+</svg>

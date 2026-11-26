@@ -1,0 +1,4 @@
+alt: 'Top: Pod writer uses the claim notes of 64 mebibytes, which stays Pending until a Pod uses it; the StorageClass standard then provisions a PersistentVolume. When the Pod is replaced the data stays; with reclaim policy Delete, deleting the claim deletes the data. Bottom: StatefulSet db with a headless Service db runs Pods db-0 and db-1, reachable as db-0.db and db-1.db, each with its own claim, data-db-0 and data-db-1.'
+caption: 'Pods come and go; claims keep the data, and a StatefulSet gives each member its own name and its own claim.'
+credit: DevForge 18 content team
+licence: project-content
