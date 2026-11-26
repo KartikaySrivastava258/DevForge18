@@ -208,6 +208,12 @@ export const LessonMetaSchema = z
     verification: z
       .object({ method: z.enum(["executed", "pending", "docs-checked"]), details: z.string().min(20) })
       .strict(),
+    /**
+     * The lesson's commands set up everything they need from nothing (their own containers, folders and data),
+     * so tests run them without replaying the prerequisite lessons first. Prerequisites stay what a learner
+     * should read before; this only says the lab does not continue from their state.
+     */
+    starts_fresh: z.boolean().optional(),
     owner: z.string().min(2),
     last_reviewed: isoDate,
     content_version: z.number().int().positive(),

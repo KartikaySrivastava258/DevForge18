@@ -32,7 +32,15 @@ describe("change scope", () => {
 });
 
 describe("selection on the real content", () => {
-  const { select, runnables } = loadRunnables(join(import.meta.dirname, "..", "..", "content"));
+  const { select, runnables, chainFor } = loadRunnables(join(import.meta.dirname, "..", "..", "content"));
+  it("a lesson that starts fresh replays nothing, and a change to its prerequisites does not select it", () => {
+    const fresh = runnables.find((r) => r.id === "kafka-producers-acks-and-retries");
+    assert.ok(fresh && "starts_fresh" in fresh && fresh.starts_fresh);
+    assert.deepEqual(chainFor(fresh), []);
+    const ids = select(changeScope(["content/lessons/kafka/kafka-scaling-consumers.md"])).map((r) => r.id);
+    assert.ok(ids.includes("kafka-scaling-consumers"));
+    assert.ok(!ids.includes("kafka-producers-acks-and-retries"));
+  });
   it("a change to Docker lesson 1 also runs Kubernetes lessons that replay it", () => {
     const ids = select(changeScope(["content/lessons/docker/docker-images-vs-containers.md"])).map((r) => r.id);
     assert.ok(ids.includes("docker-images-vs-containers"));

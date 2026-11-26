@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300">
+  <!-- How a producer write is acknowledged, from Producers, acknowledgements and retries. -->
+  <rect class="f-box-accent" x="10" y="50" width="170" height="150" rx="8"/>
+  <text class="f-small f-strong" x="95" y="74" text-anchor="middle">producer</text>
+  <text class="f-small f-mono" x="95" y="100" text-anchor="middle">send() → batch</text>
+  <text class="f-small f-mono" x="95" y="120" text-anchor="middle">linger.ms = 5</text>
+  <text class="f-small" x="95" y="146" text-anchor="middle">producer ID +</text>
+  <text class="f-small" x="95" y="164" text-anchor="middle">sequence number</text>
+  <text class="f-small" x="95" y="186" text-anchor="middle">retry until 120 s</text>
+  <rect class="f-box-faint" x="250" y="50" width="180" height="150" rx="8"/>
+  <text class="f-small f-strong" x="340" y="74" text-anchor="middle">leader (broker 1)</text>
+  <text class="f-small" x="340" y="104" text-anchor="middle">append to log</text>
+  <text class="f-small" x="340" y="126" text-anchor="middle">drop duplicate</text>
+  <text class="f-small" x="340" y="144" text-anchor="middle">sequence numbers</text>
+  <rect class="f-box-faint" x="520" y="30" width="190" height="70" rx="8"/>
+  <text class="f-small f-strong" x="615" y="58" text-anchor="middle">follower (broker 2)</text>
+  <text class="f-small" x="615" y="80" text-anchor="middle">copies the batch</text>
+  <rect class="f-box-faint" x="520" y="150" width="190" height="70" rx="8"/>
+  <text class="f-small f-strong" x="615" y="178" text-anchor="middle">follower (broker 3)</text>
+  <text class="f-small" x="615" y="200" text-anchor="middle">copies the batch</text>
+  <g>
+    <path class="f-arrow" d="M182 110 L240 110"/>
+    <polygon class="f-head" points="248,110 240,114.5 240,105.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M432 100 L510.4 72.6"/>
+    <polygon class="f-head" points="518,70 511.9,76.9 509.0,68.4"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M432 150 L510.4 177.4"/>
+    <polygon class="f-head" points="518,180 509.0,181.6 511.9,173.1"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M248 150 L190 150"/>
+    <polygon class="f-head" points="182,150 190,145.5 190,154.5"/>
+  </g>
+  <text class="f-small" x="215" y="140" text-anchor="middle">offset</text>
+  <text class="f-small" x="360" y="250" text-anchor="middle">acks=0: no reply (offset -1) · acks=1: leader has it · acks=all: every in-sync replica has it</text>
+  <text class="f-small f-danger" x="360" y="276" text-anchor="middle">a timeout means “unknown”: the broker may still write the batch</text>
+</svg>

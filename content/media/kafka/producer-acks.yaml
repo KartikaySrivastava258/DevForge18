@@ -1,0 +1,4 @@
+alt: 'The producer adds records to a batch with linger.ms 5, tags it with a producer ID and sequence number, and retries for up to 120 seconds. The leader on broker 1 appends the batch to its log and drops batches whose sequence numbers it has already seen. Followers on brokers 2 and 3 copy the batch. The leader returns the offset to the producer. With acks=0 there is no reply and the offset is -1; with acks=1 the leader has the record; with acks=all every in-sync replica has it. A timeout means unknown: the broker may still write the batch.'
+caption: 'acks decides who must have a copy before the producer hears back; idempotence makes retries safe.'
+credit: DevForge 18 content team
+licence: project-content

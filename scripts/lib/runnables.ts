@@ -21,28 +21,36 @@ export function loadRunnables(contentRoot: string) {
     })),
   ].filter((r) => r.verification.method !== "docs-checked");
 
-  /** Students continue from earlier lessons, so executed prerequisites are replayed first, in order. */
+  /**
+   * Students continue from earlier lessons, so executed prerequisites are replayed first, in order. A lesson
+   * marked starts_fresh sets up its own state, so the replay stops there: it is replayed, its prerequisites are not.
+   */
   function chainOf(prerequisites: string[]): string[] {
     const chain: string[] = [];
     const visit = (id: string) => {
       const l = bundle.lessons.find((x) => x.id === id);
       if (!l || chain.includes(id)) return;
-      l.prerequisites.forEach(visit);
+      if (!l.starts_fresh) l.prerequisites.forEach(visit);
       if (l.verification.method !== "docs-checked") chain.push(id);
     };
     prerequisites.forEach(visit);
     return chain;
   }
 
+  /** What the tests replay before a lesson or lab: nothing for a lesson that starts fresh. */
+  function chainFor(r: { prerequisites: string[]; starts_fresh?: boolean }): string[] {
+    return r.starts_fresh ? [] : chainOf(r.prerequisites);
+  }
+
   function select(scope: ChangeScope) {
     return runnables.filter((r) => {
-      const chainFiles = chainOf(r.prerequisites).map((id) => `content/lessons/${bundle.lessons.find((x) => x.id === id)?.track}/${id}.md`);
+      const chainFiles = chainFor(r).map((id) => `content/lessons/${bundle.lessons.find((x) => x.id === id)?.track}/${id}.md`);
       const own = `content/${r.kind === "lab" ? "labs" : "lessons"}/${r.track}/${r.id}.md`;
       return isAffected(scope, [own, ...chainFiles], lessonNeeds(r.track, r.order).api);
     });
   }
 
-  return { bundle, runnables, chainOf, select };
+  return { bundle, runnables, chainOf, chainFor, select };
 }
 
 /** DEVFORGE_LESSON_SHARD: "i/n" keeps every n-th item starting at the i-th; "off" keeps none; unset keeps all. */

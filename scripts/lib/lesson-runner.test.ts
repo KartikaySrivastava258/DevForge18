@@ -220,7 +220,7 @@ describe("Redis blocks", () => {
 
 // Every executed lesson in the repository must still produce exactly the output it shows.
 const contentRoot = join(import.meta.dirname, "..", "..", "content");
-const { bundle, chainOf, select } = loadRunnables(contentRoot);
+const { bundle, chainFor, select } = loadRunnables(contentRoot);
 // CI runs the executed lessons in parallel jobs: DEVFORGE_LESSON_SHARD="i/n" runs every n-th selected lesson
 // starting at the i-th (each replays its own prerequisites, so shards are independent), and "off" skips them in
 // a job that checks everything else. On pushes CI also sets DEVFORGE_CHANGED_FILES so only lessons a change can
@@ -241,7 +241,7 @@ describe("executed lessons and labs reproduce their documented output", { skip: 
     const { api: needsApi, apiPort, timeoutMs } = lessonNeeds(lesson.track, lesson.order);
     const blocksOf = (id: string, track: string) =>
       extractRunBlocks(splitFrontMatter(readFileSync(join(contentRoot, "lessons", track, `${id}.md`), "utf8"))?.body ?? "");
-    const chain = chainOf(lesson.prerequisites);
+    const chain = chainFor(lesson);
     const setupBlocks = chain.flatMap((id) => blocksOf(id, bundle.lessons.find((x) => x.id === id)?.track ?? lesson.track));
     // A lesson that continues from a Docker lesson replays its docker commands too, so it needs the same opt-in.
     const needsDocker = lesson.track === "docker" || usesDocker([...setupBlocks, ...ownBlocks]);
