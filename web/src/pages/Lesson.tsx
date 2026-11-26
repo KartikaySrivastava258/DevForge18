@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { BookmarkButton } from "../components/BookmarkButton.tsx";
 import { Crumbs } from "../components/Crumbs.tsx";
@@ -10,31 +10,12 @@ import { LevelTag } from "../components/Tags.tsx";
 import { api } from "../lib/api.ts";
 import { useAuth } from "../lib/auth.tsx";
 import { formatDate } from "../lib/format.ts";
-import { handleInternalLinkClick, Link } from "../lib/router.tsx";
+import { ArticleBody, useArticleClick } from "../lib/article.tsx";
+import { Link } from "../lib/router.tsx";
 import type { LessonResponse } from "../lib/types.ts";
 import { useApi, useTitle } from "../lib/useApi.ts";
 import { useScrollSpy } from "../lib/useScrollSpy.ts";
 import { ResourceItem } from "./Track.tsx";
-
-async function copyText(text: string): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    return false; // clipboard API unavailable (e.g. plain-http site); the code stays selectable
-  }
-}
-
-/**
- * The lesson body is static HTML. It is memoised so that re-renders of the
- * page (scroll-spy updates, announcements, progress) never make React
- * re-insert the article, which would discard text selection and DOM state
- * such as a "Copied" button label.
- */
-const LessonBody = memo(function LessonBody({ html, onClick }: { html: string; onClick: (e: MouseEvent<HTMLElement>) => void }) {
-  // HTML is rendered at build time from reviewed Markdown with raw HTML escaped (scripts/lib/markdown.ts).
-  return <article className="article" onClick={onClick} dangerouslySetInnerHTML={{ __html: html }} />;
-});
 
 export function LessonPage({ trackSlug, lessonId }: { trackSlug: string; lessonId: string }) {
   const { user } = useAuth();
@@ -64,22 +45,7 @@ export function LessonPage({ trackSlug, lessonId }: { trackSlug: string; lessonI
     setSimulations(sims);
   }, [loadedLessonId]);
 
-  const onArticleClick = useCallback(async (e: MouseEvent<HTMLElement>) => {
-    const button = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-copy]");
-    if (button) {
-      const code = button.closest(".code-block")?.querySelector("code")?.textContent ?? "";
-      const ok = await copyText(code);
-      button.textContent = ok ? "Copied" : "Select and copy";
-      button.dataset.state = ok ? "copied" : "";
-      setAnnounce(ok ? "Code copied to clipboard" : "Copy is unavailable here; select the code to copy it");
-      window.setTimeout(() => {
-        button.textContent = "Copy";
-        button.dataset.state = "";
-      }, 2000);
-      return;
-    }
-    handleInternalLinkClick(e);
-  }, []);
+  const onArticleClick = useArticleClick(setAnnounce);
 
   if (error) return <div className="page"><ErrorState error={error} onRetry={reload} /></div>;
   if (loading || !data) return <div className="page"><Loading label="Loading lesson" /></div>;
@@ -144,7 +110,7 @@ export function LessonPage({ trackSlug, lessonId }: { trackSlug: string; lessonI
           </section>
 
           <div ref={bodyRef}>
-            <LessonBody html={lesson.html} onClick={onArticleClick} />
+            <ArticleBody html={lesson.html} onClick={onArticleClick} />
           </div>
           {diagrams.map((root) => {
             const slot = root.querySelector("[data-controls]");

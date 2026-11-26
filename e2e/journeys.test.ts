@@ -223,6 +223,32 @@ describe("learning journey (registered student)", () => {
     noProblems(problems.filter((p) => !p.includes("status of 400")));
   });
 
+  it("opens a lab from its track, and records a local lab as self-reported after every checkpoint", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/git-github");
+    await page.getByRole("link", { name: "Resolve a merge conflict" }).click();
+    await page.waitForURL("**/tracks/git-github/labs/git-resolve-a-merge-conflict");
+    await page.getByRole("heading", { level: 1, name: "Resolve a merge conflict" }).waitFor();
+    assert.ok(await page.getByText("On your machine").isVisible());
+    assert.ok(await page.getByText("Tested steps.").isVisible());
+    assert.ok(await page.locator('.code-block[data-lang="output"]', { hasText: "All checks passed" }).isVisible());
+    // Anonymous visitors are asked to sign in; there is no button to press.
+    assert.equal(await page.getByRole("button", { name: "Mark the lab as done" }).count(), 0);
+    await page.locator("#lab-done-h ~ p a", { hasText: "create an account" }).click();
+    await page.getByLabel("Name").fill("Lab Learner");
+    await page.getByLabel("Email").fill("lab-learner@example.edu");
+    await page.getByLabel("Password").fill("orbit lantern cobalt river");
+    await page.getByRole("button", { name: "Create account" }).click();
+    await page.waitForURL("**/tracks/git-github/labs/git-resolve-a-merge-conflict");
+    await page.getByRole("button", { name: "Mark the lab as done" }).click();
+    assert.match(await page.locator(".check .field__error").innerText(), /Tick every checkpoint/);
+    for (const box of await page.locator(".check input[type=checkbox]").all()) await box.check();
+    await page.getByRole("button", { name: "Mark the lab as done" }).click();
+    await page.getByText(/Lab complete.*self-reported/).waitFor();
+    await page.screenshot({ path: join(SHOTS, "lab-git-conflict.png"), fullPage: true });
+    noProblems(problems);
+  });
+
   it("protects the dashboard and rejects open redirects after login", async () => {
     const { page, problems } = await h.newPage();
     await page.goto("/dashboard");
@@ -303,7 +329,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff", "/tracks/github-actions/simulations/github-actions-workflow-run", "/tracks/redis/simulations/redis-cache-load", "/tracks/nginx/simulations/nginx-location-matcher", "/tracks/postman/simulations/postman-request-builder", "/tracks/jenkins/simulations/jenkins-build-queue", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff", "/tracks/github-actions/simulations/github-actions-workflow-run", "/tracks/redis/simulations/redis-cache-load", "/tracks/nginx/simulations/nginx-location-matcher", "/tracks/postman/simulations/postman-request-builder", "/tracks/jenkins/simulations/jenkins-build-queue", "/tracks/git-github/labs/git-resolve-a-merge-conflict", "/tracks/kubernetes/labs/kubernetes-self-healing-and-rollouts", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

@@ -9,10 +9,12 @@ import type { ZodError } from "zod/v4";
 import {
   AlternativesFileSchema,
   CaseStudySchema,
+  LabMetaSchema,
   LessonMetaSchema,
   PathSchema,
   TrackSchema,
   type CaseStudy,
+  type CompiledLab,
   type CompiledLesson,
   type ContentBundle,
   type LearningPath,
@@ -221,6 +223,85 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
     }
   }
   lessons.sort((a, b) => (a.track === b.track ? a.order - b.order : a.track.localeCompare(b.track)));
+
+  // ---- Labs (REMAINING_WORK.md §4.4) ----------------------------------------
+  const labs: CompiledLab[] = [];
+  const labsDir = join(root, "labs");
+  for (const trackDir of listDirs(labsDir)) {
+    if (!trackSlugs.has(trackDir)) errors.push(`labs/${trackDir}: no track with this slug`);
+    for (const fileName of listFiles(join(labsDir, trackDir), ".md")) {
+      const file = join(labsDir, trackDir, fileName);
+      const rel = relative(root, file);
+      const split = splitFrontMatter(readFileSync(file, "utf8"));
+      if (!split) {
+        errors.push(`${rel}: missing YAML front matter (--- ... ---)`);
+        continue;
+      }
+      let raw: unknown;
+      try {
+        raw = parseYaml(split.frontMatter, file);
+      } catch (err) {
+        errors.push(`${rel}: invalid front matter — ${(err as Error).message.split("\n")[0]}`);
+        continue;
+      }
+      const parsed = LabMetaSchema.safeParse(raw);
+      if (!parsed.success) {
+        errors.push(...formatZod(rel, parsed.error));
+        continue;
+      }
+      const meta = parsed.data;
+      if (`${meta.id}.md` !== basename(fileName)) errors.push(`${rel}: id must match file name`);
+      if (meta.track !== trackDir) errors.push(`${rel}: track "${meta.track}" must match folder "${trackDir}"`);
+      if (meta.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+      if (lessonIds.has(meta.id)) errors.push(`${rel}: id "${meta.id}" is already a lesson id`);
+      for (const prereq of meta.prerequisites) if (!lessonIds.has(prereq)) errors.push(`${rel}: unknown prerequisite lesson "${prereq}"`);
+      const blocks = extractRunBlocks(split.body);
+      const checks = blocks.filter((b) => b.check).length;
+      if (meta.mode === "local") {
+        if (meta.verification.method === "docs-checked") errors.push(`${rel}: a local lab's steps must be executed by the tests (verification "executed" or "pending")`);
+        if (blocks.length === 0) errors.push(`${rel}: a local lab needs \`\`\`bash run steps`);
+        if (checks !== 1) errors.push(`${rel}: a local lab needs exactly one check script (\`\`\`bash run check), found ${checks}`);
+      } else if (checks > 0) errors.push(`${rel}: only local labs have a check script`);
+      if (meta.verification.method === "executed" && blocks.length === 0) errors.push(`${rel}: verification "executed" requires run blocks`);
+      if (meta.verification.method === "docs-checked" && blocks.length > 0) errors.push(`${rel}: has run blocks, so verification.method must be "executed" or "pending"`);
+      if (meta.simulation) {
+        const sim = simulationsById.get(meta.simulation.id);
+        if (!sim) errors.push(`${rel}: unknown simulation "${meta.simulation.id}"`);
+        else
+          for (const c of meta.simulation.challenges)
+            if (!sim.challenges.some((x) => x.id === c)) errors.push(`${rel}: simulation "${sim.id}" has no challenge "${c}"`);
+      }
+      const rendered = renderMarkdown(split.body, { media: mediaResolver(media, usedMedia, simulationsById) });
+      for (const problem of rendered.problems) errors.push(`${rel}: ${problem}`);
+      for (const heading of ["Goal", "Reset"]) if (!rendered.toc.some((t) => t.text === heading)) errors.push(`${rel}: a lab needs a "## ${heading}" section`);
+      labs.push({ ...meta, html: rendered.html, toc: rendered.toc });
+    }
+  }
+  labs.sort((a, b) => (a.track === b.track ? a.id.localeCompare(b.id) : a.track.localeCompare(b.track)));
+  const labsById = new Map<string, CompiledLab>();
+  for (const lab of labs) {
+    if (labsById.has(lab.id)) errors.push(`duplicate lab id "${lab.id}"`);
+    labsById.set(lab.id, lab);
+  }
+  const linkedLabs = new Set<string>();
+  for (const track of tracks) {
+    for (const item of track.labs) {
+      if (!item.lab) {
+        if (item.status === "available") errors.push(`track ${track.slug}: lab "${item.title}" is marked available but names no lab page`);
+        continue;
+      }
+      const lab = labsById.get(item.lab);
+      if (!lab) errors.push(`track ${track.slug}: unknown lab "${item.lab}"`);
+      else {
+        if (lab.track !== track.slug) errors.push(`track ${track.slug}: lab "${item.lab}" belongs to track ${lab.track}`);
+        if (item.status !== "available") errors.push(`track ${track.slug}: lab "${item.lab}" is published, so its status must be "available"`);
+        if (lab.level !== item.level || (item.mode && lab.mode !== item.mode)) errors.push(`track ${track.slug}: level or mode of "${item.lab}" differs from the lab page`);
+      }
+      linkedLabs.add(item.lab);
+    }
+    for (const item of track.projects) if (item.lab) errors.push(`track ${track.slug}: projects cannot name a lab`);
+  }
+  for (const lab of labs) if (!linkedLabs.has(lab.id)) errors.push(`lab ${lab.id}: not listed in its track's labs`);
   for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson`);
   for (const key of media.diagrams.keys()) if (!usedMedia.has(`diagram:${key}`)) warnings.push(`media/${key}.steps.yaml is not used by any lesson`);
 
@@ -250,7 +331,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   caseStudies.sort((a, b) => a.id.localeCompare(b.id));
 
   return {
-    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies },
+    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs },
     errors,
     warnings,
   };

@@ -556,3 +556,7 @@
 .alternative__facts dt { color: var(--muted); font-size: var(--step--1); padding-top: 0.15em; }
 .alternative__facts dd { margin: 0; overflow-wrap: anywhere; }
 @media (max-width: 36rem) { .alternative__facts { grid-template-columns: 1fr; } .alternative__facts dd { margin-bottom: var(--space-2); } }
+
+/* Labs */
+.lab-challenges { list-style: none; padding: 0; display: grid; gap: var(--space-2); }
+.lab-challenges .tag { margin-right: var(--space-2); }

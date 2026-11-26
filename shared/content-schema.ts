@@ -91,6 +91,8 @@ const PlannedWorkSchema = z
     /** read-through | local (learner's own machine) | simulation (browser, clearly labelled). */
     mode: z.enum(["read-through", "local", "simulation"]).optional(),
     status: z.enum(["planned", "available"]),
+    /** Labs only: the id of the published lab page (content/labs/<track>/<id>.md). */
+    lab: slug.optional(),
   })
   .strict();
 
@@ -212,6 +214,45 @@ export const LessonMetaSchema = z
   })
   .strict();
 export type LessonMeta = z.infer<typeof LessonMetaSchema>;
+
+/**
+ * Front matter of a lab (content/labs/<track>/<id>.md) — REMAINING_WORK.md §4.4.
+ * A lab is longer than a lesson's "Try it yourself": a goal, steps, checkpoints
+ * and a reset. "local" labs run on the learner's machine; their steps and their
+ * check script (a ```bash run check block) are executed by the test suite, and
+ * completion is self-reported because a browser cannot prove it. "simulation"
+ * labs are completed when the server has verified the listed challenges;
+ * "read-through" labs by answering questions about real output, graded on the
+ * server.
+ */
+export const LabMetaSchema = z
+  .object({
+    id: slug,
+    title: z.string().min(3),
+    track: slug,
+    level: z.enum(LEVELS),
+    mode: z.enum(["local", "simulation", "read-through"]),
+    estimated_minutes: z.number().int().min(5).max(240),
+    /** Lessons to finish first; executed ones are replayed before the lab in tests. */
+    prerequisites: z.array(slug),
+    objectives: z.array(z.string().min(10)).min(1),
+    /** What the learner must see or have; ticked before a local lab counts as done. */
+    checkpoints: z.array(z.object({ id: slug, text: z.string().min(10) }).strict()).min(1).max(12),
+    simulation: z.object({ id: slug, challenges: z.array(slug).min(1) }).strict().optional(),
+    questions: z.array(SelfCheckSchema).optional(),
+    resources: z.array(ResourceSchema),
+    verification: z
+      .object({ method: z.enum(["executed", "pending", "docs-checked"]), details: z.string().min(20) })
+      .strict(),
+    owner: z.string().min(2),
+    last_reviewed: isoDate,
+    content_version: z.number().int().positive(),
+  })
+  .strict()
+  .refine((l) => l.mode !== "simulation" || l.simulation, { message: "a simulation lab names its simulation and challenges", path: ["simulation"] })
+  .refine((l) => l.mode !== "read-through" || (l.questions?.length ?? 0) >= 2, { message: "a read-through lab needs at least two questions", path: ["questions"] })
+  .refine((l) => l.mode === "read-through" || !l.questions, { message: "only read-through labs have questions", path: ["questions"] });
+export type LabMeta = z.infer<typeof LabMetaSchema>;
 
 /**
  * Sidecar for a figure: content/media/<track>/<name>.yaml next to <name>.svg.
@@ -337,6 +378,11 @@ export interface CompiledLesson extends LessonMeta {
   word_count: number;
 }
 
+export interface CompiledLab extends LabMeta {
+  html: string;
+  toc: { id: string; text: string }[];
+}
+
 /** The compiled content bundle the server loads at start-up. */
 export interface ContentBundle {
   schema_version: 1;
@@ -347,4 +393,5 @@ export interface ContentBundle {
   /** Scenario params are normalised by the model's schema; solutions stay server-side. */
   simulations: Simulation[];
   case_studies: CaseStudy[];
+  labs: CompiledLab[];
 }

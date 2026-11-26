@@ -57,7 +57,7 @@ topics:
 labs:
   - { title: "Deploy an application to a local cluster", level: beginner, mode: local, status: planned }
   - { title: "Expose it with a Service", level: beginner, mode: local, status: planned }
-  - { title: "Change replica count and observe self-healing", level: intermediate, mode: simulation, status: planned }
+  - { title: "Change replica count and observe self-healing", level: intermediate, mode: simulation, status: available, lab: kubernetes-self-healing-and-rollouts }
   - { title: "Break a configuration and debug events and logs", level: advanced, mode: local, status: planned }
 projects:
   - { title: "Deploy a three-tier application", level: beginner, status: planned }

@@ -34,7 +34,7 @@ describe("migrations", () => {
   it("are idempotent and detect edited migrations", () => {
     const db = openDatabase(":memory:");
     const first = migrate(db);
-    assert.deepEqual(first.applied, ["0001_initial.sql", "0002_simulation_progress.sql"]);
+    assert.deepEqual(first.applied, ["0001_initial.sql", "0002_simulation_progress.sql", "0003_lab_progress.sql"]);
     assert.equal(migrate(db).applied.length, 0);
     const dir = mkdtempSync(join(tmpdir(), "mig-"));
     try {

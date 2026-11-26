@@ -189,13 +189,24 @@ describe("Redis blocks", () => {
 // Every executed lesson in the repository must still produce exactly the output it shows.
 const contentRoot = join(import.meta.dirname, "..", "..", "content");
 const { bundle } = loadContent(contentRoot);
-describe("executed lessons reproduce their documented output", () => {
+// Lessons and local labs run the same way; a lab continues from its prerequisite lessons.
+const runnables = [
+  ...bundle.lessons.map((l) => ({ ...l, kind: "lesson" as const, file: join(contentRoot, "lessons", l.track, `${l.id}.md`) })),
+  ...bundle.labs.map((l) => ({
+    ...l,
+    kind: "lab" as const,
+    // The lab needs what its latest prerequisite lesson in the same track needs (ports, API, time).
+    order: Math.max(1, ...l.prerequisites.map((id) => bundle.lessons.find((x) => x.id === id && x.track === l.track)?.order ?? 1)),
+    file: join(contentRoot, "labs", l.track, `${l.id}.md`),
+  })),
+].filter((r) => r.verification.method !== "docs-checked");
+describe("executed lessons and labs reproduce their documented output", () => {
   const postgresAvailable = hasPostgres();
   const redisAvailable = redisTestingEnabled();
   const dockerAvailable = dockerTestingEnabled();
-  for (const lesson of bundle.lessons.filter((l) => l.verification.method !== "docs-checked")) {
+  for (const lesson of runnables) {
     const needsGit = ["git-github", "github-actions", "jenkins"].includes(lesson.track);
-    const ownBlocks = extractRunBlocks(splitFrontMatter(readFileSync(join(contentRoot, "lessons", lesson.track, `${lesson.id}.md`), "utf8"))?.body ?? "");
+    const ownBlocks = extractRunBlocks(splitFrontMatter(readFileSync(lesson.file, "utf8"))?.body ?? "");
     const needsPg = lesson.track === "postgresql";
     const needsNginx = lesson.track === "nginx";
     const { api: needsApi, apiPort, timeoutMs } = lessonNeeds(lesson.track, lesson.order);
@@ -235,7 +246,7 @@ describe("executed lessons reproduce their documented output", () => {
                 : needsDocker && !dockerAvailable
                   ? "Docker lessons run only with DEVFORGE_DOCKER_TEST=1 and a Docker engine (CI)"
                   : false;
-    it(`${lesson.id} (${lesson.verification.method})`, { skip }, async (t) => {
+    it(`${lesson.kind === "lab" ? "lab " : ""}${lesson.id} (${lesson.verification.method})`, { skip }, async (t) => {
       // HTTP lessons practise against a real DevForge server, exposed to the lesson as $API.
       let api;
       try {
@@ -251,7 +262,7 @@ describe("executed lessons reproduce their documented output", () => {
       // Prerequisites' outputs are checked by their own tests; here they only need to succeed.
       // (pending prerequisites are replayed too: they are part of the learner's state)
       const setup = setupBlocks.map((b) => ({ ...b, expected: undefined }));
-      const own = blocksOf(lesson.id, lesson.track);
+      const own = ownBlocks;
       const blocks = [...setup, ...own].map((b, index) => ({ ...b, index }));
       let run;
       try {
@@ -268,6 +279,21 @@ describe("executed lessons reproduce their documented output", () => {
         .map((r) => `--- block ${r.index}:\n${r.code}\n--- expected:\n${r.expected ?? "(no output block; command must succeed)"}\n--- actual:\n${r.output}`)
         .join("\n");
       assert.equal(bad.length, 0, `${run.failure ? `Script stopped early:\n${run.failure}\n` : ""}${report}`);
+    });
+  }
+});
+
+// A check script that passes on an empty directory checks nothing (REMAINING_WORK.md §4.4).
+describe("lab check scripts fail when the work has not been done", () => {
+  for (const lab of bundle.labs.filter((l) => l.mode === "local")) {
+    const check = extractRunBlocks(splitFrontMatter(readFileSync(join(contentRoot, "labs", lab.track, `${lab.id}.md`), "utf8"))?.body ?? "").find((b) => b.check);
+    it(lab.id, () => {
+      assert.ok(check, "no check script");
+      const run = runLesson([{ ...check, index: 0, expected: undefined, allowFail: true }], { timeoutMs: 60_000 });
+      const result = run.results[0];
+      assert.ok(result, run.failure ?? "no result");
+      assert.match(result.output, /FAIL/, `the check script should report FAIL in an empty directory, got:\n${result.output}`);
+      assert.doesNotMatch(result.output, /^All checks passed/m);
     });
   }
 });

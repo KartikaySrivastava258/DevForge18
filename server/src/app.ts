@@ -22,6 +22,7 @@ import { registerAuthRoutes } from "./routes/auth.ts";
 import { registerContentRoutes } from "./routes/content.ts";
 import { sessionCookieName, type AppDeps, type Limiters } from "./routes/deps.ts";
 import { registerLearningRoutes } from "./routes/learning.ts";
+import { registerLabRoutes } from "./routes/labs.ts";
 import { registerSimulationRoutes } from "./routes/simulations.ts";
 
 const MUTATING = new Set(["POST", "PUT", "PATCH", "DELETE"]);
@@ -74,6 +75,7 @@ export function createApp(input: {
   registerContentRoutes(router, deps);
   registerLearningRoutes(router, deps);
   registerSimulationRoutes(router, deps);
+  registerLabRoutes(router, deps);
   registerAdminRoutes(router, deps);
 
   const sweeper = setInterval(() => {

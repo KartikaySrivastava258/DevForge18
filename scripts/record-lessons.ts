@@ -23,15 +23,24 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const contentRoot = join(root, "content");
 const { bundle } = loadContent(contentRoot);
 const args = process.argv.slice(2);
-const targets = args.includes("--all") ? bundle.lessons.filter((l) => l.verification.method !== "docs-checked") : bundle.lessons.filter((l) => args.includes(l.id));
+// Labs are recorded like lessons; a lab needs what its latest prerequisite lesson in its track needs.
+const items = [
+  ...bundle.lessons.map((l) => ({ ...l, file: join(contentRoot, "lessons", l.track, `${l.id}.md`) })),
+  ...bundle.labs.map((l) => ({
+    ...l,
+    order: Math.max(1, ...l.prerequisites.map((id) => bundle.lessons.find((x) => x.id === id && x.track === l.track)?.order ?? 1)),
+    file: join(contentRoot, "labs", l.track, `${l.id}.md`),
+  })),
+];
+const targets = args.includes("--all") ? items.filter((l) => l.verification.method !== "docs-checked") : items.filter((l) => args.includes(l.id));
 if (targets.length === 0) {
-  console.error("Usage: npm run lessons:record -- <lesson-id> ... | --all");
+  console.error("Usage: npm run lessons:record -- <lesson-or-lab-id> ... | --all");
   process.exit(2);
 }
 const fileOf = (id: string) => {
-  const l = bundle.lessons.find((x) => x.id === id);
-  if (!l) throw new Error(`unknown lesson ${id}`);
-  return join(contentRoot, "lessons", l.track, `${id}.md`);
+  const l = items.find((x) => x.id === id);
+  if (!l) throw new Error(`unknown lesson or lab ${id}`);
+  return l.file;
 };
 const blocksOf = (id: string): RunBlock[] => extractRunBlocks(splitFrontMatter(readFileSync(fileOf(id), "utf8"))?.body ?? "");
 

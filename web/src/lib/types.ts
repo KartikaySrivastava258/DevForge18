@@ -52,6 +52,7 @@ export interface TrackResponse {
   lessons: LessonSummary[];
   simulations: SimulationSummary[];
   caseStudies: CaseStudy[];
+  labs: LabSummary[];
   prerequisites: TrackSummary[];
   related: { why: string; track: TrackSummary }[];
   paths: { slug: string; title: string; number: number }[];
@@ -173,4 +174,44 @@ export interface VerifyResponse {
   passed: boolean;
   saved: boolean;
   completed: string[];
+}
+
+export type LabMode = "local" | "simulation" | "read-through";
+export interface LabSummary {
+  id: string;
+  title: string;
+  track: string;
+  level: Level;
+  mode: LabMode;
+  estimatedMinutes: number;
+}
+export interface LabProgress {
+  labId: string;
+  track: string;
+  evidence: "self-reported" | "verified";
+  completedAt: string;
+}
+export interface PublicLab extends LabSummary {
+  prerequisites: LessonSummary[];
+  objectives: string[];
+  checkpoints: { id: string; text: string }[];
+  simulation: (SimulationSummary & { challenges: { id: string; title: string }[] }) | null;
+  questions: { id: string; prompt: string; options: { id: string; text: string }[] }[];
+  resources: Resource[];
+  html: string;
+  toc: { id: string; text: string }[];
+  verification: { method: "executed" | "pending" | "docs-checked"; details: string };
+  lastReviewed: string;
+  contentVersion: number;
+}
+export interface LabResponse {
+  lab: PublicLab;
+  track: TrackSummary | null;
+  progress: LabProgress | null;
+  challengesDone: string[];
+}
+export interface LabCompleteResponse {
+  completed: boolean;
+  grade: { total: number; correct: number; passed: boolean; results: { id: string; correct: boolean; explanation?: string }[] } | null;
+  progress: LabProgress | null;
 }

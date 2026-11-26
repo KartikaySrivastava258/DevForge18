@@ -28,6 +28,8 @@ export interface RunBlock {
    */
   kind: "bash" | "sql" | "redis";
   allowFail: boolean;
+  /** A lab's check script (```bash run check): also run in an empty directory, where it must fail. */
+  check?: boolean;
   expected: string | undefined;
 }
 
@@ -48,6 +50,7 @@ export function extractRunBlocks(markdown: string): RunBlock[] {
       code: token.text,
       kind: words[0] === "sql" ? "sql" : words[0] === "redis" ? "redis" : "bash",
       allowFail: words.includes("fails"),
+      ...(words.includes("check") ? { check: true } : {}),
       expected: nextIsOutput ? next.text : undefined,
     });
   });

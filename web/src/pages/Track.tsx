@@ -58,7 +58,7 @@ export function TrackPage({ slug }: { slug: string }) {
 
   if (error) return <div className="page"><ErrorState error={error} onRetry={reload} /></div>;
   if (loading || !data) return <div className="page"><Loading label="Loading track" /></div>;
-  const { track, summary, lessons, simulations, caseStudies, prerequisites, related, paths } = data;
+  const { track, summary, lessons, simulations, caseStudies, labs, prerequisites, related, paths } = data;
 
   return (
     <div className="page">
@@ -271,7 +271,7 @@ export function TrackPage({ slug }: { slug: string }) {
             <ul className="plan-list">
               {track.labs.map((l) => (
                 <li key={l.title}>
-                  <span>{l.title}</span>
+                  {l.lab && labs.some((x) => x.id === l.lab) ? <Link to={`/tracks/${track.slug}/labs/${l.lab}`}>{l.title}</Link> : <span>{l.title}</span>}
                   <span className="tags">
                     <LevelTag level={l.level} />
                     <ModeTag mode={l.mode} />

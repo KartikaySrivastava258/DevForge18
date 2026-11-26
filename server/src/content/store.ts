@@ -5,6 +5,7 @@
 import { readFileSync } from "node:fs";
 import {
   type CaseStudy,
+  type CompiledLab,
   CATEGORIES,
   type CompiledLesson,
   type ContentBundle,
@@ -58,6 +59,7 @@ export class ContentStore {
   private readonly lessons = new Map<string, CompiledLesson>();
   private readonly lessonsByTrack = new Map<string, CompiledLesson[]>();
   private readonly simulations = new Map<string, Simulation>();
+  private readonly labs = new Map<string, CompiledLab>();
   private readonly index: SearchIndex;
 
   constructor(bundle: ContentBundle) {
@@ -73,6 +75,7 @@ export class ContentStore {
     }
     for (const list of this.lessonsByTrack.values()) list.sort((a, b) => a.order - b.order);
     for (const s of bundle.simulations ?? []) this.simulations.set(s.id, s);
+    for (const l of bundle.labs ?? []) this.labs.set(l.id, l);
     this.index = buildSearchIndex(buildSearchDocs(bundle));
   }
 
@@ -94,6 +97,41 @@ export class ContentStore {
   lessonsFor(track: string): CompiledLesson[] { return this.lessonsByTrack.get(track) ?? []; }
   getSimulation(id: string): Simulation | undefined { return this.simulations.get(id); }
   caseStudiesFor(track: string): CaseStudy[] { return (this.bundle.case_studies ?? []).filter((c) => c.tracks.includes(track)); }
+  getLab(id: string): CompiledLab | undefined { return this.labs.get(id); }
+  labsFor(track: string): CompiledLab[] { return [...this.labs.values()].filter((l) => l.track === track); }
+
+  labSummary(l: CompiledLab) {
+    return { id: l.id, title: l.title, track: l.track, level: l.level, mode: l.mode, estimatedMinutes: l.estimated_minutes };
+  }
+
+  /** The lab as sent to browsers: question answers and explanations removed. */
+  publicLab(l: CompiledLab) {
+    const sim = l.simulation ? this.simulations.get(l.simulation.id) : undefined;
+    return {
+      ...this.labSummary(l),
+      prerequisites: l.prerequisites.map((id) => this.lessons.get(id)).filter((x): x is CompiledLesson => !!x).map((x) => this.lessonSummary(x)),
+      objectives: l.objectives,
+      checkpoints: l.checkpoints,
+      simulation: sim && l.simulation ? { ...this.simulationSummary(sim), challenges: sim.challenges.filter((c) => l.simulation?.challenges.includes(c.id)).map((c) => ({ id: c.id, title: c.title })) } : null,
+      questions: (l.questions ?? []).map((q) => ({ id: q.id, prompt: q.prompt, options: q.options })),
+      resources: l.resources,
+      html: l.html,
+      toc: l.toc,
+      verification: l.verification,
+      lastReviewed: l.last_reviewed,
+      contentVersion: l.content_version,
+    };
+  }
+
+  /** Grade a read-through lab's questions; explanations only for correct answers (as for lessons). */
+  gradeLab(labId: string, answers: Record<string, string>) {
+    const lab = this.labs.get(labId);
+    if (!lab) return undefined;
+    const results = (lab.questions ?? []).map((q) => (answers[q.id] === q.answer ? { id: q.id, correct: true, explanation: q.explanation } : { id: q.id, correct: false }));
+    const correct = results.filter((r) => r.correct).length;
+    return { total: results.length, correct, passed: results.length > 0 && correct === results.length, results };
+  }
+
   simulationsFor(track: string): Simulation[] { return [...this.simulations.values()].filter((s) => s.track === track); }
 
   simulationSummary(s: Simulation) {
