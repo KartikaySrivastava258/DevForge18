@@ -76,7 +76,7 @@ verification:
   details: Every command on this page is run by DevForge's test suite on a real kind cluster (Kubernetes 1.36.1), and its output is compared with this page. Names, ages and timings that change on every run are shown as …. You read and interpret the output; running the commands yourself is optional.
 owner: content-team
 last_reviewed: 2026-11-26
-content_version: 2
+content_version: 3
 ---
 
 ## Goal
@@ -142,7 +142,7 @@ deployment.apps/crasher created
 deployment.apps/greedy created
 ```
 
-Every `apply` succeeded: Kubernetes accepted the *desired state*. Whether it can be *reached* only shows up afterwards. (The lab waits for each Pod to reach its failure state before looking. Two STATUS values alternate, so the table below shows them as `…`: the crasher shows `Error` right after each crash, then `CrashLoopBackOff` while Kubernetes waits before the next restart; the typo Pod shows `ErrImagePull` at each attempt, then `ImagePullBackOff` while it waits before the next one.)
+Every `apply` succeeded: Kubernetes accepted the *desired state*. Whether it can be *reached* only shows up afterwards. (The lab waits for each Pod to reach its failure state before looking. Two STATUS values alternate, so the table below shows them as `…`: the crasher shows `Error` right after each crash, then `CrashLoopBackOff` while Kubernetes waits before the next restart; the typo Pod shows `ErrImagePull` at each attempt, then `ImagePullBackOff` while it waits before the next one. The crasher has no readiness probe, so for the moment between starting and crashing it can even show `1/1 Running`.)
 
 ```bash run
 n="-n debug-lab"
@@ -154,7 +154,7 @@ kubectl $n get pods
 
 ```text output
 NAME   …   READY   STATUS   …
-crasher-…   0/1     …
+crasher-…   …/1     …
 greedy-…   0/1     Pending   …
 typo-…   0/1     …
 ```
