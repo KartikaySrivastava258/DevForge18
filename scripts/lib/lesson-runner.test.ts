@@ -119,6 +119,7 @@ describe("background servers", () => {
   });
   it("lessonNeeds gives every track one shared answer", () => {
     assert.deepEqual(lessonNeeds("prometheus-grafana", 1), { api: true, apiPort: 0, timeoutMs: 300_000 });
+    assert.deepEqual(lessonNeeds("postman", 5), { api: true, apiPort: 0, timeoutMs: 300_000 });
     assert.deepEqual(lessonNeeds("nginx", 2), { api: true, apiPort: 8080, timeoutMs: 60_000 });
     assert.deepEqual(lessonNeeds("nginx", 1), { api: false, apiPort: 0, timeoutMs: 60_000 });
     assert.deepEqual(lessonNeeds("nginx", 3), { api: false, apiPort: 0, timeoutMs: 60_000 }, "location matching needs no API");

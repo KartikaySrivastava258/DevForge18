@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 250">
+  <!-- One OpenAPI document as documentation, mock server and contract, from Mock servers and API documentation. -->
+  <rect class="f-box-accent" x="250" y="14" width="200" height="70" rx="8"/>
+  <text class="f-small f-strong f-mono" x="350" y="42" text-anchor="middle">api.yaml (OpenAPI)</text>
+  <text class="f-small" x="350" y="64" text-anchor="middle">paths, schemas, examples</text>
+  <rect class="f-box" x="20" y="150" width="200" height="70" rx="8"/>
+  <text class="f-small f-strong" x="120" y="178" text-anchor="middle">documentation</text>
+  <text class="f-small f-muted" x="120" y="200" text-anchor="middle">humans read it</text>
+  <rect class="f-box" x="250" y="150" width="200" height="70" rx="8"/>
+  <text class="f-small f-strong" x="350" y="178" text-anchor="middle">mock server</text>
+  <text class="f-small f-muted" x="350" y="200" text-anchor="middle">frontend builds on it</text>
+  <rect class="f-box" x="480" y="150" width="200" height="70" rx="8"/>
+  <text class="f-small f-strong" x="580" y="178" text-anchor="middle">contract</text>
+  <text class="f-small f-muted" x="580" y="200" text-anchor="middle">tests check the real API</text>
+  <g>
+    <path class="f-arrow" d="M300 86 L137.5 145.3"/>
+    <polygon class="f-head" points="130,148 136.0,141.1 139.1,149.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M350 86 L350 140"/>
+    <polygon class="f-head" points="350,148 345.5,140 354.5,140"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M400 86 L562.5 145.3"/>
+    <polygon class="f-head" points="570,148 560.9,149.5 564.0,141.1"/>
+  </g>
+  <text class="f-small f-muted" x="350" y="242" text-anchor="middle">Write the contract first; the mock lets work start before the backend exists.</text>
+</svg>

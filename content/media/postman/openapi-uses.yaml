@@ -1,0 +1,4 @@
+alt: 'An OpenAPI document, api.yaml, with paths, schemas and examples, feeds three uses: documentation that humans read, a mock server the frontend builds on, and a contract that tests check the real API against. A note says to write the contract first, so the mock lets work start before the backend exists.'
+caption: 'One API description, three uses: explain the API, fake it, and check it.'
+credit: DevForge 18 content team
+licence: project-content
