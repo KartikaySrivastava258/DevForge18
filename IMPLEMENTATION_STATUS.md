@@ -327,6 +327,10 @@ Commit 9e1d0b0 (GitHub Actions, Redis, Nginx, Postman, Jenkins): CI run 45765786
 - **Tests.** 4 loader tests (every track has at least two case studies and two alternatives; each claim has a quote, an https source and a check date; bad case studies and alternatives are rejected), an API assertion, a browser test (Kafka: LinkedIn quote, source link, Confirmed tag, Apache Pulsar licence link, TOC link), and the required-sections and mobile-overflow tests now include the new sections.
 - **Link check (2026-11-26).** 314 links: Azure Pipelines returned 503 and Uber's blog 406 to the automated checker (both load in a browser); every other link resolved. Redirected lesson resources were updated to their new addresses (Kubernetes probes, GitHub Actions artefacts, Postman environments).
 
+### Milestone 6 — CI fix (2026-11-26)
+
+CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key written last survives `allkeys-lru`, but in CI it was evicted. Redis's LRU is approximate (sampled keys, a one-second clock), so keys written in one burst look equally old. The check was removed and the lesson now explains this; the lesson passed three times in a row locally.
+
 ## Current work
 
 Milestone 6 is done; next is milestone 7 (labs).

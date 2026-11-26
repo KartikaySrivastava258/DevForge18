@@ -132,7 +132,6 @@ for i in $(seq 3001 4000); do echo "SET page:$i $page"; done | redis-cli | grep 
 evicted=$(redis-cli INFO stats | grep '^evicted_keys:' | cut -d: -f2 | tr -d '\r')
 echo "keys evicted: $([ "$evicted" -gt 0 ] && echo yes || echo no)"
 echo "fewer keys than written: $([ "$(redis-cli DBSIZE)" -lt 4000 ] && echo yes || echo no)"
-redis-cli EXISTS page:4000
 ```
 
 ```text output
@@ -140,10 +139,11 @@ OK
 … OK
 keys evicted: yes
 fewer keys than written: yes
-1
 ```
 
-Now every write succeeds: Redis makes room by evicting the keys used least recently. The newest page is there; older ones were dropped. For a cache that is exactly right — each page can be read from the database again.
+Now every write succeeds: Redis makes room by evicting keys. For a cache that is exactly right — each page can be read from the database again.
+
+Which keys go is only *approximately* "least recently used". Redis samples a few keys and evicts the oldest of them, and its record of when a key was last used is coarse (one second, in Redis's source code). Keys written in the same burst therefore look equally old, and even the page written last can be evicted — DevForge's own tests saw exactly that. What LRU does well over time is keep keys that are read often and drop keys nobody has touched for a while.
 
 ### 4. volatile-lru only evicts keys with a TTL
 
