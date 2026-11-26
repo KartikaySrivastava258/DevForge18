@@ -4,7 +4,7 @@ Last updated: 2026-11-26 (UTC) · Milestone: **8 — intermediate and advanced l
 
 ## Session handoff
 
-- **Where I stopped:** Prometheus + Grafana track complete (8 lessons); next: OpenTelemetry (lessons 4+), then Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira.
+- **Where I stopped:** OpenTelemetry track complete (7 lessons); next: Kafka, then Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira.
 - **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC.
 - **Open issue:** `n8n-workflows-nodes-and-items` failed once in CI (run 45886569745): the n8n container stopped after a workflow import. Not reproduced locally in 3 runs under full CPU load. The runner now prints each container's state, OOM flag and last log lines when a lesson stops early, so the next occurrence shows the cause.
 - **How to work fast:** `npm run new:lesson -- <track> <id>` scaffolds; `npm run ci:record -- <id>` records in CI (no local tool downloads); `npm run lessons:stress -- <id>` reproduces timing failures; figures are `scripts/figures/<track>/<name>.py` (helper `scripts/figures/figlib.py`); research per track in `docs/research/<track>.md`.
@@ -17,11 +17,11 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 84 published, at least 3 in every track; 82 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Git, PostgreSQL, Postman, Redis, Nginx, Docker and Terraform have 7–8 lessons each, beginner to advanced; the other 11 tracks have 3 beginner lessons |
+| Lessons | ✅ 107 published, at least 3 in every track; 105 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Git, PostgreSQL, Postman, Redis, Nginx, Docker, Terraform, Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana and OpenTelemetry have 7–8 lessons each, beginner to advanced; Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira have 3 beginner lessons |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 85 figures across all 84 lessons (no ASCII diagrams left), 22 of them step-throughs — at least one in every track; tested |
+| Figures and step-through diagrams | ✅ 108 figures (every lesson has at least one), 22 of them step-throughs — at least one in every track; tested |
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
 | Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
@@ -363,6 +363,13 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **CI restructured.** Run 45833076158 passed every test but hit the 40-minute limit, because lesson replay chains grow faster than the lesson count. Executed lessons now run in three independent shards (`DEVFORGE_LESSON_SHARD=i/n`), and the verify job skips them (`off`). Shards pull Docker Hub images through mirror.gcr.io after one shard hit Docker Hub's anonymous rate limit. Run 45843877395: all four jobs green in about 17 minutes.
 - **Runner.** Lessons that run `createdb`, `dropdb` or `psql` from bash are gated on PostgreSQL like SQL lessons.
 
+### Milestone 8 — Path 2 and 3 tracks: Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana, OpenTelemetry (2026-11-26)
+
+- **23 new lessons, all executed locally twice before pushing, each with a figure, a self-check and sources checked on 2026-11-26.** Kubernetes 4–8 (ConfigMaps and Secrets, namespaces and selectors, volumes and StatefulSets, RBAC and network policies, Ingress and Gateway API with cloud-provider-kind v0.12.0); GitHub Actions 4–8 (images to a local registry, reusable workflows and composite actions, environments, OIDC, supply-chain hardening with SHA-pinned actions); Jenkins 4–7 (Configuration as Code, agents and labels, shared libraries, securing Jenkins); Prometheus + Grafana 4–8 (metric types, dashboards and variables, alerting with Alertmanager 0.34.2, SLOs and burn rates, cardinality and long-term storage); OpenTelemetry 4–7 (context through queues, metrics and logs, sampling, correlating signals).
+- **Research notes** for each track in `docs/research/` (versions, sources with wording, behaviour observed in real runs).
+- **Facts found by running, not assumed:** the core Collector 0.166.0 has `probabilistic_sampler` but no `tail_sampling` (tail sampling is described and labelled as not run); the JavaScript SDK 0.301.2 offers only the deprecated `TraceIdRatioBased` sampler and records no exemplars; default histogram buckets put sub-second durations into one bucket; Prometheus 3 refuses scrapes without a Content-Type.
+- **CI:** run 45909030368 green on all four jobs after the SIGPIPE, Airflow-backfill and Collector-port fixes; the OpenTelemetry lessons 4–7 are confirmed by the run for the track push (see "Current work").
+
 ### Speed-ups and decisions (2026-11-26)
 
 - **Decisions recorded.** Licences: MIT for code (`LICENSE`), CC BY-SA 4.0 for `content/` (`LICENSE-CONTENT`, full legal code from creativecommons.org), Fira Sans OFL notice kept. `~/Downloads/devforge18` deleted after checking that every file's content exists in this repository's history (the only differences were three debugging logs and an older `package.json`). Terraform's plugin cache is enabled in CI with `TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE` (HashiCorp documents it for setups that discard lock files, as lesson folders do; without it the cache is never used for fresh folders); learners' commands are unchanged. Python packages are installed inside lesson containers, so no pip cache (it would change commands learners see). Quiz and project scaffolds come with their schemas in milestone 9.
@@ -384,10 +391,11 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-26 | Jenkins lessons 4–7 (one research pass; real Jenkins, plugins, agent, library server) | 85 | 15 | plugin image built in under a minute locally; no CI recording needed |
 | 2026-11-26 | CI fixes (stream order, trap set -e, n8n stress run in CI: not reproduced) | 20 | 25 | |
 | 2026-11-26 | Prometheus + Grafana lessons 4–8 (one research pass; Alertmanager added to CI tools) | 100 | 25 | waiting = Prometheus/Grafana/Alertmanager downloads (lost with the old scratch folder) |
+| 2026-11-26 | OpenTelemetry lessons 4–7 (one research pass; no new CI tools) | 110 | 15 | lost ~10 min to a shell heredoc that ended early (lesson text now written with the editor, not heredocs) |
 
 ## Current work
 
-Milestone 8: Path 1 and Terraform are done (CI green on run 45843877395 for everything up to Docker lesson 7; the Terraform lessons are in CI now). Next: Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana and OpenTelemetry, then the remaining tracks.
+Milestone 8: Path 1 and Terraform are done (CI green on run 45843877395 for everything up to Docker lesson 7; the Terraform lessons are in CI now). Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana and OpenTelemetry are done too. Next: Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira.
 
 ## Pending work (ordered)
 

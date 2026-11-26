@@ -297,7 +297,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.15 OpenTelemetry
 
-- **Lessons:** ✅ Traces, spans and context · ✅ Instrumenting a Node.js service · ✅ The Collector pipeline and Jaeger · Propagating context across services and queues · Metrics and logs with OpenTelemetry · Sampling and cost (advanced) · Correlating traces, metrics and logs (advanced).
+- **Lessons:** ✅ Traces, spans and context · ✅ Instrumenting a Node.js service · ✅ The Collector pipeline and Jaeger · ✅ Propagating context across services and queues · ✅ Metrics and logs with OpenTelemetry · ✅ Sampling and cost (advanced) · ✅ Correlating traces, metrics and logs (advanced).
 - ✅ **Simulation — trace waterfall:** a request travels through gateway → API → database → cache; the model generates spans with parent IDs; the view draws the waterfall and lets learners inject latency in one service and find it. **Challenge:** find the slow span and explain the critical path.
 - **Labs:** instrument DevForge itself (the blueprint's Phase 6 item) and send traces to a Collector and Jaeger in containers (executed in CI by querying Jaeger's API for the expected service and span names).
 - **Real world:** OpenTelemetry was formed in 2019 by merging OpenTracing and OpenCensus and is a CNCF project. Sources: opentelemetry.io, CNCF.
