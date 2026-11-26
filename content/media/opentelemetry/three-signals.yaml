@@ -1,0 +1,4 @@
+alt: 'The checkout service runs the OpenTelemetry Node SDK with three parts: a Tracer that produces spans with trace and span IDs, a Meter that produces a counter and a histogram as aggregated values, and a Logger whose records are stamped with the active span. All three are sent over OTLP/HTTP to one Collector, which has a separate pipeline for traces, metrics and logs. Traces go on to Jaeger, metrics to Prometheus and Grafana, and logs to a log store. The trace ID in each log record links it to its trace.'
+caption: 'One SDK and one Collector for all three signals; the trace ID ties a log line to its trace.'
+credit: DevForge 18 content team
+licence: project-content

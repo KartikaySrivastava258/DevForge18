@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300">
+  <!-- Three signals through one Collector, from Metrics and logs with OpenTelemetry. -->
+  <rect class="f-box-accent" x="10" y="30" width="210" height="230" rx="8"/>
+  <text class="f-small f-strong" x="115" y="54" text-anchor="middle">checkout (Node SDK)</text>
+  <rect class="f-box-faint" x="25" y="70" width="180" height="50" rx="8"/>
+  <text class="f-small f-mono" x="115" y="91" text-anchor="middle">Tracer → spans</text>
+  <text class="f-small" x="115" y="110" text-anchor="middle">trace + span IDs</text>
+  <rect class="f-box-faint" x="25" y="130" width="180" height="50" rx="8"/>
+  <text class="f-small f-mono" x="115" y="151" text-anchor="middle">Meter → counter,</text>
+  <text class="f-small" x="115" y="170" text-anchor="middle">histogram (aggregated)</text>
+  <rect class="f-box-faint" x="25" y="190" width="180" height="55" rx="8"/>
+  <text class="f-small f-mono" x="115" y="211" text-anchor="middle">Logger → records</text>
+  <text class="f-small" x="115" y="231" text-anchor="middle">stamped with active span</text>
+  <rect class="f-box-faint" x="270" y="30" width="210" height="230" rx="8"/>
+  <text class="f-small f-strong" x="375" y="54" text-anchor="middle">Collector</text>
+  <text class="f-small f-mono" x="375" y="98" text-anchor="middle">pipeline: traces</text>
+  <text class="f-small f-mono" x="375" y="158" text-anchor="middle">pipeline: metrics</text>
+  <text class="f-small f-mono" x="375" y="218" text-anchor="middle">pipeline: logs</text>
+  <rect class="f-box-ok" x="530" y="70" width="180" height="50" rx="8"/>
+  <text class="f-small f-strong" x="620" y="99" text-anchor="middle">Jaeger</text>
+  <rect class="f-box-ok" x="530" y="130" width="180" height="50" rx="8"/>
+  <text class="f-small f-strong" x="620" y="159" text-anchor="middle">Prometheus / Grafana</text>
+  <rect class="f-box-ok" x="530" y="190" width="180" height="55" rx="8"/>
+  <text class="f-small f-strong" x="620" y="222" text-anchor="middle">log store</text>
+  <g>
+    <path class="f-arrow" d="M207 95 L260 95"/>
+    <polygon class="f-head" points="268,95 260,99.5 260,90.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M482 95 L520 95"/>
+    <polygon class="f-head" points="528,95 520,99.5 520,90.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M207 155 L260 155"/>
+    <polygon class="f-head" points="268,155 260,159.5 260,150.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M482 155 L520 155"/>
+    <polygon class="f-head" points="528,155 520,159.5 520,150.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M207 217 L260 217"/>
+    <polygon class="f-head" points="268,217 260,221.5 260,212.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M482 217 L520 217"/>
+    <polygon class="f-head" points="528,217 520,221.5 520,212.5"/>
+  </g>
+  <text class="f-small" x="360" y="286" text-anchor="middle">OTLP/HTTP from the SDK · the trace ID in each log record links it to its trace</text>
+</svg>
