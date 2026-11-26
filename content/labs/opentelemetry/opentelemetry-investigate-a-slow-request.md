@@ -161,7 +161,10 @@ const spans = (body.result?.resourceSpans ?? []).flatMap((rs) => {
   return rs.scopeSpans.flatMap((ss) => ss.spans.map((s) => ({ ...s, svc })));
 });
 console.log(`${new Set(spans.map((s) => s.traceId)).size} trace(s) of ${service} over ${minimum}`);
-spans.sort((a, b) => (BigInt(a.startTimeUnixNano) < BigInt(b.startTimeUnixNano) ? -1 : 1));
+// List parents before their children: sort by depth in the trace, then by start time.
+const byId = new Map(spans.map((s) => [s.spanId, s]));
+const depth = (s) => (s.parentSpanId && byId.has(s.parentSpanId) ? 1 + depth(byId.get(s.parentSpanId)) : 0);
+spans.sort((a, b) => depth(a) - depth(b) || (BigInt(a.startTimeUnixNano) < BigInt(b.startTimeUnixNano) ? -1 : 1));
 for (const s of spans) {
   const ms = Number(BigInt(s.endTimeUnixNano) - BigInt(s.startTimeUnixNano)) / 1e6;
   const attrs = (s.attributes ?? []).filter((a) => ["customer.id", "db.rows"].includes(a.key))
@@ -183,7 +186,7 @@ node slow-traces.mjs shop 300ms
 
 - `query.duration_min=300ms` keeps only traces whose duration is at least 300 ms: one of the six. That is the point of tracing — finding the *one* slow request among many fast ones.
 - The script waits until the trace has arrived: the SDK sends spans in batches, every few seconds.
-- Read the spans top to bottom: the shop's server span, its client call, the catalog's server span — all about 400 ms because each *contains* the next — and finally `SELECT orders`, the innermost span, which holds the time itself.
+- The script lists parents before children. Read the spans top to bottom: the shop's server span, its client call, the catalog's server span — all about 400 ms because each *contains* the next — and finally `SELECT orders`, the innermost span, which holds the time itself.
 
 ### 4. Explain, then fix
 
