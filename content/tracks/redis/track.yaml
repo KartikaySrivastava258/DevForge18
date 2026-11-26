@@ -50,7 +50,7 @@ topics:
 labs:
   - { title: "Cache database query results", level: beginner, mode: local, status: planned }
   - { title: "Add TTL and observe expiration", level: beginner, mode: simulation, status: planned }
-  - { title: "Implement a rate limiter", level: intermediate, mode: local, status: planned }
+  - { title: "Implement a rate limiter", level: intermediate, mode: local, status: available, lab: redis-sliding-window-rate-limiter }
   - { title: "Simulate stale cache and invalidation", level: advanced, mode: simulation, status: planned }
   - { title: "Keep a cache stampede off the database", level: intermediate, mode: simulation, status: available, lab: redis-cache-under-load }
 projects:

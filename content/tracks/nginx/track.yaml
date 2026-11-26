@@ -52,7 +52,7 @@ labs:
   - { title: "Serve a static site", level: beginner, mode: local, status: planned }
   - { title: "Reverse proxy to a local API", level: beginner, mode: local, status: planned }
   - { title: "Load balance two backend instances", level: intermediate, mode: local, status: planned }
-  - { title: "Configure safe headers and rate limiting", level: advanced, mode: local, status: planned }
+  - { title: "Configure safe headers and rate limiting", level: advanced, mode: local, status: available, lab: nginx-safe-headers-and-rate-limiting }
   - { title: "Route requests with location matching", level: intermediate, mode: simulation, status: available, lab: nginx-location-matching-order }
 projects:
   - { title: "Reverse proxy for a multi-service application", level: beginner, status: planned }

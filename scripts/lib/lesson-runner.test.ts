@@ -287,9 +287,11 @@ describe("executed lessons and labs reproduce their documented output", () => {
 describe("lab check scripts fail when the work has not been done", () => {
   for (const lab of bundle.labs.filter((l) => l.mode === "local")) {
     const check = extractRunBlocks(splitFrontMatter(readFileSync(join(contentRoot, "labs", lab.track, `${lab.id}.md`), "utf8"))?.body ?? "").find((b) => b.check);
-    it(lab.id, () => {
+    // A check script that calls redis-cli starts with FLUSHDB like a Redis lesson, so it needs the same opt-in.
+    const needsRedis = check ? usesRedis([check]) : false;
+    it(lab.id, { skip: needsRedis && !redisTestingEnabled() ? "Redis check scripts run only with DEVFORGE_REDIS_TEST=1 (CI)" : false }, () => {
       assert.ok(check, "no check script");
-      const run = runLesson([{ ...check, index: 0, expected: undefined, allowFail: true }], { timeoutMs: 60_000 });
+      const run = runLesson([{ ...check, index: 0, expected: undefined, allowFail: true }], { timeoutMs: 60_000, allowRedisFlush: needsRedis });
       const result = run.results[0];
       assert.ok(result, run.failure ?? "no result");
       assert.match(result.output, /FAIL/, `the check script should report FAIL in an empty directory, got:\n${result.output}`);

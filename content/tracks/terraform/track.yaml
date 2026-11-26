@@ -51,7 +51,7 @@ labs:
   - { title: "Build a local or low-cost provider example", level: beginner, mode: local, status: planned }
   - { title: "Create reusable variables and outputs", level: intermediate, mode: local, status: planned }
   - { title: "Inspect a plan before applying", level: intermediate, mode: simulation, status: available, lab: terraform-plan-before-apply }
-  - { title: "Detect configuration drift", level: advanced, mode: local, status: planned }
+  - { title: "Detect configuration drift", level: advanced, mode: local, status: available, lab: terraform-detect-drift }
 projects:
   - { title: "Reproducible development environment", level: beginner, status: planned }
   - { title: "Reusable infrastructure module", level: intermediate, status: planned }
