@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 270">
+  <!-- What each letter of ACID promises, from Transactions and ACID. -->
+  <rect class="f-box" x="10" y="14" width="335" height="112" rx="8"/>
+  <text class="f-strong" x="177" y="48" text-anchor="middle">A — Atomicity</text>
+  <text class="f-small" x="177" y="76" text-anchor="middle">all statements or none</text>
+  <text class="f-small f-muted" x="177" y="100" text-anchor="middle">a failed step undoes the rest</text>
+  <rect class="f-box" x="355" y="14" width="335" height="112" rx="8"/>
+  <text class="f-strong" x="522" y="48" text-anchor="middle">C — Consistency</text>
+  <text class="f-small" x="522" y="76" text-anchor="middle">rules hold after commit</text>
+  <text class="f-small f-muted" x="522" y="100" text-anchor="middle">constraints are never broken</text>
+  <rect class="f-box-accent" x="10" y="138" width="335" height="112" rx="8"/>
+  <text class="f-strong" x="177" y="172" text-anchor="middle">I — Isolation</text>
+  <text class="f-small" x="177" y="200" text-anchor="middle">concurrent work does not mix</text>
+  <text class="f-small f-muted" x="177" y="224" text-anchor="middle">how much: the isolation level</text>
+  <rect class="f-box" x="355" y="138" width="335" height="112" rx="8"/>
+  <text class="f-strong" x="522" y="172" text-anchor="middle">D — Durability</text>
+  <text class="f-small" x="522" y="200" text-anchor="middle">committed means kept</text>
+  <text class="f-small f-muted" x="522" y="224" text-anchor="middle">written to the WAL before COMMIT returns</text>
+</svg>

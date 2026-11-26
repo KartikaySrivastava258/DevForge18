@@ -1,0 +1,4 @@
+alt: 'Four boxes. Atomicity: all statements or none; a failed step undoes the rest. Consistency: rules hold after commit; constraints are never broken. Isolation: concurrent work does not mix; how much depends on the isolation level. Durability: committed means kept; written to the write-ahead log before COMMIT returns.'
+caption: 'A transaction is a promise in four parts; isolation is the one you can tune.'
+credit: DevForge 18 content team
+licence: project-content
