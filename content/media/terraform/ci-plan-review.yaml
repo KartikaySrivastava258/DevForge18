@@ -1,0 +1,4 @@
+alt: 'A pipeline in four steps. On a pull request, CI runs fmt, validate, test and plan. Reviewers read the plan summary on the run. On merge to main, CI saves a plan with plan -out=tfplan. After approval it applies exactly that tfplan. Plan''s detailed exit codes are 0 for no changes, 1 for an error and 2 for changes. If the state changed after the plan was made, apply stops with Error: Saved plan is stale.'
+caption: 'What is reviewed is what is applied — or nothing is.'
+credit: DevForge 18 content team
+licence: project-content

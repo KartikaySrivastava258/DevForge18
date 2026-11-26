@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250">
+  <!-- Plan, review and apply the saved plan, from Terraform in CI with plan review. -->
+  <rect class="f-box" x="10" y="60" width="160" height="84" rx="8"/>
+  <text class="f-small f-strong" x="90" y="90" text-anchor="middle">pull request</text>
+  <text class="f-small" x="90" y="116" text-anchor="middle">validate, test, plan</text>
+  <rect class="f-box-accent" x="190" y="60" width="160" height="84" rx="8"/>
+  <text class="f-small f-strong" x="270" y="90" text-anchor="middle">review</text>
+  <text class="f-small" x="270" y="116" text-anchor="middle">plan summary on the run</text>
+  <rect class="f-box" x="370" y="60" width="160" height="84" rx="8"/>
+  <text class="f-small f-strong" x="450" y="90" text-anchor="middle">merge to main</text>
+  <text class="f-small" x="450" y="116" text-anchor="middle">plan -out=tfplan</text>
+  <rect class="f-box-ok" x="550" y="60" width="160" height="84" rx="8"/>
+  <text class="f-small f-strong" x="630" y="90" text-anchor="middle">approve, apply</text>
+  <text class="f-small" x="630" y="116" text-anchor="middle">apply tfplan exactly</text>
+  <g>
+    <path class="f-arrow" d="M172 102 L180 102"/>
+    <polygon class="f-head" points="188,102 180,106.5 180,97.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M352 102 L360 102"/>
+    <polygon class="f-head" points="368,102 360,106.5 360,97.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M532 102 L540 102"/>
+    <polygon class="f-head" points="548,102 540,106.5 540,97.5"/>
+  </g>
+  <text class="f-small f-muted" x="360" y="34" text-anchor="middle">plan exit codes: 0 no changes · 1 error · 2 changes</text>
+  <rect class="f-box-danger" x="370" y="170" width="340" height="56" rx="8"/>
+  <text class="f-small" x="540" y="192" text-anchor="middle">state changed since the plan?</text>
+  <text class="f-small f-mono" x="540" y="212" text-anchor="middle">Error: Saved plan is stale</text>
+  <g>
+    <path class="f-arrow" d="M630 146 L630 160"/>
+    <polygon class="f-head" points="630,168 625.5,160 634.5,160"/>
+  </g>
+</svg>
