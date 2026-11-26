@@ -1,0 +1,4 @@
+alt: 'A client talks to Nginx, whose upstream app has backends B and A. B refuses connections: it is tried once, then skipped. A is healthy and answers every request, so the client sees only 200. On an error or timeout Nginx passes the request to the next server, and with max_fails=1 it skips the failed one for fail_timeout, 10 seconds; POST requests are not retried. A separate slow backend that does not answer within 1 second produces 504 Gateway Timeout.'
+caption: 'Retries and passive health checks hide a dead backend from users; timeouts turn a hung backend into a fast, clear error.'
+credit: DevForge 18 content team
+licence: project-content

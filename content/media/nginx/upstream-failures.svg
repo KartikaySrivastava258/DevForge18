@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250">
+  <!-- What Nginx does when an upstream fails, from Upstream health and failure handling. -->
+  <rect class="f-box" x="10" y="80" width="120" height="70" rx="8"/>
+  <text class="f-small f-strong" x="70" y="110" text-anchor="middle">client</text>
+  <text class="f-small" x="70" y="130" text-anchor="middle">sees only 200</text>
+  <rect class="f-box-accent" x="190" y="40" width="220" height="150" rx="8"/>
+  <text class="f-small f-strong" x="300" y="66" text-anchor="middle">Nginx upstream app</text>
+  <text class="f-small" x="300" y="94" text-anchor="middle">error/timeout → next server</text>
+  <text class="f-small" x="300" y="118" text-anchor="middle">max_fails=1 → skip it</text>
+  <text class="f-small" x="300" y="142" text-anchor="middle">for fail_timeout (10 s)</text>
+  <text class="f-small f-muted" x="300" y="170" text-anchor="middle">POST is not retried</text>
+  <rect class="f-box-danger" x="480" y="30" width="230" height="56" rx="8"/>
+  <text class="f-small" x="595" y="52" text-anchor="middle">B: connection refused</text>
+  <text class="f-small f-muted" x="595" y="72" text-anchor="middle">tried once, then skipped</text>
+  <rect class="f-box-ok" x="480" y="100" width="230" height="56" rx="8"/>
+  <text class="f-small" x="595" y="122" text-anchor="middle">A: healthy</text>
+  <text class="f-small f-muted" x="595" y="142" text-anchor="middle">answers every request</text>
+  <rect class="f-box-warn" x="480" y="170" width="230" height="56" rx="8"/>
+  <text class="f-small" x="595" y="192" text-anchor="middle">slow: no answer in 1 s</text>
+  <text class="f-small f-muted" x="595" y="212" text-anchor="middle">504 Gateway Timeout</text>
+  <g>
+    <path class="f-arrow" d="M132 115 L180 115"/>
+    <polygon class="f-head" points="188,115 180,119.5 180,110.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M412 80 L470.4 60.5"/>
+    <polygon class="f-head" points="478,58 471.8,64.8 469.0,56.3"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M412 115 L470.2 126.5"/>
+    <polygon class="f-head" points="478,128 469.3,130.8 471.0,122.1"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M412 150 L471.5 193.3"/>
+    <polygon class="f-head" points="478,198 468.9,196.9 474.2,189.7"/>
+  </g>
+</svg>
