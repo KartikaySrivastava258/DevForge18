@@ -1,0 +1,4 @@
+alt: 'A client or test tool sends requests through a validating proxy to the real DevForge API. The proxy checks every request and response against contract.yaml; a mismatch is reported as a violation naming the exact field.'
+caption: 'Contract testing checks the real API against the agreed description, so documentation, mocks and clients cannot silently drift from it.'
+credit: DevForge 18 content team
+licence: project-content

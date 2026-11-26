@@ -150,7 +150,7 @@ The document is the API's **documentation**: the summary, the parameter's descri
 ```bash run
 npm install --no-save --no-audit --no-fund --loglevel=error @stoplight/prism-cli@5.16.0 > npm.log 2>&1 || cat npm.log
 npx prism --version
-npx prism mock -h 127.0.0.1 -p 4010 courses-api.yaml > prism.log 2>&1 &
+./node_modules/.bin/prism mock -h 127.0.0.1 -p 4010 courses-api.yaml > prism.log 2>&1 &
 echo $! > prism.pid
 for i in $(seq 1 60); do curl -s -o /dev/null http://127.0.0.1:4010/ && break; sleep 0.5; done
 M=http://127.0.0.1:4010
@@ -159,6 +159,8 @@ M=http://127.0.0.1:4010
 ```text output
 5.16.0
 ```
+
+The mock is started from `node_modules/.bin/prism` rather than with `npx`, so `$!` is Prism's own process ID and `kill` stops it later; `npx` would run Prism as a child process that a `kill` of `npx` can leave running.
 
 ### 3. Build against it
 

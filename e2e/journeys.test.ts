@@ -108,8 +108,11 @@ describe("discovery (anonymous visitor)", () => {
     const { page, problems } = await h.newPage();
     await page.goto("/tracks/git-github");
     await page.getByRole("heading", { level: 1 }).waitFor();
-    assert.equal(await page.locator(".lesson-list li").count(), 3);
-    assert.match(await page.locator(".notice--warn").innerText(), /3 lessons are published/);
+    // Counts come from the API, so the test survives new lessons.
+    const { lessons: gitLessons } = (await (await fetch(`${h.url}/api/tracks/git-github`)).json()) as { lessons: unknown[] };
+    assert.ok(gitLessons.length >= 3);
+    assert.equal(await page.locator(".lesson-list li").count(), gitLessons.length);
+    assert.match(await page.locator(".notice--warn").innerText(), new RegExp(`${gitLessons.length} lessons are published`));
     await page.getByRole("link", { name: "Your first repository and commits" }).click();
     await page.getByRole("heading", { level: 1, name: "Your first repository and commits" }).waitFor();
     assert.match(await page.locator(".verified--executed").innerText(), /Tested commands\./);

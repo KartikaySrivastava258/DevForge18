@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230">
+  <!-- A validating proxy between a client and the real API, from Contract testing. -->
+  <rect class="f-box" x="10" y="70" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong" x="85" y="98" text-anchor="middle">client / tests</text>
+  <text class="f-small f-muted" x="85" y="120" text-anchor="middle">curl, Newman</text>
+  <rect class="f-box-accent" x="250" y="50" width="220" height="110" rx="8"/>
+  <text class="f-small f-strong" x="360" y="78" text-anchor="middle">validating proxy</text>
+  <text class="f-small" x="360" y="102" text-anchor="middle">checks request</text>
+  <text class="f-small" x="360" y="122" text-anchor="middle">and response</text>
+  <text class="f-small" x="360" y="142" text-anchor="middle">against the contract</text>
+  <rect class="f-box-ok" x="560" y="70" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong" x="635" y="98" text-anchor="middle">real API</text>
+  <text class="f-small f-muted" x="635" y="120" text-anchor="middle">DevForge</text>
+  <g>
+    <path class="f-arrow" d="M162 92 L240 92"/>
+    <polygon class="f-head" points="248,92 240,96.5 240,87.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M472 92 L550 92"/>
+    <polygon class="f-head" points="558,92 550,96.5 550,87.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M558 120 L480 120"/>
+    <polygon class="f-head" points="472,120 480,115.5 480,124.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M248 120 L170 120"/>
+    <polygon class="f-head" points="162,120 170,115.5 170,124.5"/>
+  </g>
+  <rect class="f-box-faint" x="270" y="176" width="180" height="40" rx="8"/>
+  <text class="f-small f-mono" x="360" y="201" text-anchor="middle">contract.yaml</text>
+  <g>
+    <path class="f-arrow" d="M360 174 L360 170"/>
+    <polygon class="f-head" points="360,162 364.5,170 355.5,170"/>
+  </g>
+  <text class="f-small f-warn" x="585" y="190" text-anchor="middle">mismatch → violation</text>
+  <text class="f-small f-warn" x="585" y="208" text-anchor="middle">with the exact field</text>
+</svg>
