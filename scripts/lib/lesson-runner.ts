@@ -144,7 +144,7 @@ export function usesDocker(blocks: RunBlock[]): boolean {
 export function lessonNeeds(track: string, order: number): { api: boolean; apiPort: number; timeoutMs: number } {
   // Only the reverse-proxy lesson (order 2) proxies to an API, which learners run on port 8080.
   const nginxProxy = track === "nginx" && order === 2;
-  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 300_000, opentelemetry: 300_000, kafka: 300_000, postman: 300_000, airflow: 420_000, mlflow: 300_000, "langchain-llamaindex": 300_000, n8n: 300_000, docker: 120_000 };
+  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 300_000, opentelemetry: 300_000, kafka: 300_000, postman: 300_000, airflow: 420_000, mlflow: 300_000, "langchain-llamaindex": 300_000, n8n: 300_000, docker: 300_000 };
   return {
     api: track === "postman" || track === "prometheus-grafana" || nginxProxy,
     apiPort: nginxProxy ? 8080 : 0,
@@ -200,9 +200,11 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   const work = join(root, "work");
   mkdirSync(home);
   mkdirSync(work);
-  // Docker CLI plugins (such as Compose) may be installed per user in ~/.docker/cli-plugins. Link only
-  // that folder into the isolated HOME — never ~/.docker/config.json, which can hold registry credentials.
-  const userPlugins = process.env.HOME ? join(process.env.HOME, ".docker", "cli-plugins") : "";
+  // Docker CLI plugins (such as Compose or Buildx) may be installed per user in $DOCKER_CONFIG/cli-plugins,
+  // or ~/.docker/cli-plugins (Docker's own lookup). Link only that folder into the isolated HOME — never
+  // the config.json beside it, which can hold registry credentials.
+  const dockerConfig = process.env.DOCKER_CONFIG || (process.env.HOME ? join(process.env.HOME, ".docker") : "");
+  const userPlugins = dockerConfig ? join(dockerConfig, "cli-plugins") : "";
   if (usesDocker(blocks) && userPlugins && existsSync(userPlugins)) {
     mkdirSync(join(home, ".docker"));
     symlinkSync(userPlugins, join(home, ".docker", "cli-plugins"));

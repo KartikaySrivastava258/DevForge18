@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270">
+  <!-- Image layers and run-time hardening, from Image and container security. -->
+  <text class="f-small f-strong" x="170" y="22" text-anchor="middle">image devforge-leaky:1 (layers)</text>
+  <rect class="f-box-faint" x="20" y="36" width="300" height="40" rx="8"/>
+  <text class="f-small f-mono" x="170" y="61" text-anchor="middle">FROM alpine:3.20</text>
+  <rect class="f-box-danger" x="20" y="82" width="300" height="40" rx="8"/>
+  <text class="f-small f-mono" x="170" y="107" text-anchor="middle">ENV DB_PASSWORD=…  (in config)</text>
+  <rect class="f-box-danger" x="20" y="128" width="300" height="40" rx="8"/>
+  <text class="f-small f-mono" x="170" y="153" text-anchor="middle">COPY . .  → app/.env stored</text>
+  <rect class="f-box-warn" x="20" y="174" width="300" height="40" rx="8"/>
+  <text class="f-small f-mono" x="170" y="199" text-anchor="middle">RUN rm .env  → only hidden</text>
+  <text class="f-small f-danger" x="170" y="240" text-anchor="middle">docker save / inspect reveal both</text>
+  <text class="f-small f-strong" x="545" y="22" text-anchor="middle">run time: least privilege</text>
+  <rect class="f-box-ok" x="390" y="36" width="310" height="200" rx="8"/>
+  <text class="f-small f-mono" x="545" y="64" text-anchor="middle">USER node (uid 1000)</text>
+  <text class="f-small f-mono" x="545" y="94" text-anchor="middle">--read-only  --tmpfs /tmp</text>
+  <text class="f-small f-mono" x="545" y="124" text-anchor="middle">--cap-drop ALL</text>
+  <text class="f-small f-mono" x="545" y="154" text-anchor="middle">--security-opt no-new-privileges</text>
+  <text class="f-small f-mono" x="545" y="184" text-anchor="middle">secret: -v …/db_password:ro</text>
+  <text class="f-small" x="545" y="214" text-anchor="middle">.dockerignore keeps it out of layers</text>
+  <g>
+    <path class="f-arrow" d="M322 135 L380 135"/>
+    <polygon class="f-head" points="388,135 380,139.5 380,130.5"/>
+  </g>
+</svg>

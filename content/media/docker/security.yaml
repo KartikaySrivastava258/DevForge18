@@ -1,0 +1,4 @@
+alt: 'Left: the layers of the image devforge-leaky:1. FROM alpine:3.20; ENV DB_PASSWORD, stored in the image configuration; COPY . . which stores app/.env in a layer; and RUN rm .env, which only hides the file in a later layer. docker save and docker inspect reveal both secrets. Right, the safer run: USER node with uid 1000, a read-only root filesystem with a tmpfs at /tmp, all capabilities dropped, no-new-privileges, the secret mounted read-only at run time, and .dockerignore keeping it out of every layer.'
+caption: 'Layers keep everything ever copied into them; least privilege limits what a compromised container can do.'
+credit: DevForge 18 content team
+licence: project-content
