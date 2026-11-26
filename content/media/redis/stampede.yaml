@@ -1,0 +1,4 @@
+alt: 'Two panels. Stampede: five requests miss the cache at the same moment, and all five query the database. With a lock using SET NX: only request 1 queries the database, once; the other requests wait for the value to appear in the cache.'
+caption: 'When a popular key expires, a lock (or refreshing early) turns a flood of identical database queries into one.'
+credit: DevForge 18 content team
+licence: project-content

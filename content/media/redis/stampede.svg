@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250">
+  <!-- A hot key expires: without protection every request hits the database. From Cache stampede and other failure modes. -->
+  <rect class="f-box-faint" x="10" y="14" width="340" height="222" rx="8"/>
+  <text class="f-small f-strong f-danger" x="180" y="38" text-anchor="middle">stampede</text>
+  <rect class="f-box" x="30" y="54" width="90" height="26" rx="8"/>
+  <text class="f-small" x="75" y="72" text-anchor="middle">request 1</text>
+  <g>
+    <path class="f-arrow" d="M122 67 L221.1 125.9"/>
+    <polygon class="f-head" points="228,130 218.8,129.8 223.4,122.1"/>
+  </g>
+  <rect class="f-box" x="30" y="88" width="90" height="26" rx="8"/>
+  <text class="f-small" x="75" y="106" text-anchor="middle">request 2</text>
+  <g>
+    <path class="f-arrow" d="M122 101 L220.3 127.9"/>
+    <polygon class="f-head" points="228,130 219.1,132.2 221.5,123.6"/>
+  </g>
+  <rect class="f-box" x="30" y="122" width="90" height="26" rx="8"/>
+  <text class="f-small" x="75" y="140" text-anchor="middle">request 3</text>
+  <g>
+    <path class="f-arrow" d="M122 135 L220.0 130.4"/>
+    <polygon class="f-head" points="228,130 220.2,134.9 219.8,125.9"/>
+  </g>
+  <rect class="f-box" x="30" y="156" width="90" height="26" rx="8"/>
+  <text class="f-small" x="75" y="174" text-anchor="middle">request 4</text>
+  <g>
+    <path class="f-arrow" d="M122 169 L220.5 132.8"/>
+    <polygon class="f-head" points="228,130 222.0,137.0 218.9,128.6"/>
+  </g>
+  <rect class="f-box" x="30" y="190" width="90" height="26" rx="8"/>
+  <text class="f-small" x="75" y="208" text-anchor="middle">request 5</text>
+  <g>
+    <path class="f-arrow" d="M122 203 L221.4 134.5"/>
+    <polygon class="f-head" points="228,130 224.0,138.2 218.9,130.8"/>
+  </g>
+  <rect class="f-box-danger" x="230" y="100" width="100" height="60" rx="8"/>
+  <text class="f-small f-strong" x="280" y="126" text-anchor="middle">database</text>
+  <text class="f-small" x="280" y="146" text-anchor="middle">5 queries</text>
+  <rect class="f-box-faint" x="370" y="14" width="340" height="222" rx="8"/>
+  <text class="f-small f-strong f-ok" x="540" y="38" text-anchor="middle">with a lock (SET NX)</text>
+  <rect class="f-box" x="390" y="54" width="90" height="26" rx="8"/>
+  <text class="f-small" x="435" y="72" text-anchor="middle">request 1</text>
+  <rect class="f-box" x="390" y="88" width="90" height="26" rx="8"/>
+  <text class="f-small" x="435" y="106" text-anchor="middle">request 2</text>
+  <rect class="f-box" x="390" y="122" width="90" height="26" rx="8"/>
+  <text class="f-small" x="435" y="140" text-anchor="middle">request 3</text>
+  <rect class="f-box" x="390" y="156" width="90" height="26" rx="8"/>
+  <text class="f-small" x="435" y="174" text-anchor="middle">request 4</text>
+  <rect class="f-box" x="390" y="190" width="90" height="26" rx="8"/>
+  <text class="f-small" x="435" y="208" text-anchor="middle">request 5</text>
+  <g>
+    <path class="f-arrow-accent" d="M482 67 L581.1 125.9"/>
+    <polygon class="f-head-accent" points="588,130 578.8,129.8 583.4,122.1"/>
+  </g>
+  <text class="f-small f-muted" x="520" y="214" text-anchor="middle">others wait for the value</text>
+  <rect class="f-box-ok" x="590" y="100" width="100" height="60" rx="8"/>
+  <text class="f-small f-strong" x="640" y="126" text-anchor="middle">database</text>
+  <text class="f-small" x="640" y="146" text-anchor="middle">1 query</text>
+</svg>
