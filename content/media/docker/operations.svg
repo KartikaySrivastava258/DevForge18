@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270">
+  <!-- Operating a container, from Health checks, logs, limits and stopping cleanly. -->
+  <rect class="f-box-accent" x="250" y="70" width="220" height="130" rx="8"/>
+  <text class="f-small f-strong f-mono" x="360" y="96" text-anchor="middle">container devforge-web</text>
+  <text class="f-small f-mono" x="360" y="122" text-anchor="middle">PID 1: node app.js</text>
+  <text class="f-small f-mono" x="360" y="146" text-anchor="middle">--memory 64m</text>
+  <text class="f-small f-mono" x="360" y="170" text-anchor="middle">--restart on-failure:3</text>
+  <rect class="f-box-ok" x="10" y="20" width="190" height="64" rx="8"/>
+  <text class="f-small f-strong" x="105" y="44" text-anchor="middle">health check</text>
+  <text class="f-small" x="105" y="64" text-anchor="middle">starting, healthy, unhealthy</text>
+  <rect class="f-box" x="10" y="110" width="190" height="64" rx="8"/>
+  <text class="f-small f-strong f-mono" x="105" y="134" text-anchor="middle">docker logs</text>
+  <text class="f-small" x="105" y="154" text-anchor="middle">rotated: 3 × 1 MB</text>
+  <rect class="f-box-warn" x="10" y="196" width="190" height="64" rx="8"/>
+  <text class="f-small f-strong f-mono" x="105" y="220" text-anchor="middle">docker stop</text>
+  <text class="f-small" x="105" y="240" text-anchor="middle">SIGTERM … then SIGKILL</text>
+  <rect class="f-box-danger" x="520" y="40" width="190" height="64" rx="8"/>
+  <text class="f-small f-strong" x="615" y="64" text-anchor="middle">over 64 MB</text>
+  <text class="f-small" x="615" y="84" text-anchor="middle">OOMKilled, exit 137</text>
+  <rect class="f-box-faint" x="520" y="160" width="190" height="64" rx="8"/>
+  <text class="f-small f-strong" x="615" y="184" text-anchor="middle">non-zero exit</text>
+  <text class="f-small" x="615" y="204" text-anchor="middle">restart, at most 3 times</text>
+  <g>
+    <path class="f-arrow" d="M202 52 L241.8 84.9"/>
+    <polygon class="f-head" points="248,90 239.0,88.4 244.7,81.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M248 135 L209.9 140.8"/>
+    <polygon class="f-head" points="202,142 209.2,136.4 210.6,145.2"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M202 228 L242.5 185.8"/>
+    <polygon class="f-head" points="248,180 245.7,188.9 239.2,182.7"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M472 100 L511.2 76.2"/>
+    <polygon class="f-head" points="518,72 513.5,80.0 508.8,72.3"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M472 170 L510.8 188.5"/>
+    <polygon class="f-head" points="518,192 508.9,192.6 512.7,184.5"/>
+  </g>
+</svg>

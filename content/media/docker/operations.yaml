@@ -1,0 +1,4 @@
+alt: 'A running container, devforge-web, whose main process node app.js is PID 1, with a 64 MB memory limit and the restart policy on-failure:3. A health check runs inside it and moves its status from starting to healthy to unhealthy. Its output goes to docker logs, rotated as three files of 1 MB. docker stop sends SIGTERM, then SIGKILL after a grace period. Going over 64 MB gets it killed: OOMKilled, exit code 137. A non-zero exit makes Docker restart it, at most three times.'
+caption: 'Health, logs, limits, restarts and signals: the settings that turn a started container into an operable one.'
+credit: DevForge 18 content team
+licence: project-content
