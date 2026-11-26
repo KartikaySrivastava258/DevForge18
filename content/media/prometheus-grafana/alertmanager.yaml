@@ -1,0 +1,4 @@
+alt: 'Prometheus alerting rules decide what is wrong, with expr, for and labels, and send firing alerts to Alertmanager. Alertmanager routes by labels, groups, waits and repeats, inhibits HighLatency while ServiceDown fires, and applies silences for planned work: it decides who hears, when and how often. Alerts with severity=page go to on-call, others to team-tickets by default, and the always-firing Watchdog goes to a heartbeat receiver.'
+caption: 'Rules say what is wrong; Alertmanager decides who hears about it.'
+credit: DevForge 18 content team
+licence: project-content

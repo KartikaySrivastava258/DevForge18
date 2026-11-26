@@ -153,7 +153,7 @@ export function lessonNeeds(track: string, order: number): { api: boolean; apiPo
 }
 
 /** Programs some lessons run that are not part of a basic system: CI installs them; locally, lessons that need them are skipped. */
-export const OPTIONAL_TOOLS = ["prometheus", "promtool", "grafana", "otelcol", "jaeger"] as const;
+export const OPTIONAL_TOOLS = ["prometheus", "promtool", "alertmanager", "amtool", "grafana", "otelcol", "jaeger"] as const;
 
 /** Which OPTIONAL_TOOLS the blocks run (as a command, not as part of a file or folder name). */
 export function toolsUsed(blocks: RunBlock[]): string[] {
