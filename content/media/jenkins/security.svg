@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280">
+  <!-- Who may do what, from Securing Jenkins. -->
+  <rect class="f-box-faint" x="10" y="20" width="460" height="200" rx="8"/>
+  <text class="f-small f-strong" x="200" y="44" text-anchor="middle">read job</text>
+  <text class="f-small f-strong" x="310" y="44" text-anchor="middle">build</text>
+  <text class="f-small f-strong" x="420" y="44" text-anchor="middle">script console</text>
+  <text class="f-small f-mono" x="70" y="80" text-anchor="middle">anonymous</text>
+  <text class="f-small f-danger" x="200" y="80" text-anchor="middle">no</text>
+  <text class="f-small f-danger" x="310" y="80" text-anchor="middle">no</text>
+  <text class="f-small f-danger" x="420" y="80" text-anchor="middle">no</text>
+  <text class="f-small f-mono" x="70" y="116" text-anchor="middle">viewer</text>
+  <text class="f-small f-ok" x="200" y="116" text-anchor="middle">yes</text>
+  <text class="f-small f-danger" x="310" y="116" text-anchor="middle">no</text>
+  <text class="f-small f-danger" x="420" y="116" text-anchor="middle">no</text>
+  <text class="f-small f-mono" x="70" y="152" text-anchor="middle">dev</text>
+  <text class="f-small f-ok" x="200" y="152" text-anchor="middle">yes</text>
+  <text class="f-small f-ok" x="310" y="152" text-anchor="middle">yes</text>
+  <text class="f-small f-danger" x="420" y="152" text-anchor="middle">no</text>
+  <text class="f-small f-mono" x="70" y="188" text-anchor="middle">admin</text>
+  <text class="f-small f-ok" x="200" y="188" text-anchor="middle">yes</text>
+  <text class="f-small f-ok" x="310" y="188" text-anchor="middle">yes</text>
+  <text class="f-small f-ok" x="420" y="188" text-anchor="middle">yes</text>
+  <rect class="f-box-ok" x="500" y="20" width="210" height="90" rx="8"/>
+  <text class="f-small f-strong" x="605" y="44" text-anchor="middle">API token (per script)</text>
+  <text class="f-small" x="605" y="66" text-anchor="middle">no crumb needed</text>
+  <text class="f-small" x="605" y="88" text-anchor="middle">revocable on its own</text>
+  <rect class="f-box-warn" x="500" y="130" width="210" height="90" rx="8"/>
+  <text class="f-small f-strong f-mono" x="605" y="154" text-anchor="middle">Overall/Administer</text>
+  <text class="f-small" x="605" y="176" text-anchor="middle">= script console =</text>
+  <text class="f-small" x="605" y="198" text-anchor="middle">every secret</text>
+  <text class="f-small f-muted" x="360" y="255" text-anchor="middle">also: 0 executors on the controller, pinned and patched plugins, credentials in Jenkins</text>
+</svg>

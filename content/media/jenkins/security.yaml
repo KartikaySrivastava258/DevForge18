@@ -1,0 +1,4 @@
+alt: 'A permission matrix: anonymous can read nothing, build nothing and has no script console; viewer can read jobs only; dev can read and build; admin can do everything including the script console. API tokens are created per script, need no CSRF crumb and can be revoked on their own. Overall/Administer means the script console, which means every secret. Also: no executors on the controller, pinned and patched plugins, and credentials stored in Jenkins.'
+caption: 'Least privilege per account, tokens for scripts, and the script console reserved for administrators.'
+credit: DevForge 18 content team
+licence: project-content

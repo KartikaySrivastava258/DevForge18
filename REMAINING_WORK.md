@@ -261,7 +261,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.11 Jenkins
 
-- **Lessons:** ✅ Jenkins in Docker · ✅ Pipeline as code with a Jenkinsfile · Agents and running builds in containers · ✅ Parallel stages, artefacts and test reports · Shared libraries · Configuration as Code (JCasC) and plugin management (advanced) · Securing Jenkins (advanced).
+- **Lessons:** ✅ Jenkins in Docker · ✅ Pipeline as code with a Jenkinsfile · ✅ Agents and running builds in containers · ✅ Parallel stages, artefacts and test reports · ✅ Shared libraries · ✅ Configuration as Code (JCasC) and plugin management (taught as lesson 4, because the later lessons build on it) · ✅ Securing Jenkins (advanced).
 - ✅ **Simulation — controller, queue and executors:** jobs enter a queue, agents with labels and executors pick them up; show waiting time when executors are scarce. **Challenge:** cut queue time by adding an agent with the right label.
 - **Labs:** a Jenkins built from a pinned image with plugins installed by `jenkins-plugin-cli` and a job created by JCasC, then a pipeline run triggered and checked through the REST API (executed in CI).
 - **Real world:** Jenkins was forked from Hudson in 2011; Hudson was started by Kohsuke Kawaguchi at Sun Microsystems. Sources: jenkins.io history and blog.
@@ -384,7 +384,7 @@ Each milestone ends with CI green and `IMPLEMENTATION_STATUS.md` updated.
 5. **Remaining tracks, beginner level.** Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira: lessons, setup guide, one simulation each. *Done when:* all 18 tracks have at least three beginner lessons and one simulation. Status (2026-11-26): done — every track has at least three beginner lessons and a simulation.
 6. ✅ Done (2026-11-26). **Real-world context.** Case-study and alternatives content types; at least two sourced case studies and an alternatives table per track. Status: 36 case studies and 89 alternatives, every quote checked against its source page; see IMPLEMENTATION_STATUS.md.
 7. ✅ Done (2026-11-26). **Labs.** Lab pages, verification scripts, lab progress; at least two labs per track, executed in CI where the tool allows. Status: 36 labs (18 local with check scripts, 17 simulation, 1 read-through); 19 executed in CI; see IMPLEMENTATION_STATUS.md.
-8. **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first. Status (2026-11-26): in progress — Path 1 done (Git and PostgreSQL 8 lessons each; Postman, Redis, Nginx and Docker 7 each) Terraform (7), Kubernetes (8) and GitHub Actions (8); 40 new executed lessons; the other 9 tracks next.
+8. **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first. Status (2026-11-26): in progress — Path 1 done (Git and PostgreSQL 8 lessons each; Postman, Redis, Nginx and Docker 7 each) Terraform (7), Kubernetes (8), GitHub Actions (8) and Jenkins (7); 44 new executed lessons; the other 8 tracks next.
 9. **Quizzes and projects.** New question types, per-track quizzes, mini-project pages with rubrics and starter templates.
 10. **Capstones A–G and integration lessons.** Including the architecture studio and the full relationship graph.
 11. **Institutional features and hardening.** Section 6.3 and 6.4.
