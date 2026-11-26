@@ -76,7 +76,7 @@ verification:
   details: Every command on this page is run by DevForge's test suite on a real kind cluster (Kubernetes 1.36.1), and its output is compared with this page. Names, ages and timings that change on every run are shown as …. You read and interpret the output; running the commands yourself is optional.
 owner: content-team
 last_reviewed: 2026-11-26
-content_version: 1
+content_version: 2
 ---
 
 ## Goal
@@ -115,7 +115,7 @@ spec:
       containers:
         - name: worker
           image: busybox:1.36
-          command: ["sh", "-c", "echo 'reading DATABASE_URL'; test -n \"$DATABASE_URL\" || { echo 'DATABASE_URL is not set' >&2; exit 1; }; echo 'connected'; sleep 3600"]
+          command: ["sh", "-c", "echo 'reading DATABASE_URL'; test -n \"$DATABASE_URL\" || { echo 'DATABASE_URL is not set'; exit 1; }; echo 'connected'; sleep 3600"]
           terminationMessagePolicy: FallbackToLogsOnError
 ---
 apiVersion: apps/v1
@@ -142,7 +142,7 @@ deployment.apps/crasher created
 deployment.apps/greedy created
 ```
 
-Every `apply` succeeded: Kubernetes accepted the *desired state*. Whether it can be *reached* only shows up afterwards. (The lab waits for each Pod to reach its failure state before looking. The crasher's STATUS alternates: `Error` right after each crash, then `CrashLoopBackOff` while Kubernetes waits before the next restart.)
+Every `apply` succeeded: Kubernetes accepted the *desired state*. Whether it can be *reached* only shows up afterwards. (The lab waits for each Pod to reach its failure state before looking. Two STATUS values alternate, so the table below shows them as `…`: the crasher shows `Error` right after each crash, then `CrashLoopBackOff` while Kubernetes waits before the next restart; the typo Pod shows `ErrImagePull` at each attempt, then `ImagePullBackOff` while it waits before the next one.)
 
 ```bash run
 n="-n debug-lab"
@@ -155,8 +155,8 @@ kubectl $n get pods
 ```text output
 NAME   …   READY   STATUS   …
 crasher-…   0/1     …
-greedy-…    0/1     Pending   …
-typo-…      0/1     ImagePullBackOff   …
+greedy-…   0/1     Pending   …
+typo-…   0/1     …
 ```
 
 ## Case 1: ImagePullBackOff

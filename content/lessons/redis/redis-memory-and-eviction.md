@@ -57,7 +57,7 @@ verification:
   details: Every command is run by the test suite against a throwaway Redis 7 server (the CI service container); the output shown was recorded from that run. Exact key counts depend on Redis's memory overhead, so they are shown as … where they could differ. Facts about memory limits and eviction were checked against the Redis documentation on 2026-11-26.
 owner: content-team
 last_reviewed: 2026-11-26
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -151,18 +151,23 @@ Which keys go is only *approximately* "least recently used". Redis samples a few
 redis-cli FLUSHDB > /dev/null
 redis-cli CONFIG SET maxmemory-policy volatile-lru
 for i in $(seq 1 3000); do echo "SET page:$i $page"; done | redis-cli | grep . | sort | uniq -c | sed 's/^ *[0-9]* /… /'
-for i in $(seq 1 3000); do echo "SET temp:$i $page EX 600"; done | redis-cli | grep -c OOM
+pages_before=$(redis-cli --scan --pattern 'page:*' | wc -l)
+for i in $(seq 1 3000); do echo "SET temp:$i $page EX 600"; done | redis-cli > /dev/null
+pages_after=$(redis-cli --scan --pattern 'page:*' | wc -l)
+echo "keys without a TTL evicted: $((pages_before - pages_after))"
+echo "keys with a TTL stored: $(redis-cli --scan --pattern 'temp:*' | wc -l | tr -d ' ') of 3000"
 ```
 
 ```text output
 OK
 … OK
 … OOM command not allowed when used memory > 'maxmemory'.
-3000
+keys without a TTL evicted: 0
+keys with a TTL stored: … of 3000
 ```
 
 - Keys without a TTL are never evicted under `volatile-lru`, so once memory is full of them, writes are refused again — just like `noeviction`.
-- The second loop writes keys **with** a TTL (`EX 600`)… and they are refused too: there is still no room, and no TTL key yet to evict. This policy only works when the keys you are willing to lose have expiries set.
+- The second loop writes 3000 keys **with** a TTL (`EX 600`). Not one `page:` key was evicted to make room for them. Only the little memory that happened to be free could take a few `temp:` keys, and from then on each new one could only push out an *older `temp:` key*. That is why the number stored is small and changes from run to run (shown as `…`). This policy only works when the keys you are willing to lose have expiries set.
 
 ### 5. Restore the defaults
 
