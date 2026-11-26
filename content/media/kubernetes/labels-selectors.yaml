@@ -1,0 +1,4 @@
+alt: 'Inside namespace team-a, a Deployment named web and a Service named web both use the selector app=web. They both point to the two Pods labelled app=web. A third Pod relabelled app=debug matches neither selector, so it gets no traffic, and the Deployment''s ReplicaSet, which counts matching Pods, creates a replacement for it. Quotas and names apply per namespace.'
+caption: 'Nothing in Kubernetes lists its Pods; it selects them by label, every time.'
+credit: DevForge 18 content team
+licence: project-content

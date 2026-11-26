@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280">
+  <!-- Selectors decide membership, from Namespaces, labels and selectors. -->
+  <rect class="f-box-faint" x="10" y="20" width="700" height="250" rx="8"/>
+  <text class="f-small f-strong" x="360" y="40" text-anchor="middle">namespace team-a (quota and names apply here)</text>
+  <rect class="f-box-accent" x="30" y="60" width="200" height="60" rx="8"/>
+  <text class="f-small f-strong f-mono" x="130" y="84" text-anchor="middle">Deployment web</text>
+  <text class="f-small f-mono" x="130" y="104" text-anchor="middle">selector app=web</text>
+  <rect class="f-box-accent" x="490" y="60" width="200" height="60" rx="8"/>
+  <text class="f-small f-strong f-mono" x="590" y="84" text-anchor="middle">Service web</text>
+  <text class="f-small f-mono" x="590" y="104" text-anchor="middle">selector app=web</text>
+  <rect class="f-box-ok" x="90" y="160" width="160" height="56" rx="8"/>
+  <text class="f-small f-strong" x="170" y="182" text-anchor="middle">Pod</text>
+  <text class="f-small f-mono" x="170" y="202" text-anchor="middle">app=web</text>
+  <rect class="f-box-ok" x="270" y="160" width="160" height="56" rx="8"/>
+  <text class="f-small f-strong" x="350" y="182" text-anchor="middle">Pod</text>
+  <text class="f-small f-mono" x="350" y="202" text-anchor="middle">app=web</text>
+  <rect class="f-box-warn" x="470" y="160" width="200" height="56" rx="8"/>
+  <text class="f-small f-strong" x="570" y="182" text-anchor="middle">relabelled Pod</text>
+  <text class="f-small f-mono" x="570" y="202" text-anchor="middle">app=debug: no traffic</text>
+  <g>
+    <path class="f-arrow" d="M130 122 L164.1 152.6"/>
+    <polygon class="f-head" points="170,158 161.0,156.0 167.1,149.3"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M130 122 L342.1 156.7"/>
+    <polygon class="f-head" points="350,158 341.4,161.1 342.8,152.3"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M590 122 L178.0 157.3"/>
+    <polygon class="f-head" points="170,158 177.6,152.8 178.4,161.8"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M590 122 L357.9 156.8"/>
+    <polygon class="f-head" points="350,158 357.2,152.4 358.6,161.3"/>
+  </g>
+  <text class="f-small f-muted" x="360" y="246" text-anchor="middle">the ReplicaSet counts matching Pods and replaces the one that left</text>
+</svg>
