@@ -144,7 +144,8 @@ describe("docker containers", () => {
       assert.ok(run.failure !== undefined);
       assert.deepEqual(readFileSync(log, "utf8").trim().split("\n"), [
         "docker run -d --name devforge-lab -p 127.0.0.1:9092:9092 image:1",
-        // On failure, the trap first shows the container's state and recent logs, then removes it.
+        // On failure, the trap first lists containers and shows this one's state and recent logs, then removes it.
+        "docker ps -a --format     {{.Names}} {{.Status}}",
         "docker inspect -f devforge-lab: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}} devforge-lab",
         "docker logs --tail 25 devforge-lab",
         "docker rm -f devforge-lab",
@@ -163,6 +164,7 @@ describe("docker containers", () => {
       const run = runLesson(extractRunBlocks("```bash run\ndocker network create lab-net\ndocker run -d --name c1 --network lab-net image:1\ndocker compose -p lab up -d\n```\n```bash run\nfalse\n```"), { path: `${bin}:${process.env.PATH}` });
       assert.ok(run.failure !== undefined);
       assert.deepEqual(readFileSync(log, "utf8").trim().split("\n").slice(3), [
+        "docker ps -a --format     {{.Names}} {{.Status}}",
         "docker inspect -f c1: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}} c1",
         "docker logs --tail 25 c1",
         "docker rm -f c1",

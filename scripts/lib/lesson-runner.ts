@@ -218,7 +218,10 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   const diagnostics = containers.length
     ? [
         `devforge_rc=$?`,
+        // The trap inherits set -e: a failing diagnostic must not abort the rest (or the cleanup after it).
+        `set +e`,
         `if [ "$devforge_rc" -ne 0 ]; then printf '\\n--- diagnostics: the lesson stopped (exit code %s); its containers:\\n' "$devforge_rc"; ` +
+          `docker ps -a --format '    {{.Names}} {{.Status}}' 2>/dev/null; free -m 2>/dev/null | sed 's/^/    /'; ` +
           containers
             .map((c) => `docker inspect -f '${c}: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}}' ${c} 2>/dev/null; docker logs --tail 25 ${c} 2>&1 | sed 's/^/    /'`)
             .join("; ") +

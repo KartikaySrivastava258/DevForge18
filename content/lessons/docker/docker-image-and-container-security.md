@@ -74,7 +74,7 @@ verification:
   details: Every command is run by the test suite on a disposable Docker engine, after the previous lessons, and its output is compared with this lesson. The commands avoid builder-specific output, so they behave the same with the classic builder and BuildKit. The build-secret mount in "Common mistakes" is described from the Docker documentation, not executed. Checked on 2026-11-26.
 owner: content-team
 last_reviewed: 2026-11-26
-content_version: 1
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -133,13 +133,15 @@ As root, the same command would have changed a system file. As `node`, it cannot
 A read-only root filesystem, with one writable in-memory folder:
 
 ```bash run fails
-docker run --rm --read-only --tmpfs /tmp alpine:3.20 sh -c 'echo note > /tmp/scratch && cat /tmp/scratch; echo changed > /etc/motd'
+docker run --rm --read-only --tmpfs /tmp alpine:3.20 sh -c 'exec 2>&1; echo note > /tmp/scratch && cat /tmp/scratch; echo changed > /etc/motd'
 ```
 
 ```text output
 note
 sh: can't create /etc/motd: Read-only file system
 ```
+
+(`exec 2>&1` sends the shell's errors to the same stream as its output, so they appear in the order they happened.)
 
 Capabilities — here `CHOWN`, which lets root give files to another user:
 
