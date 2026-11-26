@@ -17,7 +17,51 @@ jobs:
   verify:
     name: Typecheck, build, test
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+      # No lockfile is committed yet (see IMPLEMENTATION_STATUS.md); switch to `npm ci` once package-lock.json exists.
+      - run: npm install --no-audit --no-fund
+      - name: Typecheck server, shared code and scripts
+        run: npm run typecheck
+      - name: Typecheck frontend (React)
+        run: npm run typecheck:web
+      - name: Lint documentation
+        run: npm run lint:md
+      - name: Validate content and build
+        run: npm run build
+      - name: Unit and integration tests
+        # Executed lessons and labs run in the "lessons" job below, in parallel shards.
+        env:
+          DEVFORGE_LESSON_SHARD: "off"
+        run: npm test
+      - name: Install Chromium for end-to-end tests
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end tests
+        run: npm run test:e2e
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: e2e-screenshots
+          path: build/screenshots
+          retention-days: 7
+
+  lessons:
+    # Every command in every executed lesson and local lab runs against the real tool, and its output is
+    # compared with the lesson. Lessons replay their own prerequisites, so the shards are independent.
+    name: Executed lessons (shard ${{ matrix.shard }} of 3)
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     # A real PostgreSQL server so SQL lessons' commands run and their output is checked.
     # Version 16 matches the psql client shipped by Ubuntu 24.04.
     services:
@@ -42,6 +86,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
+      DEVFORGE_LESSON_SHARD: "${{ matrix.shard }}/3"
       PGHOST: localhost
       PGPORT: "5432"
       PGUSER: postgres
@@ -136,24 +181,7 @@ jobs:
           sha256sum -c "${j}.sha256sum.txt"
           sudo install -m 0755 "${j}/jaeger" /usr/local/bin/
           jaeger version 2>/dev/null
-      - name: Typecheck server, shared code and scripts
-        run: npm run typecheck
-      - name: Typecheck frontend (React)
-        run: npm run typecheck:web
-      - name: Lint documentation
-        run: npm run lint:md
-      - name: Validate content and build
-        run: npm run build
-      - name: Unit and integration tests
-        run: npm test
-      - name: Install Chromium for end-to-end tests
-        run: npx playwright install --with-deps chromium
-      - name: End-to-end tests
-        run: npm run test:e2e
-      - name: Upload screenshots on failure
-        if: failure()
-        uses: actions/upload-artifact@v6
-        with:
-          name: e2e-screenshots
-          path: build/screenshots
-          retention-days: 7
+      - name: Validate content
+        run: npm run content:build
+      - name: Executed lessons and labs
+        run: node --disable-warning=ExperimentalWarning --test scripts/lib/lesson-runner.test.ts

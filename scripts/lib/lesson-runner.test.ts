@@ -217,14 +217,23 @@ const runnables = [
     file: join(contentRoot, "labs", l.track, `${l.id}.md`),
   })),
 ].filter((r) => r.verification.method !== "docs-checked");
-describe("executed lessons and labs reproduce their documented output", () => {
+// CI runs the executed lessons in parallel jobs: DEVFORGE_LESSON_SHARD="i/n" runs every n-th lesson starting at
+// the i-th (each replays its own prerequisites, so shards are independent), and "off" skips them in a job that
+// checks everything else. Unset runs them all.
+const shardSetting = process.env.DEVFORGE_LESSON_SHARD ?? "";
+const shardMatch = /^(\d+)\/(\d+)$/.exec(shardSetting);
+if (shardSetting && shardSetting !== "off" && !shardMatch) throw new Error(`DEVFORGE_LESSON_SHARD must be "i/n" or "off", not "${shardSetting}"`);
+const inShard = (index: number) =>
+  shardSetting === "off" ? false : shardMatch ? index % Number(shardMatch[2]) === Number(shardMatch[1]) - 1 : true;
+describe("executed lessons and labs reproduce their documented output", { skip: shardSetting === "off" ? "DEVFORGE_LESSON_SHARD=off (CI runs them in the lesson shard jobs)" : false }, () => {
   const postgresAvailable = hasPostgres();
   const redisAvailable = redisTestingEnabled();
   const dockerAvailable = dockerTestingEnabled();
-  for (const lesson of runnables) {
+  for (const lesson of runnables.filter((_, index) => inShard(index))) {
     const needsGit = ["git-github", "github-actions", "jenkins"].includes(lesson.track);
     const ownBlocks = extractRunBlocks(splitFrontMatter(readFileSync(lesson.file, "utf8"))?.body ?? "");
-    const needsPg = lesson.track === "postgresql";
+    // PostgreSQL lessons, and lessons in other tracks that use a database from bash (e.g. Terraform's pg backend).
+    const needsPg = lesson.track === "postgresql" || ownBlocks.some((b) => /(^|[\s;&|(])(createdb|dropdb|psql)\s/.test(b.code));
     const needsNginx = lesson.track === "nginx";
     const { api: needsApi, apiPort, timeoutMs } = lessonNeeds(lesson.track, lesson.order);
     const blocksOf = (id: string, track: string) =>
