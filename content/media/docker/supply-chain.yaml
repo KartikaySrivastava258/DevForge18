@@ -1,0 +1,4 @@
+alt: 'Two ways to name a base image feed into docker build: a tag such as alpine:3.20, a name that can move to different content, and a digest, sha256 followed by a hash, which always means the same content. docker build reuses cached layers, which can be stale; --pull and --no-cache refresh them. The built image is described by an SBOM listing every package and version, and a vulnerability scanner matches the SBOM against known CVEs.'
+caption: 'Pin what you build from, refresh what you cache, and keep an inventory of what you ship.'
+credit: DevForge 18 content team
+licence: project-content

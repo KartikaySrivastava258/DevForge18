@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250">
+  <!-- From base image to a known, inventoried image, from Build cache and the software supply chain. -->
+  <rect class="f-box-warn" x="10" y="30" width="200" height="80" rx="8"/>
+  <text class="f-small f-strong f-mono" x="110" y="56" text-anchor="middle">tag alpine:3.20</text>
+  <text class="f-small" x="110" y="80" text-anchor="middle">a name that can move</text>
+  <rect class="f-box-ok" x="10" y="140" width="200" height="80" rx="8"/>
+  <text class="f-small f-strong f-mono" x="110" y="166" text-anchor="middle">digest sha256:…</text>
+  <text class="f-small" x="110" y="190" text-anchor="middle">always the same content</text>
+  <rect class="f-box-accent" x="260" y="80" width="200" height="90" rx="8"/>
+  <text class="f-small f-strong f-mono" x="360" y="106" text-anchor="middle">docker build</text>
+  <text class="f-small" x="360" y="130" text-anchor="middle">cached layers can be stale</text>
+  <text class="f-small f-mono" x="360" y="152" text-anchor="middle">--pull --no-cache</text>
+  <rect class="f-box" x="510" y="30" width="200" height="80" rx="8"/>
+  <text class="f-small f-strong" x="610" y="56" text-anchor="middle">SBOM</text>
+  <text class="f-small" x="610" y="80" text-anchor="middle">every package + version</text>
+  <rect class="f-box-faint" x="510" y="140" width="200" height="80" rx="8"/>
+  <text class="f-small f-strong" x="610" y="166" text-anchor="middle">vulnerability scan</text>
+  <text class="f-small" x="610" y="190" text-anchor="middle">matches the SBOM to CVEs</text>
+  <g>
+    <path class="f-arrow" d="M212 70 L252.0 104.8"/>
+    <polygon class="f-head" points="258,110 249.0,108.1 254.9,101.4"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M212 180 L251.6 149.8"/>
+    <polygon class="f-head" points="258,145 254.3,153.4 248.9,146.3"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M462 110 L501.6 79.8"/>
+    <polygon class="f-head" points="508,75 504.3,83.4 498.9,76.3"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M610 112 L610 130"/>
+    <polygon class="f-head" points="610,138 605.5,130 614.5,130"/>
+  </g>
+</svg>
