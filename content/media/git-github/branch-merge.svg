@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 330">
+  <!-- Branches are pointers to commits; a fast-forward moves the pointer, a three-way merge adds a commit with two parents. From Branches and merging. -->
+  <rect class="f-box-faint" x="12" y="12" width="320" height="306" rx="8"/>
+  <text class="f-small f-strong" x="172" y="36" text-anchor="middle">1. Fast-forward</text>
+  <text class="f-small f-muted" x="172" y="56" text-anchor="middle">main has not moved since the branch started</text>
+  <rect class="f-box" x="44" y="104" width="32" height="32" rx="16"/>
+  <text class="f-small f-strong f-mono" x="60" y="125" text-anchor="middle">A</text>
+  <rect class="f-box" x="114" y="104" width="32" height="32" rx="16"/>
+  <text class="f-small f-strong f-mono" x="130" y="125" text-anchor="middle">B</text>
+  <rect class="f-box" x="184" y="104" width="32" height="32" rx="16"/>
+  <text class="f-small f-strong f-mono" x="200" y="125" text-anchor="middle">C</text>
+  <g>
+    <path class="f-arrow" d="M114 120 L86 120"/>
+    <polygon class="f-head" points="78,120 86,115.5 86,124.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M184 120 L156 120"/>
+    <polygon class="f-head" points="148,120 156,115.5 156,124.5"/>
+  </g>
+  <rect class="f-box" x="109.6" y="154" width="40.8" height="24" rx="6"/>
+  <text class="f-small f-mono" x="130" y="171" text-anchor="middle">main</text>
+  <rect class="f-box-accent" x="165.2" y="74" width="69.6" height="24" rx="6"/>
+  <text class="f-small f-mono" x="200" y="91" text-anchor="middle">glossary</text>
+  <text class="f-small f-mono" x="172" y="214" text-anchor="middle">git merge glossary</text>
+  <text class="f-small" x="172" y="232" text-anchor="middle">→ main simply moves to C</text>
+  <rect class="f-box-ok" x="179.6" y="258" width="40.8" height="24" rx="6"/>
+  <text class="f-small f-mono" x="200" y="275" text-anchor="middle">main</text>
+  <g>
+    <path class="f-arrow-accent" d="M130 180 L190.8 250.0"/>
+    <polygon class="f-head-accent" points="196,256 187.4,252.9 194.1,247.0"/>
+  </g>
+  <rect class="f-box-faint" x="348" y="12" width="320" height="306" rx="8"/>
+  <text class="f-small f-strong" x="508" y="36" text-anchor="middle">2. Three-way merge</text>
+  <text class="f-small f-muted" x="508" y="56" text-anchor="middle">both main and the branch have new commits</text>
+  <rect class="f-box" x="374" y="134" width="32" height="32" rx="16"/>
+  <text class="f-small f-strong f-mono" x="390" y="155" text-anchor="middle">C</text>
+  <rect class="f-box" x="444" y="94" width="32" height="32" rx="16"/>
+  <text class="f-small f-strong f-mono" x="460" y="115" text-anchor="middle">D</text>
+  <rect class="f-box" x="444" y="174" width="32" height="32" rx="16"/>
+  <text class="f-small f-strong f-mono" x="460" y="195" text-anchor="middle">E</text>
+  <rect class="f-box-ok" x="544" y="134" width="32" height="32" rx="16"/>
+  <text class="f-small f-strong f-mono" x="560" y="155" text-anchor="middle">M</text>
+  <g>
+    <path class="f-arrow" d="M444 116 L412.6 137.5"/>
+    <polygon class="f-head" points="406,142 410.1,133.8 415.1,141.2"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M444 184 L412.6 162.5"/>
+    <polygon class="f-head" points="406,158 415.1,158.8 410.1,166.2"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M544 144 L483.3 117.2"/>
+    <polygon class="f-head" points="476,114 485.1,113.1 481.5,121.3"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M544 156 L483.3 182.8"/>
+    <polygon class="f-head" points="476,186 481.5,178.7 485.1,186.9"/>
+  </g>
+  <rect class="f-box-accent" x="443.2" y="64" width="33.6" height="24" rx="6"/>
+  <text class="f-small f-mono" x="460" y="81" text-anchor="middle">faq</text>
+  <rect class="f-box-ok" x="589.6" y="184" width="40.8" height="24" rx="6"/>
+  <text class="f-small f-mono" x="610" y="201" text-anchor="middle">main</text>
+  <text class="f-small f-mono" x="508" y="250" text-anchor="middle">git merge faq</text>
+  <text class="f-small" x="508" y="268" text-anchor="middle">→ new merge commit M with two parents</text>
+  <text class="f-small f-muted" x="508" y="290" text-anchor="middle">(arrows point from a commit to its parent)</text>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 320">
+  <!-- Which command undoes what: from Undoing work safely. -->
+  <rect class="f-box-faint" x="10" y="16" width="186" height="44" rx="8"/>
+  <text class="f-small f-strong" x="103" y="43" text-anchor="middle">working folder</text>
+  <rect class="f-box-faint" x="200" y="16" width="186" height="44" rx="8"/>
+  <text class="f-small f-strong" x="293" y="43" text-anchor="middle">staging area</text>
+  <rect class="f-box-faint" x="390" y="16" width="186" height="44" rx="8"/>
+  <text class="f-small f-strong" x="483" y="43" text-anchor="middle">local commits</text>
+  <rect class="f-box-faint" x="580" y="16" width="186" height="44" rx="8"/>
+  <text class="f-small f-strong" x="673" y="43" text-anchor="middle">pushed commits</text>
+  <rect class="f-box-warn" x="10" y="80" width="226" height="46" rx="8"/>
+  <text class="f-small f-mono" x="123" y="99" text-anchor="middle">git restore &lt;file&gt;</text>
+  <text class="f-small f-muted" x="123" y="117" text-anchor="middle">discard edits</text>
+  <rect class="f-box" x="180" y="136" width="226" height="46" rx="8"/>
+  <text class="f-small f-mono" x="293" y="155" text-anchor="middle">git restore --staged &lt;file&gt;</text>
+  <text class="f-small f-muted" x="293" y="173" text-anchor="middle">unstage, keep edits</text>
+  <rect class="f-box" x="370" y="192" width="226" height="46" rx="8"/>
+  <text class="f-small f-mono" x="483" y="211" text-anchor="middle">git reset --soft HEAD~1</text>
+  <text class="f-small f-muted" x="483" y="229" text-anchor="middle">undo the commit, keep the work</text>
+  <rect class="f-box-ok" x="556" y="248" width="226" height="46" rx="8"/>
+  <text class="f-small f-mono" x="669" y="267" text-anchor="middle">git revert &lt;commit&gt;</text>
+  <text class="f-small f-muted" x="669" y="285" text-anchor="middle">new commit that undoes it</text>
+  <text class="f-small f-warn" x="180" y="290" text-anchor="middle">orange: the change is gone for good</text>
+  <text class="f-small f-ok" x="180" y="308" text-anchor="middle">green: safe even when others have the commit</text>
+</svg>

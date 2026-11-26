@@ -1,0 +1,4 @@
+alt: 'Four columns from left to right: working folder, staging area, local commits, pushed commits. Under working folder: git restore <file> discards edits, marked as losing the change for good. Under staging area: git restore --staged <file> unstages but keeps the edits. Under local commits: git reset --soft HEAD~1 undoes the commit and keeps the work. Under pushed commits: git revert <commit> adds a new commit that undoes it, marked as safe even when others have the commit.'
+caption: 'The further a change has travelled — from your folder to a shared branch — the gentler the undo must be.'
+credit: DevForge 18 content team
+licence: project-content

@@ -1,0 +1,4 @@
+alt: 'Two panels. Panel 1, fast-forward: commits A, B, C in a line; main points at B and the branch glossary at C. git merge glossary just moves main to C. Panel 2, three-way merge: after commit C, the branch faq has commit D and main has commit E; git merge faq creates a new commit M whose two parents are D and E, and main points at M. Arrows point from each commit to its parent.'
+caption: 'A branch is a movable pointer to a commit. Merging either moves the pointer forward or, when both sides have new work, records a merge commit with two parents.'
+credit: DevForge 18 content team
+licence: project-content

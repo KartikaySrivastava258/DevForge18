@@ -108,16 +108,28 @@ grep -c "startActiveSpan" catalog.cjs
 ### 2. Start Jaeger and the services, and send six requests
 
 ```bash run
-# If the previous lesson's Jaeger or Collector is still shutting down, wait until its ports are free.
-for i in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:16686/ || curl -s -o /dev/null http://127.0.0.1:8888/metrics || curl -s -o /dev/null http://127.0.0.1:4318/ || break; sleep 1; done
-jaeger \
-  --set=receivers.otlp.protocols.grpc.endpoint=127.0.0.1:4317 \
-  --set=receivers.otlp.protocols.http.endpoint=127.0.0.1:4318 \
-  --set=extensions.jaeger_query.http.endpoint=127.0.0.1:16686 \
-  --set=extensions.jaeger_query.grpc.endpoint=127.0.0.1:16685 \
-  > jaeger.log 2>&1 &
-echo $! > jaeger.pid
-for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:16686/ && break; sleep 1; done
+# Start Jaeger; if a program from the previous lesson is still releasing a port, wait and try again.
+start_jaeger() {
+  for attempt in 1 2 3 4 5; do
+    jaeger \
+      --set=receivers.otlp.protocols.grpc.endpoint=127.0.0.1:4317 \
+      --set=receivers.otlp.protocols.http.endpoint=127.0.0.1:4318 \
+      --set=extensions.jaeger_query.http.endpoint=127.0.0.1:16686 \
+      --set=extensions.jaeger_query.grpc.endpoint=127.0.0.1:16685 \
+      --set=service.telemetry.metrics.level=none \
+      > jaeger.log 2>&1 &
+    echo $! > jaeger.pid
+    for i in $(seq 1 20); do
+      curl -sf -o /dev/null http://127.0.0.1:16686/ && return 0
+      kill -0 "$(cat jaeger.pid)" 2> /dev/null || break   # Jaeger exited: try again
+      sleep 1
+    done
+    sleep 3
+  done
+  tail -n 20 jaeger.log
+  return 1
+}
+start_jaeger
 start() {  # usage: start <service>
   OTEL_SERVICE_NAME=$1 node --import ./instrumentation.mjs "$1.cjs" > "$1.log" 2>&1 &
   echo $! > "$1.pid"
@@ -137,7 +149,7 @@ for c in c1 c2 c42 c3 c4 c5; do curl -s "http://127.0.0.1:7001/orders?customer=$
 {"customer":"c5","orders":12}
 ```
 
-The instrumentation file sends spans to `127.0.0.1:4318`, which is now Jaeger's own OTLP receiver.
+The instrumentation file sends spans to `127.0.0.1:4318`, which is now Jaeger's own OTLP receiver. `service.telemetry.metrics.level=none` turns off Jaeger's metrics about *itself*, which would otherwise need port 8888 — the same port the Collector from the earlier lessons uses for its own metrics. `start_jaeger` also tries again if Jaeger exits at once, and prints Jaeger's log if it never comes up.
 
 ### 3. Search for slow traces
 
