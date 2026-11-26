@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320">
+  <!-- Where sampling decisions are made, from Sampling traces without losing the story. -->
+  <rect class="f-box-accent" x="10" y="40" width="160" height="120" rx="8"/>
+  <text class="f-small f-strong" x="90" y="64" text-anchor="middle">edge service</text>
+  <text class="f-small f-mono" x="90" y="90" text-anchor="middle">parentbased_</text>
+  <text class="f-small f-mono" x="90" y="108" text-anchor="middle">traceidratio 0.25</text>
+  <text class="f-small" x="90" y="140" text-anchor="middle">decides: 01 or 00</text>
+  <rect class="f-box-faint" x="210" y="40" width="160" height="120" rx="8"/>
+  <text class="f-small f-strong" x="290" y="64" text-anchor="middle">next service</text>
+  <text class="f-small f-mono" x="290" y="90" text-anchor="middle">parentbased_…</text>
+  <text class="f-small" x="290" y="120" text-anchor="middle">follows the flag</text>
+  <text class="f-small" x="290" y="140" text-anchor="middle">in traceparent</text>
+  <g>
+    <path class="f-arrow" d="M172 100 L200 100"/>
+    <polygon class="f-head" points="208,100 200,104.5 200,95.5"/>
+  </g>
+  <text class="f-small" x="190" y="186" text-anchor="middle">head sampling: decided early, cheap, whole traces</text>
+  <rect class="f-box-faint" x="410" y="40" width="140" height="120" rx="8"/>
+  <text class="f-small f-strong" x="480" y="64" text-anchor="middle">Collector</text>
+  <text class="f-small f-mono" x="480" y="92" text-anchor="middle">probabilistic_</text>
+  <text class="f-small f-mono" x="480" y="110" text-anchor="middle">sampler (hash</text>
+  <text class="f-small f-mono" x="480" y="128" text-anchor="middle">of trace ID)</text>
+  <g>
+    <path class="f-arrow" d="M372 100 L400 100"/>
+    <polygon class="f-head" points="408,100 400,104.5 400,95.5"/>
+  </g>
+  <rect class="f-box-ok" x="580" y="40" width="130" height="120" rx="8"/>
+  <text class="f-small f-strong" x="645" y="64" text-anchor="middle">Jaeger</text>
+  <text class="f-small" x="645" y="100" text-anchor="middle">kept traces</text>
+  <g>
+    <path class="f-arrow" d="M552 100 L570 100"/>
+    <polygon class="f-head" points="578,100 570,104.5 570,95.5"/>
+  </g>
+  <rect class="f-box-faint" x="210" y="220" width="500" height="80" rx="8"/>
+  <text class="f-small" x="460" y="244" text-anchor="middle">tail sampling (contrib Collector): wait for the whole trace,</text>
+  <text class="f-small" x="460" y="264" text-anchor="middle">then keep all errors + slow ones + a few of the rest</text>
+  <text class="f-small f-danger" x="460" y="286" text-anchor="middle">costs memory; one trace must reach one Collector instance</text>
+</svg>

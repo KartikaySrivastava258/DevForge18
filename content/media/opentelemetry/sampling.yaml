@@ -1,0 +1,4 @@
+alt: 'The edge service uses parentbased traceidratio 0.25 and decides whether a new trace is sampled, flag 01, or not, flag 00. The next service uses a parentbased sampler and follows the flag it receives in traceparent. This is head sampling: decided at the start, cheap, and it keeps whole traces. A Collector can also sample with the probabilistic sampler, which hashes the trace ID, before sending the kept traces to Jaeger. Below, tail sampling in the contrib Collector waits for the whole trace, then keeps all errors, slow traces and a few of the rest; it costs memory, and every span of a trace must reach the same Collector instance.'
+caption: 'Head sampling decides early and is followed downstream; tail sampling decides after the trace is complete.'
+credit: DevForge 18 content team
+licence: project-content
