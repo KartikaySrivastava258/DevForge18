@@ -1,0 +1,4 @@
+alt: 'Two panels. Unsafe: a query is built by concatenating input into the string WHERE name = quote, input, quote. With the input x quote OR quote 1 quote equals quote 1, the query becomes WHERE name = ''x'' OR ''1''=''1'', and every row is returned: the input became SQL. Safe: the query uses a parameter, WHERE name = $1, and the input is passed separately; the whole text is compared as a value, no student has that name, and no rows are returned.'
+caption: 'SQL injection happens when data is pasted into code; parameters keep data and code apart.'
+credit: DevForge 18 content team
+licence: project-content

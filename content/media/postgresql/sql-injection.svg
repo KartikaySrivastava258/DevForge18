@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 270">
+  <!-- Concatenated SQL versus a parameter, from Roles, privileges and SQL injection prevention. -->
+  <rect class="f-box-faint" x="10" y="14" width="335" height="240" rx="8"/>
+  <text class="f-small f-strong f-danger" x="177" y="40" text-anchor="middle">concatenated (unsafe)</text>
+  <rect class="f-box" x="26" y="58" width="303" height="40" rx="8"/>
+  <text class="f-small f-mono" x="177" y="83" text-anchor="middle">'...name = ''' || input || ''''</text>
+  <text class="f-small f-mono" x="177" y="122" text-anchor="middle">input:  x' OR '1'='1</text>
+  <rect class="f-box-danger" x="26" y="140" width="303" height="56" rx="8"/>
+  <text class="f-small f-mono" x="177" y="162" text-anchor="middle">WHERE name = 'x' OR '1'='1'</text>
+  <text class="f-small" x="177" y="184" text-anchor="middle">the input became SQL → every row</text>
+  <text class="f-small f-muted" x="177" y="232" text-anchor="middle">the database cannot tell code from data</text>
+  <rect class="f-box-faint" x="355" y="14" width="335" height="240" rx="8"/>
+  <text class="f-small f-strong f-ok" x="522" y="40" text-anchor="middle">parameter (safe)</text>
+  <rect class="f-box" x="371" y="58" width="303" height="40" rx="8"/>
+  <text class="f-small f-mono" x="522" y="83" text-anchor="middle">'... WHERE name = $1'  USING input</text>
+  <text class="f-small f-mono" x="522" y="122" text-anchor="middle">input:  x' OR '1'='1</text>
+  <rect class="f-box-ok" x="371" y="140" width="303" height="56" rx="8"/>
+  <text class="f-small" x="522" y="162" text-anchor="middle">name = the whole text, as a value</text>
+  <text class="f-small" x="522" y="184" text-anchor="middle">no student has that name → 0 rows</text>
+  <text class="f-small f-muted" x="522" y="232" text-anchor="middle">the query is fixed before the data arrives</text>
+</svg>
