@@ -104,6 +104,16 @@ jobs:
           cache-dependency-path: package.json
       # No lockfile is committed yet (see IMPLEMENTATION_STATUS.md); switch to `npm ci` once package-lock.json exists.
       - run: npm install --no-audit --no-fund
+      - name: Pull Docker Hub images through Google's mirror (avoids Docker Hub's anonymous rate limit)
+        # Images cached at mirror.gcr.io do not count against Docker Hub limits; uncached ones still come
+        # from Docker Hub. registry-mirrors is reloadable (SIGHUP), so the service containers keep running.
+        run: |
+          [ -f /etc/docker/daemon.json ] || echo '{}' | sudo tee /etc/docker/daemon.json > /dev/null
+          sudo jq '. + {"registry-mirrors": ["https://mirror.gcr.io"]}' /etc/docker/daemon.json > daemon.json.new
+          sudo install -m 0644 daemon.json.new /etc/docker/daemon.json && rm daemon.json.new
+          sudo systemctl reload docker
+          sleep 2
+          docker info --format 'registry mirrors: {{.RegistryConfig.Mirrors}}'
       - name: Install lesson tools (psql, createdb, dropdb, redis-cli, nginx)
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client redis-tools nginx
       - name: Install Terraform (pinned and checksum-verified)
