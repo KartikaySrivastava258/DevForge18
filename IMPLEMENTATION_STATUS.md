@@ -1,6 +1,13 @@
 # Implementation status
 
-Last updated: 2026-11-26 · Milestone: **8 — intermediate and advanced lessons**, in progress (Path 1 done) · Next: the remaining 12 tracks, then **9 — quizzes and projects**
+Last updated: 2026-11-26 (UTC) · Milestone: **8 — intermediate and advanced lessons**, in progress (Path 1, Terraform, Kubernetes 4–6 done) · Next: Kubernetes RBAC and network policies, Ingress/Gateway, then the remaining tracks, then milestones 9–11
+
+## Session handoff
+
+- **Where I stopped:** speed-up work done (CI recording, caches, affected-only lesson runs, flake tools, scaffolding); next item is Kubernetes lesson 7 (RBAC and network policies).
+- **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC.
+- **Open issue:** `n8n-workflows-nodes-and-items` failed once in CI (run 45886569745): the n8n container stopped after a workflow import. Not reproduced locally in 3 runs under full CPU load. The runner now prints each container's state, OOM flag and last log lines when a lesson stops early, so the next occurrence shows the cause.
+- **How to work fast:** `npm run new:lesson -- <track> <id>` scaffolds; `npm run ci:record -- <id>` records in CI (no local tool downloads); `npm run lessons:stress -- <id>` reproduces timing failures; figures are `scripts/figures/<track>/<name>.py` (helper `scripts/figures/figlib.py`); research per track in `docs/research/<track>.md`.
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -355,6 +362,22 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **Four new lessons, executed locally twice each with Terraform 1.15.6:** remote state, locking and workspaces (pg backend on PostgreSQL 16, credentials only in the environment, a refused concurrent apply, -lock-timeout); importing existing resources and handling drift (kreuzwerker/docker 4.6.0: import block with generated configuration reviewed down to a clean plan, -refresh-only, removed with destroy = false); testing and policy (validation, terraform test with plan/apply runs, expect_failures and a mocked provider, a jq policy on the plan JSON); CI with plan review (detailed exit codes, applying the saved plan, a stale plan refused, and a checked GitHub Actions workflow).
 - **CI restructured.** Run 45833076158 passed every test but hit the 40-minute limit, because lesson replay chains grow faster than the lesson count. Executed lessons now run in three independent shards (`DEVFORGE_LESSON_SHARD=i/n`), and the verify job skips them (`off`). Shards pull Docker Hub images through mirror.gcr.io after one shard hit Docker Hub's anonymous rate limit. Run 45843877395: all four jobs green in about 17 minutes.
 - **Runner.** Lessons that run `createdb`, `dropdb` or `psql` from bash are gated on PostgreSQL like SQL lessons.
+
+### Speed-ups and decisions (2026-11-26)
+
+- **Decisions recorded.** Licences: MIT for code (`LICENSE`), CC BY-SA 4.0 for `content/` (`LICENSE-CONTENT`, full legal code from creativecommons.org), Fira Sans OFL notice kept. `~/Downloads/devforge18` deleted after checking that every file's content exists in this repository's history (the only differences were three debugging logs and an older `package.json`). Terraform's plugin cache is enabled in CI with `TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE` (HashiCorp documents it for setups that discard lock files, as lesson folders do; without it the cache is never used for fresh folders); learners' commands are unchanged. Python packages are installed inside lesson containers, so no pip cache (it would change commands learners see). Quiz and project scaffolds come with their schemas in milestone 9.
+- **Record lessons in CI** (`.github/workflows/record-lessons.yml`, `npm run ci:record -- <id> …`): pushes the commit to a temporary branch, records there with every service and tool, downloads the patch, applies it for review, deletes the branch.
+- **Caches** (keyed by exact versions): tool downloads (checksums still verified every run), Terraform providers and npm packages used by lessons, Playwright's Chromium, npm via `npm ci` and the lockfile. Shared tool installation lives in `.github/actions/lesson-tools`.
+- **Affected-only lesson runs** (`scripts/lib/affected.ts`, `scripts/affected-lessons.ts`): pushes and pull requests run only lessons whose own file or prerequisite chain changed (plus API-dependent lessons on any content change; everything if the runner, server, schema, workflows or dependencies change). Nightly 01:30 UTC and manual runs execute everything. Shards with nothing to run skip tool installation.
+- **Flake tools.** `npm run lessons:stress` (repeated runs with every core busy); lessons that stop early print their containers' state, OOM flag and logs; `npm run test:e2e:throttled` (8× CPU throttling) and `samplePhases()` in the e2e harness, now used to assert that the mobile menu closes in the tap's own update.
+- **Scaffolding.** `npm run new:lesson` / `new:lab` create schema-shaped files and a figure script; the content build rejects any file still containing `TODO(scaffold)`.
+
+### Time log
+
+| Date (UTC) | Track / item | Minutes working | Minutes waiting | Notes |
+|---|---|---|---|---|
+| 2026-11-26 | Decisions: licences, duplicate folder | 10 | 0 | |
+| 2026-11-26 | Speed-ups 1–5 | 60 | 10 | waiting = local stress runs of the n8n lesson |
 
 ## Current work
 

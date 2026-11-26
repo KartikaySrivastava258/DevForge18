@@ -16,6 +16,15 @@ Content is the product. A beautiful page with a wrong command teaches the wrong 
 
 Every resource has `verification: { status: unverified | verified | broken, checked_on }`. The weekly *Link check* workflow reports reachability; a person then confirms the page is the right, current resource and sets `status: verified` with `checked_on`. The build rejects `verified` without a date. The UI shows "Link not yet verified" until then.
 
+## Fast workflow
+
+1. `npm run new:lesson -- <track> <id>` (or `npm run new:lab -- <track> <id> [local|simulation|read-through]`) creates the file with schema-shaped front matter, the standard sections and a figure script stub. The build refuses any file that still contains `TODO(scaffold)`.
+2. Reuse the track's notes in `docs/research/<track>.md` (versions, sources, checked facts); add to them rather than researching again.
+3. Draw the figure in `scripts/figures/<track>/<name>.py` (helper: `scripts/figures/figlib.py`) and run it with `python3`; it writes the SVG and its alt-text sidecar.
+4. Commit, then `npm run ci:record -- <id>` records the lesson in CI (all services and tools, fast downloads) and applies the result to your working tree; review it with `git diff` and commit. Recording locally (`npm run lessons:record`) still works when the tools are installed.
+5. A lesson that fails intermittently: `npm run lessons:stress -- <id>` runs it repeatedly with every CPU core busy. When a lesson stops early, the report includes the state and last log lines of its containers.
+6. Dates are UTC (as in CI): `last_reviewed` and `checked_on` cannot be later than today in UTC.
+
 ## Executable lessons
 
 When the tool can run in CI (Git today; more tools as CI services are added), make the lesson **executable**:

@@ -330,6 +330,16 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   }
   caseStudies.sort((a, b) => a.id.localeCompare(b.id));
 
+  // Files made by `npm run new:lesson` (and friends) carry TODO(scaffold) markers until they are written.
+  const walk = (dir: string): string[] =>
+    readdirSync(dir).flatMap((name) => {
+      const full = join(dir, name);
+      return statSync(full).isDirectory() ? walk(full) : /\.(md|ya?ml)$/.test(name) ? [full] : [];
+    });
+  for (const file of existsSync(root) ? walk(root) : []) {
+    if (readFileSync(file, "utf8").includes("TODO(scaffold)")) errors.push(`${relative(root, file)}: still contains TODO(scaffold) placeholders`);
+  }
+
   return {
     bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs },
     errors,

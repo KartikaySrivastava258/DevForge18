@@ -1,0 +1,110 @@
+# Installs every tool the executed lessons need, at pinned versions, verifying each download's checksum.
+# Downloads are cached (keyed by every version below), but checksums are verified again on every run,
+# so a cached archive is trusted exactly as much as a fresh one.
+name: Lesson tools
+description: Pinned, checksum-verified tools and shared caches for executed lessons
+runs:
+  using: composite
+  steps:
+    - name: Pull Docker Hub images through Google's mirror (avoids Docker Hub's anonymous rate limit)
+      # Images cached at mirror.gcr.io do not count against Docker Hub limits; uncached ones still come
+      # from Docker Hub. registry-mirrors is reloadable (SIGHUP), so service containers keep running.
+      shell: bash
+      run: |
+        [ -f /etc/docker/daemon.json ] || echo '{}' | sudo tee /etc/docker/daemon.json > /dev/null
+        sudo jq '. + {"registry-mirrors": ["https://mirror.gcr.io"]}' /etc/docker/daemon.json > daemon.json.new
+        sudo install -m 0644 daemon.json.new /etc/docker/daemon.json && rm daemon.json.new
+        sudo systemctl reload docker
+        sleep 2
+        docker info --format 'registry mirrors: {{.RegistryConfig.Mirrors}}'
+    - name: Install lesson packages (psql, createdb, dropdb, redis-cli, nginx)
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client redis-tools nginx
+    - name: Restore tool downloads
+      id: downloads
+      uses: actions/cache/restore@v6
+      with:
+        path: ~/.cache/devforge-downloads
+        key: lesson-tools-tf1.15.6-kind0.32.0-kubectl1.36.1-prom3.16.0-grafana13.3.2-otel0.166.0-jaeger2.23.0
+    - name: Download (if not cached), verify and install pinned tools
+      shell: bash
+      env:
+        TF_VERSION: "1.15.6"
+        KIND_VERSION: "v0.32.0"
+        KUBECTL_VERSION: "v1.36.1"
+        PROMETHEUS_VERSION: "3.16.0"
+        GRAFANA_VERSION: "13.3.2"
+        OTELCOL_VERSION: "0.166.0"
+        JAEGER_VERSION: "2.23.0"
+      run: |
+        set -euo pipefail
+        d="$HOME/.cache/devforge-downloads"; mkdir -p "$d"; cd "$d"
+        get() { [ -s "$2" ] || curl -fsSL --retry 3 -o "$2" "$1"; }
+        # Terraform
+        tf="terraform_${TF_VERSION}_linux_amd64.zip"
+        get "https://releases.hashicorp.com/terraform/${TF_VERSION}/${tf}" "$tf"
+        get "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS" tf.sums
+        grep " ${tf}$" tf.sums | sha256sum -c -
+        unzip -o -q "$tf" terraform -d tfbin && sudo install -m 0755 tfbin/terraform /usr/local/bin/terraform
+        # kind and kubectl
+        get "https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-linux-amd64" kind
+        get "https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}/kind-linux-amd64.sha256sum" kind.sha256sum
+        echo "$(cut -d' ' -f1 kind.sha256sum)  kind" | sha256sum -c -
+        get "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" kubectl
+        get "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl.sha256" kubectl.sha256
+        echo "$(cat kubectl.sha256)  kubectl" | sha256sum -c -
+        sudo install -m 0755 kind kubectl /usr/local/bin/
+        # Prometheus and Grafana (Grafana publishes the checksum alone in a .sha256 file)
+        p="prometheus-${PROMETHEUS_VERSION}.linux-amd64"
+        get "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/${p}.tar.gz" "${p}.tar.gz"
+        get "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/sha256sums.txt" prom.sums
+        grep " ${p}.tar.gz$" prom.sums | sha256sum -c -
+        tar -xzf "${p}.tar.gz" && sudo install -m 0755 "${p}/prometheus" "${p}/promtool" /usr/local/bin/
+        g="grafana-${GRAFANA_VERSION}.linux-amd64.tar.gz"
+        get "https://dl.grafana.com/oss/release/${g}" "$g"
+        get "https://dl.grafana.com/oss/release/${g}.sha256" "${g}.sha256"
+        echo "$(cat "${g}.sha256")  ${g}" | sha256sum -c -
+        tar -xzf "$g" -C "$RUNNER_TEMP"
+        echo "GRAFANA_HOME=$RUNNER_TEMP/grafana-${GRAFANA_VERSION}" >> "$GITHUB_ENV"
+        echo "$RUNNER_TEMP/grafana-${GRAFANA_VERSION}/bin" >> "$GITHUB_PATH"
+        # OpenTelemetry Collector and Jaeger (Jaeger's checksum file lists the programs inside the archive)
+        c="otelcol_${OTELCOL_VERSION}_linux_amd64.tar.gz"
+        get "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v${OTELCOL_VERSION}/${c}" "$c"
+        get "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v${OTELCOL_VERSION}/${c}.sha256" "${c}.sha256"
+        echo "$(cut -d' ' -f1 "${c}.sha256")  ${c}" | sha256sum -c -
+        mkdir -p otelcol && tar -xzf "$c" -C otelcol && sudo install -m 0755 otelcol/otelcol /usr/local/bin/
+        j="jaeger-${JAEGER_VERSION}-linux-amd64"
+        get "https://github.com/jaegertracing/jaeger/releases/download/v${JAEGER_VERSION}/${j}.tar.gz" "${j}.tar.gz"
+        get "https://github.com/jaegertracing/jaeger/releases/download/v${JAEGER_VERSION}/${j}.sha256sum.txt" "${j}.sha256sum.txt"
+        tar -xzf "${j}.tar.gz" && sha256sum -c "${j}.sha256sum.txt" && sudo install -m 0755 "${j}/jaeger" /usr/local/bin/
+        # Keep only the downloads in the cache, not what was unpacked from them.
+        rm -rf tfbin otelcol "${p}" "${j}"
+        terraform version | head -n 1; kind version; kubectl version --client | head -n 1
+        prometheus --version | head -n 1; otelcol --version; jaeger version 2> /dev/null | head -c 200; echo
+    - name: Save tool downloads
+      if: steps.downloads.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: ~/.cache/devforge-downloads
+        key: ${{ steps.downloads.outputs.cache-primary-key }}
+    - name: Shared caches for Terraform providers and npm packages used by lessons
+      # The lesson runner passes these variables through to every lesson, so `terraform init` and `npx`
+      # reuse downloads across lessons and runs. Lesson output does not change: init output is not shown
+      # verbatim, and npm's cache only avoids downloads.
+      shell: bash
+      run: |
+        mkdir -p "$HOME/.cache/devforge-terraform-plugins" "$HOME/.cache/devforge-npm"
+        echo "TF_PLUGIN_CACHE_DIR=$HOME/.cache/devforge-terraform-plugins" >> "$GITHUB_ENV"
+        # Lesson folders are fresh and their lock files are thrown away, the case HashiCorp documents for this
+        # setting; without it Terraform ignores the cache whenever no lock file exists yet (CI only).
+        echo "TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE=1" >> "$GITHUB_ENV"
+        echo "npm_config_cache=$HOME/.cache/devforge-npm" >> "$GITHUB_ENV"
+    - name: Restore Terraform provider and npm caches
+      uses: actions/cache/restore@v6
+      with:
+        path: |
+          ~/.cache/devforge-terraform-plugins
+          ~/.cache/devforge-npm
+        key: lesson-pkg-caches-${{ hashFiles('content/lessons/terraform/**', 'content/labs/terraform/**', 'content/lessons/postman/**', 'content/labs/postman/**', 'content/lessons/opentelemetry/**') }}
+        restore-keys: |
+          lesson-pkg-caches-

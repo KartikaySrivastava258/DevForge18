@@ -1,0 +1,83 @@
+# Record lessons in CI, where every service and tool is available and downloads are fast, instead of on a
+# developer's machine. Triggered by `npm run ci:record -- <id> …` (scripts/ci-record.sh), which pushes the
+# current commit to a temporary branch, runs this workflow there, and applies the resulting patch locally.
+# The patch is reviewed and committed by a person; this workflow never pushes.
+name: Record lessons
+
+on:
+  workflow_dispatch:
+    inputs:
+      ids:
+        description: Lesson or lab IDs to record, separated by spaces
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  record:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: devforge
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: devforge
+      DEVFORGE_REDIS_TEST: "1"
+      DEVFORGE_DOCKER_TEST: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Check the requested IDs
+        env:
+          IDS: ${{ inputs.ids }}
+        run: |
+          # IDs are lowercase words and hyphens; anything else is rejected before it reaches a shell command.
+          if ! [[ "$IDS" =~ ^[a-z0-9-]+( [a-z0-9-]+)*$ ]]; then echo "invalid ids: $IDS"; exit 1; fi
+          echo "DEVFORGE_RECORD_IDS=$IDS" >> "$GITHUB_ENV"
+      - uses: ./.github/actions/lesson-tools
+      - name: Record
+        # read -a splits the checked IDs into separate arguments without the shell interpreting them.
+        run: |
+          read -r -a ids <<< "$DEVFORGE_RECORD_IDS"
+          set +e
+          npm run lessons:record -- "${ids[@]}" 2>&1 | tee record.log
+          echo "exit code: ${PIPESTATUS[0]}" | tee -a record.log
+      - name: Patch with the recorded output
+        run: |
+          git diff --binary -- content/ > recorded.patch
+          echo "changed files:"; git diff --stat -- content/
+      - uses: actions/upload-artifact@v7
+        with:
+          name: recorded-lessons
+          path: |
+            recorded.patch
+            record.log
+          retention-days: 3

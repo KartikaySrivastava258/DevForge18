@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { after, before, describe, it } from "node:test";
-import { startHarness, type Harness } from "./harness.ts";
+import { samplePhases, startHarness, type Harness } from "./harness.ts";
 
 const SHOTS = join(import.meta.dirname, "..", "build", "screenshots");
 mkdirSync(SHOTS, { recursive: true });
@@ -365,6 +365,16 @@ describe("accessibility, theming and responsiveness", () => {
     // Wait for the state change rather than sampling one instant (slower CI machines need a moment).
     await nav.waitFor({ state: "hidden", timeout: 5000 }).catch(() => undefined);
     assert.equal(await nav.isVisible(), false, "menu closes after navigating");
+    // Regression (IMPLEMENTATION_STATUS.md): the menu must close in the same update as the tap, not one task
+    // later — otherwise a test, or a user, can see the new page with the old menu still open.
+    await page.getByRole("button", { name: "Open menu" }).click();
+    await nav.waitFor({ state: "visible", timeout: 5000 });
+    const phases = await samplePhases(
+      page,
+      () => (document.querySelector('#primary-nav a[href="/tracks"]') as HTMLElement).click(),
+      () => !(document.querySelector("#primary-nav") as HTMLElement).checkVisibility(),
+    );
+    assert.deepEqual(phases, { afterMicrotasks: true, afterNextTask: true }, "menu hidden right after the tap's microtasks");
     await page.screenshot({ path: join(SHOTS, "mobile-paths.png"), fullPage: true });
     await page.goto("/");
     await page.locator("h1").waitFor();

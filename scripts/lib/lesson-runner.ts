@@ -212,6 +212,19 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   const needsDb = usesPostgres(blocks);
   // Cleanup runs even when a block fails, so nothing outlives the lesson run.
   const cleanup: string[] = [];
+  // When the lesson stops early, show the state and last log lines of the containers it started before
+  // cleanup removes them — a container that crashed (on CI, say) then explains itself in the test report.
+  const containers = [...new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bdocker run\b[^\n]*?--name[ =]([a-zA-Z0-9][\w.-]*)/g)].map((m) => m[1] ?? "")))].filter(Boolean);
+  const diagnostics = containers.length
+    ? [
+        `devforge_rc=$?`,
+        `if [ "$devforge_rc" -ne 0 ]; then printf '\\n--- diagnostics: the lesson stopped (exit code %s); its containers:\\n' "$devforge_rc"; ` +
+          containers
+            .map((c) => `docker inspect -f '${c}: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}}' ${c} 2>/dev/null; docker logs --tail 25 ${c} 2>&1 | sed 's/^/    /'`)
+            .join("; ") +
+          `; fi`,
+      ]
+    : [];
   if (needsDb) cleanup.push(`dropdb --if-exists "$DEVFORGE_PGDATABASE" >/dev/null 2>&1 || true`);
   // Delete any kind cluster a lesson creates, even if a later command fails.
   for (const name of new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bkind create cluster --name ([a-z0-9-]+)/g)].map((m) => m[1] ?? "")))) {
@@ -245,7 +258,7 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
     "exec 2>&1",
     "set -e",
     "set -o pipefail",
-    ...(cleanup.length ? [`devforge_cleanup() { ${cleanup.join("; ")}; }`, "trap devforge_cleanup EXIT"] : []),
+    ...(cleanup.length ? [`devforge_cleanup() { ${[...diagnostics, ...cleanup].join("; ")}; }`, "trap devforge_cleanup EXIT"] : []),
     ...(needsDb ? [`export DEVFORGE_PGDATABASE="devforge_lesson_$$_$RANDOM"`, `createdb "$DEVFORGE_PGDATABASE"`] : []),
     ...(usesRedis(blocks) ? ["redis-cli FLUSHDB > /dev/null"] : []),
     `cd "${work}"`,
@@ -267,6 +280,11 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
       ...Object.fromEntries(Object.entries(process.env).filter(([k]) => /^PG(HOST|PORT|USER|PASSWORD|SSLMODE)$/.test(k))),
       // Where Grafana's release archive was unpacked (Grafana needs its home folder to start).
       ...(process.env.GRAFANA_HOME ? { GRAFANA_HOME: process.env.GRAFANA_HOME } : {}),
+      // Download caches shared across lessons (set in CI by .github/actions/lesson-tools); they avoid
+      // downloads without changing what a lesson prints.
+      ...Object.fromEntries(
+        Object.entries(process.env).filter(([k]) => /^(TF_PLUGIN_CACHE_DIR|TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE|npm_config_cache)$/.test(k)),
+      ),
       HOME: home,
       LANG: "C.UTF-8",
       LC_ALL: "C.UTF-8",

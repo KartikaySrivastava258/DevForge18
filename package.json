@@ -23,7 +23,12 @@
     "verify": "npm run typecheck && npm run typecheck:web && npm run lint:md && npm run build && npm test && npm run test:e2e",
     "db:backup": "node --disable-warning=ExperimentalWarning scripts/db-backup.ts",
     "lint:md": "markdownlint-cli2 \"**/*.md\"",
-    "lessons:record": "node --disable-warning=ExperimentalWarning scripts/record-lessons.ts"
+    "lessons:record": "node --disable-warning=ExperimentalWarning scripts/record-lessons.ts",
+    "lessons:stress": "bash scripts/stress-lesson.sh",
+    "ci:record": "bash scripts/ci-record.sh",
+    "new:lesson": "node --disable-warning=ExperimentalWarning scripts/new-content.ts lesson",
+    "new:lab": "node --disable-warning=ExperimentalWarning scripts/new-content.ts lab",
+    "test:e2e:throttled": "DEVFORGE_E2E_CPU_THROTTLE=8 npm run test:e2e"
   },
   "dependencies": {
     "zod": "^4.6.7"

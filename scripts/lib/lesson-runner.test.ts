@@ -3,12 +3,13 @@ import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { loadContent } from "./content-loader.ts";
 import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, lessonNeeds, toolsUsed, usesDocker, outputMatches, redisTestingEnabled, runLesson, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
 import { splitFrontMatter } from "./markdown.ts";
 import { startPracticeServer } from "./practice-server.ts";
+import { scopeFromEnv } from "./affected.ts";
+import { loadRunnables, shardFilter } from "./runnables.ts";
 
 describe("outputMatches", () => {
   it("compares exactly, ignoring trailing spaces and surrounding blank lines", () => {
@@ -141,7 +142,13 @@ describe("docker containers", () => {
     try {
       const run = runLesson(extractRunBlocks("```bash run\ndocker run -d --name devforge-lab -p 127.0.0.1:9092:9092 image:1\n```\n```bash run\nfalse\n```"), { path: `${bin}:${process.env.PATH}` });
       assert.ok(run.failure !== undefined);
-      assert.deepEqual(readFileSync(log, "utf8").trim().split("\n"), ["docker run -d --name devforge-lab -p 127.0.0.1:9092:9092 image:1", "docker rm -f devforge-lab"]);
+      assert.deepEqual(readFileSync(log, "utf8").trim().split("\n"), [
+        "docker run -d --name devforge-lab -p 127.0.0.1:9092:9092 image:1",
+        // On failure, the trap first shows the container's state and recent logs, then removes it.
+        "docker inspect -f devforge-lab: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}} devforge-lab",
+        "docker logs --tail 25 devforge-lab",
+        "docker rm -f devforge-lab",
+      ]);
     } finally {
       rmSync(bin, { recursive: true, force: true });
     }
@@ -155,7 +162,13 @@ describe("docker containers", () => {
     try {
       const run = runLesson(extractRunBlocks("```bash run\ndocker network create lab-net\ndocker run -d --name c1 --network lab-net image:1\ndocker compose -p lab up -d\n```\n```bash run\nfalse\n```"), { path: `${bin}:${process.env.PATH}` });
       assert.ok(run.failure !== undefined);
-      assert.deepEqual(readFileSync(log, "utf8").trim().split("\n").slice(3), ["docker rm -f c1", "docker compose -p lab down -v --remove-orphans", "docker network rm lab-net"]);
+      assert.deepEqual(readFileSync(log, "utf8").trim().split("\n").slice(3), [
+        "docker inspect -f c1: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}} c1",
+        "docker logs --tail 25 c1",
+        "docker rm -f c1",
+        "docker compose -p lab down -v --remove-orphans",
+        "docker network rm lab-net",
+      ]);
     } finally {
       rmSync(bin, { recursive: true, force: true });
     }
@@ -205,31 +218,19 @@ describe("Redis blocks", () => {
 
 // Every executed lesson in the repository must still produce exactly the output it shows.
 const contentRoot = join(import.meta.dirname, "..", "..", "content");
-const { bundle } = loadContent(contentRoot);
-// Lessons and local labs run the same way; a lab continues from its prerequisite lessons.
-const runnables = [
-  ...bundle.lessons.map((l) => ({ ...l, kind: "lesson" as const, file: join(contentRoot, "lessons", l.track, `${l.id}.md`) })),
-  ...bundle.labs.map((l) => ({
-    ...l,
-    kind: "lab" as const,
-    // The lab needs what its latest prerequisite lesson in the same track needs (ports, API, time).
-    order: Math.max(1, ...l.prerequisites.map((id) => bundle.lessons.find((x) => x.id === id && x.track === l.track)?.order ?? 1)),
-    file: join(contentRoot, "labs", l.track, `${l.id}.md`),
-  })),
-].filter((r) => r.verification.method !== "docs-checked");
-// CI runs the executed lessons in parallel jobs: DEVFORGE_LESSON_SHARD="i/n" runs every n-th lesson starting at
-// the i-th (each replays its own prerequisites, so shards are independent), and "off" skips them in a job that
-// checks everything else. Unset runs them all.
+const { bundle, chainOf, select } = loadRunnables(contentRoot);
+// CI runs the executed lessons in parallel jobs: DEVFORGE_LESSON_SHARD="i/n" runs every n-th selected lesson
+// starting at the i-th (each replays its own prerequisites, so shards are independent), and "off" skips them in
+// a job that checks everything else. On pushes CI also sets DEVFORGE_CHANGED_FILES so only lessons a change can
+// affect run (scripts/lib/affected.ts); nightly, on-demand and local runs leave it unset and execute everything.
 const shardSetting = process.env.DEVFORGE_LESSON_SHARD ?? "";
-const shardMatch = /^(\d+)\/(\d+)$/.exec(shardSetting);
-if (shardSetting && shardSetting !== "off" && !shardMatch) throw new Error(`DEVFORGE_LESSON_SHARD must be "i/n" or "off", not "${shardSetting}"`);
-const inShard = (index: number) =>
-  shardSetting === "off" ? false : shardMatch ? index % Number(shardMatch[2]) === Number(shardMatch[1]) - 1 : true;
+const inShard = shardFilter(shardSetting);
+const selected = select(scopeFromEnv(process.env.DEVFORGE_CHANGED_FILES));
 describe("executed lessons and labs reproduce their documented output", { skip: shardSetting === "off" ? "DEVFORGE_LESSON_SHARD=off (CI runs them in the lesson shard jobs)" : false }, () => {
   const postgresAvailable = hasPostgres();
   const redisAvailable = redisTestingEnabled();
   const dockerAvailable = dockerTestingEnabled();
-  for (const lesson of runnables.filter((_, index) => inShard(index))) {
+  for (const lesson of selected.filter((_, index) => inShard(index))) {
     const needsGit = ["git-github", "github-actions", "jenkins"].includes(lesson.track);
     const ownBlocks = extractRunBlocks(splitFrontMatter(readFileSync(lesson.file, "utf8"))?.body ?? "");
     // PostgreSQL lessons, and lessons in other tracks that use a database from bash (e.g. Terraform's pg backend).
@@ -238,15 +239,7 @@ describe("executed lessons and labs reproduce their documented output", { skip: 
     const { api: needsApi, apiPort, timeoutMs } = lessonNeeds(lesson.track, lesson.order);
     const blocksOf = (id: string, track: string) =>
       extractRunBlocks(splitFrontMatter(readFileSync(join(contentRoot, "lessons", track, `${id}.md`), "utf8"))?.body ?? "");
-    // Students continue from earlier lessons, so executed prerequisites are replayed first.
-    const chain: string[] = [];
-    const visit = (id: string) => {
-      const l = bundle.lessons.find((x) => x.id === id);
-      if (!l || chain.includes(id)) return;
-      l.prerequisites.forEach(visit);
-      if (l.verification.method !== "docs-checked") chain.push(id);
-    };
-    lesson.prerequisites.forEach(visit);
+    const chain = chainOf(lesson.prerequisites);
     const setupBlocks = chain.flatMap((id) => blocksOf(id, bundle.lessons.find((x) => x.id === id)?.track ?? lesson.track));
     // A lesson that continues from a Docker lesson replays its docker commands too, so it needs the same opt-in.
     const needsDocker = lesson.track === "docker" || usesDocker([...setupBlocks, ...ownBlocks]);

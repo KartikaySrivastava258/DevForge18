@@ -1,16 +1,24 @@
 # Continuous integration: every push and pull request must pass all checks.
+#
+# - verify: typecheck, lint, build, unit/API tests and browser tests, on every push and pull request.
+# - lessons: executed lessons and local labs, in three parallel shards. On pushes and pull requests only the
+#   lessons a change can affect run (scripts/lib/affected.ts); the nightly run and manual runs execute all of
+#   them. A lesson counts as "executed" only after a CI run that actually ran it.
 name: CI
 
 on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: "30 1 * * *" # nightly, 01:30 UTC: the full suite
+  workflow_dispatch: # manual run: the full suite (run before marking a milestone done and before tagging)
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
@@ -20,13 +28,12 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: package.json
-      # No lockfile is committed yet (see IMPLEMENTATION_STATUS.md); switch to `npm ci` once package-lock.json exists.
-      - run: npm install --no-audit --no-fund
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-audit --no-fund
       - name: Typecheck server, shared code and scripts
         run: npm run typecheck
       - name: Typecheck frontend (React)
@@ -40,24 +47,37 @@ jobs:
         env:
           DEVFORGE_LESSON_SHARD: "off"
         run: npm test
+      - name: Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('playwright-core/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright's Chromium (keyed by the exact Playwright version)
+        id: playwright-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ steps.playwright.outputs.version }}-chromium-ubuntu-24.04
       - name: Install Chromium for end-to-end tests
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+      - name: Install Chromium's system libraries (browser restored from cache)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
       - name: End-to-end tests
         run: npm run test:e2e
       - name: Upload screenshots on failure
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-screenshots
           path: build/screenshots
           retention-days: 7
 
   lessons:
-    # Every command in every executed lesson and local lab runs against the real tool, and its output is
+    # Every command in every selected lesson and local lab runs against the real tool, and its output is
     # compared with the lesson. Lessons replay their own prerequisites, so the shards are independent.
     name: Executed lessons (shard ${{ matrix.shard }} of 3)
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -97,101 +117,44 @@ jobs:
       DEVFORGE_DOCKER_TEST: "1"
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: package.json
-      # No lockfile is committed yet (see IMPLEMENTATION_STATUS.md); switch to `npm ci` once package-lock.json exists.
-      - run: npm install --no-audit --no-fund
-      - name: Pull Docker Hub images through Google's mirror (avoids Docker Hub's anonymous rate limit)
-        # Images cached at mirror.gcr.io do not count against Docker Hub limits; uncached ones still come
-        # from Docker Hub. registry-mirrors is reloadable (SIGHUP), so the service containers keep running.
-        run: |
-          [ -f /etc/docker/daemon.json ] || echo '{}' | sudo tee /etc/docker/daemon.json > /dev/null
-          sudo jq '. + {"registry-mirrors": ["https://mirror.gcr.io"]}' /etc/docker/daemon.json > daemon.json.new
-          sudo install -m 0644 daemon.json.new /etc/docker/daemon.json && rm daemon.json.new
-          sudo systemctl reload docker
-          sleep 2
-          docker info --format 'registry mirrors: {{.RegistryConfig.Mirrors}}'
-      - name: Install lesson tools (psql, createdb, dropdb, redis-cli, nginx)
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client redis-tools nginx
-      - name: Install Terraform (pinned and checksum-verified)
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Which files changed (pushes and pull requests); everything otherwise
         env:
-          TF_VERSION: "1.15.6"
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+          BASE: ${{ github.event.pull_request.base.sha }}
         run: |
-          cd "$RUNNER_TEMP"
-          base="https://releases.hashicorp.com/terraform/${TF_VERSION}"
-          curl -fsSLO "${base}/terraform_${TF_VERSION}_linux_amd64.zip"
-          curl -fsSLO "${base}/terraform_${TF_VERSION}_SHA256SUMS"
-          grep " terraform_${TF_VERSION}_linux_amd64.zip$" "terraform_${TF_VERSION}_SHA256SUMS" | sha256sum -c -
-          unzip -o -q "terraform_${TF_VERSION}_linux_amd64.zip" terraform -d tfbin
-          sudo install -m 0755 tfbin/terraform /usr/local/bin/terraform
-          terraform version
-      - name: Install kind and kubectl (pinned and checksum-verified)
-        env:
-          KIND_VERSION: "v0.32.0"
-          KUBECTL_VERSION: "v1.36.1"
-        run: |
-          cd "$RUNNER_TEMP"
-          kind_base="https://github.com/kubernetes-sigs/kind/releases/download/${KIND_VERSION}"
-          curl -fsSLo kind "${kind_base}/kind-linux-amd64"
-          curl -fsSLo kind.sha256sum "${kind_base}/kind-linux-amd64.sha256sum"
-          echo "$(cut -d' ' -f1 kind.sha256sum)  kind" | sha256sum -c -
-          k8s_base="https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64"
-          curl -fsSLO "${k8s_base}/kubectl"
-          curl -fsSLO "${k8s_base}/kubectl.sha256"
-          echo "$(cat kubectl.sha256)  kubectl" | sha256sum -c -
-          sudo install -m 0755 kind kubectl /usr/local/bin/
-          kind version
-          kubectl version --client
-      - name: Install Prometheus and Grafana (pinned and checksum-verified)
-        env:
-          PROMETHEUS_VERSION: "3.16.0"
-          GRAFANA_VERSION: "13.3.2"
-        run: |
-          cd "$RUNNER_TEMP"
-          p="prometheus-${PROMETHEUS_VERSION}.linux-amd64"
-          base="https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}"
-          curl -fsSLO "${base}/${p}.tar.gz"
-          curl -fsSLO "${base}/sha256sums.txt"
-          grep " ${p}.tar.gz$" sha256sums.txt | sha256sum -c -
-          tar -xzf "${p}.tar.gz"
-          sudo install -m 0755 "${p}/prometheus" "${p}/promtool" /usr/local/bin/
-          prometheus --version | head -n 1
-          # Grafana publishes the checksum alone in a .sha256 file.
-          g="grafana-${GRAFANA_VERSION}.linux-amd64.tar.gz"
-          curl -fsSLO "https://dl.grafana.com/oss/release/${g}"
-          curl -fsSLO "https://dl.grafana.com/oss/release/${g}.sha256"
-          echo "$(cat "${g}.sha256")  ${g}" | sha256sum -c -
-          tar -xzf "${g}"
-          echo "GRAFANA_HOME=$RUNNER_TEMP/grafana-${GRAFANA_VERSION}" >> "$GITHUB_ENV"
-          echo "$RUNNER_TEMP/grafana-${GRAFANA_VERSION}/bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/grafana-${GRAFANA_VERSION}/bin/grafana" --version
-      - name: Install the OpenTelemetry Collector and Jaeger (pinned and checksum-verified)
-        env:
-          OTELCOL_VERSION: "0.166.0"
-          JAEGER_VERSION: "2.23.0"
-        run: |
-          cd "$RUNNER_TEMP"
-          c="otelcol_${OTELCOL_VERSION}_linux_amd64.tar.gz"
-          base="https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v${OTELCOL_VERSION}"
-          curl -fsSLO --retry 3 "${base}/${c}"
-          curl -fsSLO --retry 3 "${base}/${c}.sha256"
-          echo "$(cut -d' ' -f1 "${c}.sha256")  ${c}" | sha256sum -c -
-          mkdir -p otelcol && tar -xzf "${c}" -C otelcol
-          sudo install -m 0755 otelcol/otelcol /usr/local/bin/
-          otelcol --version
-          # Jaeger's checksum file lists the programs inside the archive, so verify after unpacking.
-          j="jaeger-${JAEGER_VERSION}-linux-amd64"
-          jbase="https://github.com/jaegertracing/jaeger/releases/download/v${JAEGER_VERSION}"
-          curl -fsSLO --retry 3 "${jbase}/${j}.tar.gz"
-          curl -fsSLO --retry 3 "${jbase}/${j}.sha256sum.txt"
-          tar -xzf "${j}.tar.gz"
-          sha256sum -c "${j}.sha256sum.txt"
-          sudo install -m 0755 "${j}/jaeger" /usr/local/bin/
-          jaeger version 2>/dev/null
-      - name: Validate content
-        run: npm run content:build
+          if [ "$EVENT" = push ] && [ -n "$BEFORE" ] && git cat-file -e "${BEFORE}^{commit}" 2> /dev/null; then
+            git diff --name-only "$BEFORE" "$AFTER" > changed.txt
+          elif [ "$EVENT" = pull_request ] && [ -n "$BASE" ]; then
+            git diff --name-only "$BASE" "$AFTER" > changed.txt
+          else
+            echo all > changed.txt
+          fi
+          echo "changed files:"; cat changed.txt
+          { echo 'DEVFORGE_CHANGED_FILES<<DEVFORGE_EOF'; cat changed.txt; echo 'DEVFORGE_EOF'; } >> "$GITHUB_ENV"
+      - name: Select this shard's lessons
+        id: select
+        run: node --disable-warning=ExperimentalWarning scripts/affected-lessons.ts
+      - name: Install lesson tools
+        if: steps.select.outputs.count != '0'
+        uses: ./.github/actions/lesson-tools
       - name: Executed lessons and labs
+        if: steps.select.outputs.count != '0'
         run: node --disable-warning=ExperimentalWarning --test scripts/lib/lesson-runner.test.ts
+      - name: Save Terraform provider and npm caches
+        if: always() && steps.select.outputs.count != '0'
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            ~/.cache/devforge-terraform-plugins
+            ~/.cache/devforge-npm
+          key: lesson-pkg-caches-${{ hashFiles('content/lessons/terraform/**', 'content/labs/terraform/**', 'content/lessons/postman/**', 'content/labs/postman/**', 'content/lessons/opentelemetry/**') }}-shard${{ matrix.shard }}

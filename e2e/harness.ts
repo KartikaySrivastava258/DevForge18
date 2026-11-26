@@ -61,6 +61,9 @@ export async function startHarness(): Promise<Harness> {
       });
       await context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: url });
       const page = await context.newPage();
+      // Reproduce slow CI machines: DEVFORGE_E2E_CPU_THROTTLE=8 slows the page's CPU eightfold (Chromium only).
+      const throttle = Number(process.env.DEVFORGE_E2E_CPU_THROTTLE ?? "0");
+      if (throttle > 1) await (await context.newCDPSession(page)).send("Emulation.setCPUThrottlingRate", { rate: throttle });
       const problems: string[] = [];
       page.on("console", (m) => {
         if (m.type() === "error" || m.type() === "warning") problems.push(`console ${m.type()}: ${m.text()}`);
@@ -85,4 +88,20 @@ export async function startHarness(): Promise<Harness> {
       db.close();
     },
   };
+}
+
+/**
+ * Samples a page condition in two event-loop phases after an action: right after the current microtask
+ * queue flushes, and after the next macrotask. A UI that is only settled in the second sample has a window
+ * where tests (and users) can observe a half-updated state — the cause of the mobile-menu flake diagnosed in
+ * IMPLEMENTATION_STATUS.md. Use it to prove a state change happens in the same update as its trigger.
+ */
+export async function samplePhases(page: Page, action: () => void, condition: () => unknown): Promise<{ afterMicrotasks: unknown; afterNextTask: unknown }> {
+  // A string expression is evaluated over the DevTools protocol, so the app's strict CSP (no eval) still holds
+  // for the page itself. The functions must not use variables from the test's scope.
+  const a = action.toString();
+  const c = condition.toString();
+  return page.evaluate(
+    `new Promise((resolve) => { (${a})(); queueMicrotask(() => { const afterMicrotasks = (${c})(); setTimeout(() => resolve({ afterMicrotasks, afterNextTask: (${c})() }), 0); }); })`,
+  ) as Promise<{ afterMicrotasks: unknown; afterNextTask: unknown }>;
 }
