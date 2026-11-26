@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260">
+  <!-- Following an incident across signals, from From alert to root cause. -->
+  <rect class="f-box-accent" x="10" y="40" width="210" height="140" rx="8"/>
+  <text class="f-small f-strong" x="115" y="64" text-anchor="middle">1. metric (that)</text>
+  <text class="f-small f-mono" x="115" y="96" text-anchor="middle">checkout_requests_total</text>
+  <text class="f-small f-mono" x="115" y="116" text-anchor="middle">{job="shop",</text>
+  <text class="f-small f-mono" x="115" y="136" text-anchor="middle">outcome="error"} 1</text>
+  <text class="f-small" x="115" y="164" text-anchor="middle">narrows service + time</text>
+  <rect class="f-box-faint" x="255" y="40" width="210" height="140" rx="8"/>
+  <text class="f-small f-strong" x="360" y="64" text-anchor="middle">2. log (what)</text>
+  <text class="f-small f-mono" x="360" y="96" text-anchor="middle">ERROR checkout failed</text>
+  <text class="f-small f-mono" x="360" y="116" text-anchor="middle">for order 1013</text>
+  <text class="f-small f-mono" x="360" y="140" text-anchor="middle">Trace ID: 8b28…317a</text>
+  <text class="f-small" x="360" y="164" text-anchor="middle">names the request</text>
+  <rect class="f-box-ok" x="500" y="40" width="210" height="140" rx="8"/>
+  <text class="f-small f-strong" x="605" y="64" text-anchor="middle">3. trace (where)</text>
+  <text class="f-small f-mono" x="605" y="96" text-anchor="middle">POST /checkout  ✗</text>
+  <text class="f-small f-mono" x="605" y="116" text-anchor="middle">└ charge card  ✗</text>
+  <text class="f-small f-mono" x="605" y="140" text-anchor="middle">exception: timed out</text>
+  <text class="f-small" x="605" y="164" text-anchor="middle">shows the failing span</text>
+  <g>
+    <path class="f-arrow" d="M222 110 L245 110"/>
+    <polygon class="f-head" points="253,110 245,114.5 245,105.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M467 110 L490 110"/>
+    <polygon class="f-head" points="498,110 490,114.5 490,105.5"/>
+  </g>
+  <text class="f-small" x="360" y="214" text-anchor="middle">joined by service.name (= job label), time, and the trace ID on each log record</text>
+  <text class="f-small" x="360" y="238" text-anchor="middle">exemplars would link 1 → 3 directly; the JavaScript SDK 3.1.1 does not record them</text>
+</svg>

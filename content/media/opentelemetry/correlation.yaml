@@ -1,0 +1,4 @@
+alt: 'Three steps from left to right. First, the metric checkout_requests_total with job shop and outcome error equal to 1 says that something failed and narrows the service and time. Second, an ERROR log record, checkout failed for order 1013, carries a Trace ID and names the request. Third, the trace shows POST /checkout and its child charge card both failed, with the exception timed out on charge card, showing the failing span. The signals are joined by service.name, which is the job label, by time, and by the trace ID on each log record. Exemplars would link the metric directly to the trace, but the JavaScript SDK 3.1.1 does not record them.'
+caption: 'Metric says that, log says what, trace says where — joined by service name, time and trace ID.'
+credit: DevForge 18 content team
+licence: project-content
