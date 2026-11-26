@@ -80,4 +80,18 @@ describe("completing labs", () => {
     assert.equal(done.status, 200);
     assert.equal(done.json.progress.evidence, "verified");
   });
+  it("grades a read-through lab on the server and records it as verified only when every answer is right", async () => {
+    const lab = testContent().getLab("kubernetes-debug-broken-deployments");
+    assert.ok(lab?.questions?.length);
+    const missing = await student.post(`/api/labs/${lab.id}/complete`, { answers: {} });
+    assert.equal(missing.status, 400);
+    const wrong = Object.fromEntries(lab.questions.map((q) => [q.id, q.options.find((o) => o.id !== q.answer)?.id ?? "a"]));
+    const bad = await student.post(`/api/labs/${lab.id}/complete`, { answers: wrong });
+    assert.equal(bad.json.completed, false);
+    assert.ok(bad.json.grade.results.every((r: { correct: boolean; explanation?: string }) => !r.correct && r.explanation === undefined), "no explanations for wrong answers");
+    const right = Object.fromEntries(lab.questions.map((q) => [q.id, q.answer]));
+    const good = await student.post(`/api/labs/${lab.id}/complete`, { answers: right });
+    assert.equal(good.json.completed, true);
+    assert.equal(good.json.progress.evidence, "verified");
+  });
 });

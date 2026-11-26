@@ -246,6 +246,20 @@ describe("learning journey (registered student)", () => {
     await page.getByRole("button", { name: "Mark the lab as done" }).click();
     await page.getByText(/Lab complete.*self-reported/).waitFor();
     await page.screenshot({ path: join(SHOTS, "lab-git-conflict.png"), fullPage: true });
+
+    // A read-through lab is graded on the server and recorded as checked.
+    await page.goto("/tracks/kubernetes/labs/kubernetes-debug-broken-deployments");
+    await page.getByRole("heading", { level: 1, name: "Break a configuration and debug events and logs" }).waitFor();
+    const answer = async (n: number, text: RegExp) => page.locator(".check fieldset").nth(n).locator(".option", { hasText: text }).click();
+    await answer(0, /typo in the tag/);
+    await answer(1, /logs --previous/);
+    await answer(2, /out of disk|Delete the Pod/);
+    await answer(3, /readiness and restart counts/);
+    await page.getByRole("button", { name: "Check answers" }).click();
+    await page.getByText("3 of 4 correct.").waitFor();
+    await answer(2, /Lower the CPU request/);
+    await page.getByRole("button", { name: "Check answers" }).click();
+    await page.getByText(/Lab complete.*checked by DevForge/).waitFor();
     noProblems(problems);
   });
 
@@ -329,7 +343,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff", "/tracks/github-actions/simulations/github-actions-workflow-run", "/tracks/redis/simulations/redis-cache-load", "/tracks/nginx/simulations/nginx-location-matcher", "/tracks/postman/simulations/postman-request-builder", "/tracks/jenkins/simulations/jenkins-build-queue", "/tracks/git-github/labs/git-resolve-a-merge-conflict", "/tracks/kubernetes/labs/kubernetes-self-healing-and-rollouts", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff", "/tracks/github-actions/simulations/github-actions-workflow-run", "/tracks/redis/simulations/redis-cache-load", "/tracks/nginx/simulations/nginx-location-matcher", "/tracks/postman/simulations/postman-request-builder", "/tracks/jenkins/simulations/jenkins-build-queue", "/tracks/git-github/labs/git-resolve-a-merge-conflict", "/tracks/kubernetes/labs/kubernetes-self-healing-and-rollouts", "/tracks/kubernetes/labs/kubernetes-debug-broken-deployments", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
