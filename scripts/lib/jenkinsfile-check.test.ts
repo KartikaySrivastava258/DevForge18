@@ -58,8 +58,9 @@ describe("checkJenkinsfile", () => {
 describe("Jenkinsfiles in lessons", () => {
   const contentRoot = join(import.meta.dirname, "..", "..", "content");
   const { bundle } = loadContent(contentRoot);
-  for (const lesson of bundle.lessons) {
-    const body = splitFrontMatter(readFileSync(join(contentRoot, "lessons", lesson.track, `${lesson.id}.md`), "utf8"))?.body ?? "";
+  // Labs are checked like lessons.
+  for (const lesson of [...bundle.lessons.map((l) => ({ ...l, dir: "lessons" })), ...bundle.labs.map((l) => ({ ...l, dir: "labs" }))]) {
+    const body = splitFrontMatter(readFileSync(join(contentRoot, lesson.dir, lesson.track, `${lesson.id}.md`), "utf8"))?.body ?? "";
     const marked = new Marked();
     const codes: Tokens.Code[] = [];
     marked.walkTokens(marked.lexer(body), (t: Token) => {

@@ -55,7 +55,7 @@ labs:
   - { title: "Containerise a simple API", level: beginner, mode: local, status: planned }
   - { title: "Persist database data using volumes", level: beginner, mode: local, status: planned }
   - { title: "Connect an API and PostgreSQL with Compose", level: intermediate, mode: local, status: planned }
-  - { title: "Optimise a slow, oversized image", level: advanced, mode: local, status: planned }
+  - { title: "Optimise a slow, oversized image", level: advanced, mode: local, status: available, lab: docker-optimise-an-oversized-image }
   - { title: "Reorder a Dockerfile for the build cache", level: intermediate, mode: simulation, status: available, lab: docker-layer-cache-experiments }
 projects:
   - { title: "Containerised notes API", level: beginner, status: planned }
