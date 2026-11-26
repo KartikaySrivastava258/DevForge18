@@ -1,0 +1,4 @@
+alt: 'Three things Terraform compares: the configuration with resource docker_network legacy, the state entry docker_network.legacy holding the network ID, and the real network devforge-legacy-net, made by hand. Import links the real network into state. Every plan refreshes state from the real object. Drift means state and the real object disagree: a normal plan restores the configuration, while -refresh-only accepts the change into state. A removed block with destroy = false drops the resource from state and keeps the network.'
+caption: 'Import adopts what exists, refresh reveals drift, and removed lets go without destroying.'
+credit: DevForge 18 content team
+licence: project-content
