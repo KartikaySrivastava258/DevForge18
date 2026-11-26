@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280">
+  <!-- Three metric types, from Counters, gauges and histograms done right. -->
+  <rect class="f-box-accent" x="10" y="30" width="220" height="110" rx="8"/>
+  <text class="f-small f-strong" x="120" y="54" text-anchor="middle">counter</text>
+  <text class="f-small f-mono" x="120" y="78" text-anchor="middle">shop_requests_total 7</text>
+  <text class="f-small" x="120" y="100" text-anchor="middle">only goes up; reset = restart</text>
+  <text class="f-small f-mono" x="120" y="122" text-anchor="middle">use rate(), increase()</text>
+  <rect class="f-box-ok" x="250" y="30" width="220" height="110" rx="8"/>
+  <text class="f-small f-strong" x="360" y="54" text-anchor="middle">gauge</text>
+  <text class="f-small f-mono" x="360" y="78" text-anchor="middle">shop_requests_in_flight 0</text>
+  <text class="f-small" x="360" y="100" text-anchor="middle">goes up and down</text>
+  <text class="f-small" x="360" y="122" text-anchor="middle">read it, or max_over_time</text>
+  <rect class="f-box-warn" x="490" y="30" width="220" height="110" rx="8"/>
+  <text class="f-small f-strong" x="600" y="54" text-anchor="middle">histogram</text>
+  <text class="f-small f-mono" x="600" y="78" text-anchor="middle">_bucket{le}, _sum, _count</text>
+  <text class="f-small" x="600" y="100" text-anchor="middle">cumulative buckets</text>
+  <text class="f-small f-mono" x="600" y="122" text-anchor="middle">histogram_quantile()</text>
+  <rect class="f-box-faint" x="30" y="210" width="70" height="20" rx="8"/>
+  <text class="f-small f-mono" x="65" y="202" text-anchor="middle">2</text>
+  <text class="f-small f-mono" x="65" y="250" text-anchor="middle">≤0.05</text>
+  <rect class="f-box-faint" x="140" y="180" width="70" height="50" rx="8"/>
+  <text class="f-small f-mono" x="175" y="172" text-anchor="middle">5</text>
+  <text class="f-small f-mono" x="175" y="250" text-anchor="middle">≤0.1</text>
+  <rect class="f-box-faint" x="250" y="180" width="70" height="50" rx="8"/>
+  <text class="f-small f-mono" x="285" y="172" text-anchor="middle">5</text>
+  <text class="f-small f-mono" x="285" y="250" text-anchor="middle">≤0.25</text>
+  <rect class="f-box-faint" x="360" y="170" width="70" height="60" rx="8"/>
+  <text class="f-small f-mono" x="395" y="162" text-anchor="middle">6</text>
+  <text class="f-small f-mono" x="395" y="250" text-anchor="middle">≤0.5</text>
+  <rect class="f-box-faint" x="470" y="160" width="70" height="70" rx="8"/>
+  <text class="f-small f-mono" x="505" y="152" text-anchor="middle">7</text>
+  <text class="f-small f-mono" x="505" y="250" text-anchor="middle">≤1</text>
+  <rect class="f-box-faint" x="580" y="160" width="70" height="70" rx="8"/>
+  <text class="f-small f-mono" x="615" y="152" text-anchor="middle">7</text>
+  <text class="f-small f-mono" x="615" y="250" text-anchor="middle">+Inf</text>
+  <text class="f-small f-muted" x="360" y="272" text-anchor="middle">7 requests, cumulative: median 0.075 s, p90 0.65 s, average 0.21 s</text>
+</svg>

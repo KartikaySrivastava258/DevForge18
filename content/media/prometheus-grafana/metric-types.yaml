@@ -1,0 +1,4 @@
+alt: 'Three metric types. A counter such as shop_requests_total 7 only goes up, a reset means a restart, and it is used with rate and increase. A gauge such as shop_requests_in_flight 0 goes up and down and is read directly or with max_over_time. A histogram has _bucket series with an le label, plus _sum and _count; its buckets are cumulative and quantiles come from histogram_quantile. Below, the lab''s cumulative bucket counts for 7 requests: 2 at or under 0.05 seconds, 5 at or under 0.1, 5 at or under 0.25, 6 at or under 0.5, 7 at or under 1 and 7 in +Inf, giving a median of 0.075 seconds, a 90th percentile of 0.65 seconds and an average of 0.21 seconds.'
+caption: 'Counters accumulate, gauges move, histograms keep the shape of a distribution.'
+credit: DevForge 18 content team
+licence: project-content
