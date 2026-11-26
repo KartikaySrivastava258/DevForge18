@@ -51,7 +51,7 @@ labs:
   - { title: "Instrument a small API", level: beginner, mode: local, status: planned }
   - { title: "Trace a request across two services", level: intermediate, mode: local, status: planned }
   - { title: "Send telemetry through an OpenTelemetry Collector", level: intermediate, mode: local, status: planned }
-  - { title: "Investigate a slow request using traces", level: advanced, mode: simulation, status: planned }
+  - { title: "Investigate a slow request using traces", level: advanced, mode: local, status: available, lab: opentelemetry-investigate-a-slow-request }
   - { title: "Find the slow span and shorten the critical path", level: intermediate, mode: simulation, status: available, lab: opentelemetry-trace-waterfall-investigation }
 projects:
   - { title: "Distributed tracing for a microservice demo", level: beginner, status: planned }

@@ -63,6 +63,14 @@ resources:
     official: true
     why: Pod phases, container states and why a crashing container's Pod can still be Running.
     verification: { status: verified, checked_on: 2026-11-26 }
+  - title: Determine the reason for pod failure
+    url: https://kubernetes.io/docs/tasks/debug/debug-application/determine-reason-pod-failure/
+    publisher: Kubernetes documentation
+    type: documentation
+    level: intermediate
+    official: true
+    why: Termination messages, and terminationMessagePolicy FallbackToLogsOnError.
+    verification: { status: verified, checked_on: 2026-11-26 }
 verification:
   method: executed
   details: Every command on this page is run by DevForge's test suite on a real kind cluster (Kubernetes 1.36.1), and its output is compared with this page. Names, ages and timings that change on every run are shown as …. You read and interpret the output; running the commands yourself is optional.
@@ -108,6 +116,7 @@ spec:
         - name: worker
           image: busybox:1.36
           command: ["sh", "-c", "echo 'reading DATABASE_URL'; test -n \"$DATABASE_URL\" || { echo 'DATABASE_URL is not set' >&2; exit 1; }; echo 'connected'; sleep 3600"]
+          terminationMessagePolicy: FallbackToLogsOnError
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -164,13 +173,16 @@ Failed to pull image "nginx:1.27-alpne": … not found
 
 ## Case 2: CrashLoopBackOff
 
+The first command to try for a crashing container is `kubectl logs`, with `--previous` for the run that crashed:
+
+```bash
+kubectl -n debug-lab logs deploy/crasher --previous
+```
+
+Those logs live in files on the node, and while Kubernetes keeps restarting a container they are not always there to read. This Deployment also sets `terminationMessagePolicy: FallbackToLogsOnError`, so Kubernetes copies the end of the output of a container that fails into the Pod's status, where it stays:
+
 ```bash run
-for i in $(seq 1 15); do
-  logs=$(kubectl -n debug-lab logs deploy/crasher --previous 2>&1)
-  echo "$logs" | grep -q "is not set" && break
-  sleep 2
-done
-echo "$logs"
+kubectl -n debug-lab get pod -l app=crasher -o jsonpath='{.items[0].status.containerStatuses[0].lastState.terminated.message}'
 kubectl -n debug-lab get pod -l app=crasher -o jsonpath='phase: {.items[0].status.phase}, last exit code: {.items[0].status.containerStatuses[0].lastState.terminated.exitCode}{"\n"}'
 ```
 
@@ -180,9 +192,7 @@ DATABASE_URL is not set
 phase: Running, last exit code: 1
 ```
 
-(The loop retries for a moment: while Kubernetes is restarting the container, the previous run's logs can be briefly unavailable.)
-
-The image pulled and the container started — then the program exited with code 1. Kubernetes restarts it, it fails again, and the delays grow: a crash *loop*. `--previous` shows the output of the run that crashed. Note the **phase**: Running.
+The image pulled and the container started — then the program exited with code 1. Kubernetes restarts it, it fails again, and the delays grow: a crash *loop*. The last lines of output say why: `DATABASE_URL is not set`. Note the **phase**: Running.
 
 ## Case 3: Pending
 
