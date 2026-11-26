@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250">
+  <!-- Three ways to make several Redis commands safe together, from Transactions and Lua scripts. -->
+  <rect class="f-box" x="10" y="14" width="226" height="220" rx="8"/>
+  <text class="f-small f-strong f-mono" x="123" y="44" text-anchor="middle">MULTI … EXEC</text>
+  <text class="f-small" x="123" y="86" text-anchor="middle">queue, then run all at once</text>
+  <text class="f-small" x="123" y="128" text-anchor="middle">nothing runs in between</text>
+  <text class="f-small f-muted" x="123" y="170" text-anchor="middle">no rollback if one fails</text>
+  <rect class="f-box-accent" x="248" y="14" width="226" height="220" rx="8"/>
+  <text class="f-small f-strong f-mono" x="361" y="44" text-anchor="middle">WATCH + MULTI</text>
+  <text class="f-small" x="361" y="86" text-anchor="middle">optimistic locking</text>
+  <text class="f-small" x="361" y="128" text-anchor="middle">EXEC aborts if a key changed</text>
+  <text class="f-small f-muted" x="361" y="170" text-anchor="middle">the client retries</text>
+  <rect class="f-box-ok" x="486" y="14" width="226" height="220" rx="8"/>
+  <text class="f-small f-strong f-mono" x="599" y="44" text-anchor="middle">EVAL (Lua)</text>
+  <text class="f-small" x="599" y="86" text-anchor="middle">a script runs atomically</text>
+  <text class="f-small" x="599" y="128" text-anchor="middle">read, decide, write in Redis</text>
+  <text class="f-small f-muted" x="599" y="170" text-anchor="middle">keep scripts short</text>
+</svg>

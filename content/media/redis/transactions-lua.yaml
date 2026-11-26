@@ -1,0 +1,4 @@
+alt: 'Three columns. MULTI and EXEC: commands are queued, then run all at once, with no other client''s command in between, but there is no rollback if one fails. WATCH with MULTI: optimistic locking; EXEC aborts with nil if a watched key changed, and the client retries. EVAL with Lua: a script runs atomically, reading, deciding and writing inside Redis; keep scripts short.'
+caption: 'MULTI groups commands; WATCH adds a check that nothing changed; a Lua script moves the whole decision into Redis.'
+credit: DevForge 18 content team
+licence: project-content
