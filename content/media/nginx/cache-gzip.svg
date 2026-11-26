@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240">
+  <!-- Nginx caching a backend's response and compressing it, from Caching and compression. -->
+  <rect class="f-box" x="10" y="70" width="130" height="70" rx="8"/>
+  <text class="f-small f-strong" x="75" y="98" text-anchor="middle">browser</text>
+  <text class="f-small" x="75" y="120" text-anchor="middle">accepts gzip</text>
+  <rect class="f-box-accent" x="200" y="30" width="300" height="150" rx="8"/>
+  <text class="f-small f-strong" x="350" y="56" text-anchor="middle">Nginx</text>
+  <rect class="f-box" x="220" y="72" width="125" height="46" rx="8"/>
+  <text class="f-small f-mono" x="282" y="92" text-anchor="middle">proxy_cache</text>
+  <text class="f-small" x="282" y="110" text-anchor="middle">HIT / MISS</text>
+  <rect class="f-box" x="360" y="72" width="125" height="46" rx="8"/>
+  <text class="f-small f-mono" x="422" y="92" text-anchor="middle">gzip</text>
+  <text class="f-small" x="422" y="110" text-anchor="middle">2823 → 260 bytes</text>
+  <text class="f-small f-muted" x="350" y="150" text-anchor="middle">a HIT never reaches the backend</text>
+  <rect class="f-box-ok" x="560" y="70" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong" x="635" y="98" text-anchor="middle">backend</text>
+  <text class="f-small" x="635" y="120" text-anchor="middle">1 request for 3</text>
+  <g>
+    <path class="f-arrow" d="M142 105 L190 105"/>
+    <polygon class="f-head" points="198,105 190,109.5 190,100.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M502 105 L550 105"/>
+    <polygon class="f-head" points="558,105 550,109.5 550,100.5"/>
+  </g>
+  <text class="f-small f-muted" x="360" y="214" text-anchor="middle">the backend's Cache-Control (private, no-store) or a Set-Cookie can keep a response out of the cache</text>
+</svg>

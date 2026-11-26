@@ -1,0 +1,4 @@
+alt: 'A browser that accepts gzip asks Nginx, which has a proxy cache and gzip compression in front of a backend. A cache HIT is answered without reaching the backend, so the backend sees one request for three; gzip shrinks a 2823-byte JSON response to 260 bytes. A note says the backend''s Cache-Control: private, no-store, or a Set-Cookie header, can keep a response out of the cache.'
+caption: 'A cache in front of the backend answers repeated requests itself; compression makes every answer smaller on the wire.'
+credit: DevForge 18 content team
+licence: project-content
