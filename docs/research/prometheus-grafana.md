@@ -22,3 +22,12 @@ Checked 2026-11-26 (UTC). Reuse these in lessons; add to them instead of researc
 - SRE workbook, alerting on SLOs (sre.google/workbook/alerting-on-slos/): burn rate is "how fast, relative to the SLO, the service consumes the error budget"; recommended multiwindow alerts: 2% of budget in 1 hour → burn rate 14.4 (page), 5% in 6 hours → 6 (page), 10% in 3 days → 1 (ticket); example `ratio_rate1h > (14.4*0.001)` for a 99.9% SLO.
 - Grafana variables (grafana.com/docs/grafana/latest/dashboards/variables/): query variables; values are synced to the URL as `var-<name>=value`.
 - Grafana provisioning (…/administration/provisioning/): dashboard providers with `path`, `foldersFromFilesStructure`, `allowUiUpdates`, `updateIntervalSeconds`.
+
+## Observed while building lessons
+
+- Prometheus 3 refuses to scrape a target whose response has no valid `Content-Type` (send `text/plain; version=0.0.4`).
+- `promtool test rules` prints `Processing test file: …` then `SUCCESS` (3.16.0); floating-point results such as a burn rate of 20 can come out as 20.000000000000004 — round them in `promql_expr_test`.
+- `promtool check metrics` reports: `counter metrics should have "_total" suffix`, `no help text`, `use base unit "seconds" instead of "milliseconds"` (exit code 3).
+- `histogram_quantile` on raw cumulative buckets gave 0.07500000000000001 and 0.6499999999999999 for the lab's 7 requests.
+- A second Prometheus with `--web.enable-remote-write-receiver` works as a stand-in long-term store; data appears after the first remote-write batch.
+- amtool `alert query -o simple` columns end with State, so `awk '{print $1, $NF}'` prints name and state without times.

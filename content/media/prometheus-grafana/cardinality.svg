@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280">
+  <!-- Series, relabelling and long-term storage, from Cardinality and long-term storage. -->
+  <rect class="f-box-danger" x="10" y="30" width="200" height="110" rx="8"/>
+  <text class="f-small f-strong f-mono" x="110" y="54" text-anchor="middle">shop_cart_items</text>
+  <text class="f-small f-mono" x="110" y="78" text-anchor="middle">{user_id="u1"} …</text>
+  <text class="f-small f-mono" x="110" y="98" text-anchor="middle">{user_id="u500"}</text>
+  <text class="f-small f-strong" x="110" y="122" text-anchor="middle">= 500 series</text>
+  <rect class="f-box-ok" x="10" y="160" width="200" height="70" rx="8"/>
+  <text class="f-small f-mono" x="110" y="184" text-anchor="middle">shop_carts_open 429</text>
+  <text class="f-small f-strong" x="110" y="206" text-anchor="middle">= 1 series</text>
+  <rect class="f-box-accent" x="260" y="60" width="210" height="140" rx="8"/>
+  <text class="f-small f-strong" x="365" y="84" text-anchor="middle">Prometheus</text>
+  <text class="f-small f-mono" x="365" y="108" text-anchor="middle">metric_relabel_configs:</text>
+  <text class="f-small f-mono" x="365" y="128" text-anchor="middle">drop shop_cart_items</text>
+  <text class="f-small" x="365" y="152" text-anchor="middle">scraped 501, kept 1</text>
+  <text class="f-small f-mono" x="365" y="176" text-anchor="middle">retention 2d</text>
+  <rect class="f-box" x="520" y="60" width="190" height="140" rx="8"/>
+  <text class="f-small f-strong" x="615" y="84" text-anchor="middle">long-term store</text>
+  <text class="f-small f-mono" x="615" y="108" text-anchor="middle">remote_write</text>
+  <text class="f-small f-mono" x="615" y="132" text-anchor="middle">retention 400d</text>
+  <text class="f-small f-muted" x="615" y="160" text-anchor="middle">Thanos, Mimir,</text>
+  <text class="f-small f-muted" x="615" y="180" text-anchor="middle">VictoriaMetrics …</text>
+  <g>
+    <path class="f-arrow" d="M212 90 L250.7 106.8"/>
+    <polygon class="f-head" points="258,110 248.9,110.9 252.5,102.7"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M212 195 L251.6 164.8"/>
+    <polygon class="f-head" points="258,160 254.4,168.4 248.9,161.3"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M472 130 L510 130"/>
+    <polygon class="f-head" points="518,130 510,134.5 510,125.5"/>
+  </g>
+  <text class="f-small f-muted" x="360" y="262" text-anchor="middle">fix labels in the code; relabel to protect Prometheus meanwhile</text>
+</svg>

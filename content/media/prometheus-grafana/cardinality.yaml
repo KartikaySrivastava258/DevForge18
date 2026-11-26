@@ -1,0 +1,4 @@
+alt: 'The metric shop_cart_items with a user_id label from u1 to u500 is 500 series; the aggregated shop_carts_open 429 is 1 series. Prometheus drops shop_cart_items with metric_relabel_configs, so of 501 scraped samples it keeps 1, and keeps local data for 2 days. It sends samples with remote_write to a long-term store with 400 days of retention, such as Thanos, Mimir or VictoriaMetrics. Fix labels in the code; relabel to protect Prometheus meanwhile.'
+caption: 'Every label value is a series: keep labels bounded, and keep history in a long-term store.'
+credit: DevForge 18 content team
+licence: project-content

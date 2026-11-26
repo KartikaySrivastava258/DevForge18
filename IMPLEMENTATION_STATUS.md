@@ -4,7 +4,7 @@ Last updated: 2026-11-26 (UTC) · Milestone: **8 — intermediate and advanced l
 
 ## Session handoff
 
-- **Where I stopped:** Jenkins track complete (7 lessons); next: Prometheus + Grafana (lessons 4+), then OpenTelemetry, then the Path 3+ tracks (Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira).
+- **Where I stopped:** Prometheus + Grafana track complete (8 lessons); next: OpenTelemetry (lessons 4+), then Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira.
 - **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC.
 - **Open issue:** `n8n-workflows-nodes-and-items` failed once in CI (run 45886569745): the n8n container stopped after a workflow import. Not reproduced locally in 3 runs under full CPU load. The runner now prints each container's state, OOM flag and last log lines when a lesson stops early, so the next occurrence shows the cause.
 - **How to work fast:** `npm run new:lesson -- <track> <id>` scaffolds; `npm run ci:record -- <id>` records in CI (no local tool downloads); `npm run lessons:stress -- <id>` reproduces timing failures; figures are `scripts/figures/<track>/<name>.py` (helper `scripts/figures/figlib.py`); research per track in `docs/research/<track>.md`.
@@ -382,6 +382,8 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-26 | GitHub Actions lessons 4–8 (one research pass, checker extended for composite actions and reusable calls) | 95 | 10 | local recording (no heavy images); one root-cause hunt (git ls-remote relative path) |
 | 2026-11-26 | CI fixes (missing figure, implicit image pulls, last-green comparison) | 25 | 20 | waiting = CI runs |
 | 2026-11-26 | Jenkins lessons 4–7 (one research pass; real Jenkins, plugins, agent, library server) | 85 | 15 | plugin image built in under a minute locally; no CI recording needed |
+| 2026-11-26 | CI fixes (stream order, trap set -e, n8n stress run in CI: not reproduced) | 20 | 25 | |
+| 2026-11-26 | Prometheus + Grafana lessons 4–8 (one research pass; Alertmanager added to CI tools) | 100 | 25 | waiting = Prometheus/Grafana/Alertmanager downloads (lost with the old scratch folder) |
 
 ## Current work
 

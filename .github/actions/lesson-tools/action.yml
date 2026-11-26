@@ -19,7 +19,11 @@ runs:
         docker info --format 'registry mirrors: {{.RegistryConfig.Mirrors}}'
     - name: Install lesson packages (psql, createdb, dropdb, redis-cli, nginx)
       shell: bash
-      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client redis-tools nginx
+      # The runner image also lists Microsoft's package repository; we install nothing from it, and its outages
+      # (CI run 45903851860: 403 Forbidden) must not fail lesson jobs, so it is removed before updating.
+      run: |
+        sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list /etc/apt/sources.list.d/microsoft-prod.sources
+        sudo apt-get update && sudo apt-get install -y --no-install-recommends postgresql-client redis-tools nginx
     - name: Restore tool downloads
       id: downloads
       uses: actions/cache/restore@v6
