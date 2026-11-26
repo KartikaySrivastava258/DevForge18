@@ -1,0 +1,4 @@
+alt: 'A Service named web and two Pods. First both Pods'' readiness probes get 404, they are not ready and the Service sends them no traffic. After the probe is fixed they answer 200, become ready and receive traffic. A third Pod''s liveness probe fails three times and the kubelet kills and restarts its container, so its restart count becomes 1. A Pod requesting 100 CPUs stays Pending, and a Pod that uses more than its 64Mi memory limit is OOMKilled.'
+caption: 'Readiness decides traffic, liveness decides restarts, requests decide placement and limits decide what is allowed.'
+credit: DevForge 18 content team
+licence: project-content

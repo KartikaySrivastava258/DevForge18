@@ -1,0 +1,7 @@
+figure: scan-vs-index.svg
+title: 'Sequential scan or index?'
+steps:
+  - caption: 'Without an index: a sequential scan reads every row and the filter throws away all but the matching ones.'
+  - caption: 'A B-tree index on customer_id keeps the values sorted, with pointers to the rows that hold them.'
+  - caption: 'Looking up customer 42 goes down the tree, and only the pages holding its rows are read — the others never are.'
+  - caption: 'When a condition matches nine rows in ten, going through an index costs more than reading in order, so the planner scans the table.'

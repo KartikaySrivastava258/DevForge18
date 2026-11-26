@@ -509,3 +509,6 @@
 .layer-sim__result { font-size: var(--step--1); color: var(--muted); min-width: 4.5rem; }
 .layer-sim__buttons { display: inline-flex; gap: 2px; }
 @media (max-width: 40rem) { .layer-sim__line { grid-template-columns: 1fr; } }
+.planner-sim__sql code { display: block; padding: var(--space-2) var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg); overflow-wrap: anywhere; }
+.planner-sim__bar { height: 10px; border-radius: 5px; background: var(--line); margin: 0 0 var(--space-3); overflow: hidden; }
+.planner-sim__bar span { display: block; height: 100%; background: var(--accent); }

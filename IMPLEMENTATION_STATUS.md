@@ -10,12 +10,12 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 46 published across all 18 tracks; 44 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Latest additions (Jira lesson 3, Docker lesson 3): CI confirmation in progress |
+| Lessons | ✅ 48 published across all 18 tracks; 46 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Latest additions (Kubernetes and PostgreSQL lesson 3): CI confirmation in progress |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 47 figures across all 46 lessons (no ASCII diagrams left), 19 of them step-throughs — at least one in every track; tested |
-| Simulations | 🟡 Framework done and tested; 11 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira, Docker), with server-verified challenges |
+| Figures and step-through diagrams | ✅ 49 figures across all 48 lessons (no ASCII diagrams left), 21 of them step-throughs — at least one in every track; tested |
+| Simulations | 🟡 Framework done and tested; 12 of 18 tracks have one (Git, Kubernetes, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira, Docker, PostgreSQL), with server-verified challenges |
 | Labs, projects, quizzes, glossary, architecture studio, case studies | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
@@ -272,9 +272,25 @@ All jobs passed in 2 m 24 s — typechecks, docs lint, build, 139 unit/API/lesso
 - Figure: layers and the build cache (step-through).
 - **Tests made content-driven:** three tests (two API, one browser) hard-coded that the Docker track has 2 lessons; they now read the count from the content or the API, so adding lessons to the Path 1 tracks does not break them. The Docker lesson time limit was raised to 120 s (lesson 3 with its two prerequisites took 27 s locally; CI's first BuildKit build may be slower).
 
+### Milestone 5 — Kubernetes lesson 3 (2026-11-26)
+
+- **Lesson** *Probes, requests and limits* (executed on kind, kindest/node v1.36.1 pinned by digest): a readiness probe on a missing path keeps both Pods `0/1` and their Service endpoints not ready, then fixing the path makes them ready; the documentation's liveness example restarts its container once the file is gone; a Pod requesting 100 CPUs stays Pending with "Insufficient cpu"; a container over its 64 MiB limit is OOMKilled; the cluster is deleted.
+- **Recorded locally for the first time:** Kubernetes lessons had only ever run in CI. This time kind v0.32.0 and kubectl v1.36.1 — the versions CI pins, checksum-verified — were downloaded into a scratch folder (not installed on the machine) to record the output. Two outputs were timing-dependent in that recording (the number of "Waiting for rollout" lines, and an old Pod's endpoint still listed for a moment); the progress lines are now a wildcard and the step waits until exactly the two new endpoints remain. A long event message is reduced to its stable start.
+- **Facts** checked against the Kubernetes documentation on 2026-11-25: what readiness, liveness and startup probes do, that the scheduler places Pods by their requests and leaves unschedulable ones Pending, and that memory limits are enforced by the kernel's OOM killer ("may terminate") while CPU limits throttle. Some of these pages were read partly through summaries, so the lesson shows the behaviour from real output and uses the documentation's cautious wording.
+- Figure: probes, requests and limits (step-through).
+
+### Milestone 5 — PostgreSQL lesson 3 and simulation (2026-11-26)
+
+- **Lesson** *Indexes and EXPLAIN ANALYZE* (executed against PostgreSQL 16): 100,000 generated orders; a sequential scan returning 20 rows with `Rows Removed by Filter: 99980`; an index turning it into a bitmap scan that reads only 20 pages; an index on a column that matches nine rows in ten, which the planner does not use; index sizes. Plans are shown with `COSTS OFF` and `TIMING OFF`, so only plan shapes and real row counts appear.
+- **Corrected by running it:** the draft claimed the planner ignores an index for a condition matching half the table; PostgreSQL actually used it (a bitmap scan over all 637 pages). That case is also a near tie that could flip with `ANALYZE`'s random sample, so the data now has nine shipped orders in ten, where the sequential scan wins clearly, and the text describes the bitmap scan the planner really chose. Three more recordings on fresh databases changed nothing.
+- **Recorded** against a disposable `postgres:16` container on port 55432; the machine's own PostgreSQL on 5432 belongs to another project and was not used.
+- **Facts** checked against the PostgreSQL 16 documentation on 2026-11-25 (EXPLAIN and its options, scan types, `Rows Removed by Filter`, B-tree as the default, the cost of keeping indexes in sync, ANALYZE statistics, multicolumn indexes and leading columns).
+- **Simulation** *Query planner and indexes* (§5.4): three queries on 100,000 orders with known distributions; create and drop one- or two-column B-tree indexes; EXPLAIN compares a sequential scan with every usable index (leading columns only) by an invented, labelled cost model and shows rows touched. 8 model tests; two server-verified challenges (touch fewer than 1 % of rows for the customer query; for the pending-on-day query, where an index on status alone is not used); a browser test; embedded in lesson 3.
+- Figure: sequential scan or index (step-through).
+
 ### Milestone 5 — what remains
 
-Eight tracks still have two lessons: PostgreSQL, Terraform, GitHub Actions, Redis, Jenkins, Postman and Nginx (each also needs a simulation), and Kubernetes (which has its simulation but needs a third lesson — REMAINING_WORK.md §7 lists only the Path 1 tracks).
+Six tracks still have two lessons and no simulation: Terraform, GitHub Actions, Redis, Jenkins, Postman and Nginx.
 
 ## Current work
 
@@ -320,7 +336,7 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
-| 46 lessons across 18 tracks | 8 tracks have two lessons, 7 of them no simulation | Milestone 5 |
+| 48 lessons across 18 tracks | 6 tracks have two lessons and no simulation | Milestone 5 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Python packages for the LangChain + LlamaIndex lessons | Only the top-level packages are pinned; a new release of one of their dependencies could change behaviour or break the install in CI | If it happens: pin the full set with a constraints file generated by `pip freeze` in the lesson container |
 | Docker Hub pull limits in CI | CI pulls `postgres:16`, `redis:7`, `nginx:1.27-alpine`, `alpine:3.20`, `apache/kafka`, `apache/airflow`, `n8nio/n8n`, `python:3.12-slim` and (from GitHub's registry) `ghcr.io/mlflow/mlflow` anonymously; Docker Hub rate-limits anonymous pulls, which could intermittently fail CI | If it happens: add a Docker Hub login step (`docker/login-action` with a read-only token in repository secrets) |

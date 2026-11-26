@@ -265,7 +265,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("every page has exactly one h1 and every form control has a label", async () => {
     const { page } = await h.newPage();
-    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache"]) {
+    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       await page.waitForLoadState("networkidle");
@@ -282,7 +282,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -682,6 +682,27 @@ describe("simulations", () => {
     await sim.getByRole("button", { name: "Build", exact: true }).click();
     assert.match(await summary.innerText(), /Last build\s+1 s/);
     assert.doesNotMatch(await summary.innerText(), /secrets\.env/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("PostgreSQL: an index on status is ignored; status and day together make the query touch 27 rows", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/postgresql/simulations/postgresql-query-planner");
+    const sim = page.locator(".sim");
+    await sim.locator(".planner-sim").waitFor();
+    await sim.getByLabel("Scenario").selectOption("pending-day");
+    const summary = sim.locator(".k8s-sim__summary");
+    await sim.getByLabel("Index column 1").selectOption("status");
+    await sim.getByRole("button", { name: "Create index" }).click();
+    await sim.getByRole("button", { name: "Run EXPLAIN" }).click();
+    assert.match(await summary.innerText(), /Seq Scan/);
+    assert.match(await summary.innerText(), /100,000/);
+    await sim.getByLabel("Index column 2").selectOption("day");
+    await sim.getByRole("button", { name: "Create index" }).click();
+    await sim.getByRole("button", { name: "Run EXPLAIN" }).click();
+    assert.match(await summary.innerText(), /Index Scan using orders_status_day_idx/);
+    assert.match(await summary.innerText(), /Rows touched\s+27 \(0\.03 %\)/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });

@@ -28,6 +28,8 @@ import { SprintActionSchema, SprintScenarioSchema } from "./jira/schema.ts";
 import { sprintBoard } from "./jira/sprint-board.ts";
 import { layerCache } from "./docker/layer-cache.ts";
 import { LayerActionSchema, LayerScenarioSchema } from "./docker/schema.ts";
+import { queryPlanner } from "./postgresql/query-planner.ts";
+import { PlannerActionSchema, PlannerScenarioSchema } from "./postgresql/schema.ts";
 import type { SimulationModel } from "./types.ts";
 
 // Each model has its own state, action and scenario types; callers validate
@@ -46,4 +48,5 @@ export const MODELS: Readonly<Record<string, AnyModel>> = {
   [workflowExecutor.id]: { ...workflowExecutor, scenarioSchema: WorkflowScenarioSchema, actionSchema: WorkflowActionSchema },
   [sprintBoard.id]: { ...sprintBoard, scenarioSchema: SprintScenarioSchema, actionSchema: SprintActionSchema },
   [layerCache.id]: { ...layerCache, scenarioSchema: LayerScenarioSchema, actionSchema: LayerActionSchema },
+  [queryPlanner.id]: { ...queryPlanner, scenarioSchema: PlannerScenarioSchema, actionSchema: PlannerActionSchema },
 };

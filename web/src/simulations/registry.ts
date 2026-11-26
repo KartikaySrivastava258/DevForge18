@@ -30,4 +30,5 @@ export const SIMULATIONS: Record<string, () => Promise<{ default: SimulationEntr
   "n8n-workflow-executor": () => import("./N8nWorkflow.tsx"),
   "jira-sprint-board": () => import("./SprintBoard.tsx"),
   "docker-layer-cache": () => import("./LayerCache.tsx"),
+  "postgresql-query-planner": () => import("./QueryPlanner.tsx"),
 };

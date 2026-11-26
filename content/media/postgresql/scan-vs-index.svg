@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250">
+  <!-- A sequential scan and an index scan, from Indexes and EXPLAIN ANALYZE. -->
+  <text class="f-small f-muted" x="200" y="136">table orders (pages of rows)</text>
+  <rect class="f-box-faint" x="200" y="150" width="38" height="34" rx="3"/>
+  <rect class="f-box-faint" x="242" y="150" width="38" height="34" rx="3"/>
+  <rect class="f-box-faint" x="284" y="150" width="38" height="34" rx="3"/>
+  <rect class="f-box-faint" x="326" y="150" width="38" height="34" rx="3"/>
+  <rect class="f-box-faint" x="368" y="150" width="38" height="34" rx="3"/>
+  <rect class="f-box-faint" x="410" y="150" width="38" height="34" rx="3"/>
+  <rect class="f-box-faint" x="452" y="150" width="38" height="34" rx="3"/>
+  <rect class="f-box-faint" x="494" y="150" width="38" height="34" rx="3"/>
+  <rect class="f-box-faint" x="536" y="150" width="38" height="34" rx="3"/>
+  <rect class="f-box-faint" x="578" y="150" width="38" height="34" rx="3"/>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-warn" x="200" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-accent" x="200" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-warn" x="242" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-faint" x="242" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-accent" x="284" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="2" data-until="3">
+    <rect class="f-box-accent" x="284" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-accent" x="284" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-warn" x="326" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-faint" x="326" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-warn" x="368" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-accent" x="368" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-warn" x="410" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-faint" x="410" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-accent" x="452" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="2" data-until="3">
+    <rect class="f-box-accent" x="452" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-accent" x="452" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-warn" x="494" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-faint" x="494" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-warn" x="536" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-accent" x="536" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-warn" x="578" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-faint" x="578" y="150" width="38" height="34" rx="3"/>
+  </g>
+  <g data-step="1" data-until="1">
+    <g>
+      <path class="f-arrow" d="M190 210 L608 210"/>
+      <polygon class="f-head" points="616,210 608,214.5 608,205.5"/>
+    </g>
+    <text class="f-small f-strong f-mono" x="16" y="172">Seq Scan + Filter</text>
+    <text class="f-small" x="16" y="190">reads every row,</text>
+    <text class="f-small" x="16" y="206">keeps 20, removes 99,980</text>
+  </g>
+  <g data-step="2" data-until="3">
+    <rect class="f-box" x="310" y="14" width="120" height="30" rx="4"/>
+    <text class="f-small f-mono" x="370" y="34" text-anchor="middle">customer_id</text>
+    <rect class="f-box" x="240" y="70" width="100" height="28" rx="4"/>
+    <text class="f-small f-mono" x="290" y="89" text-anchor="middle">1 … 2499</text>
+    <rect class="f-box" x="400" y="70" width="100" height="28" rx="4"/>
+    <text class="f-small f-mono" x="450" y="89" text-anchor="middle">2500 … 4999</text>
+    <line class="f-line" x1="340" y1="44" x2="290" y2="70"/>
+    <line class="f-line" x1="400" y1="44" x2="450" y2="70"/>
+    <text class="f-small f-strong" x="16" y="34">B-tree index</text>
+  </g>
+  <g data-step="3" data-until="3">
+    <g>
+      <path class="f-arrow-accent" d="M345 44 L302.1 66.3"/>
+      <polygon class="f-head-accent" points="295,70 300.0,62.3 304.2,70.3"/>
+    </g>
+    <g>
+      <path class="f-arrow-accent" d="M290 98 L300.1 140.2"/>
+      <polygon class="f-head-accent" points="302,148 295.8,141.3 304.5,139.2"/>
+    </g>
+    <g>
+      <path class="f-arrow-accent" d="M300 98 L462.3 145.7"/>
+      <polygon class="f-head-accent" points="470,148 461.1,150.0 463.6,141.4"/>
+    </g>
+    <text class="f-small f-strong f-mono" x="16" y="172">Bitmap scan: customer 42</text>
+    <text class="f-small" x="16" y="190">reads only the pages</text>
+    <text class="f-small" x="16" y="206">with matching rows</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-strong f-mono" x="16" y="172">status = 'shipped'</text>
+    <text class="f-small" x="16" y="190">9 rows in 10 match:</text>
+    <text class="f-small" x="16" y="206">reading in order is cheaper</text>
+    <g>
+      <path class="f-arrow" d="M190 210 L608 210"/>
+      <polygon class="f-head" points="616,210 608,214.5 608,205.5"/>
+    </g>
+  </g>
+</svg>

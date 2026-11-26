@@ -1,0 +1,4 @@
+alt: 'A table drawn as ten pages of rows. First a sequential scan reads every page and keeps only the rows for one customer, removing the rest. Then a B-tree index on customer_id appears; the search for customer 42 goes down the tree and straight to the two pages that hold its rows. Finally, for status = ''shipped'', nine rows in ten match, so reading the whole table in order is cheaper and the planner uses a sequential scan again.'
+caption: 'An index pays off when a condition matches few rows; for many rows, reading the table in order wins.'
+credit: DevForge 18 content team
+licence: project-content

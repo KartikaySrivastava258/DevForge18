@@ -1,0 +1,7 @@
+figure: probes.svg
+title: 'Probes, requests and limits'
+steps:
+  - caption: 'Readiness probes ask each Pod for /ready and get 404: the Pods run, but they are not ready, so the Service has no ready endpoints and sends them no traffic.'
+  - caption: 'With the probe asking for /, both Pods answer 200 and become ready; the Service now sends them traffic.'
+  - caption: 'A liveness probe checks a file that has gone: after three failures in a row, the kubelet kills the container…'
+  - caption: '…and starts it again: restarts 1. Meanwhile a Pod that requests 100 CPUs stays Pending, and one that uses more than its memory limit is OOMKilled.'

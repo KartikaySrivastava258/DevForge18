@@ -1,0 +1,48 @@
+id: postgresql-query-planner
+track: postgresql
+title: Query planner and indexes
+concept: For every query, PostgreSQL's planner compares the plans it could use — a sequential scan, or each index that fits the query — and picks the one it estimates is cheapest. An index only helps when its leading columns match the query's conditions and those conditions are selective.
+learning_objectives:
+  - Predict whether the planner will use an index, from how many rows the condition matches.
+  - Choose a single- or two-column index that makes a query touch fewer than 1 % of the table.
+  - Explain why the order of columns in a multicolumn index matters.
+simplifications:
+  - Costs are invented units (a sequential scan costs 1,637; each row fetched through an index costs 0.25, plus 3 to go down the B-tree). PostgreSQL's real cost model has many more parameters.
+  - Row counts come from the table's exact distributions; PostgreSQL estimates them from statistics sampled by ANALYZE.
+  - Plans use at most one index and only plain index scans; PostgreSQL can also combine indexes and use bitmap scans.
+text_alternative: The table size and the query; the indexes that exist; for the last EXPLAIN, the chosen plan, the rows it touched and returned, its cost, and every other plan the planner compared with its cost. Every change is explained in the event log. Switch to text mode to read it as a list.
+scenarios:
+  - id: customer
+    title: One customer's orders
+    description: "SELECT * FROM orders WHERE customer_id = 42 — 20 of 100,000 rows. No index yet."
+    params: { query: customer, indexes: [] }
+  - id: pending-day
+    title: Pending orders on one day
+    description: "SELECT * FROM orders WHERE status = 'pending' AND day = 100. One order in ten is pending; there are 365 days."
+    params: { query: pendingDay, indexes: [] }
+  - id: shipped
+    title: Nine orders in ten
+    description: "SELECT * FROM orders WHERE status = 'shipped' — 90,000 rows. Try an index and see what the planner does."
+    params: { query: shipped, indexes: [] }
+challenges:
+  - id: customer-index
+    title: Touch fewer than 1 % of rows
+    goal: Make the customer query use an index that touches fewer than 1,000 of the 100,000 rows.
+    scenario: customer
+    check: under-1-percent
+    hint: Run EXPLAIN first. Which column is in the WHERE clause?
+    solution:
+      - { type: createIndex, columns: [customer_id] }
+      - { type: explain }
+  - id: pending-day-index
+    title: The right column for the job
+    goal: Make the pending-on-day query touch fewer than 1 % of rows through an index.
+    scenario: pending-day
+    check: under-1-percent
+    hint: An index on status alone still matches one row in ten — the planner will not use it. Which condition is more selective? Or put both columns in one index.
+    solution:
+      - { type: createIndex, columns: [status, day] }
+      - { type: explain }
+owner: content-team
+last_reviewed: 2026-11-25
+content_version: 1

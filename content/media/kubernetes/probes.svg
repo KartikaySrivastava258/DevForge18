@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 250">
+  <!-- Probes, requests and limits, from Probes, requests and limits. -->
+  <rect class="f-box-accent" x="16" y="90" width="120" height="56" rx="8"/>
+  <text class="f-strong" x="76" y="114" text-anchor="middle">Service web</text>
+  <text class="f-small f-muted" x="76" y="132" text-anchor="middle">sends traffic</text>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-warn" x="206" y="40" width="150" height="50" rx="6"/>
+    <text class="f-small f-strong f-mono" x="281" y="61" text-anchor="middle">web-1</text>
+    <text class="f-small" x="281" y="79" text-anchor="middle">readiness: 404 — not ready</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <rect class="f-box-warn" x="206" y="150" width="150" height="50" rx="6"/>
+    <text class="f-small f-strong f-mono" x="281" y="171" text-anchor="middle">web-2</text>
+    <text class="f-small" x="281" y="189" text-anchor="middle">readiness: 404 — not ready</text>
+  </g>
+  <g data-step="1" data-until="1">
+    <line class="f-line f-dashed" x1="138" y1="118" x2="204" y2="65"/>
+    <line class="f-line f-dashed" x1="138" y1="118" x2="204" y2="175"/>
+    <text class="f-small f-muted" x="170" y="236" text-anchor="middle">no endpoints ready: no traffic</text>
+  </g>
+  <g data-step="2">
+    <rect class="f-box-ok" x="206" y="40" width="150" height="50" rx="6"/>
+    <text class="f-small f-strong f-mono" x="281" y="61" text-anchor="middle">web-1</text>
+    <text class="f-small" x="281" y="79" text-anchor="middle">readiness: 200 — ready</text>
+  </g>
+  <g data-step="2">
+    <rect class="f-box-ok" x="206" y="150" width="150" height="50" rx="6"/>
+    <text class="f-small f-strong f-mono" x="281" y="171" text-anchor="middle">web-2</text>
+    <text class="f-small" x="281" y="189" text-anchor="middle">readiness: 200 — ready</text>
+  </g>
+  <g data-step="2">
+    <path class="f-arrow-accent" d="M138 112 L197.4 70.6"/>
+    <polygon class="f-head-accent" points="204,66 200.0,74.2 194.9,66.9"/>
+  </g>
+  <g data-step="2">
+    <path class="f-arrow-accent" d="M138 124 L197.6 169.2"/>
+    <polygon class="f-head-accent" points="204,174 194.9,172.7 200.3,165.6"/>
+  </g>
+  <g data-step="3" data-until="3">
+    <rect class="f-box-danger" x="430" y="40" width="150" height="50" rx="6"/>
+    <text class="f-small f-strong f-mono" x="505" y="61" text-anchor="middle">liveness</text>
+    <text class="f-small" x="505" y="79" text-anchor="middle">cat /tmp/healthy fails ×3</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-ok" x="430" y="40" width="150" height="50" rx="6"/>
+    <text class="f-small f-strong f-mono" x="505" y="61" text-anchor="middle">liveness</text>
+    <text class="f-small" x="505" y="79" text-anchor="middle">restarted — restarts: 1</text>
+  </g>
+  <g data-step="3">
+    <text class="f-small f-muted" x="505" y="106" text-anchor="middle">kubelet kills and restarts</text>
+  </g>
+  <g data-step="4">
+    <rect class="f-box-faint" x="430" y="150" width="150" height="50" rx="6"/>
+    <text class="f-small f-strong f-mono" x="505" y="171" text-anchor="middle">greedy</text>
+    <text class="f-small" x="505" y="189" text-anchor="middle">requests 100 CPU → Pending</text>
+  </g>
+  <g data-step="4">
+    <text class="f-small f-danger" x="505" y="220" text-anchor="middle">hungry: over 64Mi → OOMKilled</text>
+  </g>
+</svg>
