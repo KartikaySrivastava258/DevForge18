@@ -1,0 +1,4 @@
+alt: 'Five steps from left to right: 1 branch with git switch -c; 2 commit and push with git push -u origin; 3 open a pull request from the compare branch into the base branch; 4 review and checks, with comments and CI; 5 merge, by one of three methods: merge commit, squash or rebase. An arrow loops back from review to the push step, labelled changes requested, push more commits. A note says the pull request shows the three-dot diff: what the branch changed since it left main.'
+caption: 'A pull request is a conversation about a branch: reviewers and CI see the branch''s own changes, and new pushes update it until it is merged.'
+credit: DevForge 18 content team
+licence: project-content

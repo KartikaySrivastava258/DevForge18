@@ -1,0 +1,4 @@
+alt: 'Two panels. Before: commits A and B, then main has commit M while the branch topic has commits C and D, both starting from B. After git rebase main: the history is a straight line A, B, M, C prime, D prime; topic points at D prime. C and D were replayed as new commits with new IDs.'
+caption: 'A rebase does not move commits — it makes new copies on top of the new base, which is why it rewrites history.'
+credit: DevForge 18 content team
+licence: project-content

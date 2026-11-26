@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 250">
+  <!-- Three layers that protect a shared branch, from Protected branches, signed commits and secret scanning. -->
+  <rect class="f-box" x="10" y="30" width="220" height="150" rx="8"/>
+  <text class="f-small f-strong" x="120" y="58" text-anchor="middle">on your machine</text>
+  <text class="f-small" x="120" y="90" text-anchor="middle">signed commits (git commit -S)</text>
+  <text class="f-small" x="120" y="112" text-anchor="middle">pre-commit hook blocks secrets</text>
+  <rect class="f-box-warn" x="240" y="30" width="220" height="150" rx="8"/>
+  <text class="f-small f-strong" x="350" y="58" text-anchor="middle">when you push</text>
+  <text class="f-small" x="350" y="90" text-anchor="middle">push protection scans for</text>
+  <text class="f-small" x="350" y="112" text-anchor="middle">known secret formats</text>
+  <rect class="f-box-ok" x="470" y="30" width="220" height="150" rx="8"/>
+  <text class="f-small f-strong" x="580" y="58" text-anchor="middle">on the branch</text>
+  <text class="f-small" x="580" y="90" text-anchor="middle">pull request + approvals</text>
+  <text class="f-small" x="580" y="112" text-anchor="middle">passing checks, signed commits,</text>
+  <text class="f-small" x="580" y="134" text-anchor="middle">no force pushes</text>
+  <g>
+    <path class="f-arrow" d="M232 105 L230 105"/>
+    <polygon class="f-head" points="238,105 230,109.5 230,100.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M462 105 L460 105"/>
+    <polygon class="f-head" points="468,105 460,109.5 460,100.5"/>
+  </g>
+  <text class="f-small f-muted" x="350" y="214" text-anchor="middle">Hooks can be skipped (--no-verify); server-side rules cannot — so use both.</text>
+</svg>

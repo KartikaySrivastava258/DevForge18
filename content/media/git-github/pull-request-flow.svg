@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 210">
+  <!-- The path of a change through a pull request, from Pull requests and code review. -->
+  <rect class="f-box" x="10" y="40" width="128" height="70" rx="8"/>
+  <text class="f-small f-strong" x="74" y="68" text-anchor="middle">1. branch</text>
+  <text class="f-small f-mono" x="74" y="90" text-anchor="middle">git switch -c</text>
+  <g>
+    <path class="f-arrow" d="M140 75 L144 75"/>
+    <polygon class="f-head" points="152,75 144,79.5 144,70.5"/>
+  </g>
+  <rect class="f-box" x="154" y="40" width="128" height="70" rx="8"/>
+  <text class="f-small f-strong" x="218" y="68" text-anchor="middle">2. commit + push</text>
+  <text class="f-small f-mono" x="218" y="90" text-anchor="middle">git push -u</text>
+  <g>
+    <path class="f-arrow" d="M284 75 L288 75"/>
+    <polygon class="f-head" points="296,75 288,79.5 288,70.5"/>
+  </g>
+  <rect class="f-box-accent" x="298" y="40" width="128" height="70" rx="8"/>
+  <text class="f-small f-strong" x="362" y="68" text-anchor="middle">3. open PR</text>
+  <text class="f-small f-mono" x="362" y="90" text-anchor="middle">base ← compare</text>
+  <g>
+    <path class="f-arrow" d="M428 75 L432 75"/>
+    <polygon class="f-head" points="440,75 432,79.5 432,70.5"/>
+  </g>
+  <rect class="f-box-warn" x="442" y="40" width="128" height="70" rx="8"/>
+  <text class="f-small f-strong" x="506" y="68" text-anchor="middle">4. review + checks</text>
+  <text class="f-small f-mono" x="506" y="90" text-anchor="middle">comments, CI</text>
+  <g>
+    <path class="f-arrow" d="M572 75 L576 75"/>
+    <polygon class="f-head" points="584,75 576,79.5 576,70.5"/>
+  </g>
+  <rect class="f-box-ok" x="586" y="40" width="128" height="70" rx="8"/>
+  <text class="f-small f-strong" x="650" y="68" text-anchor="middle">5. merge</text>
+  <text class="f-small f-mono" x="650" y="90" text-anchor="middle">3 methods</text>
+  <g>
+    <path class="f-arrow-accent" d="M512 112 L512 150 L370 150 L370 120"/>
+    <polygon class="f-head-accent" points="370,112 374.5,120 365.5,120"/>
+  </g>
+  <text class="f-small f-accent" x="441" y="170" text-anchor="middle">changes requested → push more commits</text>
+  <text class="f-small f-muted" x="360" y="198" text-anchor="middle">The PR shows the three-dot diff: what the branch changed since it left main.</text>
+</svg>

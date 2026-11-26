@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 300">
+  <!-- Rebasing replays a branch's commits on top of the new base, from Rebasing and history editing. -->
+  <rect class="f-box-faint" x="10" y="12" width="330" height="276" rx="8"/>
+  <text class="f-small f-strong" x="175" y="36" text-anchor="middle">before: git rebase main</text>
+  <rect class="f-box" x="33" y="133" width="34" height="34" rx="17"/>
+  <text class="f-small f-strong f-mono" x="50" y="155" text-anchor="middle">A</text>
+  <rect class="f-box" x="103" y="133" width="34" height="34" rx="17"/>
+  <text class="f-small f-strong f-mono" x="120" y="155" text-anchor="middle">B</text>
+  <rect class="f-box" x="173" y="83" width="34" height="34" rx="17"/>
+  <text class="f-small f-strong f-mono" x="190" y="105" text-anchor="middle">M</text>
+  <rect class="f-box" x="173" y="183" width="34" height="34" rx="17"/>
+  <text class="f-small f-strong f-mono" x="190" y="205" text-anchor="middle">C</text>
+  <rect class="f-box" x="243" y="183" width="34" height="34" rx="17"/>
+  <text class="f-small f-strong f-mono" x="260" y="205" text-anchor="middle">D</text>
+  <g>
+    <path class="f-arrow" d="M102 150 L76 150"/>
+    <polygon class="f-head" points="68,150 76,145.5 76,154.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M174 108 L142.0 136.7"/>
+    <polygon class="f-head" points="136,142 139.0,133.3 144.9,140.0"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M174 192 L142.0 163.3"/>
+    <polygon class="f-head" points="136,158 144.9,160.0 139.0,166.7"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M242 200 L216 200"/>
+    <polygon class="f-head" points="208,200 216,195.5 216,204.5"/>
+  </g>
+  <rect class="f-box" x="168.6" y="52" width="42.8" height="24" rx="6"/>
+  <text class="f-small f-mono" x="190" y="69" text-anchor="middle">main</text>
+  <rect class="f-box-accent" x="235" y="228" width="50" height="24" rx="6"/>
+  <text class="f-small f-mono" x="260" y="245" text-anchor="middle">topic</text>
+  <rect class="f-box-faint" x="360" y="12" width="330" height="276" rx="8"/>
+  <text class="f-small f-strong" x="525" y="36" text-anchor="middle">after</text>
+  <rect class="f-box" x="383" y="133" width="34" height="34" rx="17"/>
+  <text class="f-small f-strong f-mono" x="400" y="155" text-anchor="middle">A</text>
+  <rect class="f-box" x="453" y="133" width="34" height="34" rx="17"/>
+  <text class="f-small f-strong f-mono" x="470" y="155" text-anchor="middle">B</text>
+  <rect class="f-box" x="523" y="133" width="34" height="34" rx="17"/>
+  <text class="f-small f-strong f-mono" x="540" y="155" text-anchor="middle">M</text>
+  <rect class="f-box-ok" x="593" y="133" width="34" height="34" rx="17"/>
+  <text class="f-small f-strong f-mono" x="610" y="155" text-anchor="middle">C'</text>
+  <rect class="f-box-ok" x="593" y="203" width="34" height="34" rx="17"/>
+  <text class="f-small f-strong f-mono" x="610" y="225" text-anchor="middle">D'</text>
+  <g>
+    <path class="f-arrow" d="M452 150 L426 150"/>
+    <polygon class="f-head" points="418,150 426,145.5 426,154.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M522 150 L496 150"/>
+    <polygon class="f-head" points="488,150 496,145.5 496,154.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M592 150 L566 150"/>
+    <polygon class="f-head" points="558,150 566,145.5 566,154.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M610 202 L610 176"/>
+    <polygon class="f-head" points="610,168 614.5,176 605.5,176"/>
+  </g>
+  <rect class="f-box" x="518.6" y="102" width="42.8" height="24" rx="6"/>
+  <text class="f-small f-mono" x="540" y="119" text-anchor="middle">main</text>
+  <rect class="f-box-accent" x="585" y="248" width="50" height="24" rx="6"/>
+  <text class="f-small f-mono" x="610" y="265" text-anchor="middle">topic</text>
+  <text class="f-small" x="525" y="64" text-anchor="middle">C and D are replayed as new commits C', D'</text>
+  <text class="f-small f-muted" x="525" y="84" text-anchor="middle">(new IDs: rewriting history)</text>
+</svg>

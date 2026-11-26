@@ -1,0 +1,4 @@
+alt: 'Three boxes from left to right. On your machine: signed commits with git commit -S, and a pre-commit hook that blocks secrets. When you push: push protection scans for known secret formats. On the branch: pull request with approvals, passing checks, signed commits, no force pushes. A note says hooks can be skipped with --no-verify while server-side rules cannot, so use both.'
+caption: 'Local checks catch mistakes early; rules on the server make sure nobody can skip them.'
+credit: DevForge 18 content team
+licence: project-content
