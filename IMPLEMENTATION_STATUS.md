@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-26 · Milestone: **7 — labs** (REMAINING_WORK.md §7; CI confirmation of the last commits in progress) · Next: **8 — intermediate and advanced lessons**
+Last updated: 2026-11-26 · Milestone: **8 — intermediate and advanced lessons**, in progress (Path 1 done) · Next: the remaining 12 tracks, then **9 — quizzes and projects**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -10,11 +10,11 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 54 published, at least 3 in every track; 52 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Latest additions (GitHub Actions, Redis, Nginx, Postman and Jenkins lesson 3): CI confirmation in progress |
+| Lessons | ✅ 80 published, at least 3 in every track; 78 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). The six Path 1 tracks (Git, PostgreSQL, Postman, Redis, Nginx, Docker) now have 7–8 lessons each, beginner to advanced; the other 12 tracks have 3 beginner lessons |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 55 figures across all 54 lessons (no ASCII diagrams left), 22 of them step-throughs — at least one in every track; tested |
+| Figures and step-through diagrams | ✅ 81 figures across all 80 lessons (no ASCII diagrams left), 22 of them step-throughs — at least one in every track; tested |
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
 | Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
@@ -342,9 +342,17 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **CI.** Green on run 45774941756 (10ca7d1). Two later runs failed on the Kubernetes read-through lab: the crashing Pod's status alternates (fixed with a wildcard), and `logs --previous` was unavailable for 30 s in CI (the lab now reads the termination message, `terminationMessagePolicy: FallbackToLogsOnError`). Confirmation of the latest commits: see "Current work".
 - **Not executed.** Jenkins running a pipeline, GitHub environments and required reviewers (checked against official docs only); the Jira lab needs no Jira site.
 
+### Milestone 8 — intermediate and advanced lessons, Path 1 (2026-11-26)
+
+- **26 new lessons, all executed by the test suite, each with a figure, sources checked on 2026-11-26, and a self-check.** Git (5): branches and merging, undoing work safely, pull requests and review, rebasing and history, protected branches, signing and secrets. PostgreSQL (5): transactions and ACID, isolation levels and anomalies, roles, privileges and SQL injection, backups, restores and migrations, replication and pooling. Postman (4): authentication flows, mock servers and documentation (Prism 5.16.0), collections in CI, contract testing. Redis (4): Pub/Sub versus Streams, transactions and Lua, persistence and replication, cache stampede and failure modes. Nginx (4): caching and compression, TLS termination with a local certificate, access control and connection limits, upstream failure handling. Docker (4): networks and Compose, health checks, logs, limits and stopping cleanly, image and container security, build cache and the supply chain (SBOM with Syft v1.55.0 on a digest-pinned base image).
+- **Lesson runner.** Cleanup also takes down Compose projects (`docker compose -p`) and user-defined networks; `redis-cli` run inside a container no longer marks a lesson as using (and flushing) the host's Redis; per-user Docker CLI plugins are linked into the isolated HOME (only the `cli-plugins` folder, never `config.json`); Docker lessons get 300 s.
+- **Facts corrected by real runs.** Under LRU, even the most recently written key can be evicted (one-second LRU clock); Git's "not fully merged" wording is version-specific; Nginx `return` runs before `limit_req`, `allow`/`deny` and `auth_basic`; Newman does not interpolate item names; Compose reports a stopped dependency as a DNS failure whose code depends on the host.
+- **Not executed (described from documentation and labelled).** BuildKit secret mounts, `--sbom`/`--provenance` attestations and vulnerability scanning (the local machine has no Buildx; lessons 6–7 are builder-independent).
+- **CI.** Run 45813697474 failed on two timing-dependent checks (Redis `volatile-lru` refusal count; Kubernetes lab status alternation, column width and stdout/stderr order) — fixed and re-verified locally. Run 45820069409 confirmed those fixes and the Redis, Nginx and Docker 4–5 lessons, but failed in the Airflow backfill lab (a backfill request returned no id); the helper now retries and reports Airflow's reply. Confirmation of the latest commits: see "Current work".
+
 ## Current work
 
-Milestone 7 is done locally (every lab's tests pass); CI for the latest commits is in progress. Next is milestone 8 (intermediate and advanced lessons).
+Milestone 8: Path 1 tracks are done locally (every new lesson passes twice); CI for the latest commits is in progress. Next: intermediate and advanced lessons for the other 12 tracks, Path 2 (Terraform, Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana, OpenTelemetry) first.
 
 ## Pending work (ordered)
 

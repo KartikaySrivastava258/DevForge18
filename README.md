@@ -4,7 +4,7 @@
 
 DevForge 18 is an interactive developer engineering academy. It teaches 18 industry technology tracks — from Git and Docker to Kafka, OpenTelemetry and MLflow — the way they are actually used: as parts of one system. Every track starts with a plain-language explanation, shows where the tool sits in an architecture and how it connects to the others, and leads into lessons with graded self-checks, labs and projects.
 
-> **Project status: Phase 1 in progress.** The platform, all 18 track curricula and 8 learning paths are in place, and 54 beginner lessons are published across all 18 tracks (Learning Paths 1 and 2 — Git, PostgreSQL, Postman, Redis, Nginx, Docker, GitHub Actions, Jenkins, Terraform, Kubernetes, Prometheus + Grafana, OpenTelemetry — plus Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira). Every command in every published lesson is run by the test suite against the real tool, and CI confirms the output matches; the two Jira lessons about the hosted Jira service are checked against Atlassian's documentation instead, and say so. Labs and projects are still being written; the app labels everything that is planned rather than available. See [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) for exactly what works today.
+> **Project status: Phase 1 in progress.** The platform, all 18 track curricula and 8 learning paths are in place, and 80 lessons are published across all 18 tracks — beginner lessons in every track, and intermediate and advanced lessons for the Path 1 tracks (Learning Paths 1 and 2 — Git, PostgreSQL, Postman, Redis, Nginx, Docker, GitHub Actions, Jenkins, Terraform, Kubernetes, Prometheus + Grafana, OpenTelemetry — plus Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira). Every command in every published lesson is run by the test suite against the real tool, and CI confirms the output matches; the two Jira lessons about the hosted Jira service are checked against Atlassian's documentation instead, and say so. Every track has two labs; projects and further intermediate and advanced lessons are still being written, and the app labels everything that is planned rather than available. See [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) for exactly what works today.
 
 ![DevForge 18 home page with the interactive system map](docs/screenshots/home-dark.jpg)
 
@@ -36,8 +36,8 @@ DevForge 18 is an interactive developer engineering academy. It teaches 18 indus
 | Interactive system map showing how the tracks connect, with an explanation behind every connection | Working |
 | 8 learning paths with ordered modules, prerequisites, alternate routes and time estimates | Working |
 | Search across tracks, curriculum topics, lessons and paths, with typo tolerance and abbreviations (`k8s`, `pg`, `otel`) | Working |
-| Lesson reader with objectives, table of contents, copyable code blocks, expected output and a server-graded self-check | Working (54 lessons; their commands are run by the test suite and in CI) |
-| Figures in every lesson, and step-through diagrams (Previous/Next, arrow keys, Play) for processes in every track with lessons; both themes, reduced motion respected | Working (55 figures, 22 of them step-throughs) |
+| Lesson reader with objectives, table of contents, copyable code blocks, expected output and a server-graded self-check | Working (80 lessons; their commands are run by the test suite and in CI) |
+| Figures in every lesson, and step-through diagrams (Previous/Next, arrow keys, Play) for processes in every track with lessons; both themes, reduced motion respected | Working (81 figures, 22 of them step-throughs) |
 | Interactive simulations with challenges, verified by the server and saved to progress: Git commit graph, Kubernetes reconciliation loop, Prometheus scrape and rate, OpenTelemetry trace waterfall, Kafka consumer groups, Airflow scheduler timeline, MLflow experiment explorer, a RAG pipeline, an n8n workflow executor, a Jira sprint board, Docker's layer cache, PostgreSQL's query planner, Terraform's plan diff, a GitHub Actions run visualiser, a Redis cache under load, Nginx's location matcher, a Postman-style request builder, a Jenkins build queue | Working (all 18 tracks) |
 | Accounts, sign-in, progress tracking (a lesson completes only when its self-check is passed), bookmarks, dashboard | Working |
 | Roles (student, faculty, admin), admin user management with an audit log, faculty aggregate statistics | API working; admin/faculty screens not built yet |
@@ -233,7 +233,7 @@ Found a vulnerability? Please report it privately to the maintainers rather than
 
 ## Known limitations
 
-- 54 beginner lessons are published — at least three in every track — and every track has a simulation. Intermediate and advanced lessons, labs and projects are still to come. Labs and projects are listed as planned.
+- 80 lessons are published — at least three in every track, and seven or eight (beginner to advanced) in Git, PostgreSQL, Postman, Redis, Nginx and Docker — and every track has a simulation and two labs. Intermediate and advanced lessons for the other 12 tracks, quizzes and projects are still to come; projects are listed as planned.
 - External resource links were all checked and reviewed on 2026-11-25. The weekly *Link check* workflow reports reachability; a person re-confirms each page before its date is updated.
 - Admin and faculty features exist in the API but have no screens yet.
 - Rate limits are kept in memory, so they apply per server process. See [ADR 0004](docs/adr/0004-auth-sessions.md).
