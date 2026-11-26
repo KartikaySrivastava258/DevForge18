@@ -1,0 +1,4 @@
+alt: 'Four checks in order before apply. Variable validation stops a plan on bad input. terraform test runs plan-mode runs, apply-mode runs and runs with mocked providers, checking the module author''s intent. terraform plan -out saved as JSON shows exactly what apply would do. A policy check on that JSON enforces the organisation''s rules for everyone''s code, for example no world-writable files with permission 0777. Only then comes a reviewed apply.'
+caption: 'Tests check that a module is right; policies check that every plan follows the rules.'
+credit: DevForge 18 content team
+licence: project-content

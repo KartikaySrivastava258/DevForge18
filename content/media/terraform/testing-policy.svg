@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250">
+  <!-- Checks before apply, from Testing modules and checking plans against policy. -->
+  <rect class="f-box" x="10" y="70" width="160" height="84" rx="8"/>
+  <text class="f-small f-strong" x="90" y="100" text-anchor="middle">validation</text>
+  <text class="f-small" x="90" y="126" text-anchor="middle">bad input stops plan</text>
+  <rect class="f-box-accent" x="190" y="70" width="160" height="84" rx="8"/>
+  <text class="f-small f-strong" x="270" y="100" text-anchor="middle">terraform test</text>
+  <text class="f-small" x="270" y="126" text-anchor="middle">plan, apply, mocks</text>
+  <rect class="f-box" x="370" y="70" width="160" height="84" rx="8"/>
+  <text class="f-small f-strong" x="450" y="100" text-anchor="middle">plan -out + JSON</text>
+  <text class="f-small" x="450" y="126" text-anchor="middle">what apply would do</text>
+  <rect class="f-box-warn" x="550" y="70" width="160" height="84" rx="8"/>
+  <text class="f-small f-strong" x="630" y="100" text-anchor="middle">policy check</text>
+  <text class="f-small" x="630" y="126" text-anchor="middle">rules for all code</text>
+  <g>
+    <path class="f-arrow" d="M172 112 L180 112"/>
+    <polygon class="f-head" points="188,112 180,116.5 180,107.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M352 112 L360 112"/>
+    <polygon class="f-head" points="368,112 360,116.5 360,107.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M532 112 L540 112"/>
+    <polygon class="f-head" points="548,112 540,116.5 540,107.5"/>
+  </g>
+  <text class="f-small f-muted" x="360" y="40" text-anchor="middle">author's intent: is the module right?</text>
+  <text class="f-small f-muted" x="360" y="190" text-anchor="middle">organisation's rules: e.g. no world-writable files (0777)</text>
+  <text class="f-small f-ok" x="360" y="222" text-anchor="middle">then a reviewed apply</text>
+</svg>
