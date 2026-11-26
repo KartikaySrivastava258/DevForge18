@@ -1,6 +1,6 @@
 # Implementation status
 
-Last updated: 2026-11-26 · Milestone: **6 — real-world context (case studies and alternatives)** (REMAINING_WORK.md §7; CI confirmation of the last commit in progress) · Next: **7 — labs**
+Last updated: 2026-11-26 · Milestone: **7 — labs** (REMAINING_WORK.md §7; CI confirmation of the last commits in progress) · Next: **8 — intermediate and advanced lessons**
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -17,7 +17,8 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | Figures and step-through diagrams | ✅ 55 figures across all 54 lessons (no ASCII diagrams left), 22 of them step-throughs — at least one in every track; tested |
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
-| Labs, projects, quizzes, glossary, architecture studio | ⬜ Not started (planned phases below) |
+| Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
+| Projects, quizzes, glossary, architecture studio | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
 
@@ -331,9 +332,19 @@ Commit 9e1d0b0 (GitHub Actions, Redis, Nginx, Postman, Jenkins): CI run 45765786
 
 CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key written last survives `allkeys-lru`, but in CI it was evicted. Redis's LRU is approximate (sampled keys, a one-second clock), so keys written in one burst look equally old. The check was removed and the lesson now explains this; the lesson passed three times in a row locally.
 
+### Milestone 7 — labs (2026-11-26)
+
+- **Lab system.** `content/labs/<track>/<id>.md` (schema `LabMetaSchema`): mode `local`, `simulation` or `read-through`; objectives, checkpoints, `## Goal` and `## Reset` sections. Track lab entries link to lab pages (`lab: <id>`); the loader checks links, levels, modes, simulation challenge ids and that every lab is listed. Local labs: steps run by the test suite after replaying prerequisite lessons, and exactly one check script (```` ```bash run check ````) that is also run in an empty folder, where it must report FAIL. `npm run lessons:record` records labs too. Workflow and Jenkinsfile checkers cover labs.
+- **Progress.** Migration `0003_lab_progress` with `evidence` = `self-reported` (local labs: every checkpoint ticked; a browser cannot prove work done on the learner's machine) or `verified` (simulation challenges replayed by the server, read-through answers graded). API: `GET /api/labs/:id`, `POST /api/labs/:id/complete`, `GET /api/me/labs`; the track API lists labs. Lab page with completion per mode.
+- **Content.** Local, executed: Git (merge conflict; reflog recovery and a committed secret), PostgreSQL (rollback and isolation), Nginx (security headers, the add_header inheritance trap, rate limiting), Terraform (drift), Redis (sliding-window limiter in Lua), GitHub Actions (protected deploy stage), Docker (multi-stage image under 1 MB), Postman (assertions on status, headers, body and errors), Jira (commit-msg hook for work item keys), Kafka (retry and dead-letter topics), Airflow (idempotent backfills), n8n (human approval with a signed, single-use resume URL), MLflow (promotion gate), LangChain (retrieval evaluation with hit rate and MRR), Prometheus (alert rule, promtool unit tests, live alert), OpenTelemetry (finding a slow request in Jaeger), Jenkins (credentials and Groovy interpolation). Read-through, executed on kind: Kubernetes debugging (ImagePullBackOff, CrashLoopBackOff, Pending). Simulation labs: one per track except Git, written from each simulation's challenges.
+- **Facts checked while writing labs.** Each lab's tool behaviour was checked against official documentation, and several drafts were corrected by real runs: `return` bypasses `limit_req` in Nginx; a new Kafka consumer group starts at the latest offset; Airflow standalone's CLI backfill hits SQLite locking (the REST API is used); n8n's resume URL is signed (401) and single-use (409); unreachable reflog entries expire after 30 days, not 90; langchain-core 1.8.4 raises on all-zero vectors.
+- **Simulation fixes found by the lab authors.** OpenTelemetry critical path (sequential calls now on the path), Terraform name field (so `-/+` can be produced), LangChain hint and chunk-size label, n8n flaky-service wording, MLflow run-ID placeholder, PostgreSQL log label.
+- **CI.** Green on run 45774941756 (10ca7d1). Two later runs failed on the Kubernetes read-through lab: the crashing Pod's status alternates (fixed with a wildcard), and `logs --previous` was unavailable for 30 s in CI (the lab now reads the termination message, `terminationMessagePolicy: FallbackToLogsOnError`). Confirmation of the latest commits: see "Current work".
+- **Not executed.** Jenkins running a pipeline, GitHub environments and required reviewers (checked against official docs only); the Jira lab needs no Jira site.
+
 ## Current work
 
-Milestone 6 is done; next is milestone 7 (labs).
+Milestone 7 is done locally (every lab's tests pass); CI for the latest commits is in progress. Next is milestone 8 (intermediate and advanced lessons).
 
 ## Pending work (ordered)
 
@@ -411,7 +422,7 @@ npm run db:backup -- ./backups/manual.db
 
 The full plan for all remaining work is in [`REMAINING_WORK.md`](REMAINING_WORK.md); [`MASTER_PROMPT.md`](MASTER_PROMPT.md) is a ready-made prompt for continuing with a coding agent.
 
-1. Milestone 7 — labs: lab pages, verification scripts, lab progress; at least two labs per track.
+1. Milestone 8 — intermediate and advanced lessons, track by track, Path 1 first (REMAINING_WORK.md §5).
 2. Re-check the case studies flagged as fast-changing (Redpanda and Dragonfly licences) before each release.
 3. Re-run the *Link check* workflow monthly; a person re-confirms each page before updating `checked_on`.
 4. Update this file after each milestone.
