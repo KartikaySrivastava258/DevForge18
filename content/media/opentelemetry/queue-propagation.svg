@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270">
+  <!-- Context through a queue, from Propagating context across services and queues. -->
+  <rect class="f-box-accent" x="10" y="60" width="200" height="110" rx="8"/>
+  <text class="f-small f-strong f-mono" x="110" y="84" text-anchor="middle">shop</text>
+  <text class="f-small f-mono" x="110" y="108" text-anchor="middle">span: orders publish</text>
+  <text class="f-small" x="110" y="128" text-anchor="middle">kind PRODUCER</text>
+  <text class="f-small f-mono" x="110" y="150" text-anchor="middle">inject(context, headers)</text>
+  <rect class="f-box-faint" x="260" y="40" width="200" height="150" rx="8"/>
+  <text class="f-small f-strong" x="360" y="64" text-anchor="middle">message on the queue</text>
+  <text class="f-small f-mono" x="360" y="92" text-anchor="middle">traceparent:</text>
+  <text class="f-small f-mono" x="360" y="112" text-anchor="middle">00-&lt;trace&gt;-&lt;span&gt;-01</text>
+  <text class="f-small f-mono" x="360" y="140" text-anchor="middle">baggage:</text>
+  <text class="f-small f-mono" x="360" y="160" text-anchor="middle">campus=north</text>
+  <rect class="f-box-ok" x="510" y="60" width="200" height="110" rx="8"/>
+  <text class="f-small f-strong f-mono" x="610" y="84" text-anchor="middle">fulfilment</text>
+  <text class="f-small f-mono" x="610" y="108" text-anchor="middle">extract(headers)</text>
+  <text class="f-small f-mono" x="610" y="128" text-anchor="middle">span: orders process</text>
+  <text class="f-small" x="610" y="150" text-anchor="middle">same trace, child span</text>
+  <g>
+    <path class="f-arrow" d="M212 115 L250 115"/>
+    <polygon class="f-head" points="258,115 250,119.5 250,110.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M462 115 L500 115"/>
+    <polygon class="f-head" points="508,115 500,119.5 500,110.5"/>
+  </g>
+  <text class="f-small f-danger" x="360" y="222" text-anchor="middle">no inject → the consumer starts a new trace: the request's story breaks in two</text>
+</svg>

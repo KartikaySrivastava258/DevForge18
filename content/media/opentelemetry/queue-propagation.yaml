@@ -1,0 +1,4 @@
+alt: 'The shop service starts the span orders publish of kind PRODUCER and injects its context into the message headers. The message on the queue carries traceparent 00, trace ID, span ID, 01, and baggage campus=north. The fulfilment service extracts the headers and starts orders process as a child span in the same trace. Without inject, the consumer starts a new trace and the request''s story breaks in two.'
+caption: 'Inject on the way out, extract on the way in — at every hop, including queues.'
+credit: DevForge 18 content team
+licence: project-content
