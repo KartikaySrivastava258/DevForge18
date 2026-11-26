@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230">
+  <!-- API tests in a CI pipeline, from Running collections in CI. -->
+  <rect class="f-box" x="10" y="40" width="128" height="70" rx="8"/>
+  <text class="f-small f-strong" x="74" y="68" text-anchor="middle">checkout</text>
+  <text class="f-small f-mono" x="74" y="90" text-anchor="middle">the repository</text>
+  <g>
+    <path class="f-arrow" d="M140 75 L144 75"/>
+    <polygon class="f-head" points="152,75 144,79.5 144,70.5"/>
+  </g>
+  <rect class="f-box" x="154" y="40" width="128" height="70" rx="8"/>
+  <text class="f-small f-strong" x="218" y="68" text-anchor="middle">start the API</text>
+  <text class="f-small f-mono" x="218" y="90" text-anchor="middle">npm start &amp;</text>
+  <g>
+    <path class="f-arrow" d="M284 75 L288 75"/>
+    <polygon class="f-head" points="296,75 288,79.5 288,70.5"/>
+  </g>
+  <rect class="f-box-accent" x="298" y="40" width="128" height="70" rx="8"/>
+  <text class="f-small f-strong" x="362" y="68" text-anchor="middle">newman run</text>
+  <text class="f-small f-mono" x="362" y="90" text-anchor="middle">-d data.csv</text>
+  <g>
+    <path class="f-arrow" d="M428 75 L432 75"/>
+    <polygon class="f-head" points="440,75 432,79.5 432,70.5"/>
+  </g>
+  <rect class="f-box" x="442" y="40" width="128" height="70" rx="8"/>
+  <text class="f-small f-strong" x="506" y="68" text-anchor="middle">report</text>
+  <text class="f-small f-mono" x="506" y="90" text-anchor="middle">JUnit XML</text>
+  <g>
+    <path class="f-arrow" d="M572 75 L576 75"/>
+    <polygon class="f-head" points="584,75 576,79.5 576,70.5"/>
+  </g>
+  <rect class="f-box-ok" x="586" y="40" width="128" height="70" rx="8"/>
+  <text class="f-small f-strong" x="650" y="68" text-anchor="middle">exit code</text>
+  <text class="f-small f-mono" x="650" y="90" text-anchor="middle">0 pass / 1 fail</text>
+  <rect class="f-box-faint" x="290" y="140" width="160" height="60" rx="8"/>
+  <text class="f-small f-mono" x="370" y="164" text-anchor="middle">data.csv</text>
+  <text class="f-small f-muted" x="370" y="186" text-anchor="middle">one iteration per row</text>
+  <g>
+    <path class="f-arrow-accent" d="M370 138 L364.4 119.6"/>
+    <polygon class="f-head-accent" points="362,112 368.6,118.3 360.1,121.0"/>
+  </g>
+  <text class="f-small" x="600" y="170" text-anchor="middle">a red exit code</text>
+  <text class="f-small" x="600" y="188" text-anchor="middle">blocks the merge</text>
+</svg>

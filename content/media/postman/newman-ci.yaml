@@ -1,0 +1,4 @@
+alt: 'A pipeline of five steps: check out the repository, start the API in the background, run newman with -d data.csv where each CSV row is one iteration, write a JUnit XML report, and finish with exit code 0 when every test passes or 1 when any fails. A red exit code blocks the merge.'
+caption: 'In CI, the collection is just another test suite: data in, report out, and an exit code that decides.'
+credit: DevForge 18 content team
+licence: project-content
