@@ -1,0 +1,4 @@
+alt: 'Left, RBAC: the ServiceAccount reporter is bound by a RoleBinding in namespace rbac-lab to the Role pod-reader, which allows get, list and watch on pods; deleting pods or reading Secrets is Forbidden. By default an identity has no rights until granted. Right, NetworkPolicy: the web Pod is isolated and accepts connections only from Pods labelled app=frontend, so frontend is allowed and intruder is blocked. By default every Pod may connect until a policy selects it.'
+caption: 'RBAC limits what an identity may do through the API; NetworkPolicies limit which Pods may connect.'
+credit: DevForge 18 content team
+licence: project-content

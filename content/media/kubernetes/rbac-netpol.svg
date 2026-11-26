@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280">
+  <!-- Two layers of least privilege, from RBAC and network policies. -->
+  <text class="f-small f-strong" x="180" y="24" text-anchor="middle">RBAC: what an identity may do via the API</text>
+  <rect class="f-box" x="10" y="40" width="160" height="60" rx="8"/>
+  <text class="f-small f-strong" x="90" y="64" text-anchor="middle">ServiceAccount</text>
+  <text class="f-small f-mono" x="90" y="84" text-anchor="middle">reporter</text>
+  <rect class="f-box-accent" x="200" y="40" width="150" height="60" rx="8"/>
+  <text class="f-small f-strong" x="275" y="64" text-anchor="middle">RoleBinding</text>
+  <text class="f-small" x="275" y="84" text-anchor="middle">in rbac-lab</text>
+  <rect class="f-box-faint" x="10" y="130" width="340" height="60" rx="8"/>
+  <text class="f-small f-mono" x="180" y="152" text-anchor="middle">Role pod-reader: get, list, watch pods</text>
+  <text class="f-small f-danger" x="180" y="174" text-anchor="middle">delete pods, read Secrets: Forbidden</text>
+  <g>
+    <path class="f-arrow" d="M172 70 L190 70"/>
+    <polygon class="f-head" points="198,70 190,74.5 190,65.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M275 102 L275 120"/>
+    <polygon class="f-head" points="275,128 270.5,120 279.5,120"/>
+  </g>
+  <text class="f-small f-strong" x="545" y="24" text-anchor="middle">NetworkPolicy: who may connect</text>
+  <rect class="f-box-ok" x="400" y="40" width="130" height="56" rx="8"/>
+  <text class="f-small f-strong f-mono" x="465" y="62" text-anchor="middle">frontend</text>
+  <text class="f-small f-ok" x="465" y="82" text-anchor="middle">allowed</text>
+  <rect class="f-box-danger" x="400" y="200" width="130" height="56" rx="8"/>
+  <text class="f-small f-strong f-mono" x="465" y="222" text-anchor="middle">intruder</text>
+  <text class="f-small f-danger" x="465" y="242" text-anchor="middle">blocked</text>
+  <rect class="f-box-accent" x="580" y="110" width="130" height="76" rx="8"/>
+  <text class="f-small f-strong f-mono" x="645" y="134" text-anchor="middle">web</text>
+  <text class="f-small" x="645" y="154" text-anchor="middle">isolated:</text>
+  <text class="f-small f-mono" x="645" y="172" text-anchor="middle">frontend only</text>
+  <g>
+    <path class="f-arrow" d="M532 72 L573.0 123.7"/>
+    <polygon class="f-head" points="578,130 569.5,126.5 576.6,120.9"/>
+  </g>
+  <text class="f-small f-danger" x="560" y="214" text-anchor="middle">✕</text>
+  <text class="f-small f-muted" x="180" y="226" text-anchor="middle">default: no rights until granted</text>
+  <text class="f-small f-muted" x="545" y="272" text-anchor="middle">default: every Pod may connect until a policy selects it</text>
+</svg>
