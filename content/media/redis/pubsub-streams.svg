@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260">
+  <!-- Pub/Sub delivers to whoever is listening; a stream stores entries and remembers each group's progress. From Pub/Sub versus Streams. -->
+  <rect class="f-box-faint" x="10" y="14" width="300" height="232" rx="8"/>
+  <text class="f-small f-strong" x="160" y="38" text-anchor="middle">Pub/Sub: PUBLISH news</text>
+  <rect class="f-box" x="30" y="60" width="110" height="40" rx="8"/>
+  <text class="f-small" x="85" y="85" text-anchor="middle">publisher</text>
+  <rect class="f-box-ok" x="180" y="54" width="110" height="34" rx="8"/>
+  <text class="f-small" x="235" y="76" text-anchor="middle">listener A ✓</text>
+  <rect class="f-box-ok" x="180" y="100" width="110" height="34" rx="8"/>
+  <text class="f-small" x="235" y="122" text-anchor="middle">listener B ✓</text>
+  <rect class="f-box-warn" x="180" y="160" width="110" height="34" rx="8"/>
+  <text class="f-small" x="235" y="182" text-anchor="middle">joins later ✗</text>
+  <g>
+    <path class="f-arrow" d="M142 80 L170.2 72.9"/>
+    <polygon class="f-head" points="178,71 171.3,77.3 169.2,68.6"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M142 80 L172.4 111.3"/>
+    <polygon class="f-head" points="178,117 169.2,114.4 175.6,108.1"/>
+  </g>
+  <text class="f-small f-muted" x="160" y="226" text-anchor="middle">nothing is stored: at most once</text>
+  <rect class="f-box-faint" x="330" y="14" width="380" height="232" rx="8"/>
+  <text class="f-small f-strong" x="520" y="38" text-anchor="middle">Stream: XADD orders</text>
+  <rect class="f-box-accent" x="350" y="56" width="56" height="34" rx="8"/>
+  <text class="f-small f-mono" x="378" y="78" text-anchor="middle">1-0</text>
+  <rect class="f-box-accent" x="412" y="56" width="56" height="34" rx="8"/>
+  <text class="f-small f-mono" x="440" y="78" text-anchor="middle">2-0</text>
+  <rect class="f-box-accent" x="474" y="56" width="56" height="34" rx="8"/>
+  <text class="f-small f-mono" x="502" y="78" text-anchor="middle">3-0</text>
+  <rect class="f-box-accent" x="536" y="56" width="56" height="34" rx="8"/>
+  <text class="f-small f-mono" x="564" y="78" text-anchor="middle">4-0</text>
+  <rect class="f-box" x="350" y="120" width="160" height="50" rx="8"/>
+  <text class="f-small f-strong" x="430" y="142" text-anchor="middle">group shipping</text>
+  <text class="f-small" x="430" y="160" text-anchor="middle">read to 3-0, 1 pending</text>
+  <rect class="f-box" x="530" y="120" width="160" height="50" rx="8"/>
+  <text class="f-small f-strong" x="610" y="142" text-anchor="middle">group analytics</text>
+  <text class="f-small" x="610" y="160" text-anchor="middle">reads from the start</text>
+  <text class="f-small f-muted" x="520" y="206" text-anchor="middle">entries stay; each group has its own position,</text>
+  <text class="f-small f-muted" x="520" y="224" text-anchor="middle">and unacknowledged entries can be claimed again</text>
+</svg>

@@ -1,0 +1,4 @@
+alt: 'Two panels. Pub/Sub: a publisher publishes to the channel news; listeners A and B, already subscribed, receive it; a listener that joins later does not; nothing is stored, so delivery is at most once. Stream: entries 1-0, 2-0, 3-0, 4-0 are appended to the stream orders; the consumer group shipping has read up to 3-0 with one entry pending; a second group, analytics, reads from the start independently. Entries stay, each group has its own position, and unacknowledged entries can be claimed again.'
+caption: 'Use Pub/Sub for live notifications that may be missed; use a stream when every message must be processed, even after a crash.'
+credit: DevForge 18 content team
+licence: project-content
