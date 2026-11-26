@@ -52,7 +52,7 @@ topics:
 labs:
   - { title: "Build a webhook-to-email workflow", level: beginner, mode: local, status: planned }
   - { title: "Connect a form to PostgreSQL", level: intermediate, mode: local, status: planned }
-  - { title: "Add branching and error handling", level: intermediate, mode: local, status: planned }
+  - { title: "Add branching and error handling", level: intermediate, mode: simulation, status: available, lab: n8n-branching-and-error-handling }
   - { title: "Require human approval before a consequential action", level: advanced, mode: local, status: planned }
 projects:
   - { title: "Student event registration automation", level: beginner, status: planned }

@@ -52,6 +52,7 @@ labs:
   - { title: "Add TTL and observe expiration", level: beginner, mode: simulation, status: planned }
   - { title: "Implement a rate limiter", level: intermediate, mode: local, status: planned }
   - { title: "Simulate stale cache and invalidation", level: advanced, mode: simulation, status: planned }
+  - { title: "Keep a cache stampede off the database", level: intermediate, mode: simulation, status: available, lab: redis-cache-under-load }
 projects:
   - { title: "Product catalogue cache", level: beginner, status: planned }
   - { title: "API rate limiter", level: intermediate, status: planned }

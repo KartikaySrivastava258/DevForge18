@@ -56,7 +56,7 @@ labs:
   - { title: "Create a repository and make a sequence of commits", level: beginner, mode: local, status: planned }
   - { title: "Resolve a merge conflict", level: intermediate, mode: local, status: available, lab: git-resolve-a-merge-conflict }
   - { title: "Create a pull request and review checklist", level: intermediate, mode: local, status: planned }
-  - { title: "Diagnose an accidental commit and recover safely", level: advanced, mode: local, status: planned }
+  - { title: "Diagnose an accidental commit and recover safely", level: advanced, mode: local, status: available, lab: git-recover-with-reflog }
 projects:
   - { title: "Personal developer portfolio repository", level: beginner, status: planned }
   - { title: "Team task tracker with branches and pull requests", level: intermediate, status: planned }

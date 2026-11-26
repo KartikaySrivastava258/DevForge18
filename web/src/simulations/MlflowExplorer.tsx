@@ -11,7 +11,7 @@ function command(a: ExplorerAction): string {
       return `search_runs(filter_string="${parts.join(" and ")}")`;
     }
     case "register":
-      return `mlflow.register_model("runs:/${runById(a.runId)?.name ?? a.runId}/model", "diabetes-model")`;
+      return `mlflow.register_model("runs:/<run ID of ${runById(a.runId)?.name ?? a.runId}>/model", "diabetes-model")`;
     case "setChampion":
       return `client.set_registered_model_alias("diabetes-model", "champion", ${a.version})`;
   }

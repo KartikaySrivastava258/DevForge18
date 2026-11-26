@@ -10,7 +10,7 @@ function command(a: PlannerAction): string {
     case "dropIndex":
       return `DROP INDEX ${a.name};`;
     case "explain":
-      return "EXPLAIN ANALYZE …";
+      return "EXPLAIN …";
   }
 }
 

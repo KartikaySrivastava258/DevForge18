@@ -130,17 +130,33 @@ export function selfTime(t: Trace, span: Span): number {
   return span.end - span.start - covered;
 }
 
-/** The spans that decide the total: from the root, always follow the child that finishes last. */
+/**
+ * The spans that decide the total. From each span, take the child that
+ * finishes last; then the latest child that ends before that one starts
+ * (the call it waited for), and so on. Sequential calls are therefore all on
+ * the path; of calls that overlap, only the one that finishes last is.
+ * Returned in start order (a parent before its children).
+ */
 export function criticalPath(t: Trace): string[] {
   const root = t.spans.find((s) => s.parentId === null);
-  const path: string[] = [];
-  let current = root;
-  while (current) {
-    path.push(current.spanId);
-    const kids = children(t, current.spanId);
-    current = kids.length ? kids.reduce((a, b) => (b.end > a.end ? b : a)) : undefined;
-  }
-  return path;
+  if (!root) return [];
+  const path: Span[] = [];
+  const visit = (span: Span) => {
+    path.push(span);
+    let rest = children(t, span.spanId);
+    let limit = Number.POSITIVE_INFINITY;
+    for (;;) {
+      const before = rest.filter((k) => k.end <= limit);
+      if (!before.length) break;
+      const last = before.reduce((a, b) => (b.end > a.end ? b : a));
+      visit(last);
+      limit = last.start;
+      rest = rest.filter((k) => k !== last);
+    }
+  };
+  visit(root);
+  const order = new Map(path.map((sp, i) => [sp.spanId, i]));
+  return [...path].sort((a, b) => a.start - b.start || (order.get(a.spanId) ?? 0) - (order.get(b.spanId) ?? 0)).map((sp) => sp.spanId);
 }
 
 export const latest = (s: WaterfallState) => s.traces.at(-1);

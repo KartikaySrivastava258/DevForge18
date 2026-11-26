@@ -54,6 +54,7 @@ labs:
   - { title: "Build and test an application", level: intermediate, mode: local, status: planned }
   - { title: "Trigger a job from a repository event", level: intermediate, mode: local, status: planned }
   - { title: "Store credentials safely", level: advanced, mode: local, status: planned }
+  - { title: "Size agents and executors for a build queue", level: intermediate, mode: simulation, status: available, lab: jenkins-labels-and-executors }
 projects:
   - { title: "Jenkins CI pipeline for a backend", level: beginner, status: planned }
   - { title: "Container build pipeline", level: intermediate, status: planned }

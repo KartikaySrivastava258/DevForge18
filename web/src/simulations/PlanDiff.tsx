@@ -42,7 +42,23 @@ function PlanDiffView({ state, dispatch }: ViewProps<PlanState, PlanAction>) {
             {state.config.map((c) => (
               <li key={c.address}>
                 <code>{c.address}</code>
-                <span className="airflow-sim__detail">name "{c.name}"</span>
+                <Field label={`Name of ${c.address} (changing it forces replacement)`}>
+                  {(id) => (
+                    <input
+                      id={id}
+                      key={c.name}
+                      defaultValue={c.name}
+                      size={12}
+                      onBlur={(e) => {
+                        const v = e.target.value.trim();
+                        if (v && v !== c.name) dispatch({ type: "setName", address: c.address, name: v });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                      }}
+                    />
+                  )}
+                </Field>
                 <Field label={`Size of ${c.address}`}>
                   {(id) => (
                     <select id={id} value={c.size} onChange={(e) => dispatch({ type: "setSize", address: c.address, size: e.target.value as Size })}>

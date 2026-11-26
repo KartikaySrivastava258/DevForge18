@@ -28,9 +28,14 @@ describe("trace waterfall: the trace", () => {
     assert.equal(api.end - api.start, 76);
     assert.equal(selfTime(t, api), 10);
   });
-  it("the critical path follows the child that finishes last", () => {
+  it("the critical path holds every call a span waited for, but only the slower of overlapping calls", () => {
+    // Sequential: the cache, then the database, then payment — each waits for the one before, so all three decide the total.
     const seq = buildTrace(config(), 1);
-    assert.deepEqual(names(criticalPath(seq), seq), ["GET /checkout", "GET /api/checkout", "GET /api/checkout", "POST /authorize (payment)", "POST /authorize"]);
+    assert.deepEqual(names(criticalPath(seq), seq), ["GET /checkout", "GET /api/checkout", "GET /api/checkout", "GET cart (cache)", "SELECT cart (database)", "POST /authorize (payment)", "POST /authorize"]);
+    // Parallel: the database overlaps the slower payment call, so it is off the path.
+    const par = buildTrace(config({ parallel: true }), 1);
+    assert.ok(!names(criticalPath(par), par).includes("SELECT cart (database)"));
+    assert.ok(names(criticalPath(par), par).includes("POST /authorize (payment)"));
     const slowDb = buildTrace(config({ parallel: true, extra: { database: 100 } }), 1);
     assert.deepEqual(names(criticalPath(slowDb), slowDb).slice(-1), ["SELECT cart (database)"], "a slow database becomes the critical path when the calls run in parallel");
   });

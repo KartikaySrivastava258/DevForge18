@@ -55,8 +55,8 @@ topics:
 labs:
   - { title: "Design a college database", level: beginner, mode: local, status: planned }
   - { title: "Write joins and aggregation queries", level: beginner, mode: local, status: planned }
-  - { title: "Compare query plans before and after indexing", level: intermediate, mode: local, status: planned }
-  - { title: "Demonstrate transaction rollback and isolation", level: advanced, mode: local, status: planned }
+  - { title: "Compare query plans before and after indexing", level: intermediate, mode: simulation, status: available, lab: postgresql-query-plans-and-indexes }
+  - { title: "Demonstrate transaction rollback and isolation", level: advanced, mode: local, status: available, lab: postgresql-transactions-and-isolation }
 projects:
   - { title: "College course registration database", level: beginner, status: planned }
   - { title: "Expense tracking API database", level: intermediate, status: planned }

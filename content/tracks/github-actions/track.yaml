@@ -54,6 +54,7 @@ labs:
   - { title: "Cache dependencies", level: intermediate, mode: local, status: planned }
   - { title: "Build and publish a container image", level: intermediate, mode: local, status: planned }
   - { title: "Add a protected deployment stage", level: advanced, mode: local, status: planned }
+  - { title: "Speed up a workflow with needs and a matrix", level: intermediate, mode: simulation, status: available, lab: github-actions-job-dependencies-and-matrix }
 projects:
   - { title: "Full CI pipeline for a REST API", level: beginner, status: planned }
   - { title: "Multi-version test matrix", level: intermediate, status: planned }

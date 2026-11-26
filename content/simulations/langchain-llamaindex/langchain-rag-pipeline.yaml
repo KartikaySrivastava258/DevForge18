@@ -51,7 +51,7 @@ challenges:
     goal: Get the sentence that answers "why add a cache in front of a database?" into a prompt of at most 45 words.
     scenario: why-cache
     check: support-within-budget
-    hint: On its own, the answer sentence ties with a Redis sentence. With the sentence before it in the same chunk, its chunk leans towards databases — like the question.
+    hint: On its own, the answer sentence ties with a Redis sentence. With a neighbouring sentence in the same chunk, its chunk leans towards databases — like the question.
     solution:
       - { type: setChunkSize, size: 2 }
 owner: content-team

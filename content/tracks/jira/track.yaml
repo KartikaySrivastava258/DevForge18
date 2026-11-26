@@ -46,7 +46,7 @@ topics:
   - { level: advanced, title: "Agile ceremonies and common anti-patterns" }
 labs:
   - { title: "Create a student project backlog", level: beginner, mode: simulation, status: planned }
-  - { title: "Plan and run a sprint", level: intermediate, mode: simulation, status: planned }
+  - { title: "Plan and run a sprint", level: intermediate, mode: simulation, status: available, lab: jira-plan-and-run-a-sprint }
   - { title: "Move a bug through a workflow", level: intermediate, mode: simulation, status: planned }
   - { title: "Read a sprint report and identify bottlenecks", level: advanced, mode: read-through, status: planned }
 projects:

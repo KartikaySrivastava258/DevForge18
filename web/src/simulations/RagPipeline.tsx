@@ -3,7 +3,7 @@ import { Field } from "./Field.tsx";
 import type { SimulationEntry, ViewProps } from "./registry.ts";
 
 function command(a: RagAction): string {
-  return a.type === "setChunkSize" ? `SentenceSplitter(chunk_size=${a.size} sentences)` : `as_retriever(similarity_top_k=${a.k})`;
+  return a.type === "setChunkSize" ? `chunks of ${a.size} sentences (a teaching model: LlamaIndex's chunk_size counts tokens)` : `as_retriever(similarity_top_k=${a.k})`;
 }
 
 function RagPipelineView({ state, dispatch }: ViewProps<RagState, RagAction>) {

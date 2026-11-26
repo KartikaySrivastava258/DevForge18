@@ -55,6 +55,7 @@ labs:
   - { title: "Compare two runs", level: beginner, mode: local, status: planned }
   - { title: "Log a model and load it back", level: intermediate, mode: local, status: planned }
   - { title: "Register and promote a model using the current MLflow workflow", level: advanced, mode: local, status: planned }
+  - { title: "Choose a champion within a latency budget", level: intermediate, mode: simulation, status: available, lab: mlflow-choose-and-promote-a-champion }
 projects:
   - { title: "Student performance prediction experiment using synthetic data", level: beginner, status: planned }
   - { title: "Model comparison dashboard", level: intermediate, status: planned }

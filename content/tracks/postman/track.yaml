@@ -54,6 +54,7 @@ labs:
   - { title: "Build a collection with environment variables", level: beginner, mode: local, status: planned }
   - { title: "Write assertions for status and response body", level: intermediate, mode: local, status: planned }
   - { title: "Run a collection in a CI pipeline", level: advanced, mode: local, status: planned }
+  - { title: "Read status codes and chain requests with a session", level: intermediate, mode: simulation, status: available, lab: postman-status-codes-and-sessions }
 projects:
   - { title: "API test suite for a college service", level: beginner, status: planned }
   - { title: "Authentication flow test collection", level: intermediate, status: planned }

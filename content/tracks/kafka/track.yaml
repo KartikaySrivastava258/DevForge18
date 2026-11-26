@@ -52,7 +52,7 @@ topics:
   - { level: advanced, title: "Security, monitoring and operational trade-offs" }
 labs:
   - { title: "Publish and consume events", level: beginner, mode: local, status: planned }
-  - { title: "Observe partitions and consumer groups", level: intermediate, mode: simulation, status: planned }
+  - { title: "Observe partitions and consumer groups", level: intermediate, mode: simulation, status: available, lab: kafka-partitions-and-consumer-groups }
   - { title: "Simulate a consumer failure", level: intermediate, mode: simulation, status: planned }
   - { title: "Implement retry and dead-letter handling", level: advanced, mode: local, status: planned }
 projects:

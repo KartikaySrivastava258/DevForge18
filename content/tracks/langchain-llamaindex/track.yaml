@@ -59,6 +59,7 @@ labs:
   - { title: "Index a set of course PDFs", level: intermediate, mode: local, status: planned }
   - { title: "Add citations to retrieved passages", level: intermediate, mode: local, status: planned }
   - { title: "Evaluate answers against a small test set", level: advanced, mode: local, status: planned }
+  - { title: "Tune chunk size and k for retrieval", level: intermediate, mode: simulation, status: available, lab: langchain-chunk-size-and-retrieval }
 projects:
   - { title: "College handbook assistant", level: beginner, status: planned }
   - { title: "Research-paper explorer", level: intermediate, status: planned }

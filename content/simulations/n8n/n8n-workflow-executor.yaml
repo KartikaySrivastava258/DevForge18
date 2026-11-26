@@ -8,7 +8,7 @@ learning_objectives:
   - Choose between retries and an error output for a failing service.
 simplifications:
   - One execution processes the whole batch of five submissions.
-  - The seat service fails in a fixed, repeatable pattern rather than at random, and only on the first attempt for a given submission.
+  - The seat service fails in a fixed, repeatable pattern rather than at random, and only on the first attempt for a submission within each execution. A retry succeeds, but running the workflow again without retries fails the same way.
   - Save and the error workflow only collect items; a real error workflow is a separate workflow started by an Error Trigger when an execution fails.
 text_alternative: The submissions with where each one ended up in the last execution; the items every node produced on each of its outputs; the current checks, branch and error settings. Every change and run is explained in the event log. Switch to text mode to read it as a list.
 scenarios:
