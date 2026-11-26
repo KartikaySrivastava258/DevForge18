@@ -1,0 +1,4 @@
+alt: 'Four boxes. allow and deny decide by IP address or network, and the first matching rule wins; refused requests get 403. auth_basic asks for a user name and password from an htpasswd file; refused requests get 401. satisfy any lets in requests that pass either the IP rule or the password, so users inside the network get no prompt. limit_conn limits open connections per IP; too many at once are refused with 503.'
+caption: 'Check who is asking (address or password) and how much they may use at once, before any request reaches the application.'
+credit: DevForge 18 content team
+licence: project-content
