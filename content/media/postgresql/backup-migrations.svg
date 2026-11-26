@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 240">
+  <!-- Backups and migrations side by side, from Backups, restores and migrations. -->
+  <rect class="f-box-faint" x="10" y="14" width="335" height="210" rx="8"/>
+  <text class="f-small f-strong" x="177" y="40" text-anchor="middle">backup and restore</text>
+  <rect class="f-box" x="36" y="58" width="283" height="38" rx="8"/>
+  <text class="f-small f-mono" x="177" y="82" text-anchor="middle">database</text>
+  <g>
+    <path class="f-arrow" d="M177 97 L177 101"/>
+    <polygon class="f-head" points="177,109 172.5,101 181.5,101"/>
+  </g>
+  <rect class="f-box-accent" x="36" y="110" width="283" height="38" rx="8"/>
+  <text class="f-small f-mono" x="177" y="134" text-anchor="middle">pg_dump -Fc → shop.dump</text>
+  <g>
+    <path class="f-arrow" d="M177 149 L177 153"/>
+    <polygon class="f-head" points="177,161 172.5,153 181.5,153"/>
+  </g>
+  <rect class="f-box-ok" x="36" y="162" width="283" height="38" rx="8"/>
+  <text class="f-small f-mono" x="177" y="186" text-anchor="middle">pg_restore → new database</text>
+  <text class="f-small f-muted" x="177" y="214" text-anchor="middle">a snapshot from when pg_dump started</text>
+  <rect class="f-box-faint" x="355" y="14" width="335" height="210" rx="8"/>
+  <text class="f-small f-strong" x="522" y="40" text-anchor="middle">migrations</text>
+  <rect class="f-box" x="371" y="58" width="222" height="34" rx="8"/>
+  <text class="f-small f-mono" x="482" y="80" text-anchor="middle">001_create_categories.sql</text>
+  <rect class="f-box" x="371" y="102" width="222" height="34" rx="8"/>
+  <text class="f-small f-mono" x="482" y="124" text-anchor="middle">002_add_category_column.sql</text>
+  <rect class="f-box" x="371" y="146" width="222" height="34" rx="8"/>
+  <text class="f-small f-mono" x="482" y="168" text-anchor="middle">003_…</text>
+  <rect class="f-box-ok" x="599" y="58" width="86" height="122" rx="8"/>
+  <text class="f-small f-mono" x="642" y="104" text-anchor="middle">schema_</text>
+  <text class="f-small f-mono" x="642" y="122" text-anchor="middle">migrations</text>
+  <text class="f-small f-muted" x="522" y="214" text-anchor="middle">each file once, in order, in a transaction</text>
+</svg>

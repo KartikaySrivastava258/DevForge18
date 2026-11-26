@@ -1,0 +1,4 @@
+alt: 'Two panels. Backup and restore: a database is dumped with pg_dump -Fc into shop.dump, and pg_restore loads it into a new database; the dump is a snapshot from when pg_dump started. Migrations: numbered SQL files 001_create_categories.sql, 002_add_category_column.sql and more are applied in order; a schema_migrations table records which have run, so each file runs once, in a transaction.'
+caption: 'Backups protect the data you have; migrations change the shape of the data in small, recorded, repeatable steps.'
+credit: DevForge 18 content team
+licence: project-content
