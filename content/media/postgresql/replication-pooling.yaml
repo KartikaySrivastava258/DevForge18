@@ -1,0 +1,4 @@
+alt: 'Four application instances each open 25 connections, 100 client connections in total, to a connection pooler such as PgBouncer, which uses only about 20 server connections, that is 20 processes, on the primary. The primary handles reads and writes and streams its write-ahead log to a replica, a read-only hot standby. A note says replication copies the data while pooling shares a few database connections among many clients.'
+caption: 'A replica gives you a second, read-only copy of the data; a pooler keeps thousands of clients from turning into thousands of database processes.'
+credit: DevForge 18 content team
+licence: project-content

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 270">
+  <!-- Streaming replication and a connection pooler, from Replication and connection pooling. -->
+  <rect class="f-box-faint" x="10" y="14" width="200" height="240" rx="8"/>
+  <text class="f-small f-strong" x="110" y="38" text-anchor="middle">many app instances</text>
+  <rect class="f-box" x="30" y="54" width="160" height="34" rx="8"/>
+  <text class="f-small" x="110" y="76" text-anchor="middle">app 1: 25 connections</text>
+  <rect class="f-box" x="30" y="100" width="160" height="34" rx="8"/>
+  <text class="f-small" x="110" y="122" text-anchor="middle">app 2: 25 connections</text>
+  <rect class="f-box" x="30" y="146" width="160" height="34" rx="8"/>
+  <text class="f-small" x="110" y="168" text-anchor="middle">app 3: 25 connections</text>
+  <rect class="f-box" x="30" y="192" width="160" height="34" rx="8"/>
+  <text class="f-small" x="110" y="214" text-anchor="middle">app 4: 25 connections</text>
+  <rect class="f-box-accent" x="240" y="90" width="140" height="70" rx="8"/>
+  <text class="f-small f-strong" x="310" y="118" text-anchor="middle">pooler</text>
+  <text class="f-small f-muted" x="310" y="140" text-anchor="middle">(e.g. PgBouncer)</text>
+  <g>
+    <path class="f-arrow" d="M192 125 L230 125"/>
+    <polygon class="f-head" points="238,125 230,129.5 230,120.5"/>
+  </g>
+  <text class="f-small f-muted" x="215" y="182" text-anchor="middle">100 client</text>
+  <text class="f-small f-muted" x="215" y="198" text-anchor="middle">connections</text>
+  <rect class="f-box-ok" x="420" y="70" width="130" height="110" rx="8"/>
+  <text class="f-small f-strong" x="485" y="100" text-anchor="middle">primary</text>
+  <text class="f-small" x="485" y="124" text-anchor="middle">reads + writes</text>
+  <text class="f-small f-muted" x="485" y="146" text-anchor="middle">20 processes</text>
+  <g>
+    <path class="f-arrow" d="M382 125 L410 125"/>
+    <polygon class="f-head" points="418,125 410,129.5 410,120.5"/>
+  </g>
+  <rect class="f-box" x="580" y="70" width="110" height="110" rx="8"/>
+  <text class="f-small f-strong" x="635" y="100" text-anchor="middle">replica</text>
+  <text class="f-small" x="635" y="124" text-anchor="middle">read-only</text>
+  <text class="f-small f-muted" x="635" y="146" text-anchor="middle">hot standby</text>
+  <g>
+    <path class="f-arrow-accent" d="M552 110 L570 110"/>
+    <polygon class="f-head-accent" points="578,110 570,114.5 570,105.5"/>
+  </g>
+  <text class="f-small f-accent" x="565" y="200" text-anchor="middle">WAL streamed to the replica</text>
+  <text class="f-small f-muted" x="350" y="248" text-anchor="middle">Replication copies the data; pooling shares a few database connections among many clients.</text>
+</svg>
