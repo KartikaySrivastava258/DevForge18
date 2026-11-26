@@ -1,0 +1,4 @@
+alt: 'Two caller workflows, ci.yml with a matrix of Node.js 20 and 22 and nightly.yml with node-version 22, both call the reusable workflow node-ci.yml, which has on: workflow_call, the inputs node-version and check-docs with a default, and contains a shared job. That job uses the composite action check-title, which bundles shared steps and receives its input through env. Workflows call jobs with uses at job level; jobs call actions with uses in a step.'
+caption: 'Reusable workflows share jobs; composite actions share steps.'
+credit: DevForge 18 content team
+licence: project-content

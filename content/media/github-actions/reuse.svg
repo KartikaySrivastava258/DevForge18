@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270">
+  <!-- Shared jobs and shared steps, from Reusable workflows and composite actions. -->
+  <rect class="f-box" x="10" y="30" width="170" height="64" rx="8"/>
+  <text class="f-small f-strong f-mono" x="95" y="56" text-anchor="middle">ci.yml</text>
+  <text class="f-small f-mono" x="95" y="78" text-anchor="middle">matrix: 20, 22</text>
+  <rect class="f-box" x="10" y="150" width="170" height="64" rx="8"/>
+  <text class="f-small f-strong f-mono" x="95" y="176" text-anchor="middle">nightly.yml</text>
+  <text class="f-small f-mono" x="95" y="198" text-anchor="middle">node-version: 22</text>
+  <rect class="f-box-accent" x="250" y="70" width="220" height="120" rx="8"/>
+  <text class="f-small f-strong f-mono" x="360" y="94" text-anchor="middle">node-ci.yml</text>
+  <text class="f-small f-mono" x="360" y="116" text-anchor="middle">on: workflow_call</text>
+  <text class="f-small f-mono" x="360" y="138" text-anchor="middle">inputs: node-version,</text>
+  <text class="f-small f-mono" x="360" y="158" text-anchor="middle">check-docs (default)</text>
+  <text class="f-small f-muted" x="360" y="178" text-anchor="middle">a shared job</text>
+  <rect class="f-box-ok" x="530" y="80" width="180" height="100" rx="8"/>
+  <text class="f-small f-strong f-mono" x="620" y="104" text-anchor="middle">check-title</text>
+  <text class="f-small" x="620" y="126" text-anchor="middle">composite action</text>
+  <text class="f-small" x="620" y="148" text-anchor="middle">shared steps,</text>
+  <text class="f-small" x="620" y="166" text-anchor="middle">input via env</text>
+  <g>
+    <path class="f-arrow" d="M182 62 L241.5 105.3"/>
+    <polygon class="f-head" points="248,110 238.9,108.9 244.2,101.7"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M182 182 L240.8 153.5"/>
+    <polygon class="f-head" points="248,150 242.8,157.5 238.8,149.4"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M472 130 L520 130"/>
+    <polygon class="f-head" points="528,130 520,134.5 520,125.5"/>
+  </g>
+  <text class="f-small f-muted" x="360" y="240" text-anchor="middle">workflows call jobs (uses: at job level); jobs call actions (uses: in a step)</text>
+</svg>

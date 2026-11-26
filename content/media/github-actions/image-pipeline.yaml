@@ -1,0 +1,4 @@
+alt: 'A commit tagged v1.2.0 is built once, with labels for its source, revision and version; pull requests only build. The image is pushed under five tags — sha-e7750c5, main, 1.2.0, 1.2 and 1 — which are names for one digest, sha256 followed by a hash. Deploy the digest: tags like main and 1 move to newer images, the digest never does.'
+caption: 'Many names, one image: tag for people, deploy by digest.'
+credit: DevForge 18 content team
+licence: project-content
