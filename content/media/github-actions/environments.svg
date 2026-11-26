@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270">
+  <!-- Build once, promote the digest, from Environments, approvals and deployments. -->
+  <rect class="f-box" x="10" y="90" width="140" height="70" rx="8"/>
+  <text class="f-small f-strong" x="80" y="116" text-anchor="middle">build</text>
+  <text class="f-small" x="80" y="138" text-anchor="middle">output: digest</text>
+  <rect class="f-box-accent" x="200" y="80" width="200" height="90" rx="8"/>
+  <text class="f-small f-strong" x="300" y="104" text-anchor="middle">environment staging</text>
+  <text class="f-small" x="300" y="126" text-anchor="middle">vars, secrets</text>
+  <text class="f-small" x="300" y="148" text-anchor="middle">deploy the digest</text>
+  <rect class="f-box-warn" x="450" y="60" width="260" height="130" rx="8"/>
+  <text class="f-small f-strong" x="580" y="84" text-anchor="middle">environment production</text>
+  <text class="f-small" x="580" y="108" text-anchor="middle">required reviewers, wait timer</text>
+  <text class="f-small f-mono" x="580" y="130" text-anchor="middle">branches: main</text>
+  <text class="f-small" x="580" y="152" text-anchor="middle">secrets after approval</text>
+  <text class="f-small f-ok" x="580" y="174" text-anchor="middle">same digest as staging</text>
+  <g>
+    <path class="f-arrow" d="M152 125 L190 125"/>
+    <polygon class="f-head" points="198,125 190,129.5 190,120.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M402 125 L440 125"/>
+    <polygon class="f-head" points="448,125 440,129.5 440,120.5"/>
+  </g>
+  <text class="f-small f-muted" x="580" y="222" text-anchor="middle">rollback: redeploy a previous digest</text>
+  <text class="f-small f-muted" x="300" y="222" text-anchor="middle">concurrency: one deploy at a time</text>
+</svg>

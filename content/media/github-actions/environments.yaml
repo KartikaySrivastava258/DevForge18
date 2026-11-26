@@ -1,0 +1,4 @@
+alt: 'A build job outputs an image digest. The staging environment, with its own variables and secrets, deploys that digest. The production environment has required reviewers, a wait timer and a deployment branch rule allowing main; its secrets are released only after approval, and it deploys the same digest that staging ran. Each environment allows one deployment at a time through concurrency, and a rollback redeploys a previous digest.'
+caption: 'One artefact moves through environments; each environment guards its own secrets.'
+credit: DevForge 18 content team
+licence: project-content

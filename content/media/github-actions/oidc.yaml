@@ -1,0 +1,4 @@
+alt: 'A job with id-token write permission and environment production, holding no stored secret, asks GitHub''s OIDC issuer for a signed JWT that lasts minutes and carries claims such as sub, aud and iss. The job sends the token and the role to assume to the cloud, AWS STS, which first verifies the signature and then checks the trust conditions: do aud and sub match? If they do, it returns temporary credentials that expire on their own. The subject looks like repo:OWNER/REPO:environment:production.'
+caption: 'No stored key: each job proves who it is, and the cloud decides per job.'
+credit: DevForge 18 content team
+licence: project-content
