@@ -10,17 +10,17 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 80 published, at least 3 in every track; 78 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). The six Path 1 tracks (Git, PostgreSQL, Postman, Redis, Nginx, Docker) now have 7–8 lessons each, beginner to advanced; the other 12 tracks have 3 beginner lessons |
+| Lessons | ✅ 84 published, at least 3 in every track; 82 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Git, PostgreSQL, Postman, Redis, Nginx, Docker and Terraform have 7–8 lessons each, beginner to advanced; the other 11 tracks have 3 beginner lessons |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 81 figures across all 80 lessons (no ASCII diagrams left), 22 of them step-throughs — at least one in every track; tested |
+| Figures and step-through diagrams | ✅ 85 figures across all 84 lessons (no ASCII diagrams left), 22 of them step-throughs — at least one in every track; tested |
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
 | Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
 | Projects, quizzes, glossary, architecture studio | ⬜ Not started (planned phases below) |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
-| CI | ✅ Runs on GitHub (first run 2026-11-25). Docker Compose / production Nginx config still untested |
+| CI | ✅ Runs on GitHub: a verify job (typecheck, lint, build, unit/API and browser tests) and executed lessons in three parallel shards, about 17 minutes in all. Docker Compose / production Nginx config still untested |
 
 ## Verified results (last run 2026-11-25)
 
@@ -350,9 +350,15 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **Not executed (described from documentation and labelled).** BuildKit secret mounts, `--sbom`/`--provenance` attestations and vulnerability scanning (the local machine has no Buildx; lessons 6–7 are builder-independent).
 - **CI.** Run 45813697474 failed on two timing-dependent checks (Redis `volatile-lru` refusal count; Kubernetes lab status alternation, column width and stdout/stderr order) — fixed and re-verified locally. Run 45820069409 confirmed those fixes and the Redis, Nginx and Docker 4–5 lessons, but failed in the Airflow backfill lab (a backfill request returned no id); the helper now retries and reports Airflow's reply. Confirmation of the latest commits: see "Current work".
 
+### Milestone 8 — Path 2 begins: Terraform (2026-11-26)
+
+- **Four new lessons, executed locally twice each with Terraform 1.15.6:** remote state, locking and workspaces (pg backend on PostgreSQL 16, credentials only in the environment, a refused concurrent apply, -lock-timeout); importing existing resources and handling drift (kreuzwerker/docker 4.6.0: import block with generated configuration reviewed down to a clean plan, -refresh-only, removed with destroy = false); testing and policy (validation, terraform test with plan/apply runs, expect_failures and a mocked provider, a jq policy on the plan JSON); CI with plan review (detailed exit codes, applying the saved plan, a stale plan refused, and a checked GitHub Actions workflow).
+- **CI restructured.** Run 45833076158 passed every test but hit the 40-minute limit, because lesson replay chains grow faster than the lesson count. Executed lessons now run in three independent shards (`DEVFORGE_LESSON_SHARD=i/n`), and the verify job skips them (`off`). Shards pull Docker Hub images through mirror.gcr.io after one shard hit Docker Hub's anonymous rate limit. Run 45843877395: all four jobs green in about 17 minutes.
+- **Runner.** Lessons that run `createdb`, `dropdb` or `psql` from bash are gated on PostgreSQL like SQL lessons.
+
 ## Current work
 
-Milestone 8: Path 1 tracks are done locally (every new lesson passes twice); CI for the latest commits is in progress. Next: intermediate and advanced lessons for the other 12 tracks, Path 2 (Terraform, Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana, OpenTelemetry) first.
+Milestone 8: Path 1 and Terraform are done (CI green on run 45843877395 for everything up to Docker lesson 7; the Terraform lessons are in CI now). Next: Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana and OpenTelemetry, then the remaining tracks.
 
 ## Pending work (ordered)
 
