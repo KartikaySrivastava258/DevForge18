@@ -54,7 +54,7 @@ labs:
   - { title: "Publish and consume events", level: beginner, mode: local, status: planned }
   - { title: "Observe partitions and consumer groups", level: intermediate, mode: simulation, status: available, lab: kafka-partitions-and-consumer-groups }
   - { title: "Simulate a consumer failure", level: intermediate, mode: simulation, status: planned }
-  - { title: "Implement retry and dead-letter handling", level: advanced, mode: local, status: planned }
+  - { title: "Implement retry and dead-letter handling", level: advanced, mode: local, status: available, lab: kafka-retry-and-dead-letter }
 projects:
   - { title: "Order event pipeline", level: beginner, status: planned }
   - { title: "Live campus activity stream", level: intermediate, status: planned }
