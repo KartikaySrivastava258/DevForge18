@@ -53,7 +53,7 @@ labs:
   - { title: "Create a three-task DAG", level: beginner, mode: local, status: planned }
   - { title: "Add retries and failure alerts", level: intermediate, mode: local, status: planned }
   - { title: "Build a small ETL workflow", level: intermediate, mode: local, status: planned }
-  - { title: "Backfill a date range safely", level: advanced, mode: local, status: planned }
+  - { title: "Backfill a date range safely", level: advanced, mode: local, status: available, lab: airflow-backfill-safely }
   - { title: "Predict scheduler runs, retries and backfills", level: intermediate, mode: simulation, status: available, lab: airflow-scheduler-experiments }
 projects:
   - { title: "Daily student attendance pipeline", level: beginner, status: planned }
