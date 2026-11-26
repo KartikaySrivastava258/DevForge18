@@ -33,3 +33,10 @@ kind has enforced NetworkPolicy out of the box since v0.24.0, through sigs.k8s.i
 - Image-pull status alternates `ErrImagePull` / `ImagePullBackOff`; crash status alternates `Error` / `CrashLoopBackOff`; the NAME column width varies with the random Pod suffix.
 - A mounted ConfigMap took about 80 seconds to update locally; wait for the condition, never a fixed time.
 - `stat` on a mounted Secret file reports the symlink (777); `stat -L` reports the file mode.
+
+## Traffic entry (lesson 8)
+
+- cloud-provider-kind v0.12.0 (released 2026-10-02), image `registry.k8s.io/cloud-provider-kind/cloud-controller-manager:v0.12.0@sha256:1b97632e5dfec8f83c7e970cf18cedb9e6b707e272011d712cabf6ab59d323c9`; it implements LoadBalancer Services, Ingress (since v0.9.0, per kind's ingress guide) and Gateway/HTTPRoute (README: passes community conformance tests; standard channel by default), installs the Gateway API CRDs itself, and registers GatewayClass and IngressClass `cloud-provider-kind`. Its proxies are `docker.io/envoyproxy/envoy:v1.33.2` containers named `kindccm-*`, removed when their Service/Gateway is deleted.
+- Run it as a container on the `kind` network: run on the host, its Envoy proxies could not fetch configuration (xDS connection timeouts on this machine).
+- HTTPRoute precedence (gateway-api `apis/v1/httproute_types.go`): exact path, longest prefix, method, most header matches, most query matches; then oldest Route, then namespace/name; then first rule in list order.
+- A Gateway can be `Programmed` before its HTTPRoute's status is written; wait on the route's `ResolvedRefs`/`Accepted` condition.

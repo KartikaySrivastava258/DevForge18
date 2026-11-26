@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290">
+  <!-- From outside to a Service, from How traffic enters a cluster. -->
+  <rect class="f-box" x="10" y="110" width="110" height="60" rx="8"/>
+  <text class="f-small f-strong" x="65" y="136" text-anchor="middle">client</text>
+  <text class="f-small f-muted" x="65" y="156" text-anchor="middle">outside</text>
+  <rect class="f-box-faint" x="160" y="20" width="170" height="66" rx="8"/>
+  <text class="f-small f-strong f-mono" x="245" y="44" text-anchor="middle">GatewayClass</text>
+  <text class="f-small" x="245" y="66" text-anchor="middle">infrastructure provider</text>
+  <rect class="f-box-accent" x="160" y="106" width="170" height="70" rx="8"/>
+  <text class="f-small f-strong f-mono" x="245" y="130" text-anchor="middle">Gateway campus</text>
+  <text class="f-small f-mono" x="245" y="152" text-anchor="middle">listener :80</text>
+  <text class="f-small f-muted" x="245" y="168" text-anchor="middle">cluster operator</text>
+  <rect class="f-box-warn" x="370" y="106" width="170" height="70" rx="8"/>
+  <text class="f-small f-strong f-mono" x="455" y="130" text-anchor="middle">HTTPRoute</text>
+  <text class="f-small" x="455" y="152" text-anchor="middle">path, headers</text>
+  <text class="f-small f-muted" x="455" y="168" text-anchor="middle">app developers</text>
+  <rect class="f-box-ok" x="580" y="60" width="130" height="56" rx="8"/>
+  <text class="f-small f-strong f-mono" x="645" y="84" text-anchor="middle">library</text>
+  <text class="f-small" x="645" y="104" text-anchor="middle">/library or header</text>
+  <rect class="f-box-ok" x="580" y="160" width="130" height="56" rx="8"/>
+  <text class="f-small f-strong f-mono" x="645" y="184" text-anchor="middle">timetable</text>
+  <text class="f-small" x="645" y="204" text-anchor="middle">everything else</text>
+  <g>
+    <path class="f-arrow" d="M122 140 L150 140"/>
+    <polygon class="f-head" points="158,140 150,144.5 150,135.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M245 88 L245 96"/>
+    <polygon class="f-head" points="245,104 240.5,96 249.5,96"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M332 140 L360 140"/>
+    <polygon class="f-head" points="368,140 360,144.5 360,135.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M542 128 L572.3 97.7"/>
+    <polygon class="f-head" points="578,92 575.5,100.8 569.2,94.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M542 152 L572.2 180.5"/>
+    <polygon class="f-head" points="578,186 569.1,183.8 575.3,177.2"/>
+  </g>
+  <text class="f-small f-muted" x="360" y="238" text-anchor="middle">ClusterIP: inside only · LoadBalancer: one address per Service</text>
+  <text class="f-small f-muted" x="360" y="262" text-anchor="middle">Ingress: frozen API, host and path rules · Gateway API: its successor</text>
+</svg>

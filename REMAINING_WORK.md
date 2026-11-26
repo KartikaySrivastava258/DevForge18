@@ -189,7 +189,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.3 Kubernetes
 
-- **Lessons:** ✅ Deployments and self-healing · ✅ Services, rolling updates and rollback · ConfigMaps and Secrets · ✅ Probes, requests and limits · Namespaces, labels and selectors in depth · Ingress/Gateway and how traffic enters a cluster · Persistent volumes (advanced) · RBAC and network policies (advanced).
+- **Lessons:** ✅ Deployments and self-healing · ✅ Services, rolling updates and rollback · ✅ ConfigMaps and Secrets · ✅ Probes, requests and limits · ✅ Namespaces, labels and selectors in depth · ✅ Ingress/Gateway and how traffic enters a cluster · ✅ Persistent volumes (advanced) · ✅ RBAC and network policies (advanced).
 - **Simulation — the reconciliation loop:** model nodes, a Deployment, ReplicaSets and Pods with states (Pending, Running, Ready, Failed); actions: kill a Pod, drain a node, scale, update image (good or broken), change maxSurge/maxUnavailable. Animate the controller "noticing" and acting. **Challenges:** "keep at least 4 Pods available during an update", "recover from a broken image". **Invariants:** available Pods never drop below `replicas − maxUnavailable` during a rolling update.
 - **Labs:** deploy a three-tier app on kind (executed in CI); break a Deployment and debug with `kubectl describe` and events (executed); add probes and observe behaviour (executed).
 - **Real world:** Kubernetes grew out of Google's experience running containers with Borg; Google published the Borg paper ("Large-scale cluster management at Google with Borg", EuroSys 2015) and donated Kubernetes to the CNCF. Sources: the paper, kubernetes.io history, CNCF case studies.
@@ -384,7 +384,7 @@ Each milestone ends with CI green and `IMPLEMENTATION_STATUS.md` updated.
 5. **Remaining tracks, beginner level.** Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira: lessons, setup guide, one simulation each. *Done when:* all 18 tracks have at least three beginner lessons and one simulation. Status (2026-11-26): done — every track has at least three beginner lessons and a simulation.
 6. ✅ Done (2026-11-26). **Real-world context.** Case-study and alternatives content types; at least two sourced case studies and an alternatives table per track. Status: 36 case studies and 89 alternatives, every quote checked against its source page; see IMPLEMENTATION_STATUS.md.
 7. ✅ Done (2026-11-26). **Labs.** Lab pages, verification scripts, lab progress; at least two labs per track, executed in CI where the tool allows. Status: 36 labs (18 local with check scripts, 17 simulation, 1 read-through); 19 executed in CI; see IMPLEMENTATION_STATUS.md.
-8. **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first. Status (2026-11-26): in progress — Path 1 done (Git and PostgreSQL 8 lessons each; Postman, Redis, Nginx and Docker 7 each) and Terraform (7); 30 new executed lessons; the other 11 tracks next.
+8. **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first. Status (2026-11-26): in progress — Path 1 done (Git and PostgreSQL 8 lessons each; Postman, Redis, Nginx and Docker 7 each) Terraform (7) and Kubernetes (8); 35 new executed lessons; the other 10 tracks next.
 9. **Quizzes and projects.** New question types, per-track quizzes, mini-project pages with rubrics and starter templates.
 10. **Capstones A–G and integration lessons.** Including the architecture studio and the full relationship graph.
 11. **Institutional features and hardening.** Section 6.3 and 6.4.

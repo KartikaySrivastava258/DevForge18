@@ -1,0 +1,4 @@
+alt: 'A client outside the cluster connects to the Gateway campus, which listens on port 80 and belongs to a GatewayClass set up by the infrastructure provider; the Gateway is run by the cluster operator. An HTTPRoute written by application developers matches on path and headers and sends /library and requests with the x-campus header to the library Service, and everything else to the timetable Service. ClusterIP Services are reachable only inside the cluster; a LoadBalancer Service gives one address per Service; Ingress is a frozen API with host and path rules; the Gateway API is its successor.'
+caption: 'One entry point, typed routing rules, and separate resources for the people who run the gateway and the people who write routes.'
+credit: DevForge 18 content team
+licence: project-content
