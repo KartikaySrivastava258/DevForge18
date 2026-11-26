@@ -1,0 +1,4 @@
+alt: 'An SLO of 99.9% over 30 days gives an error budget of 0.1%, about 43 minutes of full outage. The burn rate is the error ratio divided by 0.001; a burn rate of 1 makes the budget last exactly 30 days. An outage with burn rate 20 trips the page alert for 1 hour and 5 minutes above 14.4. A slow leak with burn rate 8 trips the page alert for 6 hours and 30 minutes above 6. A healthy service at burn rate 0.5 raises no alert. Each scenario is proved by promtool test rules.'
+caption: 'Alert on how fast the budget is burning, with a long and a short window.'
+credit: DevForge 18 content team
+licence: project-content

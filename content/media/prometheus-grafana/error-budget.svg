@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280">
+  <!-- From SLO to burn-rate alerts, from SLIs, SLOs and error budgets. -->
+  <rect class="f-box" x="10" y="30" width="210" height="90" rx="8"/>
+  <text class="f-small f-strong" x="115" y="54" text-anchor="middle">SLO 99.9% / 30 days</text>
+  <text class="f-small" x="115" y="78" text-anchor="middle">error budget 0.1%</text>
+  <text class="f-small" x="115" y="100" text-anchor="middle">≈ 43 minutes of outage</text>
+  <rect class="f-box-accent" x="260" y="30" width="200" height="90" rx="8"/>
+  <text class="f-small f-strong" x="360" y="54" text-anchor="middle">burn rate</text>
+  <text class="f-small f-mono" x="360" y="78" text-anchor="middle">error ratio ÷ 0.001</text>
+  <text class="f-small" x="360" y="100" text-anchor="middle">1 = budget lasts 30 days</text>
+  <rect class="f-box-danger" x="500" y="20" width="210" height="64" rx="8"/>
+  <text class="f-small f-strong" x="605" y="44" text-anchor="middle">page: 1h and 5m &gt; 14.4</text>
+  <text class="f-small" x="605" y="66" text-anchor="middle">outage: burn 20</text>
+  <rect class="f-box-warn" x="500" y="100" width="210" height="64" rx="8"/>
+  <text class="f-small f-strong" x="605" y="124" text-anchor="middle">page: 6h and 30m &gt; 6</text>
+  <text class="f-small" x="605" y="146" text-anchor="middle">slow leak: burn 8</text>
+  <rect class="f-box-ok" x="500" y="180" width="210" height="64" rx="8"/>
+  <text class="f-small f-strong" x="605" y="204" text-anchor="middle">no alert</text>
+  <text class="f-small" x="605" y="226" text-anchor="middle">healthy: burn 0.5</text>
+  <g>
+    <path class="f-arrow" d="M222 75 L250 75"/>
+    <polygon class="f-head" points="258,75 250,79.5 250,70.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M462 60 L490.2 53.7"/>
+    <polygon class="f-head" points="498,52 491.2,58.1 489.2,49.3"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M462 90 L492.6 124.1"/>
+    <polygon class="f-head" points="498,130 489.3,127.1 496.0,121.0"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M462 105 L495.3 197.5"/>
+    <polygon class="f-head" points="498,205 491.1,199.0 499.5,195.9"/>
+  </g>
+  <text class="f-small f-muted" x="235" y="200" text-anchor="middle">proved by promtool test rules</text>
+</svg>
