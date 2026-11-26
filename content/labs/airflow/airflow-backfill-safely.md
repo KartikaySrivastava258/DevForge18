@@ -28,7 +28,7 @@ verification:
   details: Every step and the check script are run by DevForge's test suite with apache/airflow:slim-3.4.0-python3.12 (pinned by digest) in standalone mode, after the previous lessons, and their output is compared with this page. The reprocessing behaviours were checked against the Airflow 3.4.0 documentation on 2026-11-26. The check script is also run in an empty folder, where it must fail.
 owner: content-team
 last_reviewed: 2026-11-26
-content_version: 1
+content_version: 2
 ---
 
 ## Goal
@@ -84,10 +84,17 @@ A backfill is created with `POST /api/v2/backfills`. It answers with an `id`; th
 
 ```bash run
 backfill() {  # usage: backfill <dag_id> <none|failed|completed>
-  local id
-  id=$(af -X POST -H 'Content-Type: application/json' \
-    -d "{\"dag_id\":\"$1\",\"from_date\":\"2026-01-01T00:00:00Z\",\"to_date\":\"2026-01-03T00:00:00Z\",\"reprocess_behavior\":\"$2\",\"max_active_runs\":1}" \
-    "$AF/api/v2/backfills" | grep -o '"id":[0-9]*' | cut -d: -f2)
+  local id="" reply
+  # Airflow refuses a new backfill while one for the same DAG is still finishing; try again for a while.
+  for i in $(seq 1 30); do
+    reply=$(af -X POST -H 'Content-Type: application/json' \
+      -d "{\"dag_id\":\"$1\",\"from_date\":\"2026-01-01T00:00:00Z\",\"to_date\":\"2026-01-03T00:00:00Z\",\"reprocess_behavior\":\"$2\",\"max_active_runs\":1}" \
+      "$AF/api/v2/backfills")
+    id=$(echo "$reply" | grep -o '"id":[0-9]*' | head -n 1 | cut -d: -f2 || true)
+    [ -n "$id" ] && break
+    sleep 2
+  done
+  [ -n "$id" ] || { echo "Airflow did not start the backfill: $reply"; return 1; }
   for i in $(seq 1 180); do
     af "$AF/api/v2/backfills/$id" | grep -q '"completed_at":"' && break
     sleep 1
