@@ -241,6 +241,7 @@ Found a vulnerability? Please report it privately to the maintainers rather than
 
 ## Licence
 
-No licence has been chosen yet, so all rights are reserved by default. Before publishing, choose a licence for the code (for example MIT or Apache-2.0) and, separately, for the learning content (for example CC BY-SA 4.0), and add the `LICENSE` file(s).
+- **Code:** MIT licence ([`LICENSE`](LICENSE)).
+- **Learning content** (everything in `content/`): Creative Commons Attribution-ShareAlike 4.0 International ([`LICENSE-CONTENT`](LICENSE-CONTENT)). Verbatim quotations in case studies remain their authors' and are quoted with sources.
 
 The bundled Fira Sans font is licensed under the SIL Open Font License 1.1 (`web/public/fonts/OFL.txt`). Product names are trademarks of their respective owners and are used only to identify the technologies taught; no endorsement is implied.
