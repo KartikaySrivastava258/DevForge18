@@ -28,7 +28,7 @@ verification:
   details: Every step and the check script are run by DevForge's test suite with apache/airflow:slim-3.4.0-python3.12 (pinned by digest) in standalone mode, after the previous lessons, and their output is compared with this page. The reprocessing behaviours were checked against the Airflow 3.4.0 documentation on 2026-11-26. The check script is also run in an empty folder, where it must fail.
 owner: content-team
 last_reviewed: 2026-11-26
-content_version: 2
+content_version: 3
 ---
 
 ## Goal
@@ -95,10 +95,12 @@ backfill() {  # usage: backfill <dag_id> <none|failed|completed>
     sleep 2
   done
   [ -n "$id" ] || { echo "Airflow did not start the backfill: $reply"; return 1; }
-  for i in $(seq 1 180); do
+  # Wait for completed_at (slow machines need minutes); say so plainly if it never comes.
+  for i in $(seq 1 300); do
     af "$AF/api/v2/backfills/$id" | grep -q '"completed_at":"' && break
     sleep 1
   done
+  af "$AF/api/v2/backfills/$id" | grep -q '"completed_at":"' || { echo "backfill $id did not complete: $(af "$AF/api/v2/backfills/$id")"; return 1; }
   echo "backfill of $1 ($2) completed"
 }
 backfill daily_signups_v1 none

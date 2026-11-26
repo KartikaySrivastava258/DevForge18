@@ -266,6 +266,8 @@ Services first (so their last spans still reach the Collector), then the Collect
 kill "$(cat frontend.pid)" "$(cat backend.pid)"
 for pid in $(cat frontend.pid backend.pid); do while kill -0 "$pid" 2>/dev/null; do sleep 0.2; done; done
 kill "$(cat ../otel-jaeger-lab/otelcol.pid)" "$(cat ../otel-jaeger-lab/jaeger.pid)"
+# Wait until both have exited, so their ports are free for the next lesson.
+for pid in $(cat ../otel-jaeger-lab/otelcol.pid ../otel-jaeger-lab/jaeger.pid); do while kill -0 "$pid" 2>/dev/null; do sleep 0.2; done; done
 ```
 
 Jaeger kept the traces in memory, so they are gone when it stops. Real deployments configure a storage back end.

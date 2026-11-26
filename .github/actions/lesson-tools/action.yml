@@ -89,8 +89,9 @@ runs:
         tar -xzf "${j}.tar.gz" && sha256sum -c "${j}.sha256sum.txt" && sudo install -m 0755 "${j}/jaeger" /usr/local/bin/
         # Keep only the downloads in the cache, not what was unpacked from them.
         rm -rf tfbin otelcol "${p}" "${j}" "${a}"
-        terraform version | head -n 1; kind version; kubectl version --client | head -n 1
-        prometheus --version | head -n 1; alertmanager --version 2>&1 | head -n 1; otelcol --version; jaeger version 2> /dev/null | head -c 200; echo
+        # sed reads all of its input (head closes the pipe early, which pipefail turns into SIGPIPE, exit 141).
+        terraform version | sed -n 1p; kind version; kubectl version --client | sed -n 1p
+        prometheus --version | sed -n 1p; alertmanager --version 2>&1 | sed -n 1p; otelcol --version; jaeger version 2> /dev/null | sed -n 1p
     - name: Save tool downloads
       if: steps.downloads.outputs.cache-hit != 'true'
       uses: actions/cache/save@v6

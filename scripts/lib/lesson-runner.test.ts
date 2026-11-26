@@ -125,7 +125,7 @@ describe("background servers", () => {
     assert.deepEqual(lessonNeeds("nginx", 1), { api: false, apiPort: 0, timeoutMs: 60_000 });
     assert.deepEqual(lessonNeeds("nginx", 3), { api: false, apiPort: 0, timeoutMs: 60_000 }, "location matching needs no API");
     assert.equal(lessonNeeds("kubernetes", 1).timeoutMs, 900_000);
-    assert.equal(lessonNeeds("airflow", 3).timeoutMs, 420_000);
+    assert.equal(lessonNeeds("airflow", 3).timeoutMs, 600_000);
     assert.equal(lessonNeeds("mlflow", 1).timeoutMs, 300_000);
     assert.equal(lessonNeeds("langchain-llamaindex", 3).timeoutMs, 300_000);
     assert.equal(lessonNeeds("n8n", 3).timeoutMs, 300_000);

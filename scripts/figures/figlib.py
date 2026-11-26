@@ -54,6 +54,16 @@ def _yaml_str(s):
 def write(root, track, name, fig, alt, caption):
     folder = os.path.join(root, "content", "media", track)
     os.makedirs(folder, exist_ok=True)
+    # Never overwrite another figure: refuse if a step-through uses this name, or if the existing SVG's
+    # note (its first comment) belongs to a different figure. Regenerating the same figure is fine.
+    svg_path = os.path.join(folder, f"{name}.svg")
+    if os.path.exists(os.path.join(folder, f"{name}.steps.yaml")):
+        raise SystemExit(f"{track}/{name}: a step-through figure already uses this name; choose another")
+    if os.path.exists(svg_path):
+        with open(svg_path) as existing:
+            head = existing.read(600)
+        if f"<!-- {escape(fig.note)} -->" not in head:
+            raise SystemExit(f"{track}/{name}.svg already exists for a different figure; choose another name")
     with open(os.path.join(folder, f"{name}.svg"), "w") as f:
         f.write(fig.svg())
     with open(os.path.join(folder, f"{name}.yaml"), "w") as f:
