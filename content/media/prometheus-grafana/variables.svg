@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280">
+  <!-- How a dashboard variable works, from Grafana dashboards and variables. -->
+  <rect class="f-box-accent" x="10" y="30" width="220" height="100" rx="8"/>
+  <text class="f-small f-strong f-mono" x="120" y="54" text-anchor="middle">variable route</text>
+  <text class="f-small f-mono" x="120" y="78" text-anchor="middle">label_values(</text>
+  <text class="f-small f-mono" x="120" y="98" text-anchor="middle">devforge_http_requests</text>
+  <text class="f-small f-mono" x="120" y="118" text-anchor="middle">_total, route)</text>
+  <rect class="f-box" x="270" y="30" width="200" height="100" rx="8"/>
+  <text class="f-small f-strong" x="370" y="54" text-anchor="middle">Prometheus</text>
+  <text class="f-small f-mono" x="370" y="78" text-anchor="middle">/api/v1/label/route/</text>
+  <text class="f-small f-mono" x="370" y="98" text-anchor="middle">values</text>
+  <text class="f-small" x="370" y="118" text-anchor="middle">→ 5 routes</text>
+  <rect class="f-box-ok" x="510" y="30" width="200" height="100" rx="8"/>
+  <text class="f-small f-strong" x="610" y="54" text-anchor="middle">dropdown</text>
+  <text class="f-small f-mono" x="610" y="78" text-anchor="middle">/api/search ✓</text>
+  <text class="f-small f-mono" x="610" y="98" text-anchor="middle">/api/tracks ✓</text>
+  <text class="f-small" x="610" y="118" text-anchor="middle">…</text>
+  <rect class="f-box-warn" x="160" y="170" width="400" height="70" rx="8"/>
+  <text class="f-small f-mono" x="360" y="194" text-anchor="middle">route=~"$route"  becomes</text>
+  <text class="f-small f-mono" x="360" y="216" text-anchor="middle">route=~"(/api/tracks|/api/search)"</text>
+  <g>
+    <path class="f-arrow" d="M232 80 L260 80"/>
+    <polygon class="f-head" points="268,80 260,84.5 260,75.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M472 80 L500 80"/>
+    <polygon class="f-head" points="508,80 500,84.5 500,75.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M610 132 L507.6 165.5"/>
+    <polygon class="f-head" points="500,168 506.2,161.2 509.0,169.8"/>
+  </g>
+  <text class="f-small f-muted f-mono" x="360" y="264" text-anchor="middle">URL: ?var-route=/api/search&amp;var-route=/api/tracks</text>
+</svg>

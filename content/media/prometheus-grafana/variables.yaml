@@ -1,0 +1,4 @@
+alt: 'The variable route uses label_values(devforge_http_requests_total, route). Grafana asks Prometheus at /api/v1/label/route/values and gets 5 routes, which fill a dropdown where /api/search and /api/tracks are selected. Grafana then substitutes the selection into the panel query, so route=~"$route" becomes route=~"(/api/tracks|/api/search)". The selection is kept in the URL as var-route=/api/search and var-route=/api/tracks.'
+caption: 'Values from the data, substituted into every panel, kept in the URL.'
+credit: DevForge 18 content team
+licence: project-content
