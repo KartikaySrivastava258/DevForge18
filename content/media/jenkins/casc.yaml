@@ -1,0 +1,4 @@
+alt: 'A Dockerfile from Jenkins 2.580.2 LTS with a pinned plugins.txt, and a casc/jenkins.yaml file with users, security, executors and Job DSL jobs, together produce a Jenkins container with no setup wizard whose admin password comes from the environment variable ADMIN_PASSWORD. The REST API triggers builds with a crumb and gets 201. Configuration changes are made by editing the YAML, reviewing it and reloading. An identical Jenkins can be rebuilt in minutes; build history and credentials are backed up separately.'
+caption: 'Plugins in a Dockerfile, configuration in YAML: a Jenkins you can review, rebuild and throw away.'
+credit: DevForge 18 content team
+licence: project-content
