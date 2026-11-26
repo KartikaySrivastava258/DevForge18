@@ -1,0 +1,4 @@
+alt: 'A browser that trusts the certificate authority connects to Nginx over an encrypted connection. Nginx listens on 8089 for plain HTTP and answers with a 301 redirect to HTTPS, and on 8443 with TLS 1.2 or 1.3, using a certificate and private key, adding a Strict-Transport-Security header. Behind it, the backend is reached over plain HTTP on a private network: the encryption ends, or terminates, at Nginx.'
+caption: 'Nginx holds the certificate and decrypts the traffic, so applications behind it do not each need to handle TLS.'
+credit: DevForge 18 content team
+licence: project-content

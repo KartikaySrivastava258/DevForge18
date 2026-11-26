@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240">
+  <!-- TLS termination at Nginx, from TLS termination with a local certificate. -->
+  <rect class="f-box" x="10" y="70" width="140" height="80" rx="8"/>
+  <text class="f-small f-strong" x="80" y="100" text-anchor="middle">browser</text>
+  <text class="f-small" x="80" y="122" text-anchor="middle">trusts the CA</text>
+  <rect class="f-box-accent" x="240" y="30" width="240" height="160" rx="8"/>
+  <text class="f-small f-strong" x="360" y="56" text-anchor="middle">Nginx</text>
+  <text class="f-small f-mono" x="360" y="84" text-anchor="middle">:8089 HTTP → 301 to HTTPS</text>
+  <text class="f-small f-mono" x="360" y="110" text-anchor="middle">:8443 TLS 1.2 / 1.3</text>
+  <text class="f-small" x="360" y="136" text-anchor="middle">certificate + private key</text>
+  <text class="f-small" x="360" y="162" text-anchor="middle">adds Strict-Transport-Security</text>
+  <rect class="f-box-ok" x="570" y="70" width="140" height="80" rx="8"/>
+  <text class="f-small f-strong" x="640" y="100" text-anchor="middle">backend</text>
+  <text class="f-small" x="640" y="122" text-anchor="middle">plain HTTP inside</text>
+  <g>
+    <path class="f-arrow-accent" d="M152 100 L230 100"/>
+    <polygon class="f-head-accent" points="238,100 230,104.5 230,95.5"/>
+  </g>
+  <text class="f-small f-accent" x="195" y="90" text-anchor="middle">encrypted</text>
+  <g>
+    <path class="f-arrow" d="M482 110 L560 110"/>
+    <polygon class="f-head" points="568,110 560,114.5 560,105.5"/>
+  </g>
+  <text class="f-small f-muted" x="525" y="100" text-anchor="middle">private network</text>
+  <text class="f-small f-muted" x="360" y="222" text-anchor="middle">the encryption ends (terminates) at Nginx</text>
+</svg>
