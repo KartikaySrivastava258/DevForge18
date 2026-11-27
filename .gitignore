@@ -15,3 +15,5 @@ __pycache__/
 # Mini-project starters ship a placeholder .env on purpose (the project teaches keeping it out of Git).
 !content/projects/*/*/starter/.env
 .claude/worktrees/
+# Sample data shipped with mini-projects (the data/ rule above is for the server's own data folder).
+!content/projects/**/data/

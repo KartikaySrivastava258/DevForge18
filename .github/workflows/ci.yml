@@ -60,10 +60,16 @@ jobs:
           key: playwright-${{ steps.playwright.outputs.version }}-chromium-ubuntu-24.04
       - name: Install Chromium for end-to-end tests
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          npx playwright install --with-deps chromium
       - name: Install Chromium's system libraries (browser restored from cache)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+        # The runner image lists third-party apt repositories this job does not need; when one of them is
+        # unavailable (packages.microsoft.com answered 403 in run 45988691485), apt-get update fails the step.
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          npx playwright install-deps chromium
       - name: End-to-end tests
         run: npm run test:e2e
       - name: Upload screenshots on failure
