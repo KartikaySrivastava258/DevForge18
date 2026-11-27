@@ -1,0 +1,22 @@
+id: postgresql-to-kafka
+from: postgresql
+to: kafka
+title: The outbox pattern publishes PostgreSQL changes to Kafka
+summary: "A service cannot write to PostgreSQL and to Kafka in one transaction, so it writes the business row and an outbox row in the same database transaction, and a separate relay publishes unpublished outbox rows to Kafka. Publishing is at least once, so consumers deduplicate by event ID."
+flow: "Outbox rows (event ID, aggregate ID, type, JSON payload) go from a PostgreSQL table to a Kafka topic, keyed by aggregate ID, with the event ID in a record header."
+steps:
+  - "Create an outbox table with a bigserial id for relay order, a unique event_id, the aggregate_id used as the Kafka key, the event type, a jsonb payload and a published_at column that stays NULL until the event is sent."
+  - "Insert the business row and the outbox row in one transaction, and create the event ID together with the outbox row."
+  - "In the relay, select unpublished rows ORDER BY id FOR UPDATE SKIP LOCKED, publish them keyed by aggregate ID with the event ID in a header, flush, and only then set published_at."
+  - "In every consumer, skip events whose ID it has already handled, or make the effect idempotent."
+  - "Delete or archive published outbox rows on a schedule."
+pitfalls:
+  - "Dual writes: committing the order and then publishing can crash in between, leaving an order that consumers never hear about; publishing first leaves an event for an order that may not exist."
+  - "Publishing inside the database transaction (send, then commit): if the commit fails, the event describes something that never happened."
+  - "Deleting outbox rows before the publish is confirmed: mark or delete them only after flush() succeeded."
+  - "Random event IDs generated at publish time: a republish then gets a new ID and cannot be deduplicated."
+  - "Never cleaning the outbox: the table grows forever."
+practise:
+  - { kind: lesson, id: kafka-outbox-pattern }
+owner: content-team
+last_reviewed: 2026-11-27

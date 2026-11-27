@@ -1,0 +1,22 @@
+id: github-actions-to-terraform
+from: github-actions
+to: terraform
+title: Terraform plan review and apply in GitHub Actions
+summary: "Pull requests run terraform fmt, validate, test and plan, and the plan summary appears on the run page for reviewers. After a merge to main, the workflow saves the plan, waits for approval on a protected environment and applies exactly that saved plan, which Terraform refuses if the state changed in between."
+flow: "Changes under infra/ start plans; the plan summary goes to reviewers, and the saved plan file passes from the plan job to the apply job as a short-lived artifact."
+steps:
+  - "Run the workflow on pull requests and on pushes to main that change infra/**, with TF_IN_AUTOMATION set to 1."
+  - "Pin Terraform with hashicorp/setup-terraform, then run terraform fmt -check, init -input=false, validate and test."
+  - "Run terraform plan -detailed-exitcode -out=tfplan, treat exit code 1 as failure and 2 as changes to review, and write the plan's summary lines to $GITHUB_STEP_SUMMARY."
+  - "On pushes to main, upload tfplan with retention-days: 1; an apply job that needs the plan job runs in a production environment with required reviewers, downloads the file and runs terraform apply tfplan."
+  - "Use a concurrency group with cancel-in-progress: false so two applies never run at once."
+pitfalls:
+  - "Treating exit code 2 as failure, or every non-zero code as success."
+  - "terraform apply -auto-approve after approval: it plans again, so what runs may not be what was reviewed; apply the saved plan."
+  - "Local state in CI: the runner is thrown away after the job, and the state with it; use a remote backend."
+  - "Plan files kept for weeks or shared widely: they contain secrets in cleartext."
+  - "Long-lived cloud keys in repository secrets; prefer OIDC federation, scoped to the workflow and environment."
+practise:
+  - { kind: lesson, id: terraform-in-ci-with-plan-review }
+owner: content-team
+last_reviewed: 2026-11-27

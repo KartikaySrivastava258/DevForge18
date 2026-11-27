@@ -1,0 +1,22 @@
+id: docker-to-nginx
+from: docker
+to: nginx
+title: Running Nginx in a container with mounted content
+summary: "The official nginx image runs as a container with its port published on the host. Files written inside a container stay in its own writable layer and disappear with it, so the content to serve comes from a read-only bind mount, where edits on the host are served without a restart or a rebuild."
+flow: "Docker supplies the nginx image, the published port and the mounted site folder; Nginx serves the files it finds at /usr/share/nginx/html."
+steps:
+  - "Pull a pinned image such as nginx:1.27-alpine and run it detached with a name and a published port, for example -p 8081:80; each container needs a different host port."
+  - "Mount the site folder read-only with an absolute path: -v \"$PWD/site\":/usr/share/nginx/html:ro."
+  - "Edit the files on the host and request them again; the container serves the new content without a restart or rebuild."
+  - "Remove the container with docker rm -f when you are done; the image stays and can be used again."
+pitfalls:
+  - "Expecting changes made inside a container, for example with docker exec, to update the image or survive docker rm: they live only in that container's writable layer."
+  - "Writable bind mounts by default: if the container only reads files, add :ro."
+  - "Mounting over a path the image needs: the mount hides the image's files at that path."
+  - "Relative paths in bind mounts: a bare name like site is treated as a volume name; use \"$PWD/site\"."
+  - "Rebuilding an image and expecting running containers to change: recreate them to pick up the new image."
+practise:
+  - { kind: lesson, id: docker-images-vs-containers }
+  - { kind: lesson, id: docker-volumes-and-bind-mounts }
+owner: content-team
+last_reviewed: 2026-11-27

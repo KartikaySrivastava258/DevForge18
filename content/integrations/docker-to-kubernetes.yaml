@@ -1,0 +1,24 @@
+id: docker-to-kubernetes
+from: docker
+to: kubernetes
+title: Kubernetes runs container images as Pods
+summary: "A Deployment names a container image, and Kubernetes pulls it from a registry and runs it in Pods, replacing them gradually when the image changes. In the lessons, kind runs each Kubernetes node as a Docker container, so a whole cluster runs on one Docker engine."
+flow: "Image references (name and tag, or digest) in the Pod template; the image is pulled from a registry when Pods start. With kind, the cluster's nodes are themselves Docker containers."
+steps:
+  - "Create a kind cluster with the node image pinned by digest (kindest/node:v1.36.1@sha256:...), so the same cluster can be recreated later."
+  - "Create a Deployment from a pinned image tag such as nginx:1.27-alpine and wait for it with kubectl rollout status."
+  - "Roll out a new image with kubectl set image, and roll back with kubectl rollout undo if the new Pods never become ready."
+  - "When a Pod shows ErrImagePull or ImagePullBackOff, read its events with kubectl describe pod; \"not found\" means the image name or tag does not exist in the registry."
+  - "To give a kind cluster LoadBalancer Services and Gateways, run cloud-provider-kind as a container on the kind Docker network; it mounts the Docker socket to start proxy containers."
+pitfalls:
+  - "Unpinned images such as nginx:latest: every node may pull a different version; pin tags or digests."
+  - "Deploying latest: you cannot tell which version is running, and rollback cannot return to \"the previous latest\"."
+  - "Ignoring a stuck rollout, for example after a mistyped image tag: rollout status with a timeout in CI turns it into a visible failure."
+  - "Mounting the Docker socket casually: tools like cloud-provider-kind need it by design, but on shared or production machines it means full control of the host."
+practise:
+  - { kind: lesson, id: kubernetes-deployments-and-self-healing }
+  - { kind: lesson, id: kubernetes-services-and-rollouts }
+  - { kind: lab, id: kubernetes-debug-broken-deployments }
+  - { kind: lesson, id: kubernetes-ingress-and-gateway-api }
+owner: content-team
+last_reviewed: 2026-11-27

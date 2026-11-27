@@ -1,0 +1,23 @@
+id: git-github-to-jenkins
+from: git-github
+to: jenkins
+title: Jenkins builds pipelines and shared libraries from Git
+summary: "A Jenkinsfile committed to the repository defines the pipeline, so it is reviewed and versioned like the code it builds, and Jenkins fetches it from Git. Shared libraries are Git repositories too, loaded at a tag, while secrets stay in the Jenkins credentials store and never in the repository."
+flow: "Jenkins fetches the Jenkinsfile and the code from a Git repository, and loads shared library code from another Git repository at a tag or branch."
+steps:
+  - "Commit a Jenkinsfile and push the repository somewhere Jenkins can fetch it; a Jenkins running in Docker on a laptop cannot see folders on your disk."
+  - "Create a Pipeline job with Definition set to Pipeline script from SCM, SCM set to Git, the repository URL, the branch */main and the script path Jenkinsfile."
+  - "If GitHub cannot send webhooks to your Jenkins, for example one on a laptop, poll instead with triggers { pollSCM('H/5 * * * *') }."
+  - "Keep shared stages in a library repository, tag its releases, register it as a global library with a tag as default version, and load it with @Library('name') or @Library('name@tag')."
+  - "Store secrets as Jenkins credentials, bind them with credentials('id') in the stage that needs them, and pass the shell a single-quoted command."
+pitfalls:
+  - "Configuring jobs by clicking instead of using a Jenkinsfile: the configuration cannot be reviewed and is lost with the server."
+  - "Defaulting a shared library to a moving branch: defaultVersion: main means every merge changes every pipeline immediately; default to a tag."
+  - "Hard-coding a secret in the Jenkinsfile, which is committed to the repository; store it in Jenkins and reference it by ID."
+  - "Double-quoted Groovy strings around credentials: the secret is pasted into the command text, where the process list shows it and shell metacharacters in it are executed."
+practise:
+  - { kind: lesson, id: jenkins-pipeline-as-code }
+  - { kind: lesson, id: jenkins-shared-libraries }
+  - { kind: lab, id: jenkins-store-credentials-safely }
+owner: content-team
+last_reviewed: 2026-11-27

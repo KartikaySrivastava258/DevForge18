@@ -1,0 +1,20 @@
+id: github-actions-to-postman
+from: github-actions
+to: postman
+title: GitHub Actions runs Postman collections with Newman
+summary: "A workflow job starts the API, waits for its health check and runs the collection with a pinned Newman version against it. Newman's exit code passes or fails the job, and its JUnit report is kept as an artifact even when the tests fail."
+flow: "The collection, its data file and the base URL go to Newman; an exit code and a JUnit XML report come back to the workflow."
+steps:
+  - "Keep the collection and its data file in the repository, for example in a tests folder."
+  - "In the job, check out the code, set up Node.js, start the API in the background and wait until its health endpoint answers."
+  - "Run a pinned Newman (npx --yes newman@6.2.3) with --env-var baseUrl=... pointing at the CI copy of the API, -d for the data file, and --reporters cli,junit --reporter-junit-export."
+  - "Upload the JUnit report with actions/upload-artifact and if: always(), so it is kept when the tests fail."
+pitfalls:
+  - "Running against production: CI tests create and change data; point them at a throwaway or test environment."
+  - "Not waiting for the API: the first requests fail with \"connection refused\" while it is still starting."
+  - "Secrets in the collection or data file: pass tokens with --env-var from CI secrets, not in committed files."
+  - "Unpinned tool versions: npx newman without a version can change behaviour on any day."
+practise:
+  - { kind: lesson, id: postman-collections-in-ci }
+owner: content-team
+last_reviewed: 2026-11-27

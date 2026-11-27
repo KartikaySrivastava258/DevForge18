@@ -1,0 +1,21 @@
+id: postgresql-to-docker
+from: postgresql
+to: docker
+title: Running PostgreSQL in Docker containers
+summary: "The postgres image gives a disposable PostgreSQL server, configured through environment variables and reachable on a private Docker network or on a port bound to 127.0.0.1. Its data survives removing the container only when the data directory is in a named volume."
+flow: "Docker provides the server process, its network and its storage; clients connect over the Docker network or a published local port, or run psql inside the container with docker exec."
+steps:
+  - "Start postgres:16 with POSTGRES_PASSWORD set, publish the port only on 127.0.0.1 (-p 127.0.0.1:5432:5432), and mount a named volume at /var/lib/postgresql/data."
+  - "Wait for pg_isready before running SQL, then connect with docker exec -it <container> psql -U postgres."
+  - "For several servers, such as a primary and a replica, create a Docker network and let the containers reach each other by name without publishing any port."
+  - "Clean up with docker rm -f and docker network rm, and remove a named volume deliberately with docker volume rm."
+pitfalls:
+  - "Running a database container without a volume: removing or recreating the container deletes the data."
+  - "Mounting the volume at the wrong path: for postgres:16 it is /var/lib/postgresql/data; check the image's documentation for other versions."
+  - "Expecting docker rm to delete volumes: unused volumes accumulate; list them with docker volume ls and remove what you no longer need."
+practise:
+  - { kind: lesson, id: postgresql-replication-and-pooling }
+  - { kind: lesson, id: postgresql-tables-and-constraints }
+  - { kind: lesson, id: docker-volumes-and-bind-mounts }
+owner: content-team
+last_reviewed: 2026-11-27

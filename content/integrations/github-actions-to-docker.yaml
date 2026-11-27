@@ -1,0 +1,21 @@
+id: github-actions-to-docker
+from: github-actions
+to: docker
+title: GitHub Actions builds, tags and pushes container images
+summary: "A workflow builds the image once, tags it from the Git context, labels it with its source repository and commit, and pushes it to GitHub Container Registry. Pull requests only build; deployments use the digest the registry returns, which never changes."
+flow: "Code and Git metadata go in; an image with commit, branch and version tags and OCI labels goes to the registry, and its sha256 digest comes back for deployment."
+steps:
+  - "Check out the code, set up Buildx and let docker/metadata-action compute the tags (sha-<commit>, the branch, and version tags for v*.*.* release tags) and the OCI labels."
+  - "Sign in to ghcr.io with the job's GITHUB_TOKEN, and grant packages: write only to the job that pushes."
+  - "Build with docker/build-push-action, and push only when the event is not a pull request."
+  - "Record the digest that the build step outputs, for example in the job summary, and deploy that digest rather than a tag."
+pitfalls:
+  - "Deploying latest or main: those tags move; deploy the digest, or at least an immutable sha- tag."
+  - "Pushing from pull requests: fork pull requests must never get write tokens; build only."
+  - "packages: write for the whole workflow instead of the one job that pushes."
+  - "Rebuilding for each environment instead of building once and promoting the same digest."
+  - "No labels: without source and revision, nobody can tell which code an image contains."
+practise:
+  - { kind: lesson, id: github-actions-building-and-pushing-images }
+owner: content-team
+last_reviewed: 2026-11-27

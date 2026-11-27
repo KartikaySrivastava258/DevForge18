@@ -1,0 +1,22 @@
+id: mlflow-to-docker
+from: mlflow
+to: docker
+title: Running MLflow tracking and model servers in containers
+summary: "The official MLflow image, pinned by version and digest, runs both the tracking server and a model server started with mlflow models serve. A tracking server container is safe to replace only when its stores live outside it, and a model server resolves its alias when it starts, so promoting a model means restarting or redeploying its container."
+flow: "Containers on one Docker network: clients and the model server reach the tracking server by name through MLFLOW_TRACKING_URI; the model server downloads the aliased model at start-up and answers predictions on a published port."
+steps:
+  - "Pull the official image pinned to a version and digest (ghcr.io/mlflow/mlflow:v3.18.0@sha256:...) and run mlflow server --host 0.0.0.0 with the port published on 127.0.0.1."
+  - "Put the tracking server and its clients on one Docker network, and add the in-network host name to --allowed-hosts, because MLflow accepts only localhost by default."
+  - "Keep metadata in a database and artifacts in a mounted folder or a bucket, so the server container can be replaced without losing runs."
+  - "Start a model server container with mlflow models serve -m models:/<name>@<alias> and MLFLOW_TRACKING_URI, and wait for /ping before sending requests."
+  - "After moving the alias, restart the model server container (in production, redeploy it) so it loads the new version."
+pitfalls:
+  - "Default settings in a shared container: the SQLite file and the artifact folder live inside the container and disappear when it is replaced."
+  - "Assuming an alias change is instant: a running model server keeps the version it loaded at start-up."
+  - "Opening the server to the network without authentication: anyone who can reach it can read and delete experiments; restrict --allowed-hosts."
+practise:
+  - { kind: lesson, id: mlflow-tracking-runs }
+  - { kind: lesson, id: mlflow-tracking-server-and-stores }
+  - { kind: lesson, id: mlflow-serving-and-monitoring }
+owner: content-team
+last_reviewed: 2026-11-27

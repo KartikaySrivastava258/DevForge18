@@ -1,0 +1,25 @@
+id: jenkins-to-docker
+from: jenkins
+to: docker
+title: Jenkins runs in containers and builds on container agents
+summary: "The Jenkins controller runs from a pinned LTS image with /var/jenkins_home in a named volume, and can be built as a custom image with pinned plugins and Configuration as Code. Builds run on agents, such as an inbound agent container on the same Docker network, so the controller itself runs none."
+flow: "Docker supplies the controller image, its data volume and agent containers; the controller sends builds to agents chosen by label, and each agent container connects to the controller with its secret."
+steps:
+  - "Run a pinned LTS image such as jenkins/jenkins:2.580.2-lts-jdk21, publish its port on 127.0.0.1 only, and mount a named volume at /var/jenkins_home."
+  - "Wait until the login page answers 200 or 403, not just until the port is open, because Jenkins answers 503 while it starts."
+  - "For a reproducible controller, build an image from the pinned Jenkins image that installs plugins from plugins.txt with jenkins-plugin-cli and reads Configuration as Code from CASC_JENKINS_CONFIG."
+  - "Set the built-in node's executors to 0, declare an agent with labels, and start a jenkins/inbound-agent container on the controller's Docker network with the controller URL, the agent name and its secret."
+  - "Choose where each pipeline or stage runs with agent { label '...' }."
+pitfalls:
+  - "Using jenkins/jenkins:latest or :lts: the version changes underneath you; pin a release and upgrade deliberately."
+  - "No volume for /var/jenkins_home: removing the container deletes every job, credential and build record."
+  - "Unpinned plugins: plugins.txt without versions installs whatever is newest on the day you build."
+  - "Building on the built-in node: a malicious or buggy build can then reach everything Jenkins knows."
+  - "Treating the agent secret as harmless: it lets a machine connect as that agent; store it like a password."
+  - "Long-lived agents that collect state: workspaces and caches leak between builds; disposable container agents avoid that."
+practise:
+  - { kind: lesson, id: jenkins-in-docker }
+  - { kind: lesson, id: jenkins-configuration-as-code }
+  - { kind: lesson, id: jenkins-agents-and-labels }
+owner: content-team
+last_reviewed: 2026-11-27

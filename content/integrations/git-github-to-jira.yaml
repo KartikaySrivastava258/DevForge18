@@ -1,0 +1,22 @@
+id: git-github-to-jira
+from: git-github
+to: jira
+title: Work item keys link Git branches and commits to Jira
+summary: "Writing a Jira work item key such as DEV-12 in branch names, commit messages and pull request titles lets Jira show the linked code in the work item's development panel once the Git host is connected. Even without Jira, the keys let git log find all the code for one piece of work."
+flow: "Work item keys written in branch names, commit messages and pull request titles; Jira reads them to list the linked branches, commits and pull requests."
+steps:
+  - "Name the branch after the work item, for example DEV-12-reset-link."
+  - "Start every commit message with the key in capitals followed by what the commit does, for example \"DEV-12 Expire reset links after 30 minutes\", and put the key in the pull request title."
+  - "Connect the Git host, such as GitHub or Bitbucket, to Jira so the work item's development panel shows the linked work."
+  - "Add a commit-msg hook that refuses messages without a key, share it through core.hooksPath, and run the same check in CI to enforce it for everyone."
+  - "Use the keys to find work: git log --grep for one work item, or group the commits since the last release tag by key to write release notes."
+pitfalls:
+  - "Keys in lower case or with a typo (dev-12, DEV12): they link to nothing."
+  - "Only the branch has the key: branch names disappear after merging, so put the key in commit messages and the pull request title too."
+  - "Commit messages that are just the key: DEV-12 alone says nothing about the change."
+  - "Relying on hooks alone: hooks in .git/hooks are not committed, each clone must set core.hooksPath, and git commit --no-verify skips them."
+practise:
+  - { kind: lesson, id: jira-linking-work-to-code }
+  - { kind: lab, id: jira-enforce-work-item-keys }
+owner: content-team
+last_reviewed: 2026-11-27

@@ -1,0 +1,25 @@
+id: git-github-to-github-actions
+from: git-github
+to: github-actions
+title: Pushes and pull requests start GitHub Actions workflows
+summary: "Workflows stored in .github/workflows run when a push or a pull request reaches the repository on GitHub, and their result appears as a green tick or a red cross on the commit and in the pull request. A required status check in a branch protection rule or ruleset for main turns that result into a condition for merging."
+flow: "Git events (pushes to main, pull requests) start workflows; each job's result returns to the commit and the pull request as a status check."
+steps:
+  - "Commit the workflow file under .github/workflows/ with a name ending in .yml or .yaml, and list the events it runs on, for example push to main and pull_request."
+  - "Start each job with actions/checkout, because the runner starts without the repository's code."
+  - "Work on a branch, push it and open a pull request; the workflow runs and its result appears in the pull request's checks section."
+  - "In the repository settings, add a branch protection rule or ruleset for main that requires the CI job's status check to pass before merging."
+  - "Deploy only from main: run the deploy workflow on push to main, make the deploy job need the test job, and give it an environment with required reviewers."
+pitfalls:
+  - "Running CI but not requiring it: a red cross that does not block merging is easy to ignore."
+  - "Forgetting actions/checkout: later steps fail with \"file not found\" because the runner starts without your code."
+  - "Putting the workflow outside .github/workflows/, or without a .yml or .yaml extension."
+  - "Workflow-wide write permissions because one job needs them; declare permissions: contents: read and grant more only to that job."
+  - "Putting untrusted input such as a pull request title inside run; pass it through env so the shell treats it as data."
+practise:
+  - { kind: lesson, id: github-actions-first-workflow }
+  - { kind: lesson, id: github-actions-pull-requests-and-safety }
+  - { kind: lab, id: github-actions-protected-deployment }
+  - { kind: lesson, id: git-protected-branches-signing-secrets }
+owner: content-team
+last_reviewed: 2026-11-27

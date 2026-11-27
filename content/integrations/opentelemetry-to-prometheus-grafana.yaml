@@ -1,0 +1,20 @@
+id: opentelemetry-to-prometheus-grafana
+from: opentelemetry
+to: prometheus-grafana
+title: OpenTelemetry metrics in Prometheus, linked to logs and traces
+summary: "The OpenTelemetry Collector's prometheus exporter exposes a service's metrics on an endpoint Prometheus can scrape, and the service name becomes the job label. Because logs and traces carry the same service name, and log records carry trace IDs, an error seen in a Prometheus metric can be followed to the error log and then to the failing trace."
+flow: "OTLP metrics from the SDK pass through the Collector's prometheus exporter to a /metrics endpoint; service.name becomes the job label and service.instance.id becomes instance."
+steps:
+  - "Add a prometheus exporter with its own endpoint, for example 127.0.0.1:8889, to the Collector's metrics pipeline, next to the exporters for traces and logs."
+  - "Set OTEL_SERVICE_NAME once per service, so metrics, logs and traces share one name; in Prometheus it appears as the job label."
+  - "Count outcomes with a counter and an attribute such as outcome=ok or outcome=error; the dotted name checkout.requests appears in Prometheus as checkout_requests_total."
+  - "When the metric shows errors, look for error logs from the same service in that time window, take their trace ID and open that trace in Jaeger."
+pitfalls:
+  - "Different service names per signal: if metrics, logs and traces use different names, nothing joins."
+  - "Putting the trace ID in a metric label: every request becomes a new time series; use exemplars or logs for that link."
+  - "Errors only in logs: without setStatus(ERROR) and recordException, the trace looks healthy and a search for failed traces finds nothing."
+  - "Expecting exemplars by default: the Collector's Prometheus exporter passes them on only in OpenMetrics format, and the JavaScript SDK used in the lesson records none."
+practise:
+  - { kind: lesson, id: otel-correlating-signals }
+owner: content-team
+last_reviewed: 2026-11-27

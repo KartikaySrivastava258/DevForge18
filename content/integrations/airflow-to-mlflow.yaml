@@ -1,0 +1,22 @@
+id: airflow-to-mlflow
+from: airflow
+to: mlflow
+title: Airflow training pipelines that log to MLflow
+summary: "Airflow tasks prepare the data for a run's date and train a model that is logged to MLflow with its parameters, metric, a registered model version and lineage tags. With seeds, data partition and library versions fixed, re-running the same Airflow run reproduces the metric, and the tags record which code, data and Airflow run produced each model."
+flow: "Airflow passes the data folder and its hash between tasks as a small XCom; the train task sends parameters, metrics, lineage tags and the model to the tracking server named in MLFLOW_TRACKING_URI."
+steps:
+  - "Extend the Airflow image with exact versions of mlflow-skinny, scikit-learn and the libraries mlflow.sklearn needs, installed with Airflow's constraints file."
+  - "Point the Airflow tasks at the tracking server with MLFLOW_TRACKING_URI, for example http://mlflow:5000 on a shared Docker network."
+  - "In a prepare task, split the data with a fixed random_state, write it under the run's date (ds) and return the folder and a SHA-256 hash of the training file."
+  - "In a train task, set tags for the DAG ID, the Airflow run ID, the data hash and the code hash before training, then log the parameters, the metric and the model with registered_model_name."
+  - "Clear and re-run the Airflow run, and check that the new MLflow run has the same metric and the same hashes."
+pitfalls:
+  - "Unseeded randomness in data splits, model initialisation or sampling; fix every seed you can and log them as parameters."
+  - "Training on \"the latest\" data: a rerun then trains on different data; read data for the run's date or record a snapshot ID."
+  - "Unpinned libraries: a scikit-learn upgrade can change results; pin versions in the image."
+  - "Logging lineage at the end: if training crashes, the run should still say what it was trying; set tags first."
+  - "Registering every run as a candidate for production: promote with an alias only after an evaluation gate."
+practise:
+  - { kind: lesson, id: mlflow-reproducible-pipelines-with-airflow }
+owner: content-team
+last_reviewed: 2026-11-27

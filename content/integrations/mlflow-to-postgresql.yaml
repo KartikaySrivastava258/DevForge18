@@ -1,0 +1,20 @@
+id: mlflow-to-postgresql
+from: mlflow
+to: postgresql
+title: PostgreSQL as the MLflow backend store
+summary: "An MLflow tracking server keeps metadata (experiments, runs, parameters, metrics and the model registry) in a backend store database and files in a separate artifact store. With PostgreSQL as the backend store instead of the default SQLite file inside the server's container, the server can be replaced or upgraded without losing history."
+flow: "The tracking server writes experiments, runs, parameters, metrics and registry entries as rows in PostgreSQL; artifacts go to the artifact store, not to the database."
+steps:
+  - "Add a PostgreSQL driver to the MLflow image: the official image has none, and MLflow 3.18 uses psycopg (version 3) for postgresql:// URLs."
+  - "Start the server with --backend-store-uri postgresql://user:password@host/database; MLflow creates its tables on first start."
+  - "Keep artifacts out of the database with --artifacts-destination, a folder or a bucket, so clients need only MLFLOW_TRACKING_URI."
+  - "Have tools read runs through the REST API rather than MLflow's tables, because the schema changes between versions."
+  - "Before upgrading MLflow, back up the database and run mlflow db upgrade with the new version."
+pitfalls:
+  - "Default settings in a shared container: the SQLite database and the artifacts live inside the container and disappear with it."
+  - "Backing up only the database: runs then point at artifacts that no longer exist; back up both stores together."
+  - "Upgrading MLflow without mlflow db upgrade: the new server refuses an out-of-date schema."
+practise:
+  - { kind: lesson, id: mlflow-tracking-server-and-stores }
+owner: content-team
+last_reviewed: 2026-11-27
