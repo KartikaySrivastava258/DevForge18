@@ -8,6 +8,9 @@
 # project's containers, network, volumes and built images.
 # Prints PASS or FAIL per criterion; non-zero exit if any fails.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: ${1:-.} is not a folder"; exit 1; }
 # Node.js 22.23.5 on Alpine, used only to read the JSON configuration (tag pushed 2026-11-12).
 node_image="node:22.23.5-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a"
@@ -73,7 +76,7 @@ else fail "compose.yaml should define exactly the services web, api and redis (f
 unpinned=""
 for svc in web redis; do
   img="$(fact "image.$svc")"
-  echo "$img" | grep -qE '@sha256:[0-9a-f]{64}$' || unpinned="$unpinned $svc (${img:-no image})"
+  echo "$img" | grep_quiet -E '@sha256:[0-9a-f]{64}$' || unpinned="$unpinned $svc (${img:-no image})"
 done
 api_dockerfile="$(fact build.api)"
 if [ -n "$api_dockerfile" ] && [ -f "$api_dockerfile" ]; then

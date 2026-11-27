@@ -5,6 +5,9 @@
 # data/, loads the DAG, and runs it with `airflow dags test` for three Mondays — one with a parameter, one
 # with a missing input file. Prints PASS or FAIL per criterion; exits non-zero if any fails.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 src="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 airflow="apache/airflow:slim-3.4.0-python3.12@sha256:2d3e42b9de0eca948b9a869817068fedcb8a8eac9827b1e6215de3329d59335f"  # published 2026-11-06
 id="devforge-check-airflow-$$"
@@ -83,6 +86,6 @@ run2="$(timeout 300 docker exec "$id" airflow dags test weekly_library_report 20
 want2="$(expected 2026-02-16 3)"
 if [ "$(show library_2026-02-16.md)" = "$want2" ]; then pass "top_n=3 passed as run configuration lists three books for the week of 2026-02-09"; else fail "a run for 2026-02-16 with {\"top_n\": 3} should give:"$'\n'"$want2"$'\n'"got:"$'\n'"$(show library_2026-02-16.md | head -n 8)"; fi
 run3="$(timeout 300 docker exec "$id" airflow dags test weekly_library_report 2026-02-23 2>&1)"
-if echo "$run3" | grep -q 'state=failed' && echo "$run3" | grep -q '2026-02-19'; then pass "a week with a missing file (2026-02-19) fails and names the missing day"; else fail "the run for 2026-02-23 must fail and name the missing day 2026-02-19 (run state: $(echo "$run3" | grep -o 'state=[a-z_]*' | tail -n 1))"; fi
+if echo "$run3" | grep_quiet 'state=failed' && echo "$run3" | grep_quiet '2026-02-19'; then pass "a week with a missing file (2026-02-19) fails and names the missing day"; else fail "the run for 2026-02-23 must fail and name the missing day 2026-02-19 (run state: $(echo "$run3" | grep -o 'state=[a-z_]*' | tail -n 1))"; fi
 if [ "$(show latest.md)" = "$want2" ] && [ -z "$(show library_2026-02-23.md)" ]; then pass "the failed run changed neither latest.md nor wrote a report"; else fail "a failed run must leave latest.md as it was and write no library_2026-02-23.md"; fi
 finish

@@ -5,6 +5,9 @@
 # data/ and runs the DAG with `airflow dags test` for five days of uploads — clean, a few bad rows, too many bad
 # rows, duplicates, a partial upload — then reruns a day. Prints PASS or FAIL per criterion; non-zero exit on FAIL.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 src="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 airflow="apache/airflow:slim-3.4.0-python3.12@sha256:2d3e42b9de0eca948b9a869817068fedcb8a8eac9827b1e6215de3329d59335f"  # published 2026-11-06
 id="devforge-check-airflow-$$"
@@ -29,7 +32,7 @@ bag = DagBag("/opt/airflow/dags")
 print("@@", "ok" if "marks_quality" in bag.dags and not bag.import_errors else f"errors={dict(bag.import_errors)} dags={list(bag.dags)}")
 PY
 )"
-if echo "$errors" | grep -q '^@@ ok'; then pass "the DAG marks_quality loads without import errors"; else fail "the DAG marks_quality must load: $(echo "$errors" | grep '^@@' | cut -c4-200)"; finish; fi
+if echo "$errors" | grep_quiet '^@@ ok'; then pass "the DAG marks_quality loads without import errors"; else fail "the DAG marks_quality must load: $(echo "$errors" | grep '^@@' | cut -c4-200)"; finish; fi
 states=""
 for day in 2026-03-02 2026-03-03 2026-03-04 2026-03-05 2026-03-06; do
   out="$(timeout 300 docker exec "$id" airflow dags test marks_quality "$day" 2>&1)"

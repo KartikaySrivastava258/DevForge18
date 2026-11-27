@@ -5,6 +5,9 @@
 # data/, loads the DAG, runs it with `airflow dags test` for a day, and runs single tasks with `airflow tasks
 # test`. Prints PASS or FAIL per criterion and exits non-zero if any fails. The container is removed afterwards.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 src="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 airflow="apache/airflow:slim-3.4.0-python3.12@sha256:2d3e42b9de0eca948b9a869817068fedcb8a8eac9827b1e6215de3329d59335f"  # published 2026-11-06
 id="devforge-check-airflow-$$"
@@ -75,7 +78,7 @@ run="$(af dags test attendance_daily 2026-02-03)"
 report="$(docker exec "$id" cat /opt/airflow/data/reports/attendance_2026-02-03.json 2>/dev/null)"
 expected='{"CS-A": 90.0, "CS-B": 92.9, "EC-A": 88.0}'
 same() { python3 -c 'import json,sys; sys.exit(0 if json.loads(sys.argv[1]) == json.loads(sys.argv[2]) else 1)' "$1" "$2" 2> /dev/null; }
-if echo "$run" | grep -q 'state=success' && same "$report" "$expected"; then pass "a run for 2026-02-03 writes reports/attendance_2026-02-03.json with each class's percentage"; else fail "a run for 2026-02-03 should succeed and write $expected to reports/attendance_2026-02-03.json (run: $(echo "$run" | grep -o 'state=[a-z_]*' | tail -n 1); file: ${report:-missing})"; fi
+if echo "$run" | grep_quiet 'state=success' && same "$report" "$expected"; then pass "a run for 2026-02-03 writes reports/attendance_2026-02-03.json with each class's percentage"; else fail "a run for 2026-02-03 should succeed and write $expected to reports/attendance_2026-02-03.json (run: $(echo "$run" | grep -o 'state=[a-z_]*' | tail -n 1); file: ${report:-missing})"; fi
 af dags test attendance_daily 2026-02-03 > /dev/null
 again="$(docker exec "$id" cat /opt/airflow/data/reports/attendance_2026-02-03.json 2>/dev/null)"
 if same "$again" "$expected"; then pass "running the same day again gives the same file (idempotent)"; else fail "running 2026-02-03 again must replace the report with the same content (got: $(echo "$again" | head -c 120))"; fi
@@ -83,5 +86,5 @@ af dags test attendance_daily 2026-02-04 > /dev/null
 other="$(docker exec "$id" cat /opt/airflow/data/reports/attendance_2026-02-04.json 2>/dev/null)"
 if [ -n "$other" ] && ! same "$other" "$expected"; then pass "each day reads its own file (2026-02-04 gives a different report)"; else fail "a run for 2026-02-04 must read data/attendance/2026-02-04.csv and write attendance_2026-02-04.json"; fi
 missing="$(af tasks test attendance_daily extract 2026-02-09)"; status=$?
-if [ "$status" -ne 0 ] || echo "$missing" | grep -Eq 'state=failed|FileNotFoundError'; then pass "extract fails when the day's file is missing"; else fail "extract must fail when data/attendance/<ds>.csv does not exist"; fi
+if [ "$status" -ne 0 ] || echo "$missing" | grep_quiet -E 'state=failed|FileNotFoundError'; then pass "extract fails when the day's file is missing"; else fail "extract must fail when data/attendance/<ds>.csv does not exist"; fi
 finish

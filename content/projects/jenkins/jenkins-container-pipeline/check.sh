@@ -54,6 +54,9 @@ JOB_DSL="      multibranchPipelineJob('campus-notes-api') {
         }
       }"
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 for tool in docker git curl python3; do command -v "$tool" > /dev/null || { echo "FAIL: this check needs $tool"; exit 1; }; done
 P="devforge-check-jenkins-$$"
@@ -182,7 +185,7 @@ get() { curl -sg -u "$A" "$J$1"; }
 
 # Jenkins' own declarative linter (pipeline-model-definition), the same validation a build does first.
 lint_out="$(post -F "jenkinsfile=<$work/repo/Jenkinsfile" "$J/pipeline-model-converter/validate")"
-if echo "$lint_out" | grep -q "successfully validated"; then pass "Jenkins' declarative linter accepts the Jenkinsfile"; else fail "Jenkins' declarative linter rejects the Jenkinsfile: $(echo "$lint_out" | head -n 6 | tr '\n' ' ')"; fi
+if echo "$lint_out" | grep_quiet "successfully validated"; then pass "Jenkins' declarative linter accepts the Jenkinsfile"; else fail "Jenkins' declarative linter rejects the Jenkinsfile: $(echo "$lint_out" | head -n 6 | tr '\n' ' ')"; fi
 
 # Runs the job and waits for its result; prints the result (SUCCESS, UNSTABLE, FAILURE, ABORTED or TIMEOUT).
 build() { # <number> [parameters as name=value ...]
@@ -237,7 +240,7 @@ scan() { post "$J/job/$JOB/build?delay=0" > /dev/null; }
 
 froms="$(grep -iE '^FROM ' "$work/repo/Dockerfile" 2> /dev/null)"
 if [ -z "$froms" ]; then fail "there is no Dockerfile"
-elif echo "$froms" | grep -viq '@sha256:[0-9a-f]\{64\}'; then fail "pin every base image by digest (FROM image:tag@sha256:…), so a rebuild of the same commit uses the same base: $(echo "$froms" | grep -vi '@sha256:' | head -n 1)"
+elif echo "$froms" | grep_quiet -vi '@sha256:[0-9a-f]\{64\}'; then fail "pin every base image by digest (FROM image:tag@sha256:…), so a rebuild of the same commit uses the same base: $(echo "$froms" | grep -vi '@sha256:' | head -n 1)"
 else pass "every base image in the Dockerfile is pinned by digest"; fi
 
 # A feature branch next to main; both are discovered and built by the multibranch job.
@@ -278,7 +281,7 @@ if [ -n "$d_sha" ]; then
     for _ in $(seq 1 40); do state="$(docker inspect --format '{{.State.Health.Status}}' "$P-app" 2> /dev/null)"; [ "$state" = healthy ] && break; sleep 1; done
     body="$(docker exec "$P-app" node -e "fetch('http://127.0.0.1:3000/health').then((r) => r.text()).then(console.log)" 2> /dev/null)"
     leftovers="$(docker exec "$P-app" sh -c 'ls -d /app/test /app/node_modules/.cache /app/Jenkinsfile 2> /dev/null')"
-    if [ "$state" = healthy ] && echo "$body" | grep -q '"ok"'; then pass "the pushed image starts, its HEALTHCHECK reports healthy and /health answers ok"
+    if [ "$state" = healthy ] && echo "$body" | grep_quiet '"ok"'; then pass "the pushed image starts, its HEALTHCHECK reports healthy and /health answers ok"
     else fail "the pushed image should become healthy and answer /health (health: ${state:-none}; logs: $(docker logs "$P-app" 2>&1 | tail -n 2 | tr '\n' ' '))"; fi
     if [ -z "$leftovers" ]; then pass "the image contains the application, not the tests or the Jenkinsfile (.dockerignore)"; else fail "keep tests and CI files out of the image (found: $(echo "$leftovers" | tr '\n' ' '))"; fi
     docker logout "$REGISTRY" > /dev/null 2>&1; unset DOCKER_CONFIG
@@ -289,21 +292,21 @@ fi
 
 # Credentials: in Jenkins only, never on a command line, never through Groovy, not left behind.
 leak=""
-echo "$cm" | grep -q -- "--password via the CLI is insecure" && leak="$leak docker login -p (use --password-stdin);"
-echo "$cm" | grep -q "Groovy String interpolation" && leak="$leak a secret passed to sh through Groovy string interpolation (use single quotes);"
-echo "$cm$cf" | grep -q "$REG_PASSWORD" && leak="$leak the password appears in the console;"
+echo "$cm" | grep_quiet -- "--password via the CLI is insecure" && leak="$leak docker login -p (use --password-stdin);"
+echo "$cm" | grep_quiet "Groovy String interpolation" && leak="$leak a secret passed to sh through Groovy string interpolation (use single quotes);"
+echo "$cm$cf" | grep_quiet "$REG_PASSWORD" && leak="$leak the password appears in the console;"
 grep -q "$REG_PASSWORD" "$work/repo/Jenkinsfile" && leak="$leak the password is written in the Jenkinsfile;"
 if [ "$rm_" != SUCCESS ]; then fail "the credential handling can only be judged on a successful main build"
 elif [ -n "$leak" ]; then fail "registry credentials:$leak"
-elif ! echo "$cm" | grep -q "^+ docker login"; then fail "log in to the registry with the Jenkins credential registry-push (withCredentials and docker login --password-stdin)"
+elif ! echo "$cm" | grep_quiet "^+ docker login"; then fail "log in to the registry with the Jenkins credential registry-push (withCredentials and docker login --password-stdin)"
 else pass "the registry password comes from the Jenkins credential, through --password-stdin, and never appears in the log"; fi
 dockercfg="$(docker exec "$P-jenkins" cat /var/jenkins_home/.docker/config.json 2> /dev/null)"
-if echo "$dockercfg" | grep -q "$REGISTRY"; then fail "the build left a registry login behind in Jenkins' ~/.docker/config.json: docker logout in post { always { … } }"; else pass "no registry login is left behind on the agent"; fi
+if echo "$dockercfg" | grep_quiet "$REGISTRY"; then fail "the build left a registry login behind in Jenkins' ~/.docker/config.json: docker logout in post { always { … } }"; else pass "no registry login is left behind on the agent"; fi
 left="$(docker ps -a --format '{{.Names}} {{.Image}}' | grep " $REGISTRY/" | grep -v "^$P-")"
 if [ -z "$left" ]; then pass "no smoke-test container is left running"; else fail "the pipeline left containers behind: $(echo "$left" | tr '\n' ' ')"; fi
 
 # The feature branch is built and tested, but not pushed.
-if [ "$rf" = SUCCESS ] && ! tags | grep -qx "sha-${feature_commit:0:7}" && [ "$(digest_of main)" = "$d_main" ]; then pass "the feature branch builds and tests the image but pushes nothing"
+if [ "$rf" = SUCCESS ] && ! tags | grep_quiet -x "sha-${feature_commit:0:7}" && [ "$(digest_of main)" = "$d_main" ]; then pass "the feature branch builds and tests the image but pushes nothing"
 elif [ "$rf" != SUCCESS ]; then fail "the feature-search branch should build successfully (it ended $rf)"
 else fail "the feature-search branch pushed to the registry: push only from main (when { branch 'main' })"; fi
 
@@ -314,7 +317,7 @@ if [ "$rm_" = SUCCESS ]; then
   broken="$(g rev-parse HEAD)"
   scan
   r2="$(branch_result main 2)"
-  if [ "$r2" != SUCCESS ] && ! tags | grep -qx "sha-${broken:0:7}" && [ "$(digest_of main)" = "$d_main" ]; then pass "with a failing test, main build #2 is $(echo "$r2" | tr "[:upper:]" "[:lower:]") and nothing new is pushed"
+  if [ "$r2" != SUCCESS ] && ! tags | grep_quiet -x "sha-${broken:0:7}" && [ "$(digest_of main)" = "$d_main" ]; then pass "with a failing test, main build #2 is $(echo "$r2" | tr "[:upper:]" "[:lower:]") and nothing new is pushed"
   else fail "with a failing test, main build #2 ended $r2 and the registry has: $(tags | tr '\n' ' ') — failing tests must stop the pipeline before docker build and push"; fi
 else
   fail "the failing-test scenario runs only after main build #1 succeeds"

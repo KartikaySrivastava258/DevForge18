@@ -8,6 +8,9 @@
 # response. Removes everything it started.
 # Prints PASS or FAIL per criterion; non-zero exit if any fails.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="${1:-.}"
 # Nginx 1.24.0 on Alpine, the version the Nginx lessons were recorded with (tag pushed 2024-04-18).
 nginx_image="nginx:1.24.0-alpine@sha256:77e5d4a6ad906c5d3793764085706577fa705b1dc6f244ea0241c4b5e2155385"
@@ -61,7 +64,7 @@ for svc in users orders; do
     "$node_image" node -e "$echo_js" > /dev/null || { fail "could not start the $svc service in Docker"; finish; }
 done
 for svc in users orders; do
-  for _ in $(seq 1 50); do docker logs "$id-$svc" 2>&1 | grep -q ready && break; sleep 0.2; done
+  for _ in $(seq 1 50); do docker logs "$id-$svc" 2>&1 | grep_quiet ready && break; sleep 0.2; done
 done
 
 # copy_in CONTAINER — the configuration, the site and the optional snippets, where compose.yaml mounts them.
@@ -151,7 +154,7 @@ if [ "$host_ok" = 1 ] && [[ "$xff" =~ ^203\.0\.113\.7,\ [0-9.]+$ ]] && [ "$(fiel
 else fail "the services should receive Host, X-Forwarded-For with the client appended, and X-Forwarded-Proto (got host=\"$(field host)\", x-forwarded-for=\"$xff\", x-forwarded-proto=\"$(field x-forwarded-proto)\")"; fi
 
 get /api/v1/payments/3; sec "/api/v1/payments/3"
-if [ "$code" = 404 ] && ! is_index && [ -z "$(field service)" ] && [[ "$(header content-type)" == application/json* ]] && echo "$body" | grep -q '"error"'; then
+if [ "$code" = 404 ] && ! is_index && [ -z "$(field service)" ] && [[ "$(header content-type)" == application/json* ]] && echo "$body" | grep_quiet '"error"'; then
   pass "an unknown API path gets a JSON 404 from Nginx — not index.html, not a service"
 else fail "/api/v1/payments/3 should get 404 with a JSON body such as {\"error\":\"not found\"} (got HTTP $code, $(header content-type)$(is_index && echo ', index.html')$( [ -n "$(field service)" ] && echo ", from $(field service)"))"; fi
 

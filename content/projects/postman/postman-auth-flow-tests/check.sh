@@ -8,6 +8,9 @@
 # and fail, with a failed assertion, against every broken one. Prints PASS or FAIL per criterion; non-zero exit
 # if any fails. The container is removed at the end.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="${1:-.}"
 # node:22.23.5-alpine, digest as listed on Docker Hub (pushed 2026-11-12).
 image="node:22.23.5-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a"
@@ -226,7 +229,7 @@ else fail "the suite makes $(get correct assertions) assertions; check status co
 
 # 2. Coverage: what the API saw during the correct run.
 apilog="$(docker exec "$name" cat /check/api-correct.log)"
-covers() { if echo "$apilog" | grep -Eq "$2"; then pass "the suite sends a request to $1"; else fail "the suite must send a request to $1 — no such request reached the API"; fi; }
+covers() { if echo "$apilog" | grep_quiet -E "$2"; then pass "the suite sends a request to $1"; else fail "the suite must send a request to $1 — no such request reached the API"; fi; }
 covers "/status with the API key (→ 200)" '^GET /status -> 200$'
 covers "/status without a valid API key (→ 401 invalid_api_key)" '^GET /status -> 401 invalid_api_key$'
 covers "the token endpoint with the client's ID and secret (→ 200)" '^POST /oauth/token -> 200$'

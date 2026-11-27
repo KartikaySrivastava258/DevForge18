@@ -5,6 +5,9 @@
 # rule with valid and invalid data, checks the report function, the query plan of the API's main query and the
 # API role's privileges, and removes the container. Prints PASS or FAIL per criterion; non-zero exit if any fails.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="${1:-.}"
 image="postgres:16.15-bookworm@sha256:5264710be20f409750ac6dc4e5706dcef929c87e241605463f0f9aefa932a8d9"
 name="devforge-check-pg-$$"
@@ -53,7 +56,7 @@ fi
 rejects() {
   local out
   if out="$(printf 'BEGIN;\n%s;\nROLLBACK;\n' "$3" | q expenses_check 2>&1)"; then fail "$1 (the database accepted it)"
-  elif echo "$out" | grep -q "$2"; then pass "$1"
+  elif echo "$out" | grep_quiet "$2"; then pass "$1"
   else fail "$1 (rejected, but not by a constraint: $(echo "$out" | head -n 1))"; fi
 }
 accepts() {
@@ -87,7 +90,7 @@ if [ "$report" = "$expected" ]; then pass "monthly_category_totals gives one row
 
 # The API's main query on a realistically sized table: 1,000 users with 100 expenses each.
 plan="$(printf "BEGIN;\nINSERT INTO users (email, display_name) SELECT 'load' || g || '@test.example', 'Load ' || g FROM generate_series(1, 1000) g;\nINSERT INTO categories (user_id, name) SELECT id, 'General' FROM users WHERE email LIKE 'load%%';\nINSERT INTO expenses (user_id, category_id, amount, currency, spent_on) SELECT c.user_id, c.id, 1 + (g %% 500), 'INR', DATE '2025-01-01' + (g * 7 + c.user_id) %% 365 FROM categories c, generate_series(1, 100) g WHERE c.name = 'General';\nANALYZE;\nSELECT id AS uid FROM users WHERE email = 'load42@test.example' \\gset\nEXPLAIN (COSTS OFF) SELECT id, amount, currency, spent_on, note FROM expenses WHERE user_id = :uid ORDER BY spent_on DESC, id DESC LIMIT 20;\nROLLBACK;\n" | q expenses_check 2>&1)"
-if echo "$plan" | grep -Eq 'Index (Only )?Scan( Backward)? using [^ ]+ on expenses' && ! echo "$plan" | grep -Eq 'Sort|Seq Scan'; then
+if echo "$plan" | grep_quiet -E 'Index (Only )?Scan( Backward)? using [^ ]+ on expenses' && ! echo "$plan" | grep_quiet -E 'Sort|Seq Scan'; then
   pass "the latest-expenses query reads the newest 20 rows from an index, without a sort or a full scan"
 else
   fail "the latest-expenses query should use an index that matches WHERE user_id and ORDER BY spent_on DESC, id DESC; plan was: $(echo "$plan" | tr '\n' ' ' | tr -s ' ')"
@@ -101,6 +104,6 @@ else
 fi
 for stmt in "DELETE FROM users" "UPDATE users SET display_name = 'x'" "TRUNCATE expenses" "DROP TABLE expenses"; do
   out="$(as_api "$stmt")"
-  if echo "$out" | grep -Eq 'permission denied|must be owner'; then pass "expense_api cannot $stmt"; else fail "expense_api must not be allowed to $stmt (got: $(echo "${out:-accepted}" | head -n 1))"; fi
+  if echo "$out" | grep_quiet -E 'permission denied|must be owner'; then pass "expense_api cannot $stmt"; else fail "expense_api must not be allowed to $stmt (got: $(echo "${out:-accepted}" | head -n 1))"; fi
 done
 finish

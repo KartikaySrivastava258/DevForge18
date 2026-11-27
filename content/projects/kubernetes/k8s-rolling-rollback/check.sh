@@ -6,6 +6,9 @@
 # first a good release (nginx 1.27 -> 1.28), then a broken build that starts but never answers (the pause
 # image). Prints PASS or FAIL per criterion, exits non-zero if any fails, deletes the cluster. About 3 minutes.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 node_image="kindest/node:v1.36.1@sha256:3489c7674813ba5d8b1a9977baea8a6e553784dab7b84759d1014dbd78f7ebd5"  # kind v0.32.0 release notes
 client_image="busybox:1.37@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec"      # published 2026-10-28
@@ -88,7 +91,7 @@ settle
 after="$(sample 10 0.2)"
 if [ "$(echo "$after" | grep -c '^nginx/1\.28\.')" -eq 10 ]; then pass "after the release the Service serves only the new version: $(echo "$after" | summary)"
 else fail "after the release every request should be answered by nginx 1.28 (got: $(echo "$after" | summary))"; fi
-if kubectl rollout history deployment/web 2> /dev/null | grep -q '1\.28'; then pass "kubectl rollout history records the release in CHANGE-CAUSE"
+if kubectl rollout history deployment/web 2> /dev/null | grep_quiet '1\.28'; then pass "kubectl rollout history records the release in CHANGE-CAUSE"
 else fail "kubectl rollout history shows no change-cause for the release — set the kubernetes.io/change-cause annotation in release.sh"; fi
 
 # 4. A broken release: watch capacity and traffic while it is stuck, then let release.sh react.
@@ -96,7 +99,7 @@ ROLLOUT_TIMEOUT=40s timeout 120 bash "$dir/release.sh" "$broken_image" > "$tmp/b
 release_pid=$!
 for _ in $(seq 1 30); do
   kubectl get pods -l "$(jp deployment/web '{.spec.selector.matchLabels}' | tr -d '{}"' | tr ':' '=')" \
-    -o jsonpath='{range .items[*]}{.spec.containers[0].image} {.status.phase}{"\n"}{end}' 2> /dev/null | grep -q "^registry.k8s.io/pause.* Running" && break
+    -o jsonpath='{range .items[*]}{.spec.containers[0].image} {.status.phase}{"\n"}{end}' 2> /dev/null | grep_quiet "^registry.k8s.io/pause.* Running" && break
   sleep 1
 done
 min_ready="$replicas"
@@ -109,7 +112,7 @@ done
 broken_endpoints=0
 while read -r pod ready; do
   [ "$ready" = true ] || continue
-  jp "pod/$pod" '{.spec.containers[0].image}' | grep -q pause && broken_endpoints=$((broken_endpoints + 1))
+  jp "pod/$pod" '{.spec.containers[0].image}' | grep_quiet pause && broken_endpoints=$((broken_endpoints + 1))
 done <<< "$(kubectl get endpointslices -l kubernetes.io/service-name=web -o jsonpath='{range .items[*].endpoints[*]}{.targetRef.name} {.conditions.ready}{"\n"}{end}' 2> /dev/null)"
 if [ "$(echo "$during" | grep -c '^nginx/1\.28\.')" -eq 20 ] && [ "$broken_endpoints" -eq 0 ]; then
   pass "during the broken release the Service sent no traffic to the broken Pods: $(echo "$during" | summary)"

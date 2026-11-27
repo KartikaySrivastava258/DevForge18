@@ -6,6 +6,9 @@
 # one and makes one leak memory, and reads from the Pod status and events what Kubernetes did. Prints PASS or
 # FAIL per criterion, exits non-zero if any fails, deletes the cluster. About three minutes.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 node_image="kindest/node:v1.36.1@sha256:3489c7674813ba5d8b1a9977baea8a6e553784dab7b84759d1014dbd78f7ebd5"  # kind v0.32.0 release notes
 client_image="busybox:1.37@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec"      # published 2026-10-28
@@ -83,7 +86,7 @@ if [ -z "$missing" ]; then pass "the container has a startup, a readiness and a 
 # 4. The Service answers.
 kubectl wait --for=condition=Ready pod/client --timeout=60s > /dev/null 2>&1
 get() { kubectl exec client -- wget -qO- -T 3 http://grades/cgi-bin/grades 2> /dev/null; }
-if get | grep -q '"served_by"'; then pass "the Service grades answers GET /cgi-bin/grades"; else fail "the Service grades does not answer GET /cgi-bin/grades — are Pods marked ready before they listen (no readiness probe)?"; fi
+if get | grep_quiet '"served_by"'; then pass "the Service grades answers GET /cgi-bin/grades"; else fail "the Service grades does not answer GET /cgi-bin/grades — are Pods marked ready before they listen (no readiness probe)?"; fi
 
 # 5. Trouble, on three different Pods at once.
 read -r -a pods <<< "$(kubectl get pods -l app=grades --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' 2> /dev/null)"
@@ -145,6 +148,6 @@ for _ in $(seq 1 60); do
     [ "$(kubectl get endpointslices -l kubernetes.io/service-name=grades -o jsonpath='{range .items[*].endpoints[*]}{.conditions.ready}{"\n"}{end}' | grep -c true)" -eq "$replicas" ] && { ok=true; break; }
   sleep 1
 done
-if [ "$ok" = true ] && get | grep -q '"served_by"'; then pass "afterwards all $replicas Pods are ready and in the Service again"
+if [ "$ok" = true ] && get | grep_quiet '"served_by"'; then pass "afterwards all $replicas Pods are ready and in the Service again"
 else fail "the Pods did not all recover within 60 s (ready $(jp deployment/grades '{.status.readyReplicas}') of $replicas)"; fi
 finish

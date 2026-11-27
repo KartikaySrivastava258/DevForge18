@@ -6,6 +6,9 @@
 # validation, terraform test, input validation, plan/apply/plan/destroy on a temporary copy, and the CI workflow
 # (actionlint, triggers, permissions, SHA-pinned actions, the Terraform steps). Prints PASS or FAIL per criterion.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 tf_image="hashicorp/terraform:1.15.6@sha256:adae45661e45d3c88beef071ee1277b4621cea73517aae7f0844657c8e85f641"        # published 2026-06-10
 actionlint_image="rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667"  # published 2026-03-30
@@ -60,7 +63,7 @@ fi
 init_ok=false
 for _ in 1 2 3; do  # provider downloads can fail on a flaky network; try three times
   if out="$(tf init -input=false -no-color -lockfile=readonly 2>&1)"; then init_ok=true; break; fi
-  echo "$out" | grep -q "Failed to install provider\|could not query provider" || break
+  echo "$out" | grep_quiet "Failed to install provider\|could not query provider" || break
   sleep 3
 done
 if [ "$init_ok" = true ]; then pass "terraform init -lockfile=readonly succeeds: the downloaded provider matches the committed checksums"
@@ -82,7 +85,7 @@ else fail "terraform test does not pass: ${summary:-no tests found in infra/test
 if out="$(tf plan -input=false -no-color -var environment=staging 2>&1)"; then pass "plan succeeds with environment=staging"
 else fail "plan with -var environment=staging fails: $(echo "$out" | oneline)"; finish; fi
 if out="$(tf plan -input=false -no-color -var environment=qa 2>&1)"; then fail "plan accepts environment=qa — validate var.environment (dev, staging, prod)"
-elif echo "$out" | grep -q "Invalid value for variable" && echo "$out" | grep -q 'var\.environment'; then pass "validation refuses environment=qa"
+elif echo "$out" | grep_quiet "Invalid value for variable" && echo "$out" | grep_quiet 'var\.environment'; then pass "validation refuses environment=qa"
 else fail "environment=qa fails, but not because of validation on var.environment: $(echo "$out" | oneline)"; fi
 if out="$(tf apply -auto-approve -input=false -no-color -var environment=staging 2>&1)"; then
   files="$(tf output -json config_files 2> /dev/null | tr -d ' \n')"
@@ -107,24 +110,24 @@ if out="$(docker run --rm "${as_user[@]}" -v "$dir:/repo:ro" -w /repo "$actionli
 else fail "actionlint: $(echo "$out" | head -n 4 | tr '\n' ' ')"; fi
 all="$(cd "$dir" && cat $wfs)"
 code_only="$(echo "$all" | sed 's/#.*$//')"
-if echo "$code_only" | grep -Eq '^ *pull_request(_target)?:|^on: *\[?.*pull_request'; then pass "the workflow runs on pull requests"
+if echo "$code_only" | grep_quiet -E '^ *pull_request(_target)?:|^on: *\[?.*pull_request'; then pass "the workflow runs on pull requests"
 else fail "run the workflow on pull_request, so every change is checked before it is merged"; fi
 unpinned="$(echo "$code_only" | grep -E '^ *-? *uses:' | sed 's/.*uses: *//; s/["'"'"']//g' | grep -v '^\./' | grep -Ev '@[0-9a-f]{40} *$' | tr '\n' ' ')"
 uses="$(echo "$code_only" | grep -cE '^ *-? *uses:')"
 if [ "$uses" -gt 0 ] && [ -z "$unpinned" ]; then pass "all $uses actions are pinned to full commit SHAs"
 else fail "pin every action to a full 40-character commit SHA (with the version in a comment): ${unpinned:-no actions used}"; fi
 perms="$(echo "$code_only" | grep -E '^ *(permissions: *write-all|[a-z-]+: *write) *$' | tr -s ' ' | tr '\n' ' ')"
-if echo "$code_only" | grep -Eq '^permissions:' && echo "$code_only" | grep -Eq '^ *contents: *read' && [ -z "$perms" ]; then pass "the token is read-only (permissions: contents: read)"
+if echo "$code_only" | grep_quiet -E '^permissions:' && echo "$code_only" | grep_quiet -E '^ *contents: *read' && [ -z "$perms" ]; then pass "the token is read-only (permissions: contents: read)"
 else fail "set top-level permissions to contents: read and grant nothing more (found: ${perms:-no permissions block})"; fi
 missing=""
-echo "$code_only" | grep -q 'terraform fmt -check' || missing="$missing fmt-check"
-echo "$code_only" | grep -q 'terraform init.*-lockfile=readonly' || missing="$missing init-lockfile=readonly"
-echo "$code_only" | grep -q 'terraform validate' || missing="$missing validate"
-echo "$code_only" | grep -q 'terraform test' || missing="$missing test"
-echo "$code_only" | grep -q 'terraform plan' || missing="$missing plan"
-echo "$code_only" | grep -Eq 'terraform_version: *"?1\.15\.6"?|hashicorp/terraform:1\.15\.6' || missing="$missing terraform-1.15.6"
+echo "$code_only" | grep_quiet 'terraform fmt -check' || missing="$missing fmt-check"
+echo "$code_only" | grep_quiet 'terraform init.*-lockfile=readonly' || missing="$missing init-lockfile=readonly"
+echo "$code_only" | grep_quiet 'terraform validate' || missing="$missing validate"
+echo "$code_only" | grep_quiet 'terraform test' || missing="$missing test"
+echo "$code_only" | grep_quiet 'terraform plan' || missing="$missing plan"
+echo "$code_only" | grep_quiet -E 'terraform_version: *"?1\.15\.6"?|hashicorp/terraform:1\.15\.6' || missing="$missing terraform-1.15.6"
 if [ -z "$missing" ]; then pass "the workflow runs Terraform 1.15.6: fmt -check, init -lockfile=readonly, validate, test and plan"
 else fail "the workflow is missing:$missing"; fi
-if echo "$code_only" | grep -Eq 'terraform apply.*-auto-approve|terraform apply *$'; then fail "the workflow applies without a reviewed saved plan — pull requests only plan"
+if echo "$code_only" | grep_quiet -E 'terraform apply.*-auto-approve|terraform apply *$'; then fail "the workflow applies without a reviewed saved plan — pull requests only plan"
 else pass "the workflow never runs terraform apply -auto-approve"; fi
 finish

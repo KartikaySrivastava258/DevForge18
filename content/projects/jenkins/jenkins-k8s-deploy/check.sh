@@ -43,7 +43,7 @@ BEFORE_CASC='
   docker run -d --name "$P-cm" --network "$P-net" -v "$work/kube:/k:ro" "$CM_IMAGE" kube-controller-manager --kubeconfig=/k/kubeconfig \
     --service-account-private-key-file=/k/sa.key --leader-elect=false > /dev/null
   KPORT="$(docker port "$P-api" 6443/tcp | head -n 1 | sed "s/.*://")"
-  for _ in $(seq 1 60); do curl -sk -H "Authorization: Bearer $KTOKEN" "https://127.0.0.1:$KPORT/readyz" | grep -q "^ok" && break; sleep 1; done
+  for _ in $(seq 1 60); do curl -sk -H "Authorization: Bearer $KTOKEN" "https://127.0.0.1:$KPORT/readyz" | grep_quiet "^ok" && break; sleep 1; done
   for ns in staging production; do
     curl -sk -o /dev/null -H "Authorization: Bearer $KTOKEN" -H "Content-Type: application/json" -X POST \
       -d "{\"apiVersion\":\"v1\",\"kind\":\"Namespace\",\"metadata\":{\"name\":\"$ns\"}}" "https://127.0.0.1:$KPORT/api/v1/namespaces"
@@ -104,7 +104,10 @@ credentials:
               secretBytes: \"\${readFileBase64:/run/kube/kubeconfig}\"
               description: Deploys to the staging and production namespaces"
 '
-set -uo pipefail
+set -uo pipefa# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
+il
 dir="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 for tool in docker git curl python3; do command -v "$tool" > /dev/null || { echo "FAIL: this check needs $tool"; exit 1; }; done
 P="devforge-check-jenkins-$$"
@@ -233,7 +236,7 @@ get() { curl -sg -u "$A" "$J$1"; }
 
 # Jenkins' own declarative linter (pipeline-model-definition), the same validation a build does first.
 lint_out="$(post -F "jenkinsfile=<$work/repo/Jenkinsfile" "$J/pipeline-model-converter/validate")"
-if echo "$lint_out" | grep -q "successfully validated"; then pass "Jenkins' declarative linter accepts the Jenkinsfile"; else fail "Jenkins' declarative linter rejects the Jenkinsfile: $(echo "$lint_out" | head -n 6 | tr '\n' ' ')"; fi
+if echo "$lint_out" | grep_quiet "successfully validated"; then pass "Jenkins' declarative linter accepts the Jenkinsfile"; else fail "Jenkins' declarative linter rejects the Jenkinsfile: $(echo "$lint_out" | head -n 6 | tr '\n' ' ')"; fi
 
 # Runs the job and waits for its result; prints the result (SUCCESS, UNSTABLE, FAILURE, ABORTED or TIMEOUT).
 build() { # <number> [parameters as name=value ...]
@@ -296,7 +299,7 @@ wait_input_or_end() {
 wait_end() { local r=""; for _ in $(seq 1 150); do r="$(finished "/job/$JOB/$1")"; [ -n "$r" ] && break; sleep 2; done; echo "${r:-TIMEOUT}"; }
 
 jf="$work/repo/Jenkinsfile"
-if grep -q "$KTOKEN" "$jf" || grep -Eq -- '--token|insecure-skip-tls-verify' "$jf"; then fail "no cluster token or TLS shortcut in the Jenkinsfile: use the Jenkins credential kubeconfig (withCredentials file)"
+if grep -q "$KTOKEN" "$jf" || grep_quiet -E -- '--token|insecure-skip-tls-verify' "$jf"; then fail "no cluster token or TLS shortcut in the Jenkinsfile: use the Jenkins credential kubeconfig (withCredentials file)"
 else pass "the Jenkinsfile contains no cluster credentials"; fi
 
 # Build 1: commit A. Staging first; production only after the approval.
@@ -328,7 +331,7 @@ for ns in staging production; do
 done
 if [ -z "$unvalidated" ]; then pass "in both namespaces the manifests are validated by the API server (server-side dry run) before they are applied"
 else fail "validate the rendered manifests against the cluster before applying them (kubectl apply --dry-run=server): order seen:$unvalidated"; fi
-console 1 | grep -q "$KTOKEN" && fail "the cluster token appears in the console log"
+console 1 | grep_quiet "$KTOKEN" && fail "the cluster token appears in the console log"
 
 # What was deployed: read the Deployment and Service back from the API server.
 deployment production > "$work/deploy.json"

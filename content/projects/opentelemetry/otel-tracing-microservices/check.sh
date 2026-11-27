@@ -6,6 +6,9 @@
 # private Docker network, sends requests to /products, and reads the resulting traces back from Jaeger's API.
 # Prints PASS or FAIL per criterion and exits non-zero if any fails. Everything it starts is removed.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 src="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 jaeger="jaegertracing/jaeger:2.23.0@sha256:3823829974ccfc2485d2e48b165579091f32295022ae80ca49704e2f4834116e"            # published 2026-11-05
 collector="otel/opentelemetry-collector:0.165.0@sha256:34b24b740c3c88d3467740e8642a397c13898ef76d7295c5425164c482ed1b73" # published 2026-11-07
@@ -42,13 +45,13 @@ svc() { docker run -d --name "$id-$1" --network "$id" --network-alias "$1" --use
   -e OTEL_EXPORTER_OTLP_ENDPOINT=http://collector:4318 -e CATALOGUE_URL=http://catalogue:8081 -v "$work:/app" -w /app "$node" npm run --silent "start:$1" > /dev/null; }
 # fetch <url>: GET from inside the network, prints status and body.
 fetch() { docker run --rm --network "$id" "$node" node -e 'fetch(process.argv[1]).then(async r => console.log(r.status + " " + await r.text())).catch(e => console.log("000 " + e.cause?.code))' "$1"; }
-for _ in $(seq 1 30); do docker logs "$id-collector" 2>&1 | grep -q 'Everything is ready' && break; sleep 1; done
-for _ in $(seq 1 30); do fetch http://jaeger:16686/ | grep -q '^200' && break; sleep 1; done
+for _ in $(seq 1 30); do docker logs "$id-collector" 2>&1 | grep_quiet 'Everything is ready' && break; sleep 1; done
+for _ in $(seq 1 30); do fetch http://jaeger:16686/ | grep_quiet '^200' && break; sleep 1; done
 svc catalogue; svc frontend
 
 answer=""
 for _ in $(seq 1 30); do answer="$(fetch http://frontend:8080/products)"; case "$answer" in 200*) break ;; esac; sleep 1; done
-if echo "$answer" | grep -q '^200 .*Masala dosa'; then pass "GET /products on the frontend returns the catalogue's items"; else fail "GET /products should return 200 with the items (got: $(echo "$answer" | head -c 160))"; fi
+if echo "$answer" | grep_quiet '^200 .*Masala dosa'; then pass "GET /products on the frontend returns the catalogue's items"; else fail "GET /products should return 200 with the items (got: $(echo "$answer" | head -c 160))"; fi
 fetch http://frontend:8080/products > /dev/null; fetch http://frontend:8080/products > /dev/null
 
 start="$(date -u -d '-10 min' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v-10M +%Y-%m-%dT%H:%M:%SZ)"
@@ -56,7 +59,7 @@ end="$(date -u -d '+5 min' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v+5M +%Y-
 traces=""
 for _ in $(seq 1 30); do
   traces="$(fetch "http://jaeger:16686/api/v3/traces?query.service_name=frontend&query.start_time_min=$start&query.start_time_max=$end")"
-  echo "$traces" | grep -q '"catalogue"' && break
+  echo "$traces" | grep_quiet '"catalogue"' && break
   sleep 2
 done
 python3 - "${traces#* }" <<'PY' || failures=$((failures + $?))

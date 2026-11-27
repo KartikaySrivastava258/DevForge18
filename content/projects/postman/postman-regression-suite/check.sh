@@ -7,6 +7,9 @@
 # and reads its exit code, the JUnit reports in results/ and the requests the API received. Prints PASS or FAIL
 # per criterion; non-zero exit if any fails. The container is removed at the end.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="${1:-.}"
 # node:22.23.5-alpine, digest as listed on Docker Hub (pushed 2026-11-12).
 image="node:22.23.5-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a"
@@ -232,7 +235,7 @@ if [ "$remaining" = 2 ]; then pass "the suite cleans up: after two runs the API 
 else fail "the suite must delete what it creates: after two runs the API holds $remaining events instead of 2"; fi
 
 # 2. Coverage: what the current release saw during the two runs.
-covers() { if echo "$apilog" | grep -Eq "$2"; then pass "the suite sends requests to $1"; else fail "the suite must send requests to $1 — none reached the API"; fi; }
+covers() { if echo "$apilog" | grep_quiet -E "$2"; then pass "the suite sends requests to $1"; else fail "the suite must send requests to $1 — none reached the API"; fi; }
 covers "create an event (POST /events → 201)" '^POST /events -> 201$'
 covers "read one event (GET /events/{id} → 200)" '^GET /events/[^ /]+ -> 200$'
 covers "list events (GET /events → 200)" '^GET /events -> 200$'

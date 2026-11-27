@@ -8,6 +8,9 @@
 # archived artifacts through Jenkins' JSON API. Prints PASS or FAIL per criterion; exits non-zero on any FAIL.
 JOB=campus-notes-api
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 for tool in docker git curl python3; do command -v "$tool" > /dev/null || { echo "FAIL: this check needs $tool"; exit 1; }; done
 P="devforge-check-jenkins-$$"
@@ -136,7 +139,7 @@ get() { curl -sg -u "$A" "$J$1"; }
 
 # Jenkins' own declarative linter (pipeline-model-definition), the same validation a build does first.
 lint_out="$(post -F "jenkinsfile=<$work/repo/Jenkinsfile" "$J/pipeline-model-converter/validate")"
-if echo "$lint_out" | grep -q "successfully validated"; then pass "Jenkins' declarative linter accepts the Jenkinsfile"; else fail "Jenkins' declarative linter rejects the Jenkinsfile: $(echo "$lint_out" | head -n 6 | tr '\n' ' ')"; fi
+if echo "$lint_out" | grep_quiet "successfully validated"; then pass "Jenkins' declarative linter accepts the Jenkinsfile"; else fail "Jenkins' declarative linter rejects the Jenkinsfile: $(echo "$lint_out" | head -n 6 | tr '\n' ' ')"; fi
 
 # Runs the job and waits for its result; prints the result (SUCCESS, UNSTABLE, FAILURE, ABORTED or TIMEOUT).
 build() { # <number> [parameters as name=value ...]
@@ -182,9 +185,9 @@ r1="$(build 1)"
 c1="$(console 1)"
 if [ "$r1" = SUCCESS ]; then pass "build #1 of your repository succeeds in Jenkins"; else fail "build #1 ended $r1: $(why 1)"; fi
 for step in "npm ci" "npm run lint" "npm run test:ci"; do
-  echo "$c1" | grep -q "^+ $step" || missing_steps="${missing_steps:-} $step"
+  echo "$c1" | grep_quiet "^+ $step" || missing_steps="${missing_steps:-} $step"
 done
-if [ -z "${missing_steps:-}" ] && echo "$c1" | grep -q '^\[Pipeline\] parallel'; then pass "the build runs npm ci, then lint and the tests in parallel stages"
+if [ -z "${missing_steps:-}" ] && echo "$c1" | grep_quiet '^\[Pipeline\] parallel'; then pass "the build runs npm ci, then lint and the tests in parallel stages"
 else fail "the build should run npm ci, then npm run lint and npm run test:ci in parallel stages (missing:${missing_steps:- parallel stages})"; fi
 t1="$(tests 1)"
 if [ "$t1" != none ] && [ "${t1%% *}" -ge 6 ] && [ "${t1##* }" = 0 ]; then pass "Jenkins shows the test report: ${t1%% *} tests passed"; else fail "publish the JUnit report with junit (Jenkins found: ${t1/none/no test report}; npm run test:ci writes reports/junit.xml)"; fi

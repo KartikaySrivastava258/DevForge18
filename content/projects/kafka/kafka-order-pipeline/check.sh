@@ -5,6 +5,9 @@
 # with confluent-kafka 2.16.1 on a private network, creates the topic "orders" with 3 partitions, runs your
 # producer and consumer, and inspects the topic. Prints PASS or FAIL per criterion; exits non-zero if any fails.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 src="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 kafka="apache/kafka:4.4.0@sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f"
 python="python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b"
@@ -40,7 +43,7 @@ topics --create --topic orders --partitions 3 --replication-factor 1 > /dev/null
 
 out="$(docker exec "$id-py" timeout 60 python producer.py 2>&1)"; status=$?
 expected="$(grep -c . "$work/orders.jsonl")"
-if [ "$status" -eq 0 ] && echo "$out" | grep -q "^sent $expected$"; then pass "producer.py runs and reports sent $expected"; else fail "producer.py should exit 0 and print \"sent $expected\" (got: $(echo "$out" | tail -n 2 | tr '\n' ' '))"; fi
+if [ "$status" -eq 0 ] && echo "$out" | grep_quiet "^sent $expected$"; then pass "producer.py runs and reports sent $expected"; else fail "producer.py should exit 0 and print \"sent $expected\" (got: $(echo "$out" | tail -n 2 | tr '\n' ' '))"; fi
 
 # Read everything back with a throwaway group, recording partition, offset and key of each event.
 docker exec -i "$id-py" python - > "$work/.topic.json" <<'PY'

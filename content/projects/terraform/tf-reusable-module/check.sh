@@ -7,6 +7,9 @@
 # the pages are requested, a site is added and one removed in plans, and everything is destroyed.
 # Prints PASS or FAIL per criterion and exits non-zero if any fails.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 tf_image="hashicorp/terraform:1.15.6@sha256:adae45661e45d3c88beef071ee1277b4621cea73517aae7f0844657c8e85f641"  # published 2026-06-10
 nginx_image="nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10"       # published 2025-04-16
@@ -39,7 +42,7 @@ tf() { tf_in "$work" "$@"; }
 init_in() {  # provider downloads can fail on a flaky network; try three times
   for _ in 1 2 3; do
     out="$(tf_in "$1" init -input=false -no-color 2>&1)" && return 0
-    echo "$out" | grep -q "Failed to install provider" || return 1
+    echo "$out" | grep_quiet "Failed to install provider" || return 1
     sleep 3
   done
   return 1
@@ -64,7 +67,7 @@ if out="$(tf fmt -check -recursive -no-color 2>&1)"; then pass "terraform fmt -c
 else fail "terraform fmt -check lists unformatted files: $(echo "$out" | tr '\n' ' ') — run terraform fmt -recursive"; fi
 init_in "$work" || { fail "terraform init fails: $(echo "$out" | oneline)"; finish; }
 if out="$(tf validate -no-color 2>&1)"; then pass "terraform validate succeeds"; else fail "terraform validate: $(echo "$out" | oneline)"; finish; fi
-if tf providers -no-color 2> /dev/null | grep -Eq 'provider\[registry\.terraform\.io/kreuzwerker/docker\] (= )?4\.6\.0$'; then pass "the root module pins kreuzwerker/docker to 4.6.0"
+if tf providers -no-color 2> /dev/null | grep_quiet -E 'provider\[registry\.terraform\.io/kreuzwerker/docker\] (= )?4\.6\.0$'; then pass "the root module pins kreuzwerker/docker to 4.6.0"
 else fail "pin kreuzwerker/docker to exactly 4.6.0 in the root module's required_providers"; fi
 
 # 2. The module on its own: called with the documented inputs, it must offer the documented outputs.
@@ -89,7 +92,7 @@ output "container_name" { value = module.probe.container_name }
 EOF
 init_in "$probe" || { fail "a configuration that calls modules/static-site cannot be initialised: $(echo "$out" | oneline)"; finish; }
 if out="$(tf_in "$probe" plan -input=false -no-color -var name=probe-site -var port=$p3 -var title=Probe 2>&1)"; then
-  if echo "$out" | grep -q "url *= \"http://127.0.0.1:$p3\"" && echo "$out" | grep -q 'container_name *= "probe-site"'; then
+  if echo "$out" | grep_quiet "url *= \"http://127.0.0.1:$p3\"" && echo "$out" | grep_quiet 'container_name *= "probe-site"'; then
     pass "the module takes name, port, title and image_id and outputs url (http://127.0.0.1:$p3) and container_name"
   else fail "the module's outputs should be url = \"http://127.0.0.1:<port>\" and container_name = <name> ($(echo "$out" | grep -E '^\s+\+ (url|container_name)' | tr -s ' ' | tr '\n' ' '))"; fi
 else
@@ -98,7 +101,7 @@ fi
 for bad in "name=Bad Name" "port=80" "title= "; do
   name="${bad%%=*}"; args=(-var name=probe-site -var port=$p3 -var title=Probe -var "$bad")
   if out="$(tf_in "$probe" plan -input=false -no-color "${args[@]}" 2>&1)"; then fail "the module accepts $name=\"${bad#*=}\" — add validation to its variable \"$name\""
-  elif echo "$out" | grep -q "Invalid value for variable" && echo "$out" | grep -q "var\.$name"; then pass "the module's validation refuses $name=\"${bad#*=}\": $(because "$out")"
+  elif echo "$out" | grep_quiet "Invalid value for variable" && echo "$out" | grep_quiet "var\.$name"; then pass "the module's validation refuses $name=\"${bad#*=}\": $(because "$out")"
   else fail "$name=\"${bad#*=}\" fails, but not because of validation on the module's variable $name: $(echo "$out" | oneline)"; fi
 done
 
@@ -114,7 +117,7 @@ for s in "timetable:$p1:Timetable" "library:$p2:Library"; do
   IFS=: read -r key port title <<< "$s"
   page="$(http_get "$port")"
   binding="$(docker inspect -f '{{range $p, $b := .HostConfig.PortBindings}}{{range $b}}{{.HostIp}}:{{.HostPort}}{{end}}{{end}}' "$prefix-$key" 2> /dev/null)"
-  if echo "$page" | head -n 1 | grep -q " 200" && echo "$page" | grep -q "<h1>$title</h1>\|<title>$title</title>" && [ "$binding" = "127.0.0.1:$port" ]; then
+  if echo "$page" | head -n 1 | grep_quiet " 200" && echo "$page" | grep_quiet "<h1>$title</h1>\|<title>$title</title>" && [ "$binding" = "127.0.0.1:$port" ]; then
     pass "container $prefix-$key serves the $title page on 127.0.0.1:$port only"
   else fail "container $prefix-$key should serve a page titled $title on 127.0.0.1:$port only (binding: ${binding:-none}; response: $(echo "$page" | head -n 1 | tr -d '\r'))"; fi
 done

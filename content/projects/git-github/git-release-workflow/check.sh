@@ -4,6 +4,9 @@
 # Reads the repository (a local one or a fresh clone with tags) and runs the tests on a copy of main.
 # Prints PASS or FAIL for each criterion and exits non-zero if any fails. Needs git and Node.js 22+.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 repo="${1:-.}"
 failures=0
 pass() { echo "PASS: $1"; }
@@ -34,13 +37,13 @@ show() { g show "main:$1"; }
 ci="" release=""
 for wf in $workflows; do
   body="$(show "$wf")"
-  if echo "$body" | grep -Eq '^[[:space:]]*pull_request' && echo "$body" | grep -Eq 'npm test|node --test'; then ci="$wf"; fi
-  if echo "$body" | grep -Eq '^[[:space:]]*tags:' && echo "$body" | grep -Eq 'gh release create|action-gh-release'; then release="$wf"; fi
+  if echo "$body" | grep_quiet -E '^[[:space:]]*pull_request' && echo "$body" | grep_quiet -E 'npm test|node --test'; then ci="$wf"; fi
+  if echo "$body" | grep_quiet -E '^[[:space:]]*tags:' && echo "$body" | grep_quiet -E 'gh release create|action-gh-release'; then release="$wf"; fi
 done
 if [ -n "$ci" ]; then pass "$ci runs the tests on pull requests"; else fail "no workflow in .github/workflows runs npm test on pull_request"; fi
 if [ -z "$release" ]; then
   fail "no workflow publishes a release (gh release create) when a tag is pushed"
-elif show "$release" | grep -Eq '^[[:space:]]+needs:' && show "$release" | grep -Eq 'npm test|node --test'; then
+elif show "$release" | grep_quiet -E '^[[:space:]]+needs:' && show "$release" | grep_quiet -E 'npm test|node --test'; then
   pass "$release runs the tests and publishes only after they pass (needs:)"
 else
   fail "$release must run the tests and make the release job depend on them with needs:"
@@ -50,18 +53,18 @@ unpinned=""
 for wf in $workflows; do
   while IFS= read -r ref; do
     case "$ref" in ./*|docker://*) continue ;; esac
-    echo "$ref" | grep -Eq '@[0-9a-f]{40}$' || unpinned="$unpinned $wf:$ref"
+    echo "$ref" | grep_quiet -E '@[0-9a-f]{40}$' || unpinned="$unpinned $wf:$ref"
   done < <(show "$wf" | sed -n 's/^[[:space:]-]*uses:[[:space:]]*\([^[:space:]#]*\).*/\1/p')
 done
 if [ -n "$workflows" ] && [ -z "$unpinned" ]; then pass "every action is pinned to a full commit SHA"; else fail "pin every action to a full 40-character commit SHA:${unpinned:- (no workflows found)}"; fi
 
 loose=""
-for wf in $workflows; do show "$wf" | grep -q '^permissions:' || loose="$loose $wf"; done
-if [ -n "$ci" ] && show "$ci" | grep -Eq ':[[:space:]]*write'; then loose="$loose $ci(grants write)"; fi
+for wf in $workflows; do show "$wf" | grep_quiet '^permissions:' || loose="$loose $wf"; done
+if [ -n "$ci" ] && show "$ci" | grep_quiet -E ':[[:space:]]*write'; then loose="$loose $ci(grants write)"; fi
 if [ -n "$workflows" ] && [ -z "$loose" ]; then pass "every workflow sets top-level permissions, and the CI workflow is read-only"; else fail "set a top-level permissions: block (contents: read) in every workflow and grant write only to the release job:${loose:- (no workflows found)}"; fi
 
 # 3. Changelog, version and tag.
-if g show main:CHANGELOG.md 2> /dev/null | grep -Eq "^## \[${version//./\\.}\]"; then pass "CHANGELOG.md has a section for $version"; else fail "CHANGELOG.md needs a \"## [${version:-?}]\" section for the version in package.json"; fi
+if g show main:CHANGELOG.md 2> /dev/null | grep_quiet -E "^## \[${version//./\\.}\]"; then pass "CHANGELOG.md has a section for $version"; else fail "CHANGELOG.md needs a \"## [${version:-?}]\" section for the version in package.json"; fi
 case "$version" in
   0.*|"") fail "package.json version is ${version:-missing}; release 1.0.0 or later" ;;
   *) pass "package.json version is $version" ;;

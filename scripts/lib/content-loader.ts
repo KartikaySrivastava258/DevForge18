@@ -414,6 +414,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       const checkFile = join(projectDir, trackDir, meta.id, "check.sh");
       const checkScript = existsSync(checkFile) ? readFileSync(checkFile, "utf8") : null;
       if (meta.check_needs && !checkScript) errors.push(`${rel}: check_needs is set but projects/${trackDir}/${meta.id}/check.sh is missing`);
+      if (checkScript && /pipefail/.test(checkScript) && pipesIntoQuietGrep(checkScript)) errors.push(`projects/${trackDir}/${meta.id}/check.sh pipes into grep -q, which races with set -o pipefail; use grep_quiet (grep … > /dev/null)`);
       projects.push({ ...meta, html: rendered.html, toc: rendered.toc, starter_files: starter, solution_files: solution, check_script: checkScript });
     }
   }

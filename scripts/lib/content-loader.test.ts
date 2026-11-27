@@ -253,3 +253,13 @@ describe("simulations", () => {
     assert.ok(errors.some((e) => e.includes("challenge recover-broken-release: the check already passes before the learner does anything")), errors.join("\n"));
   });
 });
+
+describe("mini-project check scripts", () => {
+  it("reject piping into grep -q under pipefail (the writer's SIGPIPE fails the pipeline at random)", () => {
+    const dir = copyContent();
+    const file = join(dir, "projects", "jenkins", "jenkins-container-pipeline", "check.sh");
+    writeFileSync(file, readFileSync(file, "utf8").replace('echo "$cm" | grep_quiet "^+ docker login"', 'echo "$cm" | grep -q "^+ docker login"'));
+    const { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.startsWith("projects/jenkins/jenkins-container-pipeline/check.sh pipes into grep -q")), errors.join("\n"));
+  });
+});

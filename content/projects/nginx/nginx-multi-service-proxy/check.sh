@@ -7,6 +7,9 @@
 # Host, X-Forwarded-For, X-Forwarded-Proto) and what Nginx sends back. Removes everything it started.
 # Prints PASS or FAIL per criterion; non-zero exit if any fails.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="${1:-.}"
 # Nginx 1.24.0 on Alpine, the version the Nginx lessons were recorded with (tag pushed 2024-04-18).
 nginx_image="nginx:1.24.0-alpine@sha256:77e5d4a6ad906c5d3793764085706577fa705b1dc6f244ea0241c4b5e2155385"
@@ -54,7 +57,7 @@ for svc in web courses notices admin; do
     "$node_image" node -e "$echo_js" > /dev/null || { fail "could not start the $svc service in Docker"; finish; }
 done
 for svc in web courses notices admin; do
-  for _ in $(seq 1 50); do docker logs "$id-$svc" 2>&1 | grep -q ready && break; sleep 0.2; done
+  for _ in $(seq 1 50); do docker logs "$id-$svc" 2>&1 | grep_quiet ready && break; sleep 0.2; done
 done
 
 # nginx -t first, in a throwaway container on the same network (so the service names resolve).

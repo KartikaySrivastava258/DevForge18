@@ -6,6 +6,9 @@
 # DAG with `airflow dags test` for 2026-03-02 twice and for 2026-03-03, and inspects the runs and the registry.
 # Prints PASS or FAIL per criterion and exits non-zero if any fails. Removes the containers, network and image.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 src="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 mlflow="ghcr.io/mlflow/mlflow:v3.18.0@sha256:257204c77980b0f3450a26eb6089e487603fcdd4509529eadaf88f90669f5c13"  # released 2026-11-03
 students_sha="3815295f75bcabaeceba5e4d552e66dbd4a179d232409747a3fa81ec445a53f1"
@@ -58,7 +61,7 @@ else:
     print("@@", "ok" if up.get("train") == ["prepare_data"] and up.get("evaluate_and_promote") == ["train"] else f"tasks {up}")
 PY
 )"
-if echo "$structure" | grep -q '^@@ ok'; then pass "the DAG loads with prepare_data → train → evaluate_and_promote"; else fail "the DAG student_model_training must load with tasks prepare_data → train → evaluate_and_promote ($(echo "$structure" | grep '^@@' | cut -c4-200))"; fi
+if echo "$structure" | grep_quiet '^@@ ok'; then pass "the DAG loads with prepare_data → train → evaluate_and_promote"; else fail "the DAG student_model_training must load with tasks prepare_data → train → evaluate_and_promote ($(echo "$structure" | grep '^@@' | cut -c4-200))"; fi
 states=""
 for day in 2026-03-02 2026-03-02 2026-03-03; do
   out="$(timeout 600 docker exec "$id-airflow" airflow dags test student_model_training "$day" 2>&1)"

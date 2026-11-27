@@ -5,6 +5,9 @@
 # criterion and exits non-zero if any fails. It only reads the repository: behaviour and tests run on a copy
 # of what is committed on main.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 repo="${1:-.}"
 failures=0
 pass() { echo "PASS: $1"; }
@@ -41,7 +44,7 @@ owners=""
 for path in .github/CODEOWNERS CODEOWNERS docs/CODEOWNERS; do
   committed "$path" && owners="$path" && break
 done
-if [ -n "$owners" ] && g show "main:$owners" | grep -Eq '^[^#[:space:]].*[[:space:]]@[^[:space:]]+'; then
+if [ -n "$owners" ] && g show "main:$owners" | grep_quiet -E '^[^#[:space:]].*[[:space:]]@[^[:space:]]+'; then
   pass "$owners assigns reviewers"
 else
   fail "commit a CODEOWNERS file (for example .github/CODEOWNERS) with a rule such as \"* @your-org/reviewers\""

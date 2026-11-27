@@ -8,6 +8,9 @@
 # it stops. Removes every container, volume and image it created.
 # Prints PASS or FAIL per criterion; non-zero exit if any fails.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="${1:-.}"
 # Alpine 3.20, as pinned in the Docker lessons, for the build-context probe (tag pushed 2026-04-17).
 probe_base="alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc"
@@ -46,9 +49,9 @@ mkdir -p "$work/.git" && printf '[remote "origin"]\n\turl = https://%s@git.examp
 froms="$(grep -iE '^[[:space:]]*FROM[[:space:]]' "$work/Dockerfile" | sed -E 's/--platform=[^ ]+ //I')"
 stages="$(echo "$froms" | awk 'tolower($3) == "as" { print tolower($4) }')"
 unpinned="$(echo "$froms" | awk '{ print $2 }' | while read -r ref; do
-  echo "$stages" | grep -qxF "$(echo "$ref" | tr 'A-Z' 'a-z')" && continue
+  echo "$stages" | grep_quiet -xF "$(echo "$ref" | tr 'A-Z' 'a-z')" && continue
   [ "$ref" = scratch ] && continue
-  echo "$ref" | grep -qE '@sha256:[0-9a-f]{64}$' || echo "$ref"
+  echo "$ref" | grep_quiet -E '@sha256:[0-9a-f]{64}$' || echo "$ref"
 done)"
 if [ -n "$froms" ] && [ -z "$unpinned" ]; then pass "every base image is pinned by digest (FROM …@sha256:…)"
 else fail "pin every base image by digest, for example FROM node:22.23.5-alpine@sha256:… (not pinned: $(echo "$unpinned" | head -n 1))"; fi

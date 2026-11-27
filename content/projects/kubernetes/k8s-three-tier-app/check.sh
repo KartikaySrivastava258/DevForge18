@@ -6,6 +6,9 @@
 # endpoints and sends requests through frontend -> api -> redis from a Pod inside the cluster. Prints PASS or
 # FAIL per criterion, exits non-zero if any fails, and deletes the cluster. Takes two to three minutes.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 node_image="kindest/node:v1.36.1@sha256:3489c7674813ba5d8b1a9977baea8a6e553784dab7b84759d1014dbd78f7ebd5"  # kind v0.32.0 release notes
 client_image="busybox:1.37@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec"  # published 2026-10-28
@@ -94,7 +97,7 @@ done
 
 # 3. The API takes REDIS_HOST from the ConfigMap api-config.
 ref="$(jp deployment/api '{.spec.template.spec.containers[0].env[?(@.name=="REDIS_HOST")].valueFrom.configMapKeyRef.name}')"
-[ -z "$ref" ] && jp deployment/api '{.spec.template.spec.containers[0].envFrom[*].configMapRef.name}' | grep -qw api-config && ref=api-config
+[ -z "$ref" ] && jp deployment/api '{.spec.template.spec.containers[0].envFrom[*].configMapRef.name}' | grep_quiet -w api-config && ref=api-config
 host="$(jp configmap/api-config '{.data.REDIS_HOST}')"
 if [ "$ref" = api-config ] && [ -n "$host" ]; then pass "the api Deployment takes REDIS_HOST ($host) from the ConfigMap api-config"
 else fail "the api Deployment should take REDIS_HOST from the ConfigMap api-config (configMapKeyRef or envFrom), not a value written into the Deployment"; fi
@@ -109,7 +112,7 @@ else fail "pin every image to a version (and preferably a digest), never latest:
 kubectl -n devforge-client wait --for=condition=Ready pod/client --timeout=60s > /dev/null 2>&1
 get() { kubectl -n devforge-client exec client -- wget -qO- -T 5 "http://$1" 2> /dev/null; }
 page="$(get "frontend.$ns.svc.cluster.local/")"
-if echo "$page" | grep -q "Campus notice board"; then pass "GET / on the frontend Service returns the notice board page"
+if echo "$page" | grep_quiet "Campus notice board"; then pass "GET / on the frontend Service returns the notice board page"
 else fail "GET http://frontend.$ns/ does not return the notice board page (${page:0:80})"; fi
 v1="$(get "frontend.$ns.svc.cluster.local/api/visits" | sed -n 's/.*"visits": *\([0-9]*\).*/\1/p')"
 v2="$(get "frontend.$ns.svc.cluster.local/api/visits" | sed -n 's/.*"visits": *\([0-9]*\).*/\1/p')"

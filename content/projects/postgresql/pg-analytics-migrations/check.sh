@@ -6,6 +6,9 @@
 # data; then it checks the query plans, the dashboard view, the new rules and the analyst role.
 # Prints PASS or FAIL per criterion and exits non-zero if any fails. The container is removed afterwards.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="${1:-.}"
 image="postgres:16.15-bookworm@sha256:5264710be20f409750ac6dc4e5706dcef929c87e241605463f0f9aefa932a8d9"
 name="devforge-check-pg-$$"
@@ -48,7 +51,7 @@ first="$(migrate fresh /check/full)"; first_status=$?
 second="$(migrate fresh /check/full)"
 total="$(ls "$dir/migrations"/*.sql | wc -l)"
 if [ "$first_status" -eq 0 ] && [ "$(echo "$first" | grep -c '^apply ')" -eq "$total" ]; then pass "all $total migrations apply to an empty database"; else fail "migrations must apply cleanly to an empty database: $(echo "$first" | tail -n 3 | tr '\n' ' ')"; fi
-if [ "$(echo "$second" | grep -c '^skip ')" -eq "$total" ] && ! echo "$second" | grep -q '^apply '; then pass "running the migrations again changes nothing"; else fail "a second run must skip every migration: $(echo "$second" | tr '\n' ' ')"; fi
+if [ "$(echo "$second" | grep -c '^skip ')" -eq "$total" ] && ! echo "$second" | grep_quiet '^apply '; then pass "running the migrations again changes nothing"; else fail "a second run must skip every migration: $(echo "$second" | tr '\n' ' ')"; fi
 
 # 2. Production: 001 and the data exist first; the new migrations run on top.
 sample="INSERT INTO customers (id, city, signed_up_on) SELECT g, (ARRAY['Dehradun', 'Delhi', 'Lucknow', 'Jaipur', 'Pune'])[1 + g % 5], DATE '2024-01-01' + g % 540 FROM generate_series(1, 2000) g;
@@ -74,14 +77,14 @@ n=0
 for query in "$query1" "$query2" "$query3"; do
   n=$((n + 1))
   plan="$(echo "EXPLAIN (COSTS OFF) $query" | q production 2>&1)"
-  if echo "$plan" | grep -Eq 'Seq Scan on orders|ERROR'; then
+  if echo "$plan" | grep_quiet -E 'Seq Scan on orders|ERROR'; then
     fail "report query $n reads the whole orders table: $(echo "$plan" | tr '\n' ' ' | tr -s ' ')"
   else
     pass "report query $n is answered without reading the whole orders table"
   fi
 done
 plan3="$(echo "EXPLAIN (COSTS OFF) $query3" | q production 2>&1)"
-if echo "$plan3" | grep -q 'Sort'; then fail "report query 3 should read its 10 rows already in order from an index (the plan sorts)"; else pass "report query 3 reads the customer's newest orders in index order (no sort)"; fi
+if echo "$plan3" | grep_quiet 'Sort'; then fail "report query 3 should read its 10 rows already in order from an index (the plan sorts)"; else pass "report query 3 reads the customer's newest orders in index order (no sort)"; fi
 
 # 3. The dashboard.
 kind="$(echo "SELECT relkind FROM pg_class WHERE relname = 'daily_revenue'" | q production 2>&1)"
@@ -99,7 +102,7 @@ fi
 rejects() {
   local out
   if out="$(printf 'BEGIN;\n%s;\nROLLBACK;\n' "$2" | q production 2>&1)"; then fail "$1 (the database accepted it)"
-  elif echo "$out" | grep -q "violates check constraint"; then pass "$1"
+  elif echo "$out" | grep_quiet "violates check constraint"; then pass "$1"
   else fail "$1 (rejected, but not by a CHECK constraint: $(echo "$out" | head -n 1))"; fi
 }
 order="INSERT INTO orders (customer_id, product_id, quantity, unit_price, ordered_at, status) VALUES (1, 1"
@@ -118,6 +121,6 @@ else
 fi
 for stmt in "INSERT INTO products VALUES (999, 'x', 'y')" "UPDATE orders SET status = 'cancelled'" "DELETE FROM customers" "REFRESH MATERIALIZED VIEW daily_revenue"; do
   out="$(as_analyst "$stmt")"
-  if echo "$out" | grep -Eq 'permission denied|must be owner'; then pass "analyst cannot $(echo "$stmt" | cut -d' ' -f1-3)"; else fail "analyst must not be allowed to $stmt (got: $(echo "${out:-accepted}" | head -n 1))"; fi
+  if echo "$out" | grep_quiet -E 'permission denied|must be owner'; then pass "analyst cannot $(echo "$stmt" | cut -d' ' -f1-3)"; else fail "analyst must not be allowed to $stmt (got: $(echo "${out:-accepted}" | head -n 1))"; fi
 done
 finish

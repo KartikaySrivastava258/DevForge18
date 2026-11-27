@@ -6,6 +6,9 @@
 # plans with good and bad input, apply, checks the containers, network, outputs and generated file, plans again
 # (no changes expected) and destroys. Prints PASS or FAIL per criterion and exits non-zero if any fails.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 tf_image="hashicorp/terraform:1.15.6@sha256:adae45661e45d3c88beef071ee1277b4621cea73517aae7f0844657c8e85f641"  # published 2026-06-10
 redis_image="redis:7.4-alpine@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe"        # published 2026-11-12
@@ -53,7 +56,7 @@ else fail "terraform fmt -check lists unformatted files: $(echo "$out" | tr '\n'
 init_ok=false
 for _ in 1 2 3; do  # provider downloads can fail on a flaky network; try three times
   if out="$(tf init -input=false -no-color 2>&1)"; then init_ok=true; break; fi
-  echo "$out" | grep -q "Failed to install provider" || break
+  echo "$out" | grep_quiet "Failed to install provider" || break
   sleep 3
 done
 [ "$init_ok" = true ] || { fail "terraform init fails: $(echo "$out" | oneline)"; finish; }
@@ -72,7 +75,7 @@ else fail "plan with -var project=… -var redis_port=… fails: $(echo "$out" |
 for bad in "project=Campus_API" "redis_port=80"; do
   name="${bad%%=*}"; other=(-var "project=$project" -var "redis_port=$port"); [ "$name" = project ] && other=(-var "redis_port=$port") || other=(-var "project=$project")
   if out="$(tf plan -input=false -no-color -var "$bad" "${other[@]}" 2>&1)"; then fail "plan accepts $bad — add a validation block to variable \"$name\""
-  elif echo "$out" | grep -q "Invalid value for variable" && echo "$out" | grep -q "var\.$name"; then pass "validation refuses $bad: $(echo "$out" | sed 's/^[│ ]*//' | awk '/^var\.[a-z_]+ is /{p=1; next} /^This was checked/{p=0} p' | grep . | tr '\n' ' ')"
+  elif echo "$out" | grep_quiet "Invalid value for variable" && echo "$out" | grep_quiet "var\.$name"; then pass "validation refuses $bad: $(echo "$out" | sed 's/^[│ ]*//' | awk '/^var\.[a-z_]+ is /{p=1; next} /^This was checked/{p=0} p' | grep . | tr '\n' ' ')"
   else fail "plan with $bad fails, but not because of a validation block on var.$name: $(echo "$out" | oneline)"; fi
 done
 

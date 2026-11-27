@@ -5,6 +5,9 @@
 # and invalid data against every rule, and removes the container. Prints PASS or FAIL per criterion and exits
 # non-zero if any fails.
 set -uo pipefail
+# grep -q stops reading at its first match; under pipefail the writer then dies of SIGPIPE and the pipeline
+# fails at random (CI run 46038301566). grep_quiet reads all of its input.
+grep_quiet() { grep "$@" > /dev/null; }
 dir="${1:-.}"
 image="postgres:16.15-bookworm@sha256:5264710be20f409750ac6dc4e5706dcef929c87e241605463f0f9aefa932a8d9"
 name="devforge-check-pg-$$"
@@ -55,7 +58,7 @@ if [ "$ids" = "2" ] && [ "$pks" = "courses,enrollments,students" ]; then pass "s
 rejects() {
   local out
   if out="$(printf 'BEGIN;\n%s;\nROLLBACK;\n' "$3" | q reg_schema 2>&1)"; then fail "$1 (the database accepted it)"
-  elif echo "$out" | grep -q "$2"; then pass "$1"
+  elif echo "$out" | grep_quiet "$2"; then pass "$1"
   else fail "$1 (rejected, but not by a constraint: $(echo "$out" | head -n 1))"; fi
 }
 accepts() {
