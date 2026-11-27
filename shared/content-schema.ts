@@ -164,7 +164,14 @@ export const PathSchema = z
     outcome: z.string().min(20),
     prerequisites: z.array(z.string().min(3)),
     modules: z.array(z.object({ track: slug, focus: z.string().min(10) }).strict()).min(3),
-    capstone: z.object({ title: z.string().min(3), status: z.enum(["planned", "available"]) }).strict(),
+    capstone: z
+      .object({
+        title: z.string().min(3),
+        status: z.enum(["planned", "available"]),
+        /** The published capstone page (content/capstones/<id>.md), once it exists. */
+        capstone: slug.optional(),
+      })
+      .strict(),
     alternate_route: z.string().min(20),
     last_reviewed: isoDate,
   })
@@ -490,6 +497,58 @@ export interface CompiledProject extends ProjectMeta {
   check_script: string | null;
 }
 
+// --- Capstones A–G (REMAINING_WORK §4.5): multi-track projects with an architecture diagram and milestones that reuse labs.
+
+/** Something a capstone milestone builds on: a lesson, a lab or a mini-project that already exists. */
+export const ReuseSchema = z.object({ kind: z.enum(["lesson", "lab", "project"]), id: slug }).strict();
+
+export const CapstoneMetaSchema = z
+  .object({
+    id: slug,
+    letter: z.enum(["A", "B", "C", "D", "E", "F", "G"]),
+    title: z.string().min(10),
+    summary: z.string().min(60),
+    level: z.enum(LEVELS),
+    estimated_hours: z.number().positive().max(160),
+    /** Tracks the capstone combines; at least three — a capstone is about integration. */
+    tracks: z.array(slug).min(3),
+    /** The architecture diagram, media:<folder>/<name>.svg. */
+    architecture: z.string().regex(/^media:[a-z0-9-]+\/[a-z0-9-]+\.svg$/),
+    user_stories: z.array(z.string().regex(/^As an? .+, I want .+ so that .+/, "write stories as: As a …, I want … so that …")).min(3),
+    milestones: z
+      .array(
+        z
+          .object({
+            id: slug,
+            title: z.string().min(5),
+            goal: z.string().min(30),
+            deliverables: z.array(z.string().min(10)).min(1),
+            acceptance: z.array(z.string().min(15)).min(2),
+            reuses: z.array(ReuseSchema),
+          })
+          .strict(),
+      )
+      .min(3),
+    rubric: z
+      .array(z.object({ criterion: z.string().min(3), excellent: z.string().min(10), good: z.string().min(10), needs_work: z.string().min(10) }).strict())
+      .min(4),
+    stretch_goals: z.array(z.string().min(10)).min(1),
+    owner: z.string().min(2),
+    last_reviewed: isoDate,
+    content_version: z.number().int().positive(),
+  })
+  .strict();
+export type CapstoneMeta = z.infer<typeof CapstoneMetaSchema>;
+
+export interface CompiledCapstone extends CapstoneMeta {
+  html: string;
+  toc: { id: string; text: string }[];
+  /** Inline SVG of the architecture diagram (from the media library). */
+  architecture_html: string;
+  /** Learning paths whose capstone this is. */
+  paths: string[];
+}
+
 /** A lesson after compilation: Markdown rendered to safe HTML plus a table of contents. */
 export interface CompiledLesson extends LessonMeta {
   html: string;
@@ -515,4 +574,5 @@ export interface ContentBundle {
   labs: CompiledLab[];
   quizzes: CompiledQuiz[];
   projects: CompiledProject[];
+  capstones: CompiledCapstone[];
 }

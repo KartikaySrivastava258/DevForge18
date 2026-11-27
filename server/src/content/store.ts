@@ -10,6 +10,7 @@ import {
   CATEGORIES,
   type CompiledLesson,
   type CompiledProject,
+  type CompiledCapstone,
   type CompiledQuiz,
   type QuizQuestion,
   type ContentBundle,
@@ -67,11 +68,13 @@ export class ContentStore {
   private readonly labs = new Map<string, CompiledLab>();
   private readonly quizzes = new Map<string, CompiledQuiz>();
   private readonly projects = new Map<string, CompiledProject>();
+  private readonly capstones = new Map<string, CompiledCapstone>();
   private readonly index: SearchIndex;
 
   constructor(bundle: ContentBundle) {
     for (const q of bundle.quizzes ?? []) this.quizzes.set(q.track, q);
     for (const p of bundle.projects ?? []) this.projects.set(p.id, p);
+    for (const c of bundle.capstones ?? []) this.capstones.set(c.id, c);
     if (bundle.schema_version !== 1) throw new Error(`Unsupported content schema_version ${String(bundle.schema_version)}`);
     this.bundle = bundle;
     for (const t of bundle.tracks) this.tracks.set(t.slug, t);
@@ -281,6 +284,34 @@ export class ContentStore {
   // ---- Projects --------------------------------------------------------------
 
   getProject(id: string): CompiledProject | undefined { return this.projects.get(id); }
+
+  getCapstone(id: string): CompiledCapstone | undefined { return this.capstones.get(id); }
+  listCapstones(): CompiledCapstone[] { return [...this.capstones.values()]; }
+
+  capstoneSummary(c: CompiledCapstone) {
+    return { id: c.id, letter: c.letter, title: c.title, summary: c.summary, level: c.level, estimatedHours: c.estimated_hours, tracks: c.tracks, paths: c.paths };
+  }
+
+  /** A capstone with each milestone's reused lessons, labs and projects resolved to titles and links. */
+  publicCapstone(c: CompiledCapstone) {
+    const reuse = (r: { kind: "lesson" | "lab" | "project"; id: string }) => {
+      if (r.kind === "lesson") { const l = this.lessons.get(r.id); return l ? { kind: r.kind, id: r.id, title: l.title, track: l.track } : null; }
+      if (r.kind === "lab") { const l = this.labs.get(r.id); return l ? { kind: r.kind, id: r.id, title: l.title, track: l.track } : null; }
+      const p = this.projects.get(r.id);
+      return p ? { kind: r.kind, id: r.id, title: p.title, track: p.track } : null;
+    };
+    return {
+      ...this.capstoneSummary(c),
+      userStories: c.user_stories,
+      architectureHtml: c.architecture_html,
+      milestones: c.milestones.map((m) => ({ id: m.id, title: m.title, goal: m.goal, deliverables: m.deliverables, acceptance: m.acceptance, reuses: m.reuses.map(reuse).filter(Boolean) })),
+      rubric: c.rubric,
+      stretchGoals: c.stretch_goals,
+      html: c.html,
+      toc: c.toc,
+      lastReviewed: c.last_reviewed,
+    };
+  }
   /** A track's published projects, in the order its track.yaml plans them (beginner to advanced). */
   projectsFor(track: string): CompiledProject[] {
     return (this.tracks.get(track)?.projects ?? []).flatMap((planned) => {

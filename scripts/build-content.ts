@@ -24,5 +24,5 @@ mkdirSync(dirname(outFile), { recursive: true });
 writeFileSync(outFile, JSON.stringify(bundle));
 console.log(
   `Content OK: ${bundle.tracks.length} tracks, ${bundle.paths.length} learning paths, ` +
-    `${bundle.lessons.length} lessons, ${bundle.labs.length} labs, ${bundle.case_studies.length} case studies, ${bundle.quizzes.length} quizzes, ${bundle.projects.length} projects → ${outFile}`,
+    `${bundle.lessons.length} lessons, ${bundle.labs.length} labs, ${bundle.case_studies.length} case studies, ${bundle.quizzes.length} quizzes, ${bundle.projects.length} projects, ${bundle.capstones.length} capstones → ${outFile}`,
 );

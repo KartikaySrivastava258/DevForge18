@@ -128,9 +128,10 @@ export function PathPage({ slug }: { slug: string }) {
           <p className="muted">{path.alternate_route}</p>
           <h2>Capstone</h2>
           <p>
-            {path.capstone.title}{" "}
+            {data.capstone ? <Link to={`/capstones/${data.capstone.id}`}>{path.capstone.title}</Link> : path.capstone.title}{" "}
             {path.capstone.status === "planned" ? <span className="tag">Planned</span> : null}
           </p>
+          {data.capstone ? <p className="muted small">{data.capstone.summary}</p> : null}
           <p className="small faint">Path last reviewed {formatDate(path.last_reviewed)}.</p>
         </section>
       </div>

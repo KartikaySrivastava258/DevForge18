@@ -69,6 +69,36 @@ export interface PathResponse {
   path: LearningPath;
   modules: { focus: string; track: TrackSummary | null }[];
   estimatedHours: { min: number; max: number };
+  capstone: CapstoneSummary | null;
+}
+
+export interface CapstoneSummary {
+  id: string;
+  letter: string;
+  title: string;
+  summary: string;
+  level: "beginner" | "intermediate" | "advanced";
+  estimatedHours: number;
+  tracks: string[];
+  paths: string[];
+}
+
+export interface CapstoneReuse {
+  kind: "lesson" | "lab" | "project";
+  id: string;
+  title: string;
+  track: string;
+}
+
+export interface PublicCapstone extends CapstoneSummary {
+  userStories: string[];
+  architectureHtml: string;
+  milestones: { id: string; title: string; goal: string; deliverables: string[]; acceptance: string[]; reuses: CapstoneReuse[] }[];
+  rubric: { criterion: string; excellent: string; good: string; needs_work: string }[];
+  stretchGoals: string[];
+  html: string;
+  toc: { id: string; text: string }[];
+  lastReviewed: string;
 }
 
 export interface PublicLesson {

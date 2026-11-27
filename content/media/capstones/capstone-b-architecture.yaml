@@ -1,0 +1,4 @@
+alt: 'A browser talks only to Nginx, which serves the static frontend and forwards /api requests to two stateless API instances. Both instances read and write PostgreSQL (constraints, migrations, data on a named volume) and use Redis for caching and rate limits. Everything runs as one Docker Compose project. Below it: the GitHub repository with branches, pull requests and CI; a Postman collection run by Newman in CI; and health checks with non-root containers.'
+caption: 'One public entry point, stateless API instances, PostgreSQL as the source of truth and Redis as a disposable cache.'
+credit: DevForge 18 content team
+licence: project-content

@@ -164,3 +164,25 @@ describe("mini-project API", () => {
     assert.equal((await faculty.get("/api/projects/no-such-project/solution")).status, 404);
   });
 });
+
+describe("capstone API", () => {
+  it("lists capstones and serves one with resolved milestone links and its architecture figure", async () => {
+    const list = await anonymous.get("/api/capstones");
+    assert.equal(list.status, 200);
+    assert.ok(list.json.capstones.some((c: { id: string; letter: string }) => c.id === "capstone-b" && c.letter === "B"));
+    const res = await anonymous.get("/api/capstones/capstone-b");
+    assert.equal(res.status, 200);
+    const c = res.json.capstone;
+    assert.match(c.architectureHtml, /<svg/);
+    assert.ok(c.milestones.length >= 3);
+    const reuses = c.milestones.flatMap((m: { reuses: { kind: string; id: string; title: string }[] }) => m.reuses);
+    assert.ok(reuses.length > 0 && reuses.every((r: { title: string }) => r.title), "every reuse resolves to a title");
+    assert.deepEqual(c.paths, ["backend-foundations"]);
+  });
+
+  it("links the capstone from its learning path and answers 404 for an unknown one", async () => {
+    const path = await anonymous.get("/api/paths/backend-foundations");
+    assert.equal(path.json.capstone.id, "capstone-b");
+    assert.equal((await anonymous.get("/api/capstones/capstone-z")).status, 404);
+  });
+});

@@ -37,6 +37,9 @@ export interface MediaLibrary {
 const domId = (key: string) => key.replace(/[^a-z0-9]+/g, "-");
 
 /** Load and validate everything under content/media. Problems are pushed to `errors`. */
+/** Media folders that belong to no single track: capstone and reference-architecture diagrams. */
+export const SHARED_MEDIA_FOLDERS = new Set(["capstones", "architecture"]);
+
 export function loadMedia(root: string, trackSlugs: Set<string>, errors: string[]): MediaLibrary {
   const lib: MediaLibrary = { figures: new Map(), diagrams: new Map() };
   const mediaDir = join(root, "media");
@@ -46,7 +49,7 @@ export function loadMedia(root: string, trackSlugs: Set<string>, errors: string[
   for (const track of readdirSync(mediaDir).sort()) {
     const dir = join(mediaDir, track);
     if (track.startsWith(".") || !statSync(dir).isDirectory()) continue;
-    if (!trackSlugs.has(track)) errors.push(`media/${track}: no track with this slug`);
+    if (!trackSlugs.has(track) && !SHARED_MEDIA_FOLDERS.has(track)) errors.push(`media/${track}: no track with this slug`);
     const files = readdirSync(dir).filter((f) => !f.startsWith(".")).sort();
     for (const file of files) {
       const rel = relative(root, join(dir, file));

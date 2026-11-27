@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 400">
+  <!-- Capstone B architecture: one Docker Compose project, one public entry point. -->
+  <rect class="f-box-faint" x="10" y="10" width="740" height="300" rx="8"/>
+  <text class="f-small f-strong" x="110" y="32" text-anchor="middle">Docker Compose project</text>
+  <rect class="f-box" x="20" y="140" width="110" height="60" rx="8"/>
+  <text class="f-small" x="75" y="168" text-anchor="middle">browser</text>
+  <text class="f-small" x="75" y="186" text-anchor="middle">(students)</text>
+  <rect class="f-box-accent" x="170" y="130" width="130" height="80" rx="8"/>
+  <text class="f-small f-strong" x="235" y="160" text-anchor="middle">Nginx</text>
+  <text class="f-small" x="235" y="178" text-anchor="middle">static files</text>
+  <text class="f-small f-mono" x="235" y="194" text-anchor="middle">/api → API</text>
+  <g>
+    <path class="f-arrow" d="M132 170 L160 170"/>
+    <polygon class="f-head" points="168,170 160,174.5 160,165.5"/>
+  </g>
+  <rect class="f-box" x="350" y="70" width="140" height="60" rx="8"/>
+  <text class="f-small" x="420" y="98" text-anchor="middle">API instance 1</text>
+  <text class="f-small" x="420" y="116" text-anchor="middle">(stateless)</text>
+  <rect class="f-box" x="350" y="210" width="140" height="60" rx="8"/>
+  <text class="f-small" x="420" y="238" text-anchor="middle">API instance 2</text>
+  <text class="f-small" x="420" y="256" text-anchor="middle">(stateless)</text>
+  <g>
+    <path class="f-arrow" d="M302 160 L342.9 111.1"/>
+    <polygon class="f-head" points="348,105 346.3,114.0 339.4,108.2"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M302 180 L342.9 228.9"/>
+    <polygon class="f-head" points="348,235 339.4,231.8 346.3,226.0"/>
+  </g>
+  <rect class="f-box-ok" x="560" y="60" width="170" height="70" rx="8"/>
+  <text class="f-small f-strong" x="645" y="90" text-anchor="middle">Redis</text>
+  <text class="f-small" x="645" y="110" text-anchor="middle">cache, rate limits</text>
+  <rect class="f-box-ok" x="560" y="200" width="170" height="80" rx="8"/>
+  <text class="f-small f-strong" x="645" y="230" text-anchor="middle">PostgreSQL</text>
+  <text class="f-small" x="645" y="250" text-anchor="middle">constraints, migrations</text>
+  <text class="f-small" x="645" y="266" text-anchor="middle">named volume</text>
+  <g>
+    <path class="f-arrow" d="M492 98 L550.0 95.4"/>
+    <polygon class="f-head" points="558,95 550.2,99.9 549.8,90.9"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M492 110 L554.0 218.1"/>
+    <polygon class="f-head" points="558,225 550.1,220.3 557.9,215.8"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M492 238 L554.2 122.0"/>
+    <polygon class="f-head" points="558,115 558.2,124.2 550.3,119.9"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M492 245 L550.0 240.6"/>
+    <polygon class="f-head" points="558,240 550.4,245.1 549.7,236.1"/>
+  </g>
+  <rect class="f-box" x="20" y="330" width="220" height="56" rx="8"/>
+  <text class="f-small" x="130" y="354" text-anchor="middle">GitHub: branches,</text>
+  <text class="f-small" x="130" y="372" text-anchor="middle">pull requests, CI</text>
+  <rect class="f-box" x="270" y="330" width="220" height="56" rx="8"/>
+  <text class="f-small" x="380" y="354" text-anchor="middle">Postman collection</text>
+  <text class="f-small" x="380" y="372" text-anchor="middle">run by Newman in CI</text>
+  <rect class="f-box" x="520" y="330" width="220" height="56" rx="8"/>
+  <text class="f-small" x="630" y="354" text-anchor="middle">health checks,</text>
+  <text class="f-small" x="630" y="372" text-anchor="middle">non-root containers</text>
+</svg>

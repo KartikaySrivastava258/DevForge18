@@ -127,3 +127,27 @@ describe("mini-projects", () => {
     noProblems(problems);
   });
 });
+
+describe("capstones", () => {
+  it("reaches a capstone from its learning path and follows a milestone's link to a mini-project", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/paths/backend-foundations");
+    await page.getByRole("link", { name: "Project B — Course registration platform" }).click();
+    await page.waitForURL("**/capstones/capstone-b");
+    await page.getByRole("heading", { level: 1, name: "Project B — Course registration platform" }).waitFor();
+    await page.locator(".capstone__architecture svg").waitFor();
+    assert.ok((await page.locator(".capstone__milestones > li").count()) >= 3);
+    await page.locator("#milestone-data-model").getByRole("link", { name: "College course registration database" }).click();
+    await page.waitForURL("**/tracks/postgresql/projects/pg-course-registration");
+    noProblems(problems);
+  });
+
+  it("lists every capstone from the main navigation", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/");
+    await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Capstones" }).click();
+    await page.waitForURL("**/capstones");
+    await expectText(page.locator(".capstone-list"), /Project B — Course registration platform/);
+    noProblems(problems);
+  });
+});

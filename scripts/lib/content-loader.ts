@@ -8,6 +8,7 @@ import { basename, join, relative } from "node:path";
 import type { ZodError } from "zod/v4";
 import {
   AlternativesFileSchema,
+  CapstoneMetaSchema,
   CaseStudySchema,
   LabMetaSchema,
   LessonMetaSchema,
@@ -16,6 +17,7 @@ import {
   QuizSchema,
   TrackSchema,
   type CaseStudy,
+  type CompiledCapstone,
   type CompiledLab,
   type CompiledLesson,
   type CompiledProject,
@@ -432,7 +434,69 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   }
   for (const project of projects) if (!linkedProjects.has(project.id)) errors.push(`project ${project.id}: not listed in its track's projects`);
 
-  for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson, quiz or project`);
+  // ---- Capstones A–G: content/capstones/<id>.md ----------------------------------
+  const capstones: CompiledCapstone[] = [];
+  const capstoneDir = join(root, "capstones");
+  const projectIds = new Set(projects.map((p) => p.id));
+  const reuseExists = (r: { kind: string; id: string }) =>
+    r.kind === "lesson" ? lessonIds.has(r.id) : r.kind === "lab" ? labsById.has(r.id) : projectIds.has(r.id);
+  for (const fileName of listFiles(capstoneDir, ".md")) {
+    const file = join(capstoneDir, fileName);
+    const rel = relative(root, file);
+    const split = splitFrontMatter(readFileSync(file, "utf8"));
+    if (!split) {
+      errors.push(`${rel}: missing YAML front matter (--- ... ---)`);
+      continue;
+    }
+    let raw: unknown;
+    try {
+      raw = parseYaml(split.frontMatter, file);
+    } catch (err) {
+      errors.push(`${rel}: invalid front matter — ${(err as Error).message.split("\n")[0]}`);
+      continue;
+    }
+    const parsed = CapstoneMetaSchema.safeParse(raw);
+    if (!parsed.success) {
+      errors.push(...formatZod(rel, parsed.error));
+      continue;
+    }
+    const meta = parsed.data;
+    if (`${meta.id}.md` !== fileName) errors.push(`${rel}: id must match file name`);
+    if (meta.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+    for (const t of meta.tracks) if (!trackSlugs.has(t)) errors.push(`${rel}: unknown track "${t}"`);
+    const milestoneIds = new Set<string>();
+    for (const m of meta.milestones) {
+      if (milestoneIds.has(m.id)) errors.push(`${rel}: duplicate milestone id "${m.id}"`);
+      milestoneIds.add(m.id);
+      for (const r of m.reuses) if (!reuseExists(r)) errors.push(`${rel}: milestone "${m.id}" reuses an unknown ${r.kind} "${r.id}"`);
+    }
+    if (capstones.some((c) => c.letter === meta.letter)) errors.push(`${rel}: another capstone already uses the letter ${meta.letter}`);
+    const resolve = mediaResolver(media, usedMedia, simulationsById);
+    const key = meta.architecture.replace(/^media:/, "").replace(/\.svg$/, "");
+    if (!media.figures.has(key)) errors.push(`${rel}: architecture figure ${meta.architecture} not found`);
+    const architectureHtml = media.figures.has(key) ? resolve.figure(meta.architecture.replace(/^media:/, ""), "", "") : "";
+    const rendered = renderMarkdown(split.body, { media: resolve });
+    for (const problem of rendered.problems) errors.push(`${rel}: ${problem}`);
+    for (const heading of ["Brief", "Architecture", "Getting started"]) if (!rendered.toc.some((t) => t.text === heading)) errors.push(`${rel}: a capstone needs a "## ${heading}" section`);
+    capstones.push({ ...meta, html: rendered.html, toc: rendered.toc, architecture_html: architectureHtml, paths: [] });
+  }
+  capstones.sort((a, b) => a.letter.localeCompare(b.letter));
+  const capstonesById = new Map(capstones.map((c) => [c.id, c]));
+  for (const path of paths) {
+    const ref = path.capstone.capstone;
+    if (!ref) {
+      if (path.capstone.status === "available") errors.push(`path ${path.slug}: the capstone is marked available but names no capstone page`);
+      continue;
+    }
+    const capstone = capstonesById.get(ref);
+    if (!capstone) errors.push(`path ${path.slug}: unknown capstone "${ref}"`);
+    else {
+      if (path.capstone.status !== "available") errors.push(`path ${path.slug}: capstone "${ref}" is published, so its status must be "available"`);
+      capstone.paths.push(path.slug);
+    }
+  }
+
+  for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson, quiz, project or capstone`);
   for (const key of media.diagrams.keys()) if (!usedMedia.has(`diagram:${key}`)) warnings.push(`media/${key}.steps.yaml is not used by any lesson, quiz or project`);
 
   // ---- Case studies -------------------------------------------------------
@@ -471,7 +535,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   }
 
   return {
-    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs, quizzes, projects },
+    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs, quizzes, projects, capstones },
     errors,
     warnings,
   };

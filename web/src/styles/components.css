@@ -577,3 +577,12 @@
 .project__files summary { padding: var(--space-2) var(--space-3); cursor: pointer; }
 .project__files pre { margin: 0; border-top: 1px solid var(--line); border-radius: 0 0 var(--radius-s) var(--radius-s); max-height: 28rem; overflow: auto; }
 .project__criteria li { margin-bottom: var(--space-2); }
+
+/* Capstones */
+.capstone-list { list-style: none; padding: 0; display: grid; gap: var(--space-4, 1rem); }
+.capstone-list li { border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.25rem; background: var(--panel); }
+.capstone-list h2 { margin: 0 0 0.5rem; font-size: 1.15rem; }
+.capstone__architecture { margin: 1rem 0 1.5rem; }
+.capstone__milestones > li { margin-bottom: 1.5rem; }
+.capstone__milestones h3 { margin-bottom: 0.25rem; }
+.capstone__milestones h4 { margin: 0.75rem 0 0.25rem; font-size: 0.95rem; }

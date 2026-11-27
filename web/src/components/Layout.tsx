@@ -132,6 +132,9 @@ export function Layout({ children }: { children: ReactNode }) {
             <Link to="/paths" aria-current={section("/paths")}>
               Learning paths
             </Link>
+            <Link to="/capstones" aria-current={section("/capstones")}>
+              Capstones
+            </Link>
             {user ? (
               <Link to="/dashboard" aria-current={section("/dashboard")}>
                 My progress

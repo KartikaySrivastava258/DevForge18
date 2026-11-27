@@ -64,7 +64,16 @@ export function registerContentRoutes(router: Router, { content }: AppDeps): voi
       (acc, m) => (m.track ? { min: acc.min + m.track.estimatedHours.min, max: acc.max + m.track.estimatedHours.max } : acc),
       { min: 0, max: 0 },
     );
-    return ok({ path, modules, estimatedHours });
+    const capstone = path.capstone.capstone ? content.getCapstone(path.capstone.capstone) : undefined;
+    return ok({ path, modules, estimatedHours, capstone: capstone ? content.capstoneSummary(capstone) : null });
+  });
+
+  router.get("/api/capstones", () => ok({ capstones: content.listCapstones().map((c) => content.capstoneSummary(c)) }));
+
+  router.get("/api/capstones/:id", (ctx) => {
+    const capstone = content.getCapstone(ctx.params.id ?? "");
+    if (!capstone) throw notFound("Capstone");
+    return ok({ capstone: content.publicCapstone(capstone) });
   });
 
   router.get("/api/lessons/:id", (ctx) => {

@@ -1,3 +1,4 @@
+import { CapstonePage, CapstonesPage } from "./pages/Capstone.tsx";
 import { Component, useEffect, useRef, type ReactNode } from "react";
 import { Layout } from "./components/Layout.tsx";
 import { NotFoundState } from "./components/States.tsx";
@@ -37,6 +38,8 @@ function Routes({ pathname }: { pathname: string }) {
   if ((m = matchPath("/tracks/:slug/quiz", pathname))) return <QuizPage key={m.slug} trackSlug={m.slug ?? ""} />;
   if ((m = matchPath("/tracks/:slug/projects/:id", pathname))) return <ProjectPage key={m.id} trackSlug={m.slug ?? ""} projectId={m.id ?? ""} />;
   if (pathname === "/paths") return <PathsPage />;
+  if (pathname === "/capstones") return <CapstonesPage />;
+  if ((m = matchPath("/capstones/:id", pathname))) return <CapstonePage key={m.id} id={m.id ?? ""} />;
   if ((m = matchPath("/paths/:slug", pathname))) return <PathPage key={m.slug} slug={m.slug ?? ""} />;
   if (pathname === "/search") return <SearchPage />;
   if (pathname === "/login") return <LoginPage />;
