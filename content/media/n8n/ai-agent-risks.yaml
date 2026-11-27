@@ -1,0 +1,4 @@
+alt: 'An untrusted ticket containing the text refund 1200 goes to the AI Agent, which is limited to three iterations and logs every step. The agent sends the ticket, the tool list and every tool result to the chat model at the provider. Tool calls go to the refund tool, which holds the rules: does the order exist, is the amount at most the order total, and does an amount above 200 need a person''s approval. The system message only asks; the tool enforces: 1200 is refused, 300 is held for approval, 80 is refunded.'
+caption: 'Customer text can steer the model; checks inside the tool decide what actually happens.'
+credit: DevForge 18 content team
+licence: project-content
