@@ -5,6 +5,8 @@ import { createServer } from "node:http";
 import { createApp, type App } from "../server/src/app.ts";
 import type { AppConfig } from "../server/src/config.ts";
 import { ContentStore } from "../server/src/content/store.ts";
+import { hashPassword } from "../server/src/auth/password.ts";
+import { insertUser, type Role } from "../server/src/auth/users.ts";
 import { migrate, openDatabase } from "../server/src/db/database.ts";
 import { silentLogger } from "../server/src/observability/logger.ts";
 
@@ -14,6 +16,8 @@ export interface Harness {
   url: string;
   browser: Browser;
   newPage: (opts?: { mobile?: boolean; colorScheme?: "light" | "dark" }) => Promise<{ page: Page; context: BrowserContext; problems: string[] }>;
+  /** Create an account directly in the database — the only way to get a faculty or admin account, as in production. */
+  createUser: (user: { email: string; name: string; password: string; role: Role }) => Promise<void>;
   close: () => Promise<void>;
 }
 
@@ -79,6 +83,9 @@ export async function startHarness(): Promise<Harness> {
         }
       });
       return { page, context, problems };
+    },
+    createUser: async ({ email, name, password, role }) => {
+      insertUser(db, { email, displayName: name, passwordHash: await hashPassword(password, config.passwordHashLogN), role });
     },
     close: async () => {
       await browser.close();

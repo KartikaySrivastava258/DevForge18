@@ -26,6 +26,14 @@ Every resource has `verification: { status: unverified | verified | broken, chec
 6. Dates are UTC (as in CI): `last_reviewed` and `checked_on` cannot be later than today in UTC.
 
 - `npm run new:quiz -- <track> <id>` and `npm run new:project -- <track> <id> [level]` scaffold a track quiz (all six question types are documented in `content/quizzes/git-github/git-github-quiz.yaml`) and a mini-project with `starter/` and `solution/` folders.
+- **Mini-project checks.** A project can ship `content/projects/<track>/<id>/check.sh`, which takes the learner's
+  folder as its only argument, prints `PASS: …` or `FAIL: …` per acceptance criterion and exits non-zero if any
+  fails. Declare the tools it needs in `check_needs` (git, python3, node, docker). `scripts/lib/projects.test.ts`
+  runs it on a copy of the starter (must fail, with at least one `FAIL`) and of the solution (must pass). Git
+  history cannot be stored as files, so a solution may include `prepare.sh`: the test runs it inside the copied
+  solution (it is not copied in itself) with `STARTER_DIR` pointing at a pristine starter, and it should replay
+  the learner's commits from the starter and end with a `diff -r` against the solution files. See the three
+  `git-github` projects. A starter must never include `prepare.sh`.
 
 ## Executable lessons
 

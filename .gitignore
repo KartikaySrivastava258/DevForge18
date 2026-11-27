@@ -12,3 +12,5 @@ test-results/
 .DS_Store
 *.log
 __pycache__/
+# Mini-project starters ship a placeholder .env on purpose (the project teaches keeping it out of Git).
+!content/projects/*/*/starter/.env

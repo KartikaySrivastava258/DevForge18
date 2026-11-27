@@ -463,6 +463,11 @@ export const ProjectMetaSchema = z
     starter: z.literal("starter"),
     /** Folder with the reference solution; served to faculty and admins only. */
     solution: z.literal("solution"),
+    /**
+     * Tools content/projects/<track>/<id>/check.sh needs. When check.sh exists, the tests run it against the starter
+     * (it must fail) and the reference solution (it must pass), after an optional prepare.sh in each folder.
+     */
+    check_needs: z.array(z.enum(["git", "python3", "node", "docker"])).optional(),
     owner: z.string().min(2),
     last_reviewed: isoDate,
     content_version: z.number().int().positive(),
@@ -481,6 +486,8 @@ export interface CompiledProject extends ProjectMeta {
   starter_files: ProjectFile[];
   /** Never sent to students; the server strips it from public responses. */
   solution_files: ProjectFile[];
+  /** The acceptance check learners run on their own work (content/projects/<track>/<id>/check.sh), if any. */
+  check_script: string | null;
 }
 
 /** A lesson after compilation: Markdown rendered to safe HTML plus a table of contents. */

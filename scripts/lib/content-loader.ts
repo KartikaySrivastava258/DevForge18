@@ -405,7 +405,10 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       const rendered = renderMarkdown(split.body, { media: mediaResolver(media, usedMedia, simulationsById) });
       for (const problem of rendered.problems) errors.push(`${rel}: ${problem}`);
       for (const heading of ["Brief", "Getting started"]) if (!rendered.toc.some((t) => t.text === heading)) errors.push(`${rel}: a project needs a "## ${heading}" section`);
-      projects.push({ ...meta, html: rendered.html, toc: rendered.toc, starter_files: starter, solution_files: solution });
+      const checkFile = join(projectDir, trackDir, meta.id, "check.sh");
+      const checkScript = existsSync(checkFile) ? readFileSync(checkFile, "utf8") : null;
+      if (meta.check_needs && !checkScript) errors.push(`${rel}: check_needs is set but projects/${trackDir}/${meta.id}/check.sh is missing`);
+      projects.push({ ...meta, html: rendered.html, toc: rendered.toc, starter_files: starter, solution_files: solution, check_script: checkScript });
     }
   }
   projects.sort((a, b) => (a.track === b.track ? a.id.localeCompare(b.id) : a.track.localeCompare(b.track)));

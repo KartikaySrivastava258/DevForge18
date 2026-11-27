@@ -281,7 +281,13 @@ export class ContentStore {
   // ---- Projects --------------------------------------------------------------
 
   getProject(id: string): CompiledProject | undefined { return this.projects.get(id); }
-  projectsFor(track: string): CompiledProject[] { return [...this.projects.values()].filter((p) => p.track === track); }
+  /** A track's published projects, in the order its track.yaml plans them (beginner to advanced). */
+  projectsFor(track: string): CompiledProject[] {
+    return (this.tracks.get(track)?.projects ?? []).flatMap((planned) => {
+      const p = planned.project ? this.projects.get(planned.project) : undefined;
+      return p ? [p] : [];
+    });
+  }
 
   projectSummary(p: CompiledProject) {
     return { id: p.id, track: p.track, title: p.title, level: p.level, estimatedHours: p.estimated_hours };
@@ -301,6 +307,7 @@ export class ContentStore {
       html: p.html,
       toc: p.toc,
       starterFiles: p.starter_files,
+      checkScript: p.check_script,
       lastReviewed: p.last_reviewed,
     };
   }

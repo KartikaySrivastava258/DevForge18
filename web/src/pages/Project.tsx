@@ -117,6 +117,18 @@ export function ProjectPage({ trackSlug, projectId }: { trackSlug: string; proje
       </p>
       <Files files={p.starterFiles} label="Starter files" />
 
+      {p.checkScript ? (
+        <>
+          <h2 id="check">Check your work</h2>
+          <p className="muted">
+            This script tests the acceptance criteria. Save it as <code>check.sh</code> next to your project folder and run{" "}
+            <code>bash check.sh path/to/your/project</code>; it prints PASS or FAIL for each criterion. DevForge's own tests run it
+            against the reference solution (all PASS) and the starter (FAIL).
+          </p>
+          <Files files={[{ path: "check.sh", content: p.checkScript }]} label="Check script" />
+        </>
+      ) : null}
+
       <h2 id="hints">Hints</h2>
       <p className="muted">Stuck? Reveal one hint at a time — try on your own after each.</p>
       <ol aria-live="polite">

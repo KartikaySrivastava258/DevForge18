@@ -295,6 +295,7 @@ export interface PublicProject extends ProjectSummary {
   html: string;
   toc: { id: string; text: string }[];
   starterFiles: ProjectFile[];
+  checkScript: string | null;
   lastReviewed: string;
 }
 
