@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300">
+  <!-- The tracking server's two stores, from The tracking server and its stores in depth. -->
+  <rect class="f-box-faint" x="10" y="110" width="190" height="80" rx="8"/>
+  <text class="f-small f-strong" x="105" y="136" text-anchor="middle">clients</text>
+  <text class="f-small" x="105" y="158" text-anchor="middle">training jobs, CI,</text>
+  <text class="f-small" x="105" y="176" text-anchor="middle">notebooks</text>
+  <rect class="f-box-accent" x="260" y="110" width="200" height="80" rx="8"/>
+  <text class="f-small f-strong" x="360" y="136" text-anchor="middle">tracking server</text>
+  <text class="f-small" x="360" y="158" text-anchor="middle">REST API + UI</text>
+  <text class="f-small" x="360" y="176" text-anchor="middle">stateless</text>
+  <g>
+    <path class="f-arrow" d="M202 150 L250 150"/>
+    <polygon class="f-head" points="258,150 250,154.5 250,145.5"/>
+  </g>
+  <text class="f-small" x="230" y="138" text-anchor="middle">URL only</text>
+  <rect class="f-box-ok" x="520" y="30" width="190" height="90" rx="8"/>
+  <text class="f-small f-strong" x="615" y="56" text-anchor="middle">backend store</text>
+  <text class="f-small f-mono" x="615" y="80" text-anchor="middle">PostgreSQL</text>
+  <text class="f-small" x="615" y="100" text-anchor="middle">runs · params · metrics</text>
+  <rect class="f-box-ok" x="520" y="180" width="190" height="90" rx="8"/>
+  <text class="f-small f-strong" x="615" y="206" text-anchor="middle">artifact store</text>
+  <text class="f-small f-mono" x="615" y="230" text-anchor="middle">folder / s3:// bucket</text>
+  <text class="f-small" x="615" y="250" text-anchor="middle">files · models</text>
+  <g>
+    <path class="f-arrow" d="M462 135 L512.0 90.3"/>
+    <polygon class="f-head" points="518,85 515.0,93.7 509.0,87.0"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M462 165 L512.0 209.7"/>
+    <polygon class="f-head" points="518,215 509.0,213.0 515.0,206.3"/>
+  </g>
+  <text class="f-small f-danger" x="360" y="290" text-anchor="middle">default: sqlite:///mlflow.db + ./mlartifacts inside the server — lost with the container</text>
+</svg>

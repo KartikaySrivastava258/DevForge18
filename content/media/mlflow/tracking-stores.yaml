@@ -1,0 +1,4 @@
+alt: 'Clients such as training jobs, CI and notebooks know only the tracking server''s URL. The tracking server, which serves the REST API and UI and keeps no state of its own, writes run metadata, parameters and metrics to the backend store, a PostgreSQL database, and files and models to the artifact store, a folder or s3 bucket, proxying uploads for the clients. By default both are a SQLite file mlflow.db and an mlartifacts folder inside the server, which are lost with its container.'
+caption: 'Metadata goes to a database, files to an artifact store; clients only talk to the server.'
+credit: DevForge 18 content team
+licence: project-content
