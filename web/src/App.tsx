@@ -1,4 +1,6 @@
 import { CapstonePage, CapstonesPage } from "./pages/Capstone.tsx";
+import { GraphPage, IntegrationPage } from "./pages/Graph.tsx";
+import { ArchitecturePage, ArchitecturesPage } from "./pages/Architecture.tsx";
 import { Component, useEffect, useRef, type ReactNode } from "react";
 import { Layout } from "./components/Layout.tsx";
 import { NotFoundState } from "./components/States.tsx";
@@ -39,6 +41,10 @@ function Routes({ pathname }: { pathname: string }) {
   if ((m = matchPath("/tracks/:slug/projects/:id", pathname))) return <ProjectPage key={m.id} trackSlug={m.slug ?? ""} projectId={m.id ?? ""} />;
   if (pathname === "/paths") return <PathsPage />;
   if (pathname === "/capstones") return <CapstonesPage />;
+  if (pathname === "/graph") return <GraphPage />;
+  if (pathname === "/architecture") return <ArchitecturesPage />;
+  if ((m = matchPath("/architecture/:id", pathname))) return <ArchitecturePage key={m.id} id={m.id ?? ""} />;
+  if ((m = matchPath("/integrations/:id", pathname))) return <IntegrationPage key={m.id} id={m.id ?? ""} />;
   if ((m = matchPath("/capstones/:id", pathname))) return <CapstonePage key={m.id} id={m.id ?? ""} />;
   if ((m = matchPath("/paths/:slug", pathname))) return <PathPage key={m.slug} slug={m.slug ?? ""} />;
   if (pathname === "/search") return <SearchPage />;

@@ -336,3 +336,57 @@ export interface MyQuizResult {
   passed: boolean;
   lastAttempt: string;
 }
+
+export interface GraphResponse {
+  nodes: { slug: string; number: number; title: string; shortTitle: string; category: string }[];
+  edges: { a: string; b: string; reasons: { from: string; why: string }[]; integration: { id: string; title: string } | null }[];
+  paths: { slug: string; title: string; tracks: string[] }[];
+}
+
+export interface PublicIntegration {
+  id: string;
+  from: string;
+  to: string;
+  fromTitle: string;
+  toTitle: string;
+  title: string;
+  summary: string;
+  flow: string;
+  steps: string[];
+  pitfalls: string[];
+  practise: CapstoneReuse[];
+  last_reviewed: string;
+}
+
+export interface ArchitectureSummary {
+  id: string;
+  title: string;
+  summary: string;
+  tracks: string[];
+}
+
+export interface PublicArchitecture extends ArchitectureSummary {
+  problem: string;
+  diagramHtml: string;
+  components: { name: string; track?: string; role: string }[];
+  flow: string[];
+  tradeOffs: { choice: string; gain: string; cost: string }[];
+  failureModes: { failure: string; effect: string; mitigation: string }[];
+  alternatives: { instead_of: string; consider: string; when: string }[];
+  decisionPrompts: string[];
+  learnMore: CapstoneReuse[];
+  capstones: { id: string; letter: string; title: string }[];
+  html: string;
+  toc: { id: string; text: string }[];
+  lastReviewed: string;
+}
+
+export interface ArchitectureDecision {
+  architectureId: string;
+  title: string;
+  context: string;
+  decision: string;
+  consequences: string;
+  status: "draft" | "submitted";
+  updatedAt: string;
+}

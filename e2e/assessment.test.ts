@@ -151,3 +151,39 @@ describe("capstones", () => {
     noProblems(problems);
   });
 });
+
+describe("architecture studio and relationship graph", () => {
+  it("shows a reference architecture and saves a learner's decision record", async () => {
+    await h.createUser({ email: "architect@example.edu", name: "Architect", password: "orbit lantern cobalt river", role: "student" });
+    const { page, problems } = await h.newPage();
+    await page.goto("/login?next=/architecture/web-app-with-cache");
+    await page.getByLabel("Email").fill("architect@example.edu");
+    await page.getByLabel("Password").fill("orbit lantern cobalt river");
+    await page.getByRole("button", { name: "Sign in" }).click();
+    await page.waitForURL("**/architecture/web-app-with-cache");
+    await page.getByRole("heading", { level: 1, name: "Web application with a cache behind a reverse proxy" }).waitFor();
+    await page.locator(".capstone__architecture svg").waitFor();
+    await page.getByLabel("Context", { exact: true }).fill("Course portal with 5,000 students and a registration rush.");
+    await page.getByLabel("Decision", { exact: true }).fill("Cache the course list for 30 seconds; never cache seat counts.");
+    await page.getByLabel("Consequences", { exact: true }).fill("Course descriptions may be 30 s stale.");
+    await page.getByRole("button", { name: "Save draft" }).click();
+    await expectText(page.locator(".adr"), /Draft saved\. Status: draft/);
+    await page.reload();
+    await expectText(page.locator(".adr"), /Status: draft/);
+    assert.equal(await page.getByLabel("Decision", { exact: true }).inputValue(), "Cache the course list for 30 seconds; never cache seat counts.");
+    noProblems(problems);
+  });
+
+  it("filters the relationship graph by learning path and keeps a text list of every connection", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/graph");
+    await page.getByRole("heading", { level: 1, name: "How the tools connect" }).waitFor();
+    const rows = page.locator("table tbody tr");
+    const all = await rows.count();
+    assert.ok(all >= 20, `expected the full list of connections, got ${all}`);
+    await page.getByLabel("Highlight a learning path").selectOption({ label: "MLOps" });
+    await expectText(page.locator("table"), /MLflow/);
+    assert.ok((await rows.count()) < all, "the path filter narrows the list");
+    noProblems(problems);
+  });
+});

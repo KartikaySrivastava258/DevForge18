@@ -47,6 +47,9 @@ export function TracksPage() {
         Eighteen tracks, grouped by the job they do in a system. Each one starts with a plain explanation and builds towards
         production practice.
       </p>
+      <p>
+        <Link to="/graph">See how the tools connect</Link> · <Link to="/architecture">Reference architectures</Link> · <Link to="/capstones">Capstone projects that combine them</Link>
+      </p>
 
       <div className="filters" role="group" aria-label="Filter tracks">
         <div className="search-input">
