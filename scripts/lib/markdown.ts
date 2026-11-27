@@ -197,10 +197,5 @@ export function renderMarkdown(source: string, options: { media?: MediaResolver 
   return { html, toc, wordCount, problems, figures };
 }
 
-/** Split a Markdown file into YAML front matter and body. */
-export function splitFrontMatter(source: string): { frontMatter: string; body: string } | null {
-  const normalised = source.replace(/\r\n/g, "\n");
-  const match = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(normalised);
-  if (!match) return null;
-  return { frontMatter: match[1] ?? "", body: match[2] ?? "" };
-}
+/** Split a Markdown file into YAML front matter and body (re-exported; it lives in front-matter.ts). */
+export { splitFrontMatter } from "./front-matter.ts";

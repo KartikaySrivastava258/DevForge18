@@ -41,6 +41,7 @@ try {
       env: config.env,
       tracks: content.listTracks().length,
       lessons: content.bundle.lessons.length,
+      contentEditor: config.cms?.enabled ? "enabled" : (config.cms?.reason ?? "not configured"),
     });
   });
 
