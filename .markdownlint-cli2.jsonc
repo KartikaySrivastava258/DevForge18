@@ -1,4 +1,4 @@
 {
   "config": { "MD013": false, "MD060": false, "MD033": false, "MD024": { "siblings_only": true } },
-  "ignores": ["node_modules/**", "build/**", "content/**", ".github/pull_request_template.md"]
+  "ignores": ["node_modules/**", ".claude/**", "build/**", "content/**", ".github/pull_request_template.md"]
 }
