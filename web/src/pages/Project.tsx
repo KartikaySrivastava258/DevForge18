@@ -16,7 +16,8 @@ function Files({ files, label }: { files: ProjectFile[]; label: string }) {
           <summary>
             <code>{f.path}</code>
           </summary>
-          <pre>
+          {/* Scrolls (max-height, long lines), so it must take keyboard focus to be scrollable without a mouse. */}
+          <pre tabIndex={0}>
             <code>{f.content}</code>
           </pre>
         </details>

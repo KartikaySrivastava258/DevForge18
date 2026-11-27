@@ -30,13 +30,16 @@
     "new:lab": "node --disable-warning=ExperimentalWarning scripts/new-content.ts lab",
     "new:quiz": "node --disable-warning=ExperimentalWarning scripts/new-content.ts quiz",
     "new:project": "node --disable-warning=ExperimentalWarning scripts/new-content.ts project",
-    "test:e2e:throttled": "DEVFORGE_E2E_CPU_THROTTLE=8 npm run test:e2e"
+    "test:e2e:throttled": "DEVFORGE_E2E_CPU_THROTTLE=8 npm run test:e2e",
+    "test:compose": "bash scripts/compose-smoke.sh",
+    "test:load": "bash scripts/load-test.sh"
   },
   "dependencies": {
     "js-yaml": "^4.2.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@types/node": "26.6.3",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
@@ -52,6 +55,7 @@
   },
   "license": "MIT",
   "overrides": {
-    "katex": "^0.18.2"
+    "katex": "^0.18.2",
+    "axe-core": "4.14.0"
   }
 }

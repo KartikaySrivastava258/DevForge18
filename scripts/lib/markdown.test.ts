@@ -35,6 +35,11 @@ describe("renderMarkdown structure", () => {
     ]);
     assert.ok(html.includes('id="detail"'));
   });
+  it("makes code blocks keyboard-focusable, so lines wider than the screen can be scrolled without a mouse", () => {
+    const { html } = renderMarkdown("```bash\necho hello\n```\n\n```text output\nhello\n```");
+    assert.equal(html.match(/<pre tabindex="0">/g)?.length, 2);
+    assert.ok(!html.includes("<pre>"));
+  });
 });
 
 describe("helpers", () => {

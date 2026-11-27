@@ -28,10 +28,11 @@ export function ErrorState({ error, onRetry }: { error: ApiError; onRetry?: () =
   );
 }
 
+/** Always the page's main content when shown (unknown route or missing item), so it carries the page's h1. */
 export function NotFoundState() {
   return (
     <div className="state">
-      <h2>Page not found</h2>
+      <h1>Page not found</h1>
       <p>The link may be mistyped, or the content may have moved.</p>
       <p>
         <Link to="/tracks">Browse all 18 tracks</Link> or <Link to="/search">search for a topic</Link>.

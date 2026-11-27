@@ -59,7 +59,9 @@ export function GraphPage() {
           </select>
         </div>
       </div>
-      <svg className="graph__svg" viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-labelledby="graph-desc">
+      {/* role="group", not "img": the tools and guides in the picture are keyboard-focusable links, and an image's
+          children are hidden from assistive technology (axe: nested-interactive). */}
+      <svg className="graph__svg" viewBox={`0 0 ${SIZE} ${SIZE}`} role="group" aria-label="Diagram of how the tools connect" aria-describedby="graph-desc">
         <desc id="graph-desc">
           {data.nodes.length} tools arranged in a circle with {data.edges.length} lines between related tools. The same information is in the list
           below the picture.

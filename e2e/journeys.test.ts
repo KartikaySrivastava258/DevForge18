@@ -915,4 +915,19 @@ describe("simulations", () => {
     }
     noProblems(problems);
   });
+
+  it("stacks its side panel when embedded in an article, so the stage keeps the article's width", async () => {
+    // Regression: a viewport media query kept two columns inside a ~630 px lab article, squeezing the Dockerfile
+    // editor to ~250 px with one character per line. The layout now follows the simulation's own width.
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/docker/labs/docker-layer-cache-experiments");
+    const embed = page.locator(".sim-embed .sim");
+    await embed.locator(".layer-sim__file").waitFor();
+    const simWidth = (await embed.boundingBox())?.width ?? 0;
+    const stageWidth = (await embed.locator(".sim__stage").boundingBox())?.width ?? 0;
+    assert.ok(stageWidth > simWidth * 0.8, `stage is ${stageWidth}px of a ${simWidth}px simulation`);
+    const line = embed.locator(".layer-sim__line code").first();
+    assert.ok(((await line.boundingBox())?.height ?? 999) < 40, "FROM alpine:3.20 fits on one line");
+    noProblems(problems);
+  });
 });
