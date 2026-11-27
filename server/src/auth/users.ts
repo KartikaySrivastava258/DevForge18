@@ -63,6 +63,12 @@ export function setUserRole(db: Db, userId: string, role: Role): void {
   db.prepare("UPDATE users SET role = ?, updated_at = ? WHERE id = ?").run(role, new Date().toISOString(), userId);
 }
 
+/** Disable (now) or re-enable an account. Callers delete the user's sessions when disabling. */
+export function setUserDisabled(db: Db, userId: string, disabled: boolean): void {
+  const now = new Date().toISOString();
+  db.prepare("UPDATE users SET disabled_at = ?, updated_at = ? WHERE id = ?").run(disabled ? now : null, now, userId);
+}
+
 export function countActiveAdmins(db: Db): number {
   const row = db.prepare("SELECT COUNT(*) AS n FROM users WHERE role = 'admin' AND disabled_at IS NULL").get() as { n: number };
   return row.n;
