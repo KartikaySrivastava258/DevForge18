@@ -1,0 +1,4 @@
+alt: 'A schema registry holds subject orders-value with version 1 as ID 1 and version 2 as ID 2, and the rule BACKWARD. A producer looks up or registers its schema and gets its ID. Each record in the topic is a format byte 00, the four-byte schema ID such as 00 00 00 02, then the Avro data. A consumer fetches the writer schema by ID from the registry and resolves it to its own schema. A new version is checked against the rule before any producer can use it; an incompatible one is refused with HTTP 409.'
+caption: 'The registry hands out schema IDs and enforces compatibility; each record names the schema it was written with.'
+credit: DevForge 18 content team
+licence: project-content
