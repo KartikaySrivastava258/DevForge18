@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320">
+  <!-- A self-hosted n8n and what protects it, from Self-hosting n8n securely. -->
+  <rect class="f-box-faint" x="10" y="110" width="140" height="80" rx="8"/>
+  <text class="f-small f-strong" x="80" y="140" text-anchor="middle">users &amp;</text>
+  <text class="f-small f-strong" x="80" y="160" text-anchor="middle">webhooks</text>
+  <rect class="f-box-accent" x="190" y="100" width="150" height="100" rx="8"/>
+  <text class="f-small f-strong" x="265" y="128" text-anchor="middle">reverse proxy</text>
+  <text class="f-small" x="265" y="150" text-anchor="middle">TLS · auth</text>
+  <text class="f-small" x="265" y="172" text-anchor="middle">(Nginx)</text>
+  <rect class="f-box-accent" x="380" y="80" width="170" height="140" rx="8"/>
+  <text class="f-small f-strong" x="465" y="104" text-anchor="middle">n8n</text>
+  <text class="f-small f-mono" x="465" y="128" text-anchor="middle">NODES_EXCLUDE</text>
+  <text class="f-small" x="465" y="148" text-anchor="middle">(Execute Command off)</text>
+  <text class="f-small f-mono" x="465" y="172" text-anchor="middle">n8n audit</text>
+  <text class="f-small" x="465" y="194" text-anchor="middle">task runners isolated</text>
+  <rect class="f-box-ok" x="590" y="30" width="120" height="110" rx="8"/>
+  <text class="f-small f-strong" x="650" y="56" text-anchor="middle">volume /</text>
+  <text class="f-small f-strong" x="650" y="76" text-anchor="middle">PostgreSQL</text>
+  <text class="f-small" x="650" y="100" text-anchor="middle">credentials</text>
+  <text class="f-small" x="650" y="118" text-anchor="middle">encrypted</text>
+  <rect class="f-box-danger" x="590" y="170" width="120" height="110" rx="8"/>
+  <text class="f-small f-strong" x="650" y="196" text-anchor="middle">encryption</text>
+  <text class="f-small f-strong" x="650" y="216" text-anchor="middle">key</text>
+  <text class="f-small" x="650" y="240" text-anchor="middle">secret store +</text>
+  <text class="f-small" x="650" y="258" text-anchor="middle">separate backup</text>
+  <g>
+    <path class="f-arrow" d="M152 150 L180 150"/>
+    <polygon class="f-head" points="188,150 180,154.5 180,145.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M342 150 L370 150"/>
+    <polygon class="f-head" points="378,150 370,154.5 370,145.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M552 120 L581.9 95.1"/>
+    <polygon class="f-head" points="588,90 584.7,98.6 579.0,91.7"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M552 180 L582.6 214.1"/>
+    <polygon class="f-head" points="588,220 579.3,217.1 586.0,211.0"/>
+  </g>
+  <text class="f-small f-danger" x="360" y="306" text-anchor="middle">lose the key and every stored credential is unreadable — back it up apart from the database</text>
+</svg>

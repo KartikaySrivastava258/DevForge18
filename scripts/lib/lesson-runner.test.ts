@@ -155,21 +155,22 @@ describe("docker containers", () => {
     }
   });
 
-  it("Compose projects and user-defined networks are taken down by the cleanup trap, containers first", () => {
+  it("Compose projects, user-defined networks and named volumes are taken down by the cleanup trap, containers first", () => {
     const bin = mkdtempSync(join(tmpdir(), "devforge-dockerstub-"));
     const log = join(bin, "calls.log");
     writeFileSync(join(bin, "docker"), `#!/bin/bash\necho "docker $*" >> "${log}"\n`);
     chmodSync(join(bin, "docker"), 0o755);
     try {
-      const run = runLesson(extractRunBlocks("```bash run\ndocker network create lab-net\ndocker run -d --name c1 --network lab-net image:1\ndocker compose -p lab up -d\n```\n```bash run\nfalse\n```"), { path: `${bin}:${process.env.PATH}` });
+      const run = runLesson(extractRunBlocks("```bash run\ndocker network create lab-net\ndocker volume create lab-data\ndocker run -d --name c1 --network lab-net image:1\ndocker compose -p lab up -d\n```\n```bash run\nfalse\n```"), { path: `${bin}:${process.env.PATH}` });
       assert.ok(run.failure !== undefined);
-      assert.deepEqual(readFileSync(log, "utf8").trim().split("\n").slice(3), [
+      assert.deepEqual(readFileSync(log, "utf8").trim().split("\n").slice(4), [
         "docker ps -a --format     {{.Names}} {{.Status}}",
         "docker inspect -f c1: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}} c1",
         "docker logs --tail 25 c1",
         "docker rm -f c1",
         "docker compose -p lab down -v --remove-orphans",
         "docker network rm lab-net",
+        "docker volume rm -f lab-data",
       ]);
     } finally {
       rmSync(bin, { recursive: true, force: true });

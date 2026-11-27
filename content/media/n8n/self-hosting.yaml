@@ -1,0 +1,4 @@
+alt: 'Users and webhooks reach n8n through a reverse proxy such as Nginx, which provides TLS and authentication. n8n excludes risky nodes with NODES_EXCLUDE, so Execute Command is off, runs n8n audit regularly and isolates its task runners. Its data lives on a volume or in PostgreSQL, with credentials encrypted. The encryption key belongs in a secret store with a separate backup: lose the key and every stored credential is unreadable.'
+caption: 'TLS and authentication in front, fewer capabilities inside, encrypted data on durable storage, and the key kept safe.'
+credit: DevForge 18 content team
+licence: project-content

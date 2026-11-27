@@ -264,6 +264,10 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   for (const name of new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bdocker network create ([a-zA-Z0-9][\w.-]*)/g)].map((m) => m[1] ?? "")))) {
     if (name) cleanup.push(`docker network rm ${name} >/dev/null 2>&1 || true`);
   }
+  // Named volumes a lesson creates (docker volume create name), after the containers that use them are gone.
+  for (const name of new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bdocker volume create ([a-zA-Z0-9][\w.-]*)/g)].map((m) => m[1] ?? "")))) {
+    if (name) cleanup.push(`docker volume rm -f ${name} >/dev/null 2>&1 || true`);
+  }
   // Stop servers a lesson started in the background (prometheus … &), even if a later block fails.
   // The job list is read in this shell, not in a $(…) subshell (CI once saw a background job survive
   // that way and hold the output pipe open until the timeout); pkill -P then catches any child left.
