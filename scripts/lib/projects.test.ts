@@ -9,8 +9,10 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import type { CompiledProject, ProjectFile } from "../../shared/content-schema.ts";
+import { changeScope } from "./affected.ts";
 import { loadContent } from "./content-loader.ts";
 import { dockerTestingEnabled, hasCommand } from "./lesson-runner.ts";
+import { shardFilter } from "./runnables.ts";
 
 const contentRoot = join(import.meta.dirname, "..", "..", "content");
 const { bundle } = loadContent(contentRoot);
@@ -65,11 +67,34 @@ function runCheck(project: CompiledProject, files: ProjectFile[]): { status: num
   }
 }
 
+/**
+ * Where each check runs in CI. The verify job (DEVFORGE_LESSON_SHARD=off) runs the checks that need no Docker;
+ * the lesson shard jobs ("i/n", Docker allowed) run every n-th Docker check — on pushes only for projects whose
+ * files changed (or everything when the runner, server or schema changed). Local runs (unset) run everything
+ * the machine has tools for.
+ */
+const shardSetting = process.env.DEVFORGE_LESSON_SHARD ?? "";
+const withCheck = bundle.projects.filter((p) => p.check_script);
+const usesDocker = (p: CompiledProject) => (p.check_needs ?? []).includes("docker");
+function selectedForThisJob(): { project: CompiledProject; skip: string | false }[] {
+  if (shardSetting === "off") return withCheck.map((project) => ({ project, skip: usesDocker(project) ? "runs in the lesson shard jobs (needs Docker)" : false }));
+  if (!shardSetting) return withCheck.map((project) => ({ project, skip: false }));
+  const changed = process.env.DEVFORGE_CHANGED_FILES;
+  const lines = changed === undefined || changed.trim() === "all" ? "all" : changed.split("\n").map((l) => l.trim()).filter(Boolean);
+  const everything = lines === "all" || changeScope(lines) === "all";
+  const inShard = shardFilter(shardSetting);
+  return withCheck
+    .filter(usesDocker)
+    .filter((_, index) => inShard(index))
+    .filter((p) => everything || (lines as string[]).some((f) => f.startsWith(`content/projects/${p.track}/${p.id}.md`) || f.startsWith(`content/projects/${p.track}/${p.id}/`)))
+    .map((project) => ({ project, skip: false }));
+}
+
 describe("mini-project checks", () => {
-  for (const project of bundle.projects.filter((p) => p.check_script)) {
+  for (const { project, skip } of selectedForThisJob()) {
     const needs = project.check_needs ?? [];
     const missing = needs.filter((tool) => (tool === "docker" ? !dockerTestingEnabled() : !hasCommand(tool)));
-    it(`${project.id}: the check fails on the starter and passes on the reference solution`, { skip: missing.length ? `needs ${missing.join(", ")}` : false }, () => {
+    it(`${project.id}: the check fails on the starter and passes on the reference solution`, { skip: skip || (missing.length ? `needs ${missing.join(", ")}` : false) }, () => {
       const starter = runCheck(project, project.starter_files);
       assert.notEqual(starter.status, 0, `the check should fail on the starter:\n${starter.output}`);
       assert.match(starter.output, /FAIL/, "the check should say which criterion fails");

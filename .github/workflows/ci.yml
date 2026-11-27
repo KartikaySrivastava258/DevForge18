@@ -163,6 +163,8 @@ jobs:
       - name: Executed lessons and labs
         if: steps.select.outputs.count != '0'
         run: node --disable-warning=ExperimentalWarning --test scripts/lib/lesson-runner.test.ts
+      - name: Mini-project checks that need Docker (the verify job runs the others)
+        run: node --disable-warning=ExperimentalWarning --test scripts/lib/projects.test.ts
       - name: Save Terraform provider and npm caches
         if: always() && steps.select.outputs.count != '0'
         uses: actions/cache/save@v6
