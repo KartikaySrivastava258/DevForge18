@@ -17,6 +17,7 @@ const SECTIONS = [
   { id: "simulations", label: "Simulations" },
   { id: "practice", label: "Labs" },
   { id: "projects", label: "Projects" },
+  { id: "quiz", label: "Quiz" },
   { id: "who-uses", label: "Who uses it" },
   { id: "alternatives", label: "Alternatives" },
   { id: "resources", label: "Official resources" },
@@ -58,7 +59,7 @@ export function TrackPage({ slug }: { slug: string }) {
 
   if (error) return <div className="page"><ErrorState error={error} onRetry={reload} /></div>;
   if (loading || !data) return <div className="page"><Loading label="Loading track" /></div>;
-  const { track, summary, lessons, simulations, caseStudies, labs, prerequisites, related, paths } = data;
+  const { track, summary, lessons, simulations, caseStudies, labs, quiz, projects, prerequisites, related, paths } = data;
 
   return (
     <div className="page">
@@ -287,7 +288,7 @@ export function TrackPage({ slug }: { slug: string }) {
             <ul className="plan-list">
               {track.projects.map((p) => (
                 <li key={p.title}>
-                  <span>{p.title}</span>
+                  {p.project && projects.some((x) => x.id === p.project) ? <Link to={`/tracks/${track.slug}/projects/${p.project}`}>{p.title}</Link> : <span>{p.title}</span>}
                   <span className="tags">
                     <LevelTag level={p.level} />
                     {p.status === "planned" ? <span className="tag">Planned</span> : null}
@@ -295,6 +296,18 @@ export function TrackPage({ slug }: { slug: string }) {
                 </li>
               ))}
             </ul>
+          </section>
+
+          <section id="quiz" className="section" aria-labelledby="quiz-h">
+            <h2 id="quiz-h">Quiz</h2>
+            {quiz ? (
+              <p>
+                <Link to={`/tracks/${track.slug}/quiz`}>{quiz.title}</Link> — {quiz.questionCount} questions from all levels, pass mark{" "}
+                {Math.round(quiz.passMark * 100)}%. Already know this tool? Passing lets learning paths mark this track as skippable.
+              </p>
+            ) : (
+              <p className="muted">The quiz for this track is planned.</p>
+            )}
           </section>
 
           <section id="who-uses" className="section" aria-labelledby="who-uses-h">

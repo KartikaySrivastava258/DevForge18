@@ -25,6 +25,7 @@ export interface TrackSummary {
   outcome: string;
   entryLevel: Level;
   estimatedHours: { min: number; max: number };
+  hasQuiz: boolean;
   contentStatus: "outline" | "in-progress" | "complete";
   lessonCount: number;
   topicCount: number;
@@ -53,6 +54,8 @@ export interface TrackResponse {
   simulations: SimulationSummary[];
   caseStudies: CaseStudy[];
   labs: LabSummary[];
+  quiz: QuizSummary | null;
+  projects: ProjectSummary[];
   prerequisites: TrackSummary[];
   related: { why: string; track: TrackSummary }[];
   paths: { slug: string; title: string; number: number }[];
@@ -214,4 +217,91 @@ export interface LabCompleteResponse {
   completed: boolean;
   grade: { total: number; correct: number; passed: boolean; results: { id: string; correct: boolean; explanation?: string }[] } | null;
   progress: LabProgress | null;
+}
+
+// ---- Track quizzes and mini-projects ----
+
+export interface QuizItem {
+  id: string;
+  text: string;
+}
+
+interface QuizQuestionBase {
+  id: string;
+  level: "beginner" | "intermediate" | "advanced";
+  prompt: string;
+}
+
+export type PublicQuizQuestion =
+  | (QuizQuestionBase & { type: "single" | "multiple"; options: QuizItem[] })
+  | (QuizQuestionBase & { type: "output"; command: string; output: string; options: QuizItem[] })
+  | (QuizQuestionBase & { type: "ordering"; items: QuizItem[] })
+  | (QuizQuestionBase & { type: "matching"; left: QuizItem[]; right: QuizItem[] })
+  | (QuizQuestionBase & { type: "diagram"; figureHtml: string; targets: QuizItem[]; labels: QuizItem[] });
+
+export interface PublicQuiz {
+  id: string;
+  track: string;
+  title: string;
+  description: string;
+  passMark: number;
+  lastReviewed: string;
+  questions: PublicQuizQuestion[];
+}
+
+export type QuizAnswer = string | string[] | Record<string, string>;
+
+export interface QuizGradeResponse {
+  quizId: string;
+  track: string;
+  total: number;
+  correct: number;
+  score: number;
+  passMark: number;
+  passed: boolean;
+  results: { id: string; correct: boolean; explanation?: string; review?: { id: string; title: string } }[];
+  saved: boolean;
+}
+
+export interface QuizSummary {
+  id: string;
+  track: string;
+  title: string;
+  questionCount: number;
+  passMark: number;
+}
+
+export interface ProjectSummary {
+  id: string;
+  track: string;
+  title: string;
+  level: "beginner" | "intermediate" | "advanced";
+  estimatedHours: number;
+}
+
+export interface ProjectFile {
+  path: string;
+  content: string;
+}
+
+export interface PublicProject extends ProjectSummary {
+  prerequisites: LessonSummary[];
+  relatedTracks: string[];
+  userStories: string[];
+  acceptanceCriteria: string[];
+  rubric: { criterion: string; excellent: string; good: string; needs_work: string }[];
+  hints: string[];
+  stretchGoals: string[];
+  html: string;
+  toc: { id: string; text: string }[];
+  starterFiles: ProjectFile[];
+  lastReviewed: string;
+}
+
+export interface MyQuizResult {
+  track: string;
+  attempts: number;
+  bestScore: number;
+  passed: boolean;
+  lastAttempt: string;
 }

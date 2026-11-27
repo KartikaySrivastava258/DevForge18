@@ -36,6 +36,7 @@ export interface TrackSummary {
   topicCount: number;
   prerequisites: string[];
   related: { slug: string; why: string }[];
+  hasQuiz: boolean;
 }
 
 export interface LessonSummary {
@@ -184,6 +185,7 @@ export class ContentStore {
       topicCount: track.topics.length,
       prerequisites: track.prerequisites,
       related: track.related,
+      hasQuiz: this.quizzes.has(track.slug),
     };
   }
 

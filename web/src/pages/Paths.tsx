@@ -2,9 +2,10 @@ import { BookmarkButton } from "../components/BookmarkButton.tsx";
 import { Crumbs } from "../components/Crumbs.tsx";
 import { ErrorState, Loading } from "../components/States.tsx";
 import { LevelTag } from "../components/Tags.tsx";
+import { useAuth } from "../lib/auth.tsx";
 import { formatDate, hours } from "../lib/format.ts";
 import { Link } from "../lib/router.tsx";
-import type { PathResponse, PathsResponse, TracksResponse } from "../lib/types.ts";
+import type { MyQuizResult, PathResponse, PathsResponse, TracksResponse } from "../lib/types.ts";
 import { useApi, useTitle } from "../lib/useApi.ts";
 
 export function PathsPage() {
@@ -47,6 +48,9 @@ export function PathsPage() {
 
 export function PathPage({ slug }: { slug: string }) {
   const { data, error, loading, reload } = useApi<PathResponse>(`/api/paths/${encodeURIComponent(slug)}`, { cache: true });
+  const { user } = useAuth();
+  const myQuizzes = useApi<{ quizzes: MyQuizResult[] }>(user ? "/api/me/quizzes" : null);
+  const quizResult = (track: string) => myQuizzes.data?.quizzes.find((q) => q.track === track);
   useTitle(data?.path.title);
   if (error) return <div className="page"><ErrorState error={error} onRetry={reload} /></div>;
   if (loading || !data) return <div className="page"><Loading label="Loading path" /></div>;
@@ -96,6 +100,18 @@ export function PathPage({ slug }: { slug: string }) {
                       {m.track.lessonCount ? `${m.track.lessonCount} lesson${m.track.lessonCount > 1 ? "s" : ""}` : "Outline only"}
                     </span>
                   </div>
+                  {m.track.hasQuiz ? (
+                    quizResult(m.track.slug)?.passed ? (
+                      <p className="small">
+                        <span className="tag tag--ok">Skipped by quiz</span> best score {Math.round((quizResult(m.track.slug)?.bestScore ?? 0) * 100)}% —{" "}
+                        <Link to={`/tracks/${m.track.slug}`}>review the track anyway</Link>
+                      </p>
+                    ) : (
+                      <p className="small">
+                        Know it already? <Link to={`/tracks/${m.track.slug}/quiz`}>Take the {m.track.shortTitle} quiz</Link> to skip ahead.
+                      </p>
+                    )
+                  ) : null}
                 </li>
               ) : null,
             )}

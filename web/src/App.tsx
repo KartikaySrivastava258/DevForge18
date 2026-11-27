@@ -10,6 +10,8 @@ import { HomePage } from "./pages/Home.tsx";
 import { LabPage } from "./pages/Lab.tsx";
 import { LessonPage } from "./pages/Lesson.tsx";
 import { PathPage, PathsPage } from "./pages/Paths.tsx";
+import { ProjectPage } from "./pages/Project.tsx";
+import { QuizPage } from "./pages/Quiz.tsx";
 import { SearchPage } from "./pages/Search.tsx";
 import { SimulationPage } from "./pages/Simulation.tsx";
 import { TrackPage } from "./pages/Track.tsx";
@@ -32,6 +34,8 @@ function Routes({ pathname }: { pathname: string }) {
   if ((m = matchPath("/tracks/:slug/lessons/:id", pathname))) return <LessonPage key={m.id} trackSlug={m.slug ?? ""} lessonId={m.id ?? ""} />;
   if ((m = matchPath("/tracks/:slug/labs/:id", pathname))) return <LabPage key={m.id} trackSlug={m.slug ?? ""} labId={m.id ?? ""} />;
   if ((m = matchPath("/tracks/:slug/simulations/:id", pathname))) return <SimulationPage key={m.id} trackSlug={m.slug ?? ""} id={m.id ?? ""} />;
+  if ((m = matchPath("/tracks/:slug/quiz", pathname))) return <QuizPage key={m.slug} trackSlug={m.slug ?? ""} />;
+  if ((m = matchPath("/tracks/:slug/projects/:id", pathname))) return <ProjectPage key={m.id} trackSlug={m.slug ?? ""} projectId={m.id ?? ""} />;
   if (pathname === "/paths") return <PathsPage />;
   if ((m = matchPath("/paths/:slug", pathname))) return <PathPage key={m.slug} slug={m.slug ?? ""} />;
   if (pathname === "/search") return <SearchPage />;
