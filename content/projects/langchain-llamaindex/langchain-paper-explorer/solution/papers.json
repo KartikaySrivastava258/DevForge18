@@ -1,0 +1,75 @@
+{
+  "note": "Fictional papers and authors, written for a DevForge 18 exercise. None of them exists.",
+  "papers": [
+    {
+      "id": "p01", "year": 2019, "authors": ["A. Kulkarni", "R. Menon"],
+      "title": "Leaf-disease detection in rice crops from smartphone images",
+      "abstract": "We train a convolutional network on 12,000 smartphone images of rice leaves to recognise four common diseases. Farmers photograph a leaf and the image classifier returns the disease and a confidence. The model reaches 91 percent accuracy on images taken in the field."
+    },
+    {
+      "id": "p02", "year": 2020, "authors": ["N. Iqbal", "P. Saxena"],
+      "title": "Chest X-ray triage with convolutional networks",
+      "abstract": "A convolutional network sorts chest X-ray images into urgent and routine so that radiologists see the urgent images first. On 8,000 hospital images the classifier finds 95 percent of urgent cases. We discuss image quality and the risk of missed patients."
+    },
+    {
+      "id": "p03", "year": 2020, "authors": ["R. Menon", "T. Hussain"],
+      "title": "Speech recognition for low-resource Indian languages",
+      "abstract": "We build speech recognition for three Indian languages with less than 50 hours of recorded speech each. Transfer from a Hindi acoustic model halves the word error rate. The audio recordings and transcripts are released for research."
+    },
+    {
+      "id": "p04", "year": 2021, "authors": ["S. Bhatt", "L. Fernandes"],
+      "title": "Forecasting rooftop solar output with weather data",
+      "abstract": "Rooftop solar panels produce less energy on cloudy days. We forecast the next day's solar output of 40 college buildings from weather forecasts, cutting the forecast error by a third. Accurate forecasts let the campus schedule battery charging."
+    },
+    {
+      "id": "p05", "year": 2022, "authors": ["L. Fernandes", "P. Saxena"],
+      "title": "Graph neural networks for city traffic forecasting",
+      "abstract": "Road sensors form a graph whose nodes are junctions and whose edges are roads. A graph neural network forecasts traffic speed at every junction 30 minutes ahead. Traffic forecasts are better when the graph includes the direction of each road."
+    },
+    {
+      "id": "p06", "year": 2022, "authors": ["M. George", "T. Hussain"],
+      "title": "Measuring hallucination in retrieval-augmented answers",
+      "abstract": "We evaluate answers from retrieval-augmented question answering systems and count sentences that the retrieved passages do not support. An evaluation set of 300 questions shows that citation checks catch half of the hallucinations. We release the evaluation set."
+    },
+    {
+      "id": "p07", "year": 2023, "authors": ["N. Iqbal", "A. Kulkarni"],
+      "title": "Federated learning for hospital records without sharing patient data",
+      "abstract": "Five hospitals train one model on patient records without sending the records anywhere: federated learning shares only model updates. We add differential privacy to the updates and measure how much privacy costs in accuracy."
+    },
+    {
+      "id": "p08", "year": 2023, "authors": ["A. Kulkarni", "S. Bhatt"],
+      "title": "Pest detection in cotton fields with drone images",
+      "abstract": "Drones photograph cotton fields every week, and a detector marks pests in the images. Farmers spray only the marked parts of the crop, which reduces pesticide use. We compare detectors on images taken at different heights."
+    },
+    {
+      "id": "p09", "year": 2024, "authors": ["P. Saxena", "M. George"],
+      "title": "Early warning of student drop-out from learning-platform activity",
+      "abstract": "Students who stop logging in to the learning platform often drop out weeks later. We predict drop-out from platform activity in the first month of a course and alert mentors. Early warnings let mentors contact students while they can still catch up."
+    },
+    {
+      "id": "p10", "year": 2024, "authors": ["T. Hussain", "N. Iqbal"],
+      "title": "Detecting phishing e-mails with small language models",
+      "abstract": "Phishing e-mails try to steal passwords. A small language model fine-tuned on 20,000 labelled e-mails detects phishing better than keyword filters and runs on the mail server itself, so no e-mail leaves the college."
+    },
+    {
+      "id": "p11", "year": 2024, "authors": ["R. Menon", "L. Fernandes"],
+      "title": "Sign-language recognition from classroom video",
+      "abstract": "We recognise Indian Sign Language from video of the classroom so that a teacher's assistant can caption signed questions. The recogniser uses image frames and hand positions, and was evaluated with deaf students."
+    },
+    {
+      "id": "p12", "year": 2025, "authors": ["M. George", "R. Menon"],
+      "title": "Retrieval-augmented question answering over course handbooks",
+      "abstract": "Students ask questions about course rules, and the system retrieves handbook passages and answers with citations. Retrieval with small chunks finds the right passage more often than whole documents, and refusing when nothing relevant is retrieved prevents invented rules."
+    },
+    {
+      "id": "p13", "year": 2025, "authors": ["S. Bhatt"],
+      "title": "Battery-health estimation for electric two-wheelers",
+      "abstract": "We estimate how much capacity an electric scooter's battery has lost from its charging data. The estimate helps owners decide when to replace the battery, and helps the college's charging stations limit charging current for old batteries."
+    },
+    {
+      "id": "p14", "year": 2025, "authors": ["A. Kulkarni", "M. George"],
+      "title": "Weed detection for small farms with a phone camera",
+      "abstract": "A small detector finds weeds in phone camera images of vegetable plots and tells the farmer where to weed by hand. It runs on an inexpensive phone without a network connection, which matters on farms with poor coverage, and copes with images taken in poor light."
+    }
+  ]
+}

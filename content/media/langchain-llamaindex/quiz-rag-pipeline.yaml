@@ -1,0 +1,4 @@
+alt: 'Five numbered boxes. Handbook files flow into box 1, and box 1 into box 2. A question also enters box 2. From box 2 an arrow labelled "score ≥ 0.5?" leads to box 3; another arrow, labelled "nothing relevant", leads down to "I don''t know" with no model call. Box 3 leads to box 4, box 4 down to box 5, and box 5 outputs "answer + sources, or rejected". The boxes are not named; the quiz asks which stage each number is.'
+caption: 'Which stage of the pipeline is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

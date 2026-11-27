@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320">
+  <!-- Numbered diagram for the LangChain + LlamaIndex track quiz: label the stages of a RAG pipeline with citations. -->
+  <text class="f-small" x="20" y="40">handbook files</text>
+  <g>
+    <path class="f-arrow" d="M60 50 L60 82"/>
+    <polygon class="f-head" points="60,90 55.5,82 64.5,82"/>
+  </g>
+  <rect class="f-box-faint" x="20" y="95" width="130" height="70" rx="8"/>
+  <text class="f-strong" x="85" y="137" text-anchor="middle">1</text>
+  <g>
+    <path class="f-arrow" d="M152 130 L202 130"/>
+    <polygon class="f-head" points="210,130 202,134.5 202,125.5"/>
+  </g>
+  <rect class="f-box-faint" x="215" y="95" width="130" height="70" rx="8"/>
+  <text class="f-strong" x="280" y="137" text-anchor="middle">2</text>
+  <text class="f-small" x="280" y="40" text-anchor="middle">question</text>
+  <g>
+    <path class="f-arrow" d="M280 50 L280 82"/>
+    <polygon class="f-head" points="280,90 275.5,82 284.5,82"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M347 130 L397 130"/>
+    <polygon class="f-head" points="405,130 397,134.5 397,125.5"/>
+  </g>
+  <text class="f-small f-mono" x="376" y="84" text-anchor="middle">score ≥ 0.5?</text>
+  <rect class="f-box-faint" x="410" y="95" width="130" height="70" rx="8"/>
+  <text class="f-strong" x="475" y="137" text-anchor="middle">3</text>
+  <g>
+    <path class="f-arrow" d="M542 130 L592 130"/>
+    <polygon class="f-head" points="600,130 592,134.5 592,125.5"/>
+  </g>
+  <rect class="f-box-faint" x="605" y="95" width="130" height="70" rx="8"/>
+  <text class="f-strong" x="670" y="137" text-anchor="middle">4</text>
+  <g>
+    <path class="f-arrow" d="M670 167 L670 222"/>
+    <polygon class="f-head" points="670,230 665.5,222 674.5,222"/>
+  </g>
+  <rect class="f-box-faint" x="605" y="235" width="130" height="70" rx="8"/>
+  <text class="f-strong" x="670" y="277" text-anchor="middle">5</text>
+  <g>
+    <path class="f-arrow" d="M603 270 L512 270"/>
+    <polygon class="f-head" points="504,270 512,265.5 512,274.5"/>
+  </g>
+  <text class="f-small" x="420" y="266" text-anchor="end">answer + sources,</text>
+  <text class="f-small" x="420" y="283" text-anchor="end">or rejected</text>
+  <g>
+    <path class="f-arrow" d="M280 167 L280 222"/>
+    <polygon class="f-head" points="280,230 275.5,222 284.5,222"/>
+  </g>
+  <text class="f-small" x="290" y="200">nothing relevant</text>
+  <text class="f-small" x="280" y="255" text-anchor="middle">"I don't know"</text>
+  <text class="f-small" x="280" y="272" text-anchor="middle">(no model call)</text>
+</svg>

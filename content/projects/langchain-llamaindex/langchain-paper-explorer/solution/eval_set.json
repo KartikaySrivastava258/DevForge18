@@ -1,0 +1,15 @@
+[
+  { "question": "Is there a paper that classifies rice leaf photos taken by farmers?", "expected": "p01" },
+  { "question": "Sorting chest X-ray images by urgency in a hospital", "expected": "p02" },
+  { "question": "Speech recognition when only a few hours of audio exist", "expected": "p03" },
+  { "question": "Graph neural network for road traffic", "expected": "p05" },
+  { "question": "Federated learning with differential privacy for patient records", "expected": "p07" },
+  { "question": "Drone images of pests in cotton fields", "expected": "p08" },
+  { "question": "Alerting mentors before students drop out", "expected": "p09" },
+  { "question": "Phishing detection on the college mail server", "expected": "p10" },
+  { "question": "Recognising sign language from video", "expected": "p11" },
+  { "question": "Estimating battery health from charging data", "expected": "p13" },
+  { "question": "Retrieval-augmented answers with citations", "expected": "p12", "year_from": 2024 },
+  { "question": "Detecting things in phone camera images", "expected": "p08", "author": "S. Bhatt" },
+  { "question": "Forecasting energy from weather", "expected": "p04", "year_to": 2022 }
+]

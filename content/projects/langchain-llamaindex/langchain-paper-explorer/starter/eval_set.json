@@ -1,0 +1,4 @@
+[
+  { "question": "Is there a paper that classifies rice leaf photos taken by farmers?", "expected": "p01" },
+  { "question": "Retrieval-augmented answers with citations", "expected": "p12", "year_from": 2024 }
+]

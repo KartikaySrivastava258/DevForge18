@@ -1,0 +1,3 @@
+# Exact versions, as in the track's lessons. The check installs only these (llama-index-core==0.14.26 is also allowed).
+langchain-core==1.8.4
+numpy==2.5.5

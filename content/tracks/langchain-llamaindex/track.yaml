@@ -61,9 +61,9 @@ labs:
   - { title: "Evaluate answers against a small test set", level: advanced, mode: local, status: available, lab: langchain-evaluate-against-a-test-set }
   - { title: "Tune chunk size and k for retrieval", level: intermediate, mode: simulation, status: available, lab: langchain-chunk-size-and-retrieval }
 projects:
-  - { title: "College handbook assistant", level: beginner, status: planned }
-  - { title: "Research-paper explorer", level: intermediate, status: planned }
-  - { title: "Tool-using study assistant with safe, limited tools", level: advanced, status: planned }
+  - { title: "College handbook assistant", level: beginner, status: available, project: langchain-handbook-assistant }
+  - { title: "Research-paper explorer", level: intermediate, status: available, project: langchain-paper-explorer }
+  - { title: "Tool-using study assistant with safe, limited tools", level: advanced, status: available, project: langchain-study-agent }
 resources:
   - title: LangChain documentation
     url: https://docs.langchain.com/

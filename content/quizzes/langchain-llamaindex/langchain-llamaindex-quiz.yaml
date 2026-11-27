@@ -1,0 +1,202 @@
+id: langchain-llamaindex-quiz
+track: langchain-llamaindex
+title: LangChain + LlamaIndex — track quiz
+description: Thirteen questions from prompts, parsers and embeddings to RAG with citations, evaluation, tool-calling guards and prompt injection. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: chain-parts
+    type: matching
+    level: beginner
+    lesson: langchain-prompts-models-and-parsers
+    prompt: Match each part of the chain prompt | model | StrOutputParser() with what it does.
+    left:
+      - { id: prompt, text: "ChatPromptTemplate" }
+      - { id: model, text: "FakeListChatModel" }
+      - { id: parser, text: "StrOutputParser" }
+      - { id: pipe, text: "prompt | model | parser" }
+    right:
+      - { id: fill, text: "Fills the {course} and {question} blanks and produces system and human messages" }
+      - { id: standin, text: "A stand-in chat model that replies with the answers you gave it, in order" }
+      - { id: string, text: "Turns the model's reply message into a plain string" }
+      - { id: sequence, text: "A RunnableSequence: each part's output is the next part's input" }
+      - { id: key, text: "Stores the provider's API key" }
+    pairs: { prompt: fill, model: standin, parser: string, pipe: sequence }
+    explanation: The lesson prints type(chain).__name__ as RunnableSequence. To use a real model you replace only the model line with a provider's chat model; the prompt and parser stay the same.
+
+  - id: json-parser-limits
+    type: single
+    level: beginner
+    lesson: langchain-prompts-models-and-parsers
+    prompt: 'The model replies {"tool": "Docker", "level": "expert"}, but your program only allows beginner, intermediate or advanced. What catches it?'
+    options:
+      - { id: a, text: "JsonOutputParser — it rejects values it does not expect" }
+      - { id: b, text: "Nothing; the reply is valid JSON, so it is correct" }
+      - { id: c, text: "A Pydantic model with level as Literal[\"beginner\", \"intermediate\", \"advanced\"] — JsonOutputParser only turns the reply into a dictionary, or fails when it is not JSON at all" }
+    answer: c
+    explanation: In the lesson the "expert" reply parses as JSON and is then rejected by TrackInfo.model_validate with "Input should be 'beginner', 'intermediate' or 'advanced'". Never pass unchecked model output on.
+
+  - id: zero-vector
+    type: output
+    level: beginner
+    lesson: langchain-embeddings-and-similarity
+    prompt: The keyword embedding knows only four topic word lists. What happened here?
+    command: 'py < where-it-breaks.py   # step 4: store.similarity_search_with_score("Which tool queues messages?", k=1)'
+    output: |
+      Which tool queues messages? -> [0.0, 0.0, 0.0, 0.0]
+      search failed: NaN values found, please remove the NaN values and try again
+    options:
+      - { id: a, text: "The store is empty" }
+      - { id: b, text: "None of the question's words are in the keyword lists, so its vector is all zeros and cosine similarity cannot be computed; a trained embedding model places related wording near each other without word lists" }
+      - { id: c, text: "Kafka is not supported by InMemoryVectorStore" }
+    answer: b
+    explanation: A zero vector has no direction. A person knows "queues messages" is about Kafka; the hand-made lists do not — which is why real applications use a trained embedding model and why the lessons label this one a teaching model.
+
+  - id: chunk-similarity
+    type: single
+    level: beginner
+    lesson: llamaindex-chunking-and-retrieval
+    prompt: With chunk_size=60, the best hit for "What happens when the TTL of a cache entry runs out?" was "Choosing the TTL is a trade-off between fresh data and fewer database queries." What does that show?
+    options:
+      - { id: a, text: "Similarity means \"about the same thing\", not \"answers the question\" — chunk size and top_k must be tested against real questions" }
+      - { id: b, text: "SentenceSplitter cut the sentence in half" }
+      - { id: c, text: "The chunk lost its file metadata" }
+    answer: a
+    explanation: The sentence that answers the question was in the second hit. With similarity_top_k=1 the model would only have seen the trade-off sentence — and been told to answer from it.
+
+  - id: rag-order
+    type: ordering
+    level: intermediate
+    lesson: langchain-rag-with-citations
+    prompt: Put the steps of a RAG pipeline with citations in order.
+    items:
+      - { id: index, text: "Split documents into chunks with source and section metadata, embed them and store them" }
+      - { id: retrieve, text: "Retrieve the most similar chunks with scores and keep those above the threshold" }
+      - { id: prompt, text: "Send the chunks as numbered sources [1], [2] with the question" }
+      - { id: check, text: "Check that every sentence cites a source that was in the prompt" }
+      - { id: return, text: "Return the answer together with its sources" }
+    order: [index, retrieve, prompt, check, return]
+    explanation: Indexing happens once; the rest happens per question. If nothing passes the threshold, the pipeline answers "I don't know" before the prompt step, without a model call.
+
+  - id: rag-diagram
+    type: diagram
+    level: intermediate
+    lesson: langchain-rag-with-citations
+    prompt: This is the pipeline from the RAG lesson. Label the numbered boxes.
+    media: media:langchain-llamaindex/quiz-rag-pipeline.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+      - { id: "5", text: "Box 5" }
+    labels:
+      - { id: chunk, text: "Chunking into Documents with source and section metadata" }
+      - { id: store, text: "Vector store: similarity search with scores" }
+      - { id: prompt, text: "Prompt with numbered sources" }
+      - { id: model, text: "Chat model" }
+      - { id: check, text: "Citation check" }
+      - { id: judge, text: "LLM judge compared with human labels" }
+    answers: { "1": chunk, "2": store, "3": prompt, "4": model, "5": check }
+    explanation: Chunks are embedded into the store once. Per question the store returns scored chunks; below the threshold the pipeline abstains, otherwise the chunks become numbered sources, the model answers, and the citation check decides whether the answer is shown.
+
+  - id: citation-checks
+    type: multiple
+    level: intermediate
+    lesson: langchain-rag-with-citations
+    prompt: Which does the lesson's citation check catch mechanically? Select all that apply.
+    options:
+      - { id: a, text: "A sentence that cites [3] when only sources [1] and [2] were in the prompt" }
+      - { id: b, text: "A sentence with no citation at all" }
+      - { id: c, text: "A sentence that cites [1], although source 1 does not say what the sentence claims" }
+      - { id: d, text: "An answer that cites [1] for every sentence and uses only what source 1 says" }
+    answers: [a, b]
+    explanation: The check proves that citations point to real sources, not that the source supports the sentence (c) — that needs evaluation, the topic of a later lesson. Answer d is the grounded case, which is shown to the user.
+
+  - id: tool-guards
+    type: matching
+    level: intermediate
+    lesson: langchain-tool-calling-and-agents
+    prompt: Match each failure from the agent lab with the guard that handled it.
+    left:
+      - { id: delete, text: "The model asks for delete_account" }
+      - { id: lots, text: "The model calls refund with amount=\"lots\"" }
+      - { id: big, text: "The model asks for a refund of 1200 rupees" }
+      - { id: runaway, text: "The model calls get_order again and again" }
+    right:
+      - { id: allow, text: "Allowlist: the tool was never given to this agent" }
+      - { id: schema, text: "Validation against the tool's argument schema" }
+      - { id: approve, text: "Approval by a person above 500 rupees" }
+      - { id: limit, text: "Step limit (max_steps)" }
+      - { id: prompt, text: "A stricter system prompt" }
+    pairs: { delete: allow, lots: schema, big: approve, runaway: limit }
+    explanation: Every guard runs in the loop, in code, at the point of execution. Not offering a tool is the strongest guard; a system prompt is a request the model may not follow.
+
+  - id: create-agent-limit
+    type: single
+    level: intermediate
+    lesson: langchain-tool-calling-and-agents
+    prompt: You build an agent with LangChain's create_agent. What does the lesson say about its step limit?
+    options:
+      - { id: a, text: "There is none; agents always stop by themselves" }
+      - { id: b, text: "It is 9,999 steps unless you set a lower recursion_limit — so set one" }
+      - { id: c, text: "It stops after exactly four steps" }
+    answer: b
+    explanation: The lesson quotes LangChain's documentation. A loop that never finishes costs money and may repeat side effects; the lab's own loop stops after four steps with a message in the audit log.
+
+  - id: release-gate
+    type: output
+    level: advanced
+    lesson: llm-evaluation-and-hallucination-checks
+    prompt: The release gate ran on two versions of the assistant. What does this output mean?
+    command: 'for system in SYSTEM_A SYSTEM_B; do docker exec devforge-llm python /lab/gate.py "$system" || echo "  (exit code $?: this version would not ship)"; done'
+    output: |
+      SYSTEM_A: FAIL (unsupported sentences = 2; answered when it should abstain = 1)
+        (exit code 1: this version would not ship)
+      SYSTEM_B: PASS
+    options:
+      - { id: a, text: "System A got the facts wrong on every question" }
+      - { id: b, text: "System A made claims its cited sources do not support and answered a question it should have declined; the non-zero exit code lets a CI job block it, like a failing test" }
+      - { id: c, text: "Both systems can ship; the gate only prints warnings" }
+    answer: b
+    explanation: Both systems had all required facts. Only faithfulness and abstention separated them — system A invented a default TTL and a Wi-Fi password, citing real sources to look trustworthy.
+
+  - id: judge-agreement
+    type: single
+    level: advanced
+    lesson: llm-evaluation-and-hallucination-checks
+    prompt: An LLM judge agrees with human labels on 4 of 6 sentences, and both disagreements are hallucinations it marked "supported". What should you do?
+    options:
+      - { id: a, text: "Use it — 67% agreement is good enough" }
+      - { id: b, text: "Do not rely on it yet: improve its prompt or model until it agrees with people on the cases that matter (the unsupported ones), and re-check it whenever the judge changes" }
+      - { id: c, text: "Replace it with exact match, which needs no checking" }
+    answer: b
+    explanation: The lesson's lenient judge would have waved through two of three hallucinations, one of which contradicts its source. Exact match scored correct answers as zero, so it is no alternative for generated text.
+
+  - id: permission-filter
+    type: single
+    level: advanced
+    lesson: llm-prompt-injection-and-permissions
+    prompt: A planted vendor FAQ tells the HR assistant to include the salary table. Which defence guarantees that a staff member's answer cannot contain it?
+    options:
+      - { id: a, text: "A system prompt that says \"Never reveal confidential data\"" }
+      - { id: b, text: "Wrapping every retrieved passage in <untrusted-document> tags" }
+      - { id: c, text: "Filtering retrieval by the user's permissions, so the payroll chunk never reaches the model" }
+      - { id: d, text: "A regular expression that flags \"ignore previous instructions\"" }
+    answer: c
+    explanation: In the lab the stand-in model obeyed the injection every time, yet with the audience filter there was nothing to leak. Marking, flagging and output checks are extra layers; OWASP notes no prompt technique is known to be fool-proof.
+
+  - id: injection-layers
+    type: multiple
+    level: advanced
+    lesson: llm-prompt-injection-and-permissions
+    prompt: Which statements about the extra layers in the injection lab are true? Select all that apply.
+    options:
+      - { id: a, text: "Flagging instruction-like passages is a signal for review, and easy to evade by rephrasing" }
+      - { id: b, text: "The output check blocked the salary data when the permission filter was deliberately bypassed" }
+      - { id: c, text: "Marking passages as untrusted stopped the stand-in model from obeying the injection" }
+      - { id: d, text: "For the HR officer, permissions limit the damage but do not make the injected instruction harmless" }
+    answers: [a, b, d]
+    explanation: Marking made no difference to the stand-in, which obeys anything; with real models it lowers, but does not remove, the chance of obedience. The HR officer may see salaries, yet the injection still steered the answer.
