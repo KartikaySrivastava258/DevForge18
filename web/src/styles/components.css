@@ -44,7 +44,8 @@
 
 /* Loading / error / empty */
 .state { padding: var(--space-7) var(--space-5); text-align: center; color: var(--muted); }
-.state h2 { color: var(--text); }
+.state h1, .state h2 { color: var(--text); }
+.state h1 { font-size: var(--step-2); letter-spacing: -0.01em; }
 .skeleton { background: linear-gradient(90deg, var(--panel) 0%, var(--panel-2) 50%, var(--panel) 100%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; border-radius: var(--radius-s); }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 .skeleton-lines > * { height: 1rem; margin-bottom: var(--space-3); }
@@ -332,7 +333,12 @@
 .sim-embed[data-enhanced] > .sim-embed__fallback { display: none; }
 .sim-card__concept { display: block; margin-top: 2px; }
 .sim-page__head { max-width: var(--measure); }
-@media (max-width: 60rem) { .sim__body { grid-template-columns: 1fr; } .sim { padding: var(--space-4); } }
+/* The stage and side panel stack when the simulation itself is narrow — on a phone, and also when it is embedded in
+   a lesson or lab article (about 40rem wide), where a viewport media query kept two columns and squeezed the stage to
+   about 250 px (Dockerfile lines wrapped one character per line). */
+.sim { container: sim / inline-size; }
+@container sim (max-width: 50rem) { .sim__body { grid-template-columns: 1fr; } }
+@media (max-width: 60rem) { .sim { padding: var(--space-4); } }
 
 .git-sim__scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg); padding: var(--space-2); }
 .git-sim__svg { display: block; max-width: none; font-family: var(--font-sans); } /* natural size: the frame scrolls */
@@ -504,7 +510,10 @@
 @media (max-width: 40rem) { .sprint-sim__board { grid-template-columns: 1fr; } }
 .layer-sim__file { list-style: decimal inside; margin: 0 0 var(--space-3); padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .layer-sim__line { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--space-2); padding: 4px var(--space-2); border: 1px solid var(--line); border-radius: var(--radius-s); background: var(--bg); }
-.layer-sim__line[data-on="false"] { opacity: 0.55; border-style: dashed; }
+/* A removed step is dashed and its instruction muted. Not opacity: that would also fade the step's "Add" button
+   below WCAG AA contrast, and it is the control the learner needs next. */
+.layer-sim__line[data-on="false"] { border-style: dashed; background: transparent; }
+.layer-sim__line[data-on="false"] code { color: var(--muted); }
 .layer-sim__line code { font-size: 0.8125rem; overflow-wrap: anywhere; }
 .layer-sim__result { font-size: var(--step--1); color: var(--muted); min-width: 4.5rem; }
 .layer-sim__buttons { display: inline-flex; gap: 2px; }

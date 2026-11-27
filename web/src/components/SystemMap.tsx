@@ -155,13 +155,15 @@ export function SystemMap({ tracks }: { tracks: TrackSummary[] }) {
                 }}
               >
                 <rect x={x} y={y} width={NODE_W} height={NODE_H} rx={6} />
+                {/* The trailing spaces keep the visible words apart ("1 Git + GitHub"), so the link's name,
+                    "Track 1: Git + GitHub", contains its visible label in order (WCAG 2.5.3 Label in Name). */}
                 <text className="map-node__num" x={x + 9} y={y + 26}>
-                  {track.number}
+                  {`${track.number} `}
                 </text>
                 {track.shortTitle.includes(" + ") ? (
                   // Paired tracks name both products (e.g. "Prometheus + Grafana") on two lines rather than truncating.
                   <text className="map-node__two" x={x + 26} y={y + 18}>
-                    <tspan x={x + 26}>{track.shortTitle.split(" + ")[0]} +</tspan>
+                    <tspan x={x + 26}>{`${track.shortTitle.split(" + ")[0]} + `}</tspan>
                     <tspan x={x + 26} dy={14}>
                       {track.shortTitle.split(" + ")[1]}
                     </tspan>

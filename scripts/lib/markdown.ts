@@ -168,7 +168,9 @@ export function renderMarkdown(source: string, options: { media?: MediaResolver 
           `<div class="code-block${isOutput ? " code-block--output" : ""}" data-lang="${escapeHtml(isOutput ? "output" : label)}">` +
           `<div class="code-block__bar"><span class="code-block__lang">${escapeHtml(label)}</span>` +
           `<button type="button" class="code-block__copy" data-copy>Copy</button></div>` +
-          `<pre><code class="hljs language-${language}">${highlighted}</code></pre></div>\n`
+          // tabindex="0": long lines scroll sideways (always on phones), and keyboard users can only scroll a
+          // region that can take focus (WCAG 2.1.1; axe: scrollable-region-focusable).
+          `<pre tabindex="0"><code class="hljs language-${language}">${highlighted}</code></pre></div>\n`
         );
       },
       link({ href, title, tokens }: Tokens.Link): string {
