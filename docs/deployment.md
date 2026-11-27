@@ -1,6 +1,6 @@
 # Deployment
 
-> The Docker and Nginx files in `deploy/` were written and syntax-checked but **not executed** in the build environment. Expect to validate them on first deployment, and report any fix back to the repository.
+> The files in `deploy/` are tested: `npm run test:compose` (`scripts/compose-smoke.sh`, also the CI job *Docker Compose and Nginx smoke test*) builds the image, starts Compose and checks through Nginx the health and readiness endpoints, an SPA route with the strict CSP and security headers, 18 tracks from the API, CSRF rejections, caching of hashed assets, gzip, the hidden `/metrics`, sign-up and sessions, `user:create` and `db:backup` inside the read-only container, data surviving a restart, Nginx's 429 rate limit, and that only Nginx's port is published. Set `DEVFORGE_HTTP_PORT` to run it when port 8080 is taken; it removes its containers, volume and image afterwards (`KEEP=1` keeps them).
 
 ## Option A — Docker Compose (recommended)
 
@@ -12,6 +12,9 @@ docker compose exec app node --disable-warning=ExperimentalWarning scripts/creat
 ```
 
 - `app` runs as the unprivileged `node` user with a read-only filesystem; data lives in the `devforge-data` volume at `/data`.
+- Both containers run with `read_only: true` and `no-new-privileges`; Nginx writes only to tmpfs mounts. Images are pinned by version and digest (`deploy/Dockerfile`, `deploy/docker-compose.yml`); update them deliberately and rerun `npm run test:compose`.
+- To publish Nginx on another host port, set both `DEVFORGE_HTTP_PORT=8090` and `PUBLIC_ORIGIN=http://localhost:8090` (the origin must match what browsers use, or the CSRF check refuses sign-in).
+- Backups inside the container must go to the volume, because the image's filesystem is read-only: `docker compose exec app node --disable-warning=ExperimentalWarning scripts/db-backup.ts /data/backups/devforge-$(date +%F).db`, then copy the file off the machine (`docker compose cp app:/data/backups/… .`).
 - `nginx` is the only published port. For HTTPS, terminate TLS in Nginx (add a `listen 443 ssl` server block with your certificate, for example from Let's Encrypt), then set `PUBLIC_ORIGIN=https://your.host` and `COOKIE_SECURE=true`.
 
 ## Option B — Node directly (a lab machine or VM)

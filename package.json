@@ -30,7 +30,8 @@
     "new:lab": "node --disable-warning=ExperimentalWarning scripts/new-content.ts lab",
     "new:quiz": "node --disable-warning=ExperimentalWarning scripts/new-content.ts quiz",
     "new:project": "node --disable-warning=ExperimentalWarning scripts/new-content.ts project",
-    "test:e2e:throttled": "DEVFORGE_E2E_CPU_THROTTLE=8 npm run test:e2e"
+    "test:e2e:throttled": "DEVFORGE_E2E_CPU_THROTTLE=8 npm run test:e2e",
+    "test:compose": "bash scripts/compose-smoke.sh"
   },
   "dependencies": {
     "zod": "^4.6.7"
