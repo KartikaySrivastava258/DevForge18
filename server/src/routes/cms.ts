@@ -147,6 +147,10 @@ export function registerCmsRoutes(router: Router, { db, config, logger }: AppDep
       let file: Awaited<ReturnType<GitHubClient["file"]>>;
       try {
         branch = await gh.defaultBranch();
+      } catch (err) {
+        throw fromGitHub(err, "read the repository");
+      }
+      try {
         file = await gh.file(path, branch);
       } catch (err) {
         if (err instanceof GitHubError && err.status === 404) throw new HttpError(404, "not_found", "This file does not exist on the default branch.");

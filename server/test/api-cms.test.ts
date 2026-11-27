@@ -294,5 +294,11 @@ describe("content editor with GitHub (fake)", () => {
     assert.equal(unauth.status, 502);
     assert.equal(unauth.json.error.code, "github_auth");
     assert.equal((await as.faculty!.get(`/api/cms/file?path=${encodeURIComponent("content/lessons/git-github/git-no-such-lesson.md")}`)).status, 404);
+    // A missing repository (or a token without access) is a configuration problem, not a missing file.
+    gh.failNext("GET /repos/devforge-test/devforge18", 404, "Not Found");
+    const noRepo = await as.faculty!.get(`/api/cms/file?path=${encodeURIComponent(LESSON)}`);
+    assert.equal(noRepo.status, 502);
+    assert.equal(noRepo.json.error.code, "github_access");
+    assert.match(noRepo.json.error.message, /GITHUB_REPOSITORY/);
   });
 });
