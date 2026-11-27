@@ -177,14 +177,16 @@ As before, the container runs as your own user (`--user "$(id -u):0"`), so the w
 # trigger a run for a given logical date; print its run ID
 trigger() { af -X POST -H 'Content-Type: application/json' -d "{\"logical_date\": \"$2T00:00:00Z\"}" "$AF/api/v2/dags/$1/dagRuns" \
   | grep -o '"dag_run_id":"[^"]*"' | cut -d'"' -f4; }
-# wait until the run's load task has finished attempt number $3
+# wait until the run's load task has finished attempt number $3 and the scheduler has marked the whole run done
+# (clearing a run the scheduler has not yet closed can be undone by it, leaving the task never rescheduled)
 wait_try() {
   for i in $(seq 1 180); do
     ti=$(af "$AF/api/v2/dags/$1/dagRuns/$2/taskInstances/load")
-    echo "$ti" | grep "\"try_number\":$3" > /dev/null && echo "$ti" | grep '"state":"success"' > /dev/null && return 0
+    echo "$ti" | grep "\"try_number\":$3" > /dev/null && echo "$ti" | grep '"state":"success"' > /dev/null &&
+      af "$AF/api/v2/dags/$1/dagRuns/$2" | grep '"state":"success"' > /dev/null && return 0
     sleep 1
   done
-  echo "$1: attempt $3 did not succeed"; return 1
+  echo "$1: attempt $3 did not succeed (last seen: $(echo "$ti" | grep -o '"try_number":[0-9]*\|"state":"[a-z_]*"' | tr '\n' ' '))"; return 1
 }
 totals() { docker exec -i devforge-airflow python - <<'PY'
 import sqlite3

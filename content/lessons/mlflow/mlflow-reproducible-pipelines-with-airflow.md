@@ -212,7 +212,9 @@ trigger() { af -X POST -H 'Content-Type: application/json' -d "{\"logical_date\"
 wait_train() {
   for i in $(seq 1 300); do
     ti=$(af "$AF/api/v2/dags/train_diabetes/dagRuns/$1/taskInstances/train")
-    echo "$ti" | grep "\"try_number\":$2" > /dev/null && echo "$ti" | grep -E '"state":"(success|failed)"' > /dev/null && break
+    # the task has finished, and so has the run (a run the scheduler has not closed yet must not be cleared)
+    echo "$ti" | grep "\"try_number\":$2" > /dev/null && echo "$ti" | grep -E '"state":"(success|failed)"' > /dev/null &&
+      af "$AF/api/v2/dags/train_diabetes/dagRuns/$1" | grep -E '"state":"(success|failed)"' > /dev/null && break
     sleep 1
   done
   echo "train: $(echo "$ti" | grep -o '"state":"[a-z_]*"' | head -n 1)"
