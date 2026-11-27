@@ -87,6 +87,21 @@ c.close()
 print(json.dumps({"state": state, "unkeyed": unkeyed}, sort_keys=True))
 PY
 }
+# Warm up the group coordinator first: the first consumer group on a fresh broker makes Kafka create its internal
+# __consumer_offsets topic, which can take longer than occupancy.py's 5-second idle stop on a slow machine — a copy
+# would then exit before it ever got a partition (CI run 46039933638: 0 and 300). A throwaway group waits for that.
+docker exec -i "$id-py" python - <<'PY' || { fail "the Kafka group coordinator did not become ready"; finish; }
+import time
+from confluent_kafka import Consumer
+c = Consumer({"bootstrap.servers": "kafka:9092", "group.id": "devforge-check-warmup", "auto.offset.reset": "latest"})
+c.subscribe(["campus-activity"])
+deadline = time.time() + 90
+while not c.assignment():
+    if time.time() > deadline:
+        raise SystemExit("no assignment after 90 s")
+    c.poll(0.5)
+c.close()
+PY
 # Start both copies first, then let the swipes arrive over about four seconds: a real stream does not arrive all at
 # once, and this gives the group time to share the partitions before the first copy could finish everything alone.
 docker exec "$id-py" sh -c 'timeout 120 python occupancy.py > /tmp/a.out 2>&1 & timeout 120 python occupancy.py > /tmp/b.out 2>&1 & wait' &
