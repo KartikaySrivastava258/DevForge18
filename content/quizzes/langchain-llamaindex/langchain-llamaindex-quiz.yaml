@@ -43,7 +43,7 @@ questions:
     level: beginner
     lesson: langchain-embeddings-and-similarity
     prompt: The keyword embedding knows only four topic word lists. What happened here?
-    command: 'py < where-it-breaks.py   # step 4: store.similarity_search_with_score("Which tool queues messages?", k=1)'
+    command: "py <<'EOF'   # the lesson's step: embed the question, then store.similarity_search_with_score(\"Which tool queues messages?\", k=1)"
     output: |
       Which tool queues messages? -> [0.0, 0.0, 0.0, 0.0]
       search failed: NaN values found, please remove the NaN values and try again

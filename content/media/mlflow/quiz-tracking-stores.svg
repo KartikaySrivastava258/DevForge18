@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 280">
+  <!-- Numbered diagram for the MLflow track quiz: label the parts of an MLflow tracking set-up. -->
+  <rect class="f-box-faint" x="20" y="105" width="150" height="70" rx="8"/>
+  <text class="f-strong" x="95" y="146" text-anchor="middle">1</text>
+  <text class="f-small f-mono" x="95" y="195" text-anchor="middle">train.py</text>
+  <rect class="f-box-faint" x="270" y="105" width="170" height="70" rx="8"/>
+  <text class="f-strong" x="355" y="146" text-anchor="middle">2</text>
+  <rect class="f-box-faint" x="560" y="30" width="180" height="70" rx="8"/>
+  <text class="f-strong" x="650" y="71" text-anchor="middle">3</text>
+  <text class="f-small" x="650" y="118" text-anchor="middle">params, metrics, tags</text>
+  <rect class="f-box-faint" x="560" y="170" width="180" height="70" rx="8"/>
+  <text class="f-strong" x="650" y="211" text-anchor="middle">4</text>
+  <text class="f-small" x="650" y="258" text-anchor="middle">model files, plots</text>
+  <g><path class="f-arrow" d="M172 140 L260 140"/><polygon class="f-head" points="268,140 260,144.5 260,135.5"/></g>
+  <text class="f-small" x="218" y="128" text-anchor="middle">HTTP</text>
+  <g><path class="f-arrow" d="M442 125 L550 75"/><polygon class="f-head" points="557,72 550,79 546,71"/></g>
+  <g><path class="f-arrow" d="M442 155 L550 200"/><polygon class="f-head" points="557,203 547,203 550,195"/></g>
+</svg>

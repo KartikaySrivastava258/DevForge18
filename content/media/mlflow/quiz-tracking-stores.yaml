@@ -1,0 +1,4 @@
+alt: 'Box 1, marked train.py, sends HTTP requests to box 2. Box 2 has an arrow to box 3, described as "params, metrics, tags", and another to box 4, described as "model files, plots". The quiz asks which part of an MLflow set-up each number is.'
+caption: 'Which part of an MLflow set-up is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

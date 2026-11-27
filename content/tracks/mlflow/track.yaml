@@ -57,9 +57,9 @@ labs:
   - { title: "Register and promote a model using the current MLflow workflow", level: advanced, mode: local, status: available, lab: mlflow-gated-promotion }
   - { title: "Choose a champion within a latency budget", level: intermediate, mode: simulation, status: available, lab: mlflow-choose-and-promote-a-champion }
 projects:
-  - { title: "Student performance prediction experiment using synthetic data", level: beginner, status: planned }
-  - { title: "Model comparison dashboard", level: intermediate, status: planned }
-  - { title: "Reproducible training pipeline coordinated by Airflow", level: advanced, status: planned }
+  - { title: "Student performance prediction experiment using synthetic data", level: beginner, status: available, project: mlflow-student-experiment }
+  - { title: "Model comparison dashboard", level: intermediate, status: available, project: mlflow-model-comparison }
+  - { title: "Reproducible training pipeline coordinated by Airflow", level: advanced, status: available, project: mlflow-airflow-pipeline }
 resources:
   - title: MLflow documentation
     url: https://mlflow.org/docs/latest/

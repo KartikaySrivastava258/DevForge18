@@ -1,0 +1,176 @@
+id: mlflow-quiz
+track: mlflow
+title: MLflow — track quiz
+description: Twelve questions on tracking runs, the tracking server and its stores, comparing runs, models and the registry, reproducible pipelines, and serving and monitoring. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: param-or-metric
+    type: matching
+    level: beginner
+    lesson: mlflow-tracking-runs
+    prompt: Match each thing from a training run with how MLflow should record it.
+    left:
+      - { id: lr, text: "Learning rate 0.01" }
+      - { id: error, text: "Test error 53.0" }
+      - { id: model, text: "The fitted model file" }
+    right:
+      - { id: param, text: "Parameter — a setting that went into the run" }
+      - { id: metric, text: "Metric — a number that came out of the run" }
+      - { id: artifact, text: "Artifact (or logged model) — a file the run produced" }
+      - { id: experiment, text: "Experiment name" }
+    pairs: { lr: param, error: metric, model: artifact }
+    explanation: Keeping settings, results and files apart is what lets you ask later "which settings gave the lowest error?" and load the model that did.
+
+  - id: what-is-run
+    type: single
+    level: beginner
+    lesson: mlflow-tracking-runs
+    prompt: What is an MLflow run?
+    options:
+      - { id: a, text: "One execution of some data-science code, recording its parameters, metrics, start and end times and artifacts; an experiment groups related runs" }
+      - { id: b, text: "A deployed model" }
+      - { id: c, text: "A scheduled job" }
+    answer: a
+    explanation: The MLflow documentation describes runs as executions of some piece of data science code.
+
+  - id: stores-diagram
+    type: diagram
+    level: beginner
+    lesson: mlflow-tracking-server-and-stores
+    prompt: Label the numbered parts of this MLflow set-up.
+    media: media:mlflow/quiz-tracking-stores.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: client, text: "Training code using the MLflow client" }
+      - { id: server, text: "Tracking server" }
+      - { id: backend, text: "Backend store (a database)" }
+      - { id: artifacts, text: "Artifact store" }
+      - { id: serving, text: "Model serving endpoint" }
+    answers: { "1": client, "2": server, "3": backend, "4": artifacts }
+    explanation: Small structured data — parameters, metrics, tags — goes to the backend store; files go to the artifact store. With artifact proxying, clients reach both through the tracking server.
+
+  - id: lost-runs
+    type: single
+    level: beginner
+    lesson: mlflow-tracking-server-and-stores
+    prompt: A colleague runs mlflow server in a container with no options and no volume, then upgrades the image. What happens to the experiments?
+    options:
+      - { id: a, text: "They are migrated automatically" }
+      - { id: b, text: "They are gone — the database and artifacts lived inside the replaced container" }
+      - { id: c, text: "They move to the MLflow cloud" }
+    answer: b
+    explanation: The lesson shows the run count drop to zero after replacing the container. Keep stores outside the container — a volume, a real database, object storage.
+
+  - id: filter-quotes
+    type: single
+    level: intermediate
+    lesson: mlflow-comparing-runs
+    prompt: Why does the filter params.model = 'lasso' and metrics.r2 > 0.4 quote the parameter value but not the metric?
+    options:
+      - { id: a, text: "Parameters are always stored as strings, metrics as numbers" }
+      - { id: b, text: "Quotes are optional everywhere" }
+      - { id: c, text: "Metrics cannot be filtered" }
+    answer: a
+    explanation: Even alpha=0.1 is stored as "0.1", so a filter compares a parameter with a quoted value; metrics can be compared with < and >.
+
+  - id: search-output
+    type: output
+    level: intermediate
+    lesson: mlflow-comparing-runs
+    prompt: This search used filter_string="params.model = 'lasso' and metrics.r2 > 0.4". Why is lasso-1.0 missing?
+    command: "python - <<'EOF'   # the lesson's search: mlflow.search_runs(…, filter_string=\"params.model = 'lasso' and metrics.r2 > 0.4\")"
+    output: |
+      tags.mlflow.runName  metrics.rmse
+                lasso-0.1         52.48
+                lasso-0.5         53.80
+    options:
+      - { id: a, text: "Its r2 (0.38) is not above 0.4, so the filter excludes it" }
+      - { id: b, text: "It failed to log" }
+      - { id: c, text: "Search returns at most two runs" }
+    answer: a
+    explanation: The full table in the lesson shows lasso-1.0 with r2 0.38. Filters run on the server, so only matching runs come back.
+
+  - id: overfit-test
+    type: single
+    level: intermediate
+    lesson: mlflow-comparing-runs
+    prompt: You compared twenty settings on the same test set and picked the one with the lowest error. What is the risk?
+    options:
+      - { id: a, text: "None — the test set is unbiased" }
+      - { id: b, text: "The choice slowly fits that test set; keep a final set aside (or use cross-validation) to judge the chosen model" }
+      - { id: c, text: "MLflow will refuse the twenty-first run" }
+    answer: b
+    explanation: Selecting among many runs on one test set leaks information from it into the choice.
+
+  - id: alias-ship
+    type: single
+    level: intermediate
+    lesson: mlflow-models-and-registry
+    prompt: The serving code loads models:/diabetes-ridge@champion. A better version 3 is ready. How do you ship it?
+    options:
+      - { id: a, text: "Change the serving code to load version 3" }
+      - { id: b, text: "Move the alias champion to version 3 — the code keeps asking for the champion" }
+      - { id: c, text: "Delete versions 1 and 2" }
+    answer: b
+    explanation: An alias is a movable name for one version; promoting or rolling back is moving that name, with no code change.
+
+  - id: reload-order
+    type: ordering
+    level: advanced
+    lesson: mlflow-serving-and-monitoring
+    prompt: The lesson ships a new model and then rolls it back. Put the steps in order.
+    items:
+      - { id: register, text: "Register version 2 and move the alias champion to it" }
+      - { id: reload, text: "Restart the serving container so it loads the new champion" }
+      - { id: observe, text: "See the new predictions and decide to roll back" }
+      - { id: back, text: "Move champion back to version 1 and restart the server again" }
+    order: [register, reload, observe, back]
+    explanation: The server resolves the alias when it loads the model, so a moved alias takes effect after a reload — in both directions.
+
+  - id: drift-output
+    type: output
+    level: advanced
+    lesson: mlflow-serving-and-monitoring
+    prompt: True outcomes arrive weeks later. What does this monitoring output tell you today?
+    command: "python - <<'EOF'   # the lesson's monitor: PSI of the bmi feature against the training data, alert above 0.2"
+    output: |
+      normal   traffic: 111 predictions logged, mean prediction 145.6, bmi PSI 0.18 → ok
+      shifted  traffic: 111 predictions logged, mean prediction 156.5, bmi PSI 0.37 → ALERT
+    options:
+      - { id: a, text: "The model is wrong for the shifted traffic" }
+      - { id: b, text: "The bmi inputs of the shifted traffic differ from the training data more than the threshold allows — an early warning to investigate, not proof the model is wrong" }
+      - { id: c, text: "Nothing, until the true outcomes arrive" }
+    answer: b
+    explanation: Input drift can be measured before outcomes are known. It tells you to look; accuracy needs the true outcomes.
+
+  - id: lineage
+    type: multiple
+    level: advanced
+    lesson: mlflow-reproducible-pipelines-with-airflow
+    prompt: Which of these make two training runs for the same day produce exactly the same model? Select all that apply.
+    options:
+      - { id: a, text: "A seeded train/test split and a seeded model" }
+      - { id: b, text: "Reading the data for the run's logical date, not 'the latest' data" }
+      - { id: c, text: "Pinned library versions in the training image" }
+      - { id: d, text: "Running the training at the same time of day" }
+    answers: [a, b, c]
+    explanation: Remove any one — an unseeded split, "latest" data, an unpinned scikit-learn — and reruns can drift. The clock time does not matter.
+
+  - id: signature
+    type: single
+    level: advanced
+    lesson: mlflow-models-and-registry
+    prompt: A caller sends data without the bmi column to a model logged with a signature. What happens?
+    options:
+      - { id: a, text: "The model fills in zeros and predicts" }
+      - { id: b, text: "The request is rejected with an error that names the missing column, instead of a silent wrong prediction" }
+      - { id: c, text: "The signature is ignored" }
+    answer: b
+    explanation: A signature describes the expected inputs; with one, a wrongly shaped input fails loudly at the boundary.
