@@ -72,8 +72,8 @@ verification:
   method: executed
   details: Every command is run by the test suite with Grafana 13.3.2 and Prometheus 3.16.0 (checksum-verified official archives) and a real DevForge server, after the previous lessons; the output shown was recorded from that run. Looking at the dashboard in a browser is not executed. Grafana facts were checked against the Grafana documentation on 2026-11-25.
 owner: content-team
-last_reviewed: 2026-11-25
-content_version: 1
+last_reviewed: 2026-11-27
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -249,12 +249,18 @@ curl -s -u admin:devforge-lab-only http://127.0.0.1:3000/api/dashboards/uid/devf
 The dashboard exists, with both panels, and its address is `/d/devforge-overview/…`. (`grep -o` prints only the matching parts of the JSON.) Now ask Grafana whether it can reach Prometheus:
 
 ```bash run
+for i in $(seq 1 30); do
+  curl -s -u admin:devforge-lab-only http://127.0.0.1:3000/api/datasources/uid/devforge-prometheus/health | grep '"status":"OK"' > /dev/null && break
+  sleep 1
+done
 curl -s -u admin:devforge-lab-only http://127.0.0.1:3000/api/datasources/uid/devforge-prometheus/health
 ```
 
 ```text output
 {"details":{"application":"Prometheus","features":{"rulerApiEnabled":false}},"message":"Successfully queried the Prometheus API.","status":"OK"}
 ```
+
+The loop is there because `/api/health` answers before Grafana has finished loading its plugins: in DevForge's own test runs, asking a few moments too early once returned `{"messageId":"plugin.notRegistered","message":"Plugin not registered"}` for the Prometheus data source. Wait for the condition you need, not just for the server.
 
 And without credentials:
 

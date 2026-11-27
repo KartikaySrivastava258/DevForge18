@@ -73,8 +73,8 @@ verification:
   method: executed
   details: Every command is run by the test suite with the OpenTelemetry JavaScript SDK (api 1.10.0, sdk-node 0.301.2, sdk-metrics and sdk-logs 3.1.1, OTLP exporters 0.301.2), Collector 0.166.0 and Jaeger 2.23.0, after the earlier OpenTelemetry lessons, and its output is compared with this lesson. Trace IDs are random, so the lab compares them instead of printing them. The statement that this JavaScript SDK records no exemplars comes from inspecting @opentelemetry/sdk-metrics 3.1.1, which contains no exemplar code. Checked against the OpenTelemetry documentation and specification on 2026-11-26.
 owner: content-team
-last_reviewed: 2026-11-26
-content_version: 1
+last_reviewed: 2026-11-27
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -110,6 +110,7 @@ jaeger \
   --set=receivers.otlp.protocols.http.endpoint=127.0.0.1:14318 \
   --set=extensions.jaeger_query.http.endpoint=127.0.0.1:16686 \
   --set=extensions.jaeger_query.grpc.endpoint=127.0.0.1:16685 \
+  --set=service.telemetry.metrics.level=none \
   > incident-jaeger.log 2>&1 &
 echo $! > incident-jaeger.pid
 cat > collector-incident.yaml <<'YAML'

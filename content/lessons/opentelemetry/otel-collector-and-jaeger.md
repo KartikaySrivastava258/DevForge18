@@ -64,8 +64,8 @@ verification:
   method: executed
   details: Every command is run by the test suite with Jaeger 2.23.0 and Collector 0.166.0 (official binaries, checksum-verified) and the services from the previous lesson; the output shown was recorded from that run. Viewing traces in the Jaeger web interface is not executed. Jaeger ports and API stability, and the batch processor's placement, were checked against the official documentation on 2026-11-25.
 owner: content-team
-last_reviewed: 2026-11-25
-content_version: 1
+last_reviewed: 2026-11-27
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -128,10 +128,11 @@ jaeger \
   --set=receivers.otlp.protocols.http.endpoint=127.0.0.1:14318 \
   --set=extensions.jaeger_query.http.endpoint=127.0.0.1:16686 \
   --set=extensions.jaeger_query.grpc.endpoint=127.0.0.1:16685 \
+  --set=service.telemetry.metrics.level=none \
   > jaeger.log 2>&1 &
 echo $! > jaeger.pid
 for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:16686/ && break; sleep 1; done
-curl -s http://127.0.0.1:16686/api/v3/services
+curl -s http://127.0.0.1:16686/api/v3/services || { tail -n 20 jaeger.log; exit 1; }
 ```
 
 ```text output
@@ -140,6 +141,7 @@ curl -s http://127.0.0.1:16686/api/v3/services
 
 - Without a configuration file, Jaeger runs as an *all-in-one*: it receives, stores (in memory) and serves traces.
 - `--set` changes one setting of that built-in configuration: OTLP moves to 14317/14318, and the web interface listens only on `127.0.0.1`, so other computers on your network cannot reach it.
+- `service.telemetry.metrics.level=none` turns off Jaeger's own metrics. Jaeger 2 is built on the OpenTelemetry Collector and, like it, serves `otelcol_*` metrics about itself on port 8888 — the same port a Collector uses for its own metrics. If a Collector from an earlier lab is still shutting down and holding that port, Jaeger cannot start.
 - `/api/v3/…` is the Jaeger API that its documentation marks as **stable**. No services have sent traces yet.
 
 ### 2. Build the Collector pipeline
