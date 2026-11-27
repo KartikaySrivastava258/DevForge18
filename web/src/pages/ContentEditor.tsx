@@ -241,7 +241,7 @@ function Submissions({ version, admin }: { version: number; admin: boolean }) {
   return (
     <section aria-labelledby="subs-h">
       <h2 id="subs-h">{admin ? "Recent pull requests from the editor" : "Your recent pull requests"}</h2>
-      <div className="table-wrap">
+      <div className="table-wrap admin-table-wrap">
         <table className="admin-table">
           <thead>
             <tr>

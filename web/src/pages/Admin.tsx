@@ -130,7 +130,7 @@ function UsersSection({ me, onChanged }: { me: User; onChanged: () => void }) {
       {error ? <ErrorState error={error} onRetry={reload} /> : null}
       {loading && !data ? <Loading label="Loading users" /> : null}
       {data ? (
-        <div className="table-wrap">
+        <div className="table-wrap admin-table-wrap">
           <table className="admin-table">
             <thead>
               <tr>
@@ -219,7 +219,7 @@ function AuditSection({ version }: { version: number }) {
         data.events.length === 0 ? (
           <p className="muted">No events on this page.</p>
         ) : (
-          <div className="table-wrap">
+          <div className="table-wrap admin-table-wrap">
             <table className="admin-table" aria-label="Audit log">
               <thead>
                 <tr>
