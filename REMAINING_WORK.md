@@ -252,7 +252,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.10 Apache Kafka
 
-- **Lessons:** ✅ Events, topics and partitions · ✅ Consumer groups, offsets and lag · ✅ Scaling consumers and rebalancing · Producers, acknowledgements and retries · Offsets, retention and replay in depth · Replication and fault tolerance · Delivery guarantees and idempotent producers · Schemas and evolution (advanced) · Outbox pattern and event-driven design (advanced).
+- **Lessons:** ✅ Events, topics and partitions · ✅ Consumer groups, offsets and lag · ✅ Scaling consumers and rebalancing · ✅ Producers, acknowledgements and retries · ✅ Offsets, retention and replay in depth · ✅ Replication and fault tolerance · ✅ Delivery guarantees and idempotent producers · ✅ Schemas and evolution (advanced) · ✅ Outbox pattern and event-driven design (advanced).
 - ✅ **Simulation — partitions and consumer groups:** a topic with N partitions; producers append keyed messages (same key → same partition); consumers in a group are assigned partitions; kill a consumer and watch rebalancing; show offsets and lag per partition. **Challenges:** "make lag reach zero", "explain why adding a fifth consumer to four partitions does nothing". **Invariants:** each partition is assigned to at most one consumer in a group; ordering holds within a partition.
 - **Labs:** run Kafka in KRaft mode in a container (executed in CI with the official image, pinned); produce and consume with the CLI tools; replay from an earlier offset.
 - **Real world:** Kafka was created at LinkedIn and open-sourced in 2011, later becoming an Apache top-level project. Sources: the Apache Kafka website, LinkedIn's engineering blog, the original Kafka paper.

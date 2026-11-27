@@ -4,7 +4,7 @@ Last updated: 2026-11-26 (UTC) · Milestone: **8 — intermediate and advanced l
 
 ## Session handoff
 
-- **Where I stopped:** OpenTelemetry track complete (7 lessons); next: Kafka, then Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira.
+- **Where I stopped:** Kafka track complete (9 lessons); next: Airflow, then MLflow, LangChain + LlamaIndex, n8n, Jira.
 - **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC.
 - **Open issue:** `n8n-workflows-nodes-and-items` failed once in CI (run 45886569745): the n8n container stopped after a workflow import. Not reproduced locally in 3 runs under full CPU load. The runner now prints each container's state, OOM flag and last log lines when a lesson stops early, so the next occurrence shows the cause.
 - **How to work fast:** `npm run new:lesson -- <track> <id>` scaffolds; `npm run ci:record -- <id>` records in CI (no local tool downloads); `npm run lessons:stress -- <id>` reproduces timing failures; figures are `scripts/figures/<track>/<name>.py` (helper `scripts/figures/figlib.py`); research per track in `docs/research/<track>.md`.
@@ -17,11 +17,11 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 107 published, at least 3 in every track; 105 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Git, PostgreSQL, Postman, Redis, Nginx, Docker, Terraform, Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana and OpenTelemetry have 7–8 lessons each, beginner to advanced; Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira have 3 beginner lessons |
+| Lessons | ✅ 113 published, at least 3 in every track; 111 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Git, PostgreSQL, Postman, Redis, Nginx, Docker, Terraform, Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana, OpenTelemetry and Kafka have 7–9 lessons each, beginner to advanced; Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira have 3 beginner lessons |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 108 figures (every lesson has at least one), 22 of them step-throughs — at least one in every track; tested |
+| Figures and step-through diagrams | ✅ 114 figures (every lesson has at least one), 22 of them step-throughs — at least one in every track; tested |
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
 | Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
@@ -368,7 +368,15 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **23 new lessons, all executed locally twice before pushing, each with a figure, a self-check and sources checked on 2026-11-26.** Kubernetes 4–8 (ConfigMaps and Secrets, namespaces and selectors, volumes and StatefulSets, RBAC and network policies, Ingress and Gateway API with cloud-provider-kind v0.12.0); GitHub Actions 4–8 (images to a local registry, reusable workflows and composite actions, environments, OIDC, supply-chain hardening with SHA-pinned actions); Jenkins 4–7 (Configuration as Code, agents and labels, shared libraries, securing Jenkins); Prometheus + Grafana 4–8 (metric types, dashboards and variables, alerting with Alertmanager 0.34.2, SLOs and burn rates, cardinality and long-term storage); OpenTelemetry 4–7 (context through queues, metrics and logs, sampling, correlating signals).
 - **Research notes** for each track in `docs/research/` (versions, sources with wording, behaviour observed in real runs).
 - **Facts found by running, not assumed:** the core Collector 0.166.0 has `probabilistic_sampler` but no `tail_sampling` (tail sampling is described and labelled as not run); the JavaScript SDK 0.301.2 offers only the deprecated `TraceIdRatioBased` sampler and records no exemplars; default histogram buckets put sub-second durations into one bucket; Prometheus 3 refuses scrapes without a Content-Type.
-- **CI:** run 45909030368 green on all four jobs after the SIGPIPE, Airflow-backfill and Collector-port fixes; the OpenTelemetry lessons 4–7 are confirmed by the run for the track push (see "Current work").
+- **CI:** run 45909030368 green on all four jobs after the SIGPIPE, Airflow-backfill and Collector-port fixes; OpenTelemetry lessons 4–7 confirmed in CI by run 45912029469 (all four jobs green).
+
+### Milestone 8 — Kafka (2026-11-27)
+
+- **Six new lessons, each run twice locally before pushing:** producers, acks and retries (a paused broker; a timed-out send that was written anyway); offsets, retention and replay (resets by offset, shift and time; retention by record timestamp; compaction); replication on a three-node KRaft cluster (ISR, min.insync.replicas, preferred leader election); delivery guarantees (at-most/at-least/exactly-once with crashes at fixed points; transactions and markers); schemas and evolution (Apicurio Registry 3.3.4, the wire format by hand with fastavro); the outbox pattern (PostgreSQL 16, a relay, deduplicating consumers).
+- **`starts_fresh: true`** (lesson front matter): the lab builds everything itself, so tests and the recorder skip prerequisite replay. Kafka lesson 4 went from 190 s to 63 s.
+- **Root-cause fix for a class of flaky waits:** run blocks use `set -o pipefail`, so `cmd | grep -q x` fails when `cmd` gets SIGPIPE after grep exits — wait loops never broke. 33 lessons and labs now use `grep x > /dev/null`; the build rejects `| grep -q`; a test reproduces the race. The PostgreSQL gate no longer counts `psql` run inside a container.
+- **Decision:** Apicurio Registry instead of Karapace (680 MB vs 1.7 GB image; both Apache-2.0); Confluent Schema Registry not used (Confluent Community License). Kafka lessons get 600 s.
+- **CI:** see "Current work" for the run that confirms the track.
 
 ### Speed-ups and decisions (2026-11-26)
 
@@ -392,6 +400,7 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-26 | CI fixes (stream order, trap set -e, n8n stress run in CI: not reproduced) | 20 | 25 | |
 | 2026-11-26 | Prometheus + Grafana lessons 4–8 (one research pass; Alertmanager added to CI tools) | 100 | 25 | waiting = Prometheus/Grafana/Alertmanager downloads (lost with the old scratch folder) |
 | 2026-11-26 | OpenTelemetry lessons 4–7 (one research pass; no new CI tools) | 110 | 15 | lost ~10 min to a shell heredoc that ended early (lesson text now written with the editor, not heredocs) |
+| 2026-11-27 | Kafka lessons 4–9 (one research pass; `starts_fresh`; pipefail/grep -q race fixed in 33 files) | 170 | 35 | waiting = lesson runs (each tested twice); 25 min lost to a 300 s timeout whose cause was grep -q under pipefail |
 
 ## Current work
 
