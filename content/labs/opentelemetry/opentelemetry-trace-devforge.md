@@ -84,6 +84,7 @@ service:
       exporters: [otlp_grpc]
 EOF
 COLLECTOR=otel/opentelemetry-collector:0.165.0@sha256:34b24b740c3c88d3467740e8642a397c13898ef76d7295c5425164c482ed1b73
+docker pull -q "$COLLECTOR" > /dev/null
 docker run --rm -e COLLECTOR_CONFIG="$(cat otel-collector.yaml)" "$COLLECTOR" validate --config=env:COLLECTOR_CONFIG > /dev/null && echo "otel-collector.yaml is valid"
 ```
 
@@ -98,6 +99,7 @@ otel-collector.yaml is valid
 
 ```bash run
 JAEGER=jaegertracing/jaeger:2.23.0@sha256:3823829974ccfc2485d2e48b165579091f32295022ae80ca49704e2f4834116e
+docker pull -q "$JAEGER" > /dev/null
 docker network create otel-lab > /dev/null
 docker run -d --name otel-lab-jaeger --network otel-lab --network-alias=jaeger -p 127.0.0.1:16686:16686 "$JAEGER" > /dev/null
 docker run -d --name otel-lab-collector --network otel-lab -p 127.0.0.1:4318:4318 \

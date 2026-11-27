@@ -109,11 +109,16 @@ if [ -n "$images" ] && [ -z "$unpinned" ]; then pass "every image is pinned ($(e
 else fail "pin every image to a version (and preferably a digest), never latest: ${unpinned:-no Deployments found}"; fi
 
 # 5. End to end, from inside the cluster: the page, then two visits that the counter in Redis records.
-kubectl -n devforge-client wait --for=condition=Ready pod/client --timeout=60s > /dev/null 2>&1
-get() { kubectl -n devforge-client exec client -- wget -qO- -T 5 "http://$1" 2> /dev/null; }
+# The client Pod is the check's own tool, not part of your work: if it is not ready, say so instead of blaming the app.
+client_note=""
+if ! kubectl -n devforge-client wait --for=condition=Ready pod/client --timeout=180s > /dev/null 2>&1; then
+  client_note=" [the check's client Pod is not ready: $(kubectl -n devforge-client get pod client -o jsonpath='{.status.phase} {.status.containerStatuses[0].state}' 2>&1 | head -c 200)]"
+fi
+get_err="$tmp/get-err"
+get() { kubectl -n devforge-client exec client -- wget -qO- -T 5 "http://$1" 2> "$get_err"; }
 page="$(get "frontend.$ns.svc.cluster.local/")"
 if echo "$page" | grep_quiet "Campus notice board"; then pass "GET / on the frontend Service returns the notice board page"
-else fail "GET http://frontend.$ns/ does not return the notice board page (${page:0:80})"; fi
+else fail "GET http://frontend.$ns/ does not return the notice board page (${page:0:80})${client_note} $(tail -n 1 "$get_err" | head -c 200)"; fi
 v1="$(get "frontend.$ns.svc.cluster.local/api/visits" | sed -n 's/.*"visits": *\([0-9]*\).*/\1/p')"
 v2="$(get "frontend.$ns.svc.cluster.local/api/visits" | sed -n 's/.*"visits": *\([0-9]*\).*/\1/p')"
 if [ -n "$v1" ] && [ -n "$v2" ] && [ "$v2" -gt "$v1" ]; then pass "GET /api/visits goes frontend -> api -> redis: the counter went from $v1 to $v2"
