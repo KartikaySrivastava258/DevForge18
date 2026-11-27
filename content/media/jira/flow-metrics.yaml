@@ -1,0 +1,4 @@
+alt: 'A work item moves from To Do, where it waits, to In Progress, to In Review, where it often waits again, to Done. Lead time runs from creation to done; cycle time runs from the start of work to done. Work in progress counts items between started and done; throughput counts items done per week. In a stable system, Little''s Law says average WIP equals throughput times average cycle time.'
+caption: 'Lead time is what the customer waits; cycle time is what the team controls; WIP drives both.'
+credit: DevForge 18 content team
+licence: project-content

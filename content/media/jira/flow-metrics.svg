@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300">
+  <!-- Lead time, cycle time and WIP, from Kanban and flow metrics in depth. -->
+  <rect class="f-box-faint" x="20" y="60" width="150" height="50" rx="8"/>
+  <text class="f-small" x="95" y="90" text-anchor="middle">To Do (waiting)</text>
+  <rect class="f-box-accent" x="180" y="60" width="230" height="50" rx="8"/>
+  <text class="f-small" x="295" y="90" text-anchor="middle">In Progress</text>
+  <rect class="f-box-danger" x="420" y="60" width="180" height="50" rx="8"/>
+  <text class="f-small" x="510" y="90" text-anchor="middle">In Review (waiting)</text>
+  <rect class="f-box-ok" x="610" y="60" width="100" height="50" rx="8"/>
+  <text class="f-small" x="660" y="90" text-anchor="middle">Done</text>
+  <g>
+    <path class="f-arrow" d="M20 140 L602 140"/>
+    <polygon class="f-head" points="610,140 602,144.5 602,135.5"/>
+  </g>
+  <text class="f-small" x="315" y="160" text-anchor="middle">lead time = done − created</text>
+  <g>
+    <path class="f-arrow" d="M180 190 L602 190"/>
+    <polygon class="f-head" points="610,190 602,194.5 602,185.5"/>
+  </g>
+  <text class="f-small" x="395" y="210" text-anchor="middle">cycle time = done − started</text>
+  <text class="f-small" x="360" y="250" text-anchor="middle">WIP = items between started and done · throughput = items done per week</text>
+  <text class="f-small f-strong" x="360" y="276" text-anchor="middle">stable system (Little's Law): average WIP = throughput × average cycle time</text>
+</svg>
