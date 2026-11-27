@@ -1,0 +1,37 @@
+# The canteen ordering API on your machine: three API instances, a fallback, two report instances and Nginx.
+#   docker compose up -d        start everything (Nginx on http://127.0.0.1:8080; PROXY_PORT=8081 to change)
+#   docker compose exec proxy nginx -t && docker compose exec proxy nginx -s reload   after editing nginx.conf
+#   docker compose down         stop and remove everything
+# Images are pinned by digest, as the check uses them: Nginx 1.24.0 (the lessons' version) and Node.js 22.
+x-instance: &instance
+  image: node:22.23.5-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a
+  command: ["node", "/srv/echo.js"]
+  volumes:
+    - ./services/echo.js:/srv/echo.js:ro
+
+services:
+  app1:
+    <<: *instance
+    environment: { NAME: app1 }
+  app2:
+    <<: *instance
+    environment: { NAME: app2 }
+  app3:
+    <<: *instance
+    environment: { NAME: app3 }
+  fallback:
+    <<: *instance
+    environment: { NAME: fallback }
+  r1:
+    <<: *instance
+    environment: { NAME: r1 }
+  r2:
+    <<: *instance
+    environment: { NAME: r2 }
+  proxy:
+    image: nginx:1.24.0-alpine@sha256:77e5d4a6ad906c5d3793764085706577fa705b1dc6f244ea0241c4b5e2155385
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "127.0.0.1:${PROXY_PORT:-8080}:80"
+    depends_on: [app1, app2, app3, fallback, r1, r2]

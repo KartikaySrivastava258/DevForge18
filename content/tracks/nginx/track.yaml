@@ -55,9 +55,9 @@ labs:
   - { title: "Configure safe headers and rate limiting", level: advanced, mode: local, status: available, lab: nginx-safe-headers-and-rate-limiting }
   - { title: "Route requests with location matching", level: intermediate, mode: simulation, status: available, lab: nginx-location-matching-order }
 projects:
-  - { title: "Reverse proxy for a multi-service application", level: beginner, status: planned }
-  - { title: "Local load-balancing demo", level: intermediate, status: planned }
-  - { title: "Static frontend + API gateway-style routing", level: advanced, status: planned }
+  - { title: "Reverse proxy for a multi-service application", level: beginner, status: available, project: nginx-multi-service-proxy }
+  - { title: "Local load-balancing demo", level: intermediate, status: available, project: nginx-load-balancing-demo }
+  - { title: "Static frontend + API gateway-style routing", level: advanced, status: available, project: nginx-spa-api-gateway }
 resources:
   - title: Nginx beginner's guide
     url: https://nginx.org/en/docs/beginners_guide.html

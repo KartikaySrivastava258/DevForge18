@@ -1,0 +1,4 @@
+alt: 'Five numbered boxes. Box 1, which sends GET /api/menu, has an arrow to box 2, labelled "upstream api { … }". From box 2, an arrow labelled "200 OK" goes to box 3; an arrow labelled "connection refused, skipped for fail_timeout" goes to box 4; and an arrow labelled "only when 3 and 4 are unavailable" goes to box 5. The boxes are not named; the quiz asks which part of the system each number is.'
+caption: 'Which part of the system is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

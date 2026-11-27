@@ -1,0 +1,201 @@
+id: nginx-quiz
+track: nginx
+title: Nginx — track quiz
+description: Twelve questions from serving files and choosing a location to caching, TLS, access rules and upstream failures. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: css-content-type
+    type: single
+    level: beginner
+    lesson: nginx-serving-static-files
+    prompt: The browser ignores your stylesheet, and curl shows style.css arriving as application/octet-stream. What is wrong?
+    options:
+      - { id: a, text: "The file is too large for Nginx to serve" }
+      - { id: b, text: "Nginx has no mapping from .css to text/css (the types block, or an include of mime.types), so it falls back to default_type — and browsers refuse to apply a stylesheet without the right type" }
+      - { id: c, text: "server_tokens is still on" }
+    answer: b
+    explanation: Nginx picks Content-Type from the file extension through types; anything unmapped gets default_type. In the lesson, adding css to types made style.css arrive as text/css.
+
+  - id: trust-forwarded-for
+    type: single
+    level: beginner
+    lesson: nginx-reverse-proxy-and-load-balancing
+    prompt: Nginx sets X-Forwarded-For for your application. When may the application use that header as the client's address?
+    options:
+      - { id: a, text: "Always — browsers cannot send X-Forwarded-For" }
+      - { id: b, text: "Only when the application can be reached exclusively through your proxy; otherwise any client could send a made-up X-Forwarded-For directly" }
+      - { id: c, text: "Never — the TCP connection always shows the real client" }
+    answer: b
+    explanation: Behind a proxy, the TCP connection comes from Nginx, so the header is the only source of the client's address — but a client can send its own. DevForge trusts it only with TRUST_PROXY=true, when it sits behind its own Nginx.
+
+  - id: location-regex-wins
+    type: output
+    level: beginner
+    lesson: nginx-location-matching
+    prompt: The configuration has prefix locations /, /api/ and /api/v1/ (D), a ^~ /static/ (E), and two regular expressions, \.png$ (F) and ^/api/.*\.json$ (G). Why did /api/v1/users.json get G rather than D?
+    command: |
+      for path in / /about /api/ /api/users /api/v1/users /api/v1/users.json /static/logo.png /img/logo.png /api/v1/logo.png; do
+        printf '%-20s ' "$path"
+        curl -s "http://127.0.0.1:8089$path"
+      done
+    output: |
+      /                    A: exact = /
+      /about               B: prefix /
+      /api/                C: prefix /api/
+      /api/users           C: prefix /api/
+      /api/v1/users        D: prefix /api/v1/
+      /api/v1/users.json   G: regex, /api/ and ends in .json
+      /static/logo.png     E: prefix ^~ /static/
+      /img/logo.png        F: regex, ends in .png
+      /api/v1/logo.png     F: regex, ends in .png
+    options:
+      - { id: a, text: "G comes later in the file, and the last match wins" }
+      - { id: b, text: "D was remembered as the longest prefix, but it has no ^~, so the regular expressions were checked and the first one that matched (G) won" }
+      - { id: c, text: "Regular expressions are always checked before prefixes" }
+    answer: b
+    explanation: Nginx remembers the longest matching prefix, then tries regular expressions in file order; a matching regex beats the remembered prefix unless that prefix has ^~ — which is why /static/logo.png stayed with E.
+
+  - id: location-order
+    type: ordering
+    level: beginner
+    lesson: nginx-location-matching
+    prompt: Put Nginx's steps for choosing a location block in order.
+    items:
+      - { id: exact, text: "If a location = … matches the URI exactly, use it and stop" }
+      - { id: prefix, text: "Compare all prefix locations and remember the longest match" }
+      - { id: caret, text: "If that longest prefix has ^~, use it and skip regular expressions" }
+      - { id: regex, text: "Try regular expressions in the order they appear; the first match wins" }
+      - { id: fallback, text: "If no regular expression matches, use the remembered prefix" }
+    order: [exact, prefix, caret, regex, fallback]
+    explanation: Exact matches end the search at once; prefix order in the file never matters, but the order of regular expressions does.
+
+  - id: cache-directives
+    type: matching
+    level: intermediate
+    lesson: nginx-caching-and-compression
+    prompt: Match each directive from the caching lesson with what it does.
+    left:
+      - { id: path, text: "proxy_cache_path tmp/cache keys_zone=pages:1m …" }
+      - { id: valid, text: "proxy_cache_valid 200 30s" }
+      - { id: status, text: "add_header X-Cache-Status $upstream_cache_status always" }
+      - { id: vary, text: "gzip_vary on" }
+    right:
+      - { id: store, text: "Defines where cached responses are stored and a shared-memory zone for their keys" }
+      - { id: ttl, text: "Keeps successful responses for 30 seconds" }
+      - { id: visible, text: "Shows MISS, HIT or EXPIRED on each response" }
+      - { id: varyhdr, text: "Adds Vary: Accept-Encoding so other caches keep compressed and plain versions apart" }
+      - { id: compress, text: "Compresses images and video" }
+    pairs: { path: store, valid: ttl, status: visible, vary: varyhdr }
+    explanation: proxy_cache_path defines the cache, proxy_cache uses it and proxy_cache_valid sets lifetimes; a status header makes caching visible. Images and video are already compressed — gzip_types should list text types only.
+
+  - id: what-is-cached
+    type: multiple
+    level: intermediate
+    lesson: nginx-caching-and-compression
+    prompt: A location has proxy_cache and proxy_cache_valid 200 30s, with no proxy_ignore_headers. Which statements are true? Select all that apply.
+    options:
+      - { id: a, text: "A 200 JSON response with no Cache-Control header is stored" }
+      - { id: b, text: "A 200 response with Cache-Control: private, no-store is stored" }
+      - { id: c, text: "A 200 response that sets a cookie (Set-Cookie) is stored" }
+      - { id: d, text: "A second request for the same public URL within 30 seconds is answered from the cache" }
+    answers: [a, d]
+    explanation: In the lesson /timetable was stored (MISS, then HIT, HIT — one backend request for three). /private, marked private, no-store, was fetched every time, and responses with Set-Cookie are not cached either — unless proxy_ignore_headers overrides it, which can leak one user's data to another.
+
+  - id: return-skips-access
+    type: single
+    level: intermediate
+    lesson: nginx-access-control
+    prompt: "A location has allow 10.0.0.0/8; deny all; and, for a quick test, return 200 \"admin\";. Requests from anywhere get 200. Why?"
+    options:
+      - { id: a, text: "allow and deny only work with auth_basic" }
+      - { id: b, text: "return answers the request in the rewrite phase, before the access phase where allow and deny are checked" }
+      - { id: c, text: "deny all only blocks IPv6 addresses" }
+    answer: b
+    explanation: The lesson's protected locations serve real files for this reason. A location that only says return 200 lets everyone in — the same trap as testing limit_req with return.
+
+  - id: self-signed-error
+    type: output
+    level: intermediate
+    lesson: nginx-tls-termination
+    prompt: Nginx serves HTTPS with a self-signed development certificate (cert.pem). What is the right way to test it from your machine?
+    command: curl -sS https://localhost:8443/
+    output: |
+      curl: (60) SSL certificate problem: self-signed certificate
+      More details here: https://curl.se/docs/sslcerts.html
+
+      curl failed to verify the legitimacy of the server and therefore could not
+      establish a secure connection to it. To learn more about this situation and
+      how to fix it, please visit the web page mentioned above.
+    options:
+      - { id: a, text: "Add -k so curl skips verification" }
+      - { id: b, text: "Tell curl to trust exactly this certificate with --cacert cert.pem" }
+      - { id: c, text: "Switch Nginx to plain HTTP for development" }
+    answer: b
+    explanation: The connection would be encrypted, but curl cannot tell whose key it is. --cacert trusts this one certificate and keeps verification on; -k turns verification off entirely and is a bad habit.
+
+  - id: status-not-retried
+    type: output
+    level: advanced
+    lesson: nginx-upstream-failures
+    prompt: Backend A is healthy; backend B is running but answers 500 to everything. The location uses proxy_pass http://app; with no proxy_next_upstream directive. Why do half the requests fail?
+    command: for i in 1 2 3 4; do curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8089/; done | sort | uniq -c
+    output: |2
+            2 200
+            2 500
+    options:
+      - { id: a, text: "B is overloaded, so Nginx times out" }
+      - { id: b, text: "The default is proxy_next_upstream error timeout: a 500 is a valid HTTP response, not a connection error, so Nginx passes it on instead of trying A" }
+      - { id: c, text: "Round robin is disabled when a backend fails" }
+    answer: b
+    explanation: Adding http_500 to proxy_next_upstream makes Nginx try the next server — for requests that are safe to repeat. A refused connection, by contrast, is retried by default.
+
+  - id: failure-facts
+    type: multiple
+    level: advanced
+    lesson: nginx-upstream-failures
+    prompt: Which statements about Nginx's upstream failure handling are true? Select all that apply.
+    options:
+      - { id: a, text: "After max_fails failures (default 1) within fail_timeout (default 10 s), a server is considered unavailable for fail_timeout" }
+      - { id: b, text: "A POST that was already sent to a backend is not passed to the next one unless non_idempotent is added to proxy_next_upstream" }
+      - { id: c, text: "When proxy_read_timeout expires, the client gets 504 Gateway Timeout" }
+      - { id: d, text: "A server marked backup takes its share of requests all the time" }
+      - { id: e, text: "Passive health checks notice a failing server before any real request reaches it" }
+    answers: [a, b, c]
+    explanation: A backup server receives requests only when the others are unavailable. Passive checks learn from real requests, which is why orchestrators add active checks such as Kubernetes readiness probes.
+
+  - id: failover-diagram
+    type: diagram
+    level: advanced
+    lesson: nginx-upstream-failures
+    prompt: This is a load-balanced setup at the moment one server has crashed. Label the numbered boxes.
+    media: media:nginx/quiz-upstream-failover.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+      - { id: "5", text: "Box 5" }
+    labels:
+      - { id: client, text: "Client (browser or curl)" }
+      - { id: nginx, text: "Nginx reverse proxy" }
+      - { id: healthy, text: "Healthy backend server" }
+      - { id: crashed, text: "Crashed backend server" }
+      - { id: backup, text: "Server marked backup" }
+      - { id: ca, text: "Certificate authority" }
+    answers: { "1": client, "2": nginx, "3": healthy, "4": crashed, "5": backup }
+    explanation: The client only talks to Nginx. Nginx tried the crashed server, got connection refused, passed the request to the healthy one (error is in the default retry list) and skips the crashed server for fail_timeout. The backup is used only when every other server is unavailable.
+
+  - id: hsts-short
+    type: single
+    level: advanced
+    lesson: nginx-tls-termination
+    prompt: You are adding Strict-Transport-Security to a site that has just started using HTTPS. Why begin with a short max-age, such as 300?
+    options:
+      - { id: a, text: "Browsers obey max-age for its whole duration: if HTTPS turns out to be broken somewhere, a long value keeps browsers from using plain HTTP for that long" }
+      - { id: b, text: "A short max-age makes the TLS handshake faster" }
+      - { id: c, text: "HSTS only works with self-signed certificates when max-age is short" }
+    answer: a
+    explanation: HSTS tells browsers to use HTTPS for the host for max-age seconds, even when asked for http://. Start short, and use months only once HTTPS is known to work everywhere.
