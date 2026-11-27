@@ -38,6 +38,24 @@ describe("runLesson", () => {
     assert.ok(run.failure?.includes("before"));
     assert.equal(run.results[1]?.ok, false);
   });
+
+  it("on failure in a lesson with a kind cluster, prints the pods and recent events before deleting the cluster", () => {
+    const bin = mkdtempSync(join(tmpdir(), "devforge-kindstub-"));
+    const stub = (name: string, body: string) => {
+      writeFileSync(join(bin, name), `#!/bin/bash\n${body}\n`);
+      chmodSync(join(bin, name), 0o755);
+    };
+    stub("kind", 'echo "kind $*" >> "$(dirname "$0")/calls.log"');
+    stub("kubectl", 'case "$2" in pods) echo "default web-1 0/1 ImagePullBackOff";; events) echo "Warning Failed pod/web-1 toomanyrequests";; esac');
+    try {
+      const run = runLesson(extractRunBlocks("```bash run\nkind create cluster --name stub\nfalse\n```"), { path: `${bin}:${process.env.PATH}` });
+      assert.match(run.failure ?? "", /pods:\n\s+default web-1 0\/1 ImagePullBackOff/);
+      assert.match(run.failure ?? "", /recent events:\n\s+Warning Failed pod\/web-1 toomanyrequests/);
+      assert.match(readFileSync(join(bin, "calls.log"), "utf8"), /^kind delete cluster --name stub$/m, "the cluster is still deleted afterwards");
+    } finally {
+      rmSync(bin, { recursive: true, force: true });
+    }
+  });
 });
 
 describe("SQL blocks", () => {

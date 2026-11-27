@@ -242,16 +242,24 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   // When the lesson stops early, show the state and last log lines of the containers it started before
   // cleanup removes them — a container that crashed (on CI, say) then explains itself in the test report.
   const containers = [...new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bdocker run\b[^\n]*?--name[ =]([a-zA-Z0-9][\w.-]*)/g)].map((m) => m[1] ?? "")))].filter(Boolean);
-  const diagnostics = containers.length
+  const kindClusters = [...new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bkind create cluster --name ([a-z0-9-]+)/g)].map((m) => m[1] ?? "")))].filter(Boolean);
+  // With a kind cluster, the pods and the cluster's recent events (image pulls, scheduling, probes) explain a
+  // rollout that timed out — the container list alone only shows the kind node itself.
+  const kubeDiagnostics = kindClusters.length
+    ? `printf '    pods:\\n'; kubectl get pods -A -o wide 2>&1 | sed 's/^/    /'; printf '    recent events:\\n'; kubectl get events -A --sort-by=.lastTimestamp 2>&1 | tail -n 25 | sed 's/^/    /'`
+    : "";
+  const diagnostics = containers.length || kindClusters.length
     ? [
         `devforge_rc=$?`,
         // The trap inherits set -e: a failing diagnostic must not abort the rest (or the cleanup after it).
         `set +e`,
         `if [ "$devforge_rc" -ne 0 ]; then printf '\\n--- diagnostics: the lesson stopped (exit code %s); its containers:\\n' "$devforge_rc"; ` +
-          `docker ps -a --format '    {{.Names}} {{.Status}}' 2>/dev/null; free -m 2>/dev/null | sed 's/^/    /'; ` +
-          containers
-            .map((c) => `docker inspect -f '${c}: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}}' ${c} 2>/dev/null; docker logs --tail 25 ${c} 2>&1 | sed 's/^/    /'`)
-            .join("; ") +
+          [
+            `docker ps -a --format '    {{.Names}} {{.Status}}' 2>/dev/null`,
+            `free -m 2>/dev/null | sed 's/^/    /'`,
+            ...containers.map((c) => `docker inspect -f '${c}: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}}' ${c} 2>/dev/null; docker logs --tail 25 ${c} 2>&1 | sed 's/^/    /'`),
+            ...(kubeDiagnostics ? [kubeDiagnostics] : []),
+          ].join("; ") +
           `; fi`,
       ]
     : [];
