@@ -2,8 +2,8 @@
 # Acceptance check for "Live campus activity stream".
 # Usage: bash check.sh path/to/your/project   (the folder with topics.sh and occupancy.py)
 # Needs Docker (and network access once, for pip). Starts a single-node Kafka 4.4.0 and a Python 3.12 container
-# with confluent-kafka 2.16.1 on a private network, runs your topics.sh, produces 360 badge swipes, runs two
-# copies of occupancy.py side by side and then one more, and reads the occupancy topic. PASS or FAIL per criterion.
+# with confluent-kafka 2.16.1 on a private network, runs your topics.sh, runs two copies of occupancy.py side by side while
+# 300 badge swipes arrive, then 60 more swipes and one more copy, and reads the occupancy topic. PASS or FAIL per criterion.
 set -uo pipefail
 src="$(cd "${1:-.}" 2> /dev/null && pwd)" || { echo "FAIL: folder ${1:-.} not found"; exit 1; }
 kafka="apache/kafka:4.4.0@sha256:833b867a9585a141da455dc2b57431c65cbccb27f11c91f694444cca9f777e0f"
@@ -45,17 +45,20 @@ if [ "$policy" = "cleanup.policy=compact" ]; then pass "building-occupancy is a 
 [ "$parts" = "6" ] || topics --create --if-not-exists --topic campus-activity --partitions 6 --replication-factor 1 > /dev/null 2>&1
 topics --create --if-not-exists --topic building-occupancy --partitions 1 --replication-factor 1 > /dev/null 2>&1
 
-# produce <first> <count>: deterministic swipes for six buildings, keyed by building.
-produce() { docker exec -i "$id-py" python - "$1" "$2" <<'PY'
-import json, sys
+# produce <first> <count> [seconds between swipes]: deterministic swipes for six buildings, keyed by building.
+produce() { docker exec -i "$id-py" python - "$1" "$2" "${3:-0}" <<'PY'
+import json, sys, time
 from confluent_kafka import Producer
-first, count = int(sys.argv[1]), int(sys.argv[2])
+first, count, gap = int(sys.argv[1]), int(sys.argv[2]), float(sys.argv[3])
 B = ["library", "lab-block", "canteen", "hostel-a", "hostel-b", "sports"]
 p = Producer({"bootstrap.servers": "kafka:9092", "acks": "all"})
 for i in range(first, first + count):
     b = B[i % 6]
     swipe = {"building": b, "student": f"s{i % 97:04d}", "direction": "out" if (i // 6) % 4 == 3 else "in", "at": f"2026-02-03T08:{i // 60 % 60:02d}:{i % 60:02d}Z"}
     p.produce("campus-activity", key=b.encode(), value=json.dumps(swipe).encode())
+    if gap:
+        p.poll(0)
+        time.sleep(gap)
 p.flush(30)
 PY
 }
@@ -84,8 +87,13 @@ c.close()
 print(json.dumps({"state": state, "unkeyed": unkeyed}, sort_keys=True))
 PY
 }
-produce 0 300
-docker exec "$id-py" sh -c 'timeout 120 python occupancy.py > /tmp/a.out 2>&1 & timeout 120 python occupancy.py > /tmp/b.out 2>&1 & wait'
+# Start both copies first, then let the swipes arrive over about four seconds: a real stream does not arrive all at
+# once, and this gives the group time to share the partitions before the first copy could finish everything alone.
+docker exec "$id-py" sh -c 'timeout 120 python occupancy.py > /tmp/a.out 2>&1 & timeout 120 python occupancy.py > /tmp/b.out 2>&1 & wait' &
+copies=$!
+sleep 2
+produce 0 300 0.013
+wait "$copies"
 a="$(docker exec "$id-py" tail -n 1 /tmp/a.out)"; b="$(docker exec "$id-py" tail -n 1 /tmp/b.out)"
 na="$(echo "$a" | python3 -c 'import json,sys; print(json.load(sys.stdin)["processed"])' 2>/dev/null)"; nb="$(echo "$b" | python3 -c 'import json,sys; print(json.load(sys.stdin)["processed"])' 2>/dev/null)"
 if [ -n "$na" ] && [ -n "$nb" ] && [ $((na + nb)) -eq 300 ]; then pass "two copies together processed all 300 swipes exactly once ($na + $nb)"; else fail "two copies should process 300 swipes between them, each printing {\"processed\": n} (got: $(echo "$a" | head -c 80) / $(echo "$b" | head -c 80))"; fi

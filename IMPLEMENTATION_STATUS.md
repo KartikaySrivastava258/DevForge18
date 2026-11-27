@@ -1,13 +1,13 @@
 # Implementation status
 
-Last updated: 2026-11-27 (UTC) · Milestone: **9 — quizzes and projects**, in progress (quiz and project content types, pages and API done; Git quiz and Git projects done) · Next: quizzes and 3 mini-projects for each of the other 17 tracks, then milestones 10–11
+Last updated: 2026-11-27 (UTC) · Milestones **9 and 10 done** (content complete; closing once CI is green) · Next: Milestone 11 — institutional features and hardening (REMAINING_WORK §6.3–6.4), then the release checklist
 
 ## Session handoff
 
-- **Where I stopped:** Milestone 9, 14 of 18 tracks done and pushed (quiz + 3 executable projects each): Git, PostgreSQL, Jira, Prometheus + Grafana, OpenTelemetry, Postman, Redis, Nginx, Docker, Kafka, Airflow, LangChain + LlamaIndex, n8n, MLflow. Helper agents in git worktrees are finishing Kubernetes + Terraform and GitHub Actions + Jenkins; their commits are reviewed (allowed files only, quiz outputs and commands checked against the lessons) and cherry-picked onto main.
-- **Next:** merge the last four tracks, run `npm run verify`, close Milestone 9 in REMAINING_WORK §7, then Milestone 10.
+- **Where I stopped:** Milestone 9 (18 quizzes, 54 mini-projects with executable checks) and Milestone 10 (capstones A–G, 17 integrations, 10 reference architectures, learner ADRs, relationship graph) are written, executed locally and pushed. Last fixes: a stale unused-media warning test, and a race in the Kafka campus-activity check (the first consumer could finish all swipes before the second joined; the check now starts both copies and lets the swipes arrive over about 4 s).
+- **Next:** confirm CI green for the last push, then Milestone 11 in the order of REMAINING_WORK §6.3 (admin and faculty screens, cohorts and assignments, project/ADR review against rubrics, portfolio, certificates, CMS that opens pull requests) and §6.4.
 - **Disk:** keep at least 5 GB free; checks remove their containers with `-v` and the images they build.
-- **How to work fast:** `npm run new:quiz|new:project -- <track> <id>`; `DEVFORGE_DOCKER_TEST=1 node --test scripts/lib/projects.test.ts`; Docker project checks run in the CI lesson shards, the others in the verify job.
+- **How to work fast:** `npm run new:quiz|new:project -- <track> <id>`; `DEVFORGE_DOCKER_TEST=1 DEVFORGE_CHANGED_FILES=<file> node --test scripts/lib/projects.test.ts` (or `lesson-runner.test.ts`); Docker project checks run in the CI "Mini-project checks" job (four shards), the others in the verify job.
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -17,7 +17,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 131 published; 129 **executed**, 2 Jira lessons **docs-checked** (Jira's own screens). Every track has 5–9 lessons, beginner to advanced — the full Milestone 8 plan in REMAINING_WORK §5 |
+| Lessons | ✅ 133 published; 131 **executed**, 2 Jira lessons **docs-checked** (Jira's own screens). Every track has 5–9 lessons, beginner to advanced — the full Milestone 8 plan in REMAINING_WORK §5 |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
@@ -25,9 +25,9 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
 | Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
-| Quizzes | 🟡 Six question types graded on the server (answers never sent before grading), attempts saved, paths show "skipped by quiz"; 14 of 18 track quizzes written |
-| Mini-projects | 🟡 Project pages (brief, stories, criteria, rubric, starter files, progressive hints, faculty-only solution) and executable acceptance checks (fail on the starter, pass on the solution); 42 of 54 written |
-| Glossary, architecture studio | ⬜ Milestone 10 |
+| Quizzes | ✅ Six question types graded on the server (answers never sent before grading), attempts saved, paths show "skipped by quiz"; all 18 track quizzes written |
+| Mini-projects | 🟡 Project pages (brief, stories, criteria, rubric, starter files, progressive hints, faculty-only solution) and executable acceptance checks (fail on the starter, pass on the solution); all 54 written, Docker-based checks in their own four-shard CI job |
+| Capstones, integrations, architecture studio, relationship graph | ✅ 7 capstones (A–G), 17 integrations between related tracks, 10 reference architectures with learner decision records; API and browser tests |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub: a verify job (typecheck, lint, build, unit/API and browser tests) and executed lessons in three parallel shards, about 17 minutes in all. Docker Compose / production Nginx config still untested |
 
@@ -436,6 +436,20 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **Capstone content type** (`content/capstones/<id>.md`): letter A–G, summary, at least three tracks, an architecture diagram (`media:capstones/…`, drawn with figlib), user stories, milestones with deliverables, acceptance criteria and links to the lessons, labs and mini-projects they build on (validated), rubric, stretch goals; "Brief", "Architecture" and "Getting started" sections. Paths link their capstone by id. API `/api/capstones`, `/api/capstones/:id`; pages `/capstones` and `/capstones/:id`; a Capstones item in the main navigation; API and browser tests.
 - **Decision — capstone B:** the blueprint's text for Project B is not in the repository (the original prompt folder was deleted). Every other letter is named by a learning path (A distributed systems, C AI application, D data engineering, E MLOps, F DevOps platform and its team slice, G automation); the only unlettered path capstone, backend foundations' course-registration system, becomes **Project B — Course registration platform**.
 
+### Milestone 9 — done: Kubernetes, Terraform, GitHub Actions, Jenkins (2026-11-27)
+
+- The last four tracks' quizzes and projects (helper agents in worktrees; reviewed, quiz outputs and commands checked against the lessons, merged). All 18 tracks now have a quiz and three mini-projects.
+- **CI:** Docker-based project checks moved out of the lesson shards into their own job ("Mini-project checks", four shards, affected-only on pushes) — 48 Docker checks did not fit the lesson shards' time budget. Known caveats: Jenkins checks download plugins on their first run; kind clusters may hit inotify limits on small machines.
+- **Flake fixed at the root:** `kafka-campus-activity`'s check started two consumers after all 300 swipes were produced; with a 0 ms initial rebalance delay the first consumer could process everything before the second joined (CI run 46033336825: 0 and 300). Both copies now start first and the swipes arrive over about 4 s; the criterion ("both copies did part of the work") is unchanged. Solution passed 3 of 3 local runs.
+
+### Milestone 10 — capstones, integrations and architecture studio (2026-11-27)
+
+- **Capstones A–G**, each with a figlib architecture diagram, milestones linked to the lessons, labs and projects they reuse (validated), rubric and stretch goals; paths link their capstone.
+- **17 integrations** (`content/integrations/*.yaml`) between related tracks, each practised by executed lessons of its two tracks, and the **relationship graph** (`/graph`, filters by path and tool, an accessible connections table; `/integrations/:id`). **Decision:** the blueprint's list of 17 integrations is not in the repository (prompt folder deleted); the 17 are the 15 related-track pairs that existing lessons already demonstrate, plus two pairs that needed a new executed lesson: Redis cache-aside in front of PostgreSQL and one trace across a Kafka hop with OpenTelemetry.
+- **Architecture studio:** 10 reference architectures (diagram, components, flow, trade-offs, failure modes, alternatives, decision prompts, learn-more links, capstones), and learner architecture decision records saved per architecture (migration 0005, `/api/me/decisions`), with API and browser tests.
+- **New lessons:** `redis-cache-aside-with-postgresql` (PostgreSQL 16 + Redis 7.4 + Python; a dead cache falls back immediately with no retries) and `kafka-tracing-with-opentelemetry` (Kafka 4.4.0, confluent-kafka 2.16.1, opentelemetry-sdk 1.45.2 released 2026-10-29; a traceparent header joins producer and consumer spans, a message without it starts a new trace). Both executed.
+- **Fix:** the unused-media warning now names capstones and architectures, and its test was updated to the new wording (it had been left on the old text, failing the verify job in run 46033336825).
+
 ### Speed-ups and decisions (2026-11-26)
 
 - **Decisions recorded.** Licences: MIT for code (`LICENSE`), CC BY-SA 4.0 for `content/` (`LICENSE-CONTENT`, full legal code from creativecommons.org), Fira Sans OFL notice kept. `~/Downloads/devforge18` deleted after checking that every file's content exists in this repository's history (the only differences were three debugging logs and an older `package.json`). Terraform's plugin cache is enabled in CI with `TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE` (HashiCorp documents it for setups that discard lock files, as lesson folders do; without it the cache is never used for fresh folders); learners' commands are unchanged. Python packages are installed inside lesson containers, so no pip cache (it would change commands learners see). Quiz and project scaffolds come with their schemas in milestone 9.
@@ -469,10 +483,13 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-27 | Git quiz and three Git mini-projects with acceptance checks and replayed histories; Docker OOM root cause | 120 | 10 | |
 | 2026-11-27 | PostgreSQL, Jira, Prometheus + Grafana, OpenTelemetry quizzes and projects; disk-full root cause (orphaned volumes) | 330 | 40 | waiting = usage limit (helper agents in parallel used it up) |
 | 2026-11-27 | Kafka, Airflow, MLflow (own); review and merge of Postman, Redis, Nginx, Docker, LangChain, n8n (agents); CI fixes (ignored sample data, apt repository 403, two lesson flakes) | 300 | 30 | |
+| 2026-11-27 | Kubernetes, Terraform, GitHub Actions, Jenkins (agents, reviewed and merged); CI projects job | 90 | 20 | |
+| 2026-11-27 | Capstones A–G, graph, integrations (15 by an agent + 2 with new lessons), architecture studio and ADRs | 300 | 30 | |
+| 2026-11-27 | CI fixes: stale warning test, Kafka consumer-group race | 25 | 10 | |
 
 ## Current work
 
-Milestone 9: foundations and the Git track are done. Next: a quiz and three mini-projects for each of the other 17 tracks, in Path 1 order (PostgreSQL, Postman, Redis, Nginx, Docker, then the rest).
+Milestone 11: institutional features and hardening (REMAINING_WORK §6.3–6.4), then the release checklist.
 
 ## Pending work (ordered)
 

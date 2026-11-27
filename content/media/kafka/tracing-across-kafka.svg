@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260">
+  <!-- The trace context travels inside the message, in a header. -->
+  <rect class="f-box" x="10" y="70" width="180" height="100" rx="8"/>
+  <text class="f-small f-strong" x="100" y="100" text-anchor="middle">orders service</text>
+  <text class="f-small" x="100" y="122" text-anchor="middle">span: publish</text>
+  <text class="f-small" x="100" y="142" text-anchor="middle">(kind PRODUCER)</text>
+  <rect class="f-box-warn" x="270" y="60" width="180" height="120" rx="8"/>
+  <text class="f-small f-strong" x="360" y="88" text-anchor="middle">Kafka message</text>
+  <text class="f-small" x="360" y="112" text-anchor="middle">key, value</text>
+  <text class="f-small" x="360" y="134" text-anchor="middle">header:</text>
+  <text class="f-small f-mono" x="360" y="154" text-anchor="middle">traceparent</text>
+  <g>
+    <path class="f-arrow" d="M192 120 L260 120"/>
+    <polygon class="f-head" points="268,120 260,124.5 260,115.5"/>
+  </g>
+  <text class="f-small" x="230" y="108" text-anchor="middle">inject</text>
+  <rect class="f-box" x="530" y="70" width="180" height="100" rx="8"/>
+  <text class="f-small f-strong" x="620" y="100" text-anchor="middle">email consumer</text>
+  <text class="f-small" x="620" y="122" text-anchor="middle">span: process</text>
+  <text class="f-small" x="620" y="142" text-anchor="middle">(kind CONSUMER)</text>
+  <g>
+    <path class="f-arrow" d="M452 120 L520 120"/>
+    <polygon class="f-head" points="528,120 520,124.5 520,115.5"/>
+  </g>
+  <text class="f-small" x="490" y="108" text-anchor="middle">extract</text>
+  <text class="f-small" x="360" y="225" text-anchor="middle">same trace ID; the consumer's span has the producer's span as its parent</text>
+</svg>

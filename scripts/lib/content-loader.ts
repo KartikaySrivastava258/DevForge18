@@ -572,7 +572,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   }
   architectures.sort((a, b) => a.id.localeCompare(b.id));
 
-  for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson, quiz, project or capstone`);
+  for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson, quiz, project, capstone or architecture`);
   for (const key of media.diagrams.keys()) if (!usedMedia.has(`diagram:${key}`)) warnings.push(`media/${key}.steps.yaml is not used by any lesson, quiz or project`);
 
   // ---- Case studies -------------------------------------------------------

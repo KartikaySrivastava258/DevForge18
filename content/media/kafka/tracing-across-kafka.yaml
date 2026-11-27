@@ -1,0 +1,4 @@
+alt: 'The orders service creates a publish span of kind PRODUCER and injects its trace context into the Kafka message as a traceparent header, next to the key and value. The email consumer extracts the context from the header and starts a process span of kind CONSUMER. Both spans share one trace ID, and the consumer''s span has the producer''s span as its parent.'
+caption: 'Kafka does not carry trace context by itself; the producer injects it into a header and the consumer extracts it.'
+credit: DevForge 18 content team
+licence: project-content

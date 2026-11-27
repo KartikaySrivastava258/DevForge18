@@ -1,0 +1,20 @@
+id: kafka-to-opentelemetry
+from: kafka
+to: opentelemetry
+title: One trace across a Kafka hop
+summary: The producer injects the current trace context into the message headers (a W3C traceparent header) and the consumer extracts it before starting its span, so the work a message causes later appears in the same trace as the request that published it.
+flow: A traceparent header travels with each Kafka record from the producer's PRODUCER span to the consumer's CONSUMER span; both services export their spans to the tracing backend.
+steps:
+  - In the producer, start a span of kind PRODUCER with the messaging attributes (messaging.system, messaging.destination.name).
+  - Call the propagator's inject on a dictionary and send its entries as the record's headers.
+  - In the consumer, turn the record's headers back into a dictionary and call extract.
+  - Start a span of kind CONSUMER with the extracted context as its parent, and do the work inside it.
+pitfalls:
+  - Starting the consumer span without the extracted context — it becomes a new root and the trace stops at the broker.
+  - Relays, retries and dead-letter steps that republish only the key and value — copy the headers too, or the trace is lost.
+  - Putting personal data in baggage — baggage travels to every consumer of the topic.
+practise:
+  - { kind: lesson, id: kafka-tracing-with-opentelemetry }
+  - { kind: lesson, id: otel-context-propagation }
+owner: content-team
+last_reviewed: 2026-11-27

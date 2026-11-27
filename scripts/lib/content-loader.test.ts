@@ -189,7 +189,7 @@ describe("figures and step-throughs", () => {
     writeFileSync(file, readFileSync(file, "utf8").replace("![](media:docker/mounts.svg)", "(diagram removed)"));
     const { errors, warnings } = loadContent(dir);
     assert.ok(errors.some((e) => e.startsWith('lessons/docker/docker-volumes-and-bind-mounts.md: the "How it works" section needs a figure')), errors.join("\n"));
-    assert.ok(warnings.includes("media/docker/mounts.svg is not used by any lesson, quiz or project"));
+    assert.ok(warnings.includes("media/docker/mounts.svg is not used by any lesson, quiz, project, capstone or architecture"));
   });
   it("reject third-party media without a source", () => {
     const dir = copyContent();
