@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330">
+  <!-- Numbered diagram for the Docker track quiz: label the parts of the Compose lab (an API and Redis). -->
+  <rect class="f-box-faint" x="20" y="125" width="140" height="80" rx="8"/>
+  <text class="f-strong" x="90" y="172" text-anchor="middle">1</text>
+  <text class="f-small" x="90" y="227" text-anchor="middle">curl on this machine</text>
+  <rect class="f-box-faint" x="215" y="20" width="525" height="230" rx="10"/>
+  <text class="f-strong" x="240" y="48">2</text>
+  <rect class="f-box-faint" x="270" y="125" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="345" y="172" text-anchor="middle">3</text>
+  <rect class="f-box-faint" x="540" y="125" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="615" y="172" text-anchor="middle">4</text>
+  <rect class="f-box-faint" x="540" y="265" width="150" height="55" rx="8"/>
+  <text class="f-strong" x="615" y="298" text-anchor="middle">5</text>
+  <g>
+    <path class="f-arrow" d="M162 165 L260 165"/>
+    <polygon class="f-head" points="268,165 260,169.5 260,160.5"/>
+  </g>
+  <text class="f-small f-mono" x="215" y="150" text-anchor="middle">127.0.0.1:8096</text>
+  <g>
+    <path class="f-arrow" d="M422 165 L530 165"/>
+    <polygon class="f-head" points="538,165 530,169.5 530,160.5"/>
+  </g>
+  <text class="f-small f-mono" x="480" y="150" text-anchor="middle">cache:6379</text>
+  <g>
+    <path class="f-arrow" d="M615 207 L615 255"/>
+    <polygon class="f-head" points="615,263 610.5,255 619.5,255"/>
+  </g>
+  <text class="f-small f-mono" x="560" y="240" text-anchor="end">/data</text>
+</svg>

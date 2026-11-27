@@ -1,0 +1,4 @@
+alt: 'Box 1, labelled "curl on this machine", has an arrow marked 127.0.0.1:8096 into box 3. Boxes 3 and 4 sit inside a large box numbered 2. An arrow marked cache:6379 goes from box 3 to box 4, and an arrow marked /data goes from box 4 down to box 5, outside the large box. The boxes are not named; the quiz asks which part of the system each number is.'
+caption: 'Which part of the Compose project is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

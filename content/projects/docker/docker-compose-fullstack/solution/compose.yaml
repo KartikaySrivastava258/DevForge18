@@ -1,0 +1,47 @@
+# Campus Noticeboard — web (Nginx) in front of the API, which stores notices in Redis.
+#   WEB_PORT=8080 docker compose up -d --build --wait     (WEB_PORT defaults to 8080)
+#   docker compose down        keeps the notices (named volume); docker compose down -v deletes them
+services:
+  web:
+    # Nginx 1.27.5 on Alpine, the version the Docker lessons use, pinned by digest.
+    image: nginx:1.27.5-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+    volumes:
+      - ./web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./web/site:/usr/share/nginx/html:ro
+    ports:
+      # The only published port: on this machine only (127.0.0.1), and configurable so it cannot clash.
+      - "127.0.0.1:${WEB_PORT:-8080}:80"
+    depends_on:
+      # Nginx resolves "api" when it starts; wait until the API actually answers.
+      api:
+        condition: service_healthy
+
+  api:
+    build: ./api
+    environment:
+      REDIS_HOST: redis   # the Compose service name; Docker's DNS resolves it on the project network
+    # No ports: only web talks to the API, over the project network.
+    healthcheck:
+      # /api/health answers 200 only when Redis answers too. wget is part of the Alpine base image.
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/api/health"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    # Redis 7.4.12 on Alpine, pinned by digest.
+    image: redis:7.4.12-alpine@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe
+    # No ports: nothing outside this application should reach the database.
+    volumes:
+      - redis-data:/data   # Redis writes its snapshot here; the named volume outlives the container
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  redis-data:

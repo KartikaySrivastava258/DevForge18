@@ -1,0 +1,12 @@
+# Never send these to the builder: secrets, history, local data and tooling files.
+.env
+.env.*
+secrets/
+.git
+data/
+node_modules
+npm-debug.log*
+*.log
+Dockerfile
+.dockerignore
+README.md

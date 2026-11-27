@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campus Noticeboard</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+      form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+      input { flex: 1; padding: 0.4rem; }
+      li { margin: 0.4rem 0; }
+      time { color: #5a6475; font-size: 0.85rem; margin-left: 0.5rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Campus Noticeboard</h1>
+    <form id="post">
+      <label for="title" hidden>Notice</label>
+      <input id="title" name="title" placeholder="Library closes at 6 pm on Friday" required maxlength="200">
+      <button>Post</button>
+    </form>
+    <p id="status" role="status"></p>
+    <ul id="notices"></ul>
+    <script>
+      const list = document.getElementById("notices");
+      const status = document.getElementById("status");
+      async function refresh() {
+        const res = await fetch("/api/notices");
+        if (!res.ok) { status.textContent = `The API answered ${res.status}.`; return; }
+        list.replaceChildren(...(await res.json()).map((n) => {
+          const li = document.createElement("li");
+          const time = document.createElement("time");
+          time.dateTime = n.posted_at;
+          time.textContent = new Date(n.posted_at).toLocaleString();
+          li.append(n.title, time);
+          return li;
+        }));
+        status.textContent = "";
+      }
+      document.getElementById("post").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const input = document.getElementById("title");
+        const res = await fetch("/api/notices", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: input.value }) });
+        if (res.ok) { input.value = ""; refresh(); } else status.textContent = `Could not post (${res.status}).`;
+      });
+      refresh();
+    </script>
+  </body>
+</html>

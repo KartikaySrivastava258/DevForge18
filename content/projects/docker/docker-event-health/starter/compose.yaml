@@ -1,0 +1,24 @@
+# Campus events — first draft. It starts on the author's laptop; README.md lists what it must do instead.
+services:
+  api:
+    build: .
+    environment:
+      REDIS_HOST: redis
+      API_KEY: dev-key-123
+    ports:
+      - "8090:3000"
+    depends_on:
+      - redis
+
+  worker:
+    build: .
+    command: ["node", "app/worker.js"]
+    environment:
+      REDIS_HOST: redis
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "6379:6379"

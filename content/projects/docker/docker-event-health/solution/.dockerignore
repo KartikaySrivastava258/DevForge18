@@ -1,0 +1,9 @@
+# The builder needs app/ and nothing else: never secrets, history or local files.
+secrets/
+.env
+.env.*
+.git
+node_modules
+*.log
+compose.yaml
+README.md

@@ -58,9 +58,9 @@ labs:
   - { title: "Optimise a slow, oversized image", level: advanced, mode: local, status: available, lab: docker-optimise-an-oversized-image }
   - { title: "Reorder a Dockerfile for the build cache", level: intermediate, mode: simulation, status: available, lab: docker-layer-cache-experiments }
 projects:
-  - { title: "Containerised notes API", level: beginner, status: planned }
-  - { title: "Local full-stack application with Compose", level: intermediate, status: planned }
-  - { title: "Multi-service event application with health checks", level: advanced, status: planned }
+  - { title: "Containerised notes API", level: beginner, status: available, project: docker-notes-api }
+  - { title: "Local full-stack application with Compose", level: intermediate, status: available, project: docker-compose-fullstack }
+  - { title: "Multi-service event application with health checks", level: advanced, status: available, project: docker-event-health }
 resources:
   - title: Docker — Get started
     url: https://docs.docker.com/learn/

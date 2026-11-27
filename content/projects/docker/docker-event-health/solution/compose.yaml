@@ -1,0 +1,75 @@
+# Campus events — an API that queues events, a worker that processes them, and Redis between them.
+#   cp secrets/api_key.txt.example secrets/api_key.txt   (then put a long random value in it)
+#   API_PORT=8090 docker compose up -d --build --wait    (API_PORT defaults to 8090)
+
+# Settings shared by the two application containers (a YAML anchor, merged below with <<:).
+x-app: &app
+  build: .
+  read_only: true                 # the root filesystem cannot be changed at all
+  cap_drop: [ALL]                 # a web API and a queue worker need no Linux capabilities
+  security_opt:
+    - no-new-privileges:true      # no setuid program can raise privileges later
+  mem_limit: 128m
+  logging:
+    driver: json-file
+    options:
+      max-size: "1m"              # at most 3 × 1 MB of logs per container
+      max-file: "3"
+  restart: unless-stopped
+  environment:
+    REDIS_HOST: redis
+
+services:
+  api:
+    <<: *app
+    command: ["node", "api.js"]
+    secrets:
+      - api_key                   # mounted read-only at /run/secrets/api_key; never in the environment
+    ports:
+      - "127.0.0.1:${API_PORT:-8090}:3000"   # the only published port
+    healthcheck:
+      # /health answers 200 only when Redis answers PING, so "healthy" means "can accept events".
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/health"]
+      interval: 2s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  worker:
+    <<: *app
+    command: ["node", "worker.js"]
+    tmpfs:
+      - /tmp                      # the one writable place: the heartbeat file lives here, in memory
+    healthcheck:
+      # Healthy only if the worker reached Redis in the last 5 seconds (see app/healthcheck.js).
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 2s
+      timeout: 2s
+      retries: 3
+      start_period: 5s
+    stop_grace_period: 10s        # time to finish the event in hand after SIGTERM
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    # Redis 7.4.12 on Alpine, pinned by digest. No published port: only api and worker use it.
+    image: redis:7.4.12-alpine@sha256:7f7d30b7fdd09467bac58198a1f166dd69789d348d4fe859cccb20e0cf287fbe
+    command: ["redis-server", "--appendonly", "yes"]   # log every write, so queued events survive a crash
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+
+secrets:
+  api_key:
+    file: ./secrets/api_key.txt
+
+volumes:
+  redis-data:

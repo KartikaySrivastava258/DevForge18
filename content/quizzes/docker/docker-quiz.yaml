@@ -1,0 +1,205 @@
+id: docker-quiz
+track: docker
+title: Docker — track quiz
+description: Thirteen questions from images, containers and volumes to Compose, health checks, security and the supply chain. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: file-gone
+    type: output
+    level: beginner
+    lesson: docker-volumes-and-bind-mounts
+    prompt: "A container named scratch ran sh -c 'echo \"note 1\" > /notes.txt' and was then removed with docker rm scratch. Why does this command fail?"
+    command: docker run --rm alpine:3.20 cat /notes.txt
+    output: |
+      cat: can't open '/notes.txt': No such file or directory
+    options:
+      - { id: a, text: "--rm deleted the file before cat could read it" }
+      - { id: b, text: "The file was in scratch's writable layer, which was deleted with the container; a new container starts from the clean image" }
+      - { id: c, text: "alpine:3.20 cannot write to /" }
+    answer: b
+    explanation: Each container has its own writable layer on top of the image. To keep data beyond one container, store it in a volume — three containers in the lesson shared one named volume.
+
+  - id: rm-keeps-image
+    type: single
+    level: beginner
+    lesson: docker-images-vs-containers
+    prompt: You run docker rm -f web1, a container made from nginx:1.27-alpine. What happens to the image?
+    options:
+      - { id: a, text: "It is deleted too, because no container uses it any more" }
+      - { id: b, text: "Nothing: the container and its writable layer are gone, the image is still listed and can start new containers" }
+      - { id: c, text: "It is reset to the version on Docker Hub" }
+    answer: b
+    explanation: An image is the read-only template; a container adds a writable layer. docker rm -f deletes the container and that layer only. docker image rm removes the local copy of the image.
+
+  - id: cache-order
+    type: ordering
+    level: beginner
+    lesson: docker-dockerfile-layers-and-cache
+    prompt: Order the lesson's Dockerfile instructions so that a change to the source code reuses as much of the build cache as possible (the RUN step stands in for a slow dependency install).
+    items:
+      - { id: from, text: "FROM alpine:3.20" }
+      - { id: deps, text: "COPY requirements.txt /app/" }
+      - { id: install, text: "RUN sleep 2 && sort /app/requirements.txt > /app/installed.txt" }
+      - { id: src, text: "COPY src/ /app/src/" }
+      - { id: cmd, text: "CMD [\"cat\", \"/app/src/app.txt\"]" }
+    order: [from, deps, install, src, cmd]
+    explanation: Once a layer changes, every later one is rebuilt. Put what changes least first — the base image, the dependency list and their installation — and the source code last. CMD adds no file layer.
+
+  - id: volume-facts
+    type: multiple
+    level: beginner
+    lesson: docker-volumes-and-bind-mounts
+    prompt: Which statements about volumes and bind mounts are true? Select all that apply.
+    options:
+      - { id: a, text: "Removing a container never removes its named volumes" }
+      - { id: b, text: "Several containers, one after another, can use the same named volume" }
+      - { id: c, text: "A bind mount is writable unless you add :ro" }
+      - { id: d, text: "A change to a bind-mounted file needs an image rebuild before the container sees it" }
+    answers: [a, b, c]
+    explanation: Named volumes must be deleted deliberately (docker volume rm), which protects data from an accidental docker rm. A bind mount shows your own files live — the lesson changed index.html and nginx served it without a restart or rebuild.
+
+  - id: default-bridge
+    type: output
+    level: intermediate
+    lesson: docker-networks-and-compose
+    prompt: A Redis container named devforge-cache runs on the user-defined network devforge-net. From a container started with --network devforge-net, redis-cli -h devforge-cache ping answers PONG. Why does this one fail?
+    command: docker run --rm redis:7.4-alpine redis-cli -h devforge-cache ping
+    output: |
+      Could not connect to Redis at devforge-cache:6379: …
+    options:
+      - { id: a, text: "Redis refuses connections from containers it did not start" }
+      - { id: b, text: "Without --network, the container is on the default bridge network, which has no DNS for container names — and is not on devforge-net at all" }
+      - { id: c, text: "Port 6379 was not published with -p" }
+    answer: b
+    explanation: Containers on a user-defined bridge network reach each other by name through Docker's built-in DNS. Publishing a port is about reaching a container from the host, not from other containers.
+
+  - id: compose-terms
+    type: matching
+    level: intermediate
+    lesson: docker-networks-and-compose
+    prompt: Match each Compose feature with what it does.
+    left:
+      - { id: healthy, text: "depends_on with condition: service_healthy" }
+      - { id: wait, text: "docker compose up --wait" }
+      - { id: downv, text: "docker compose down -v" }
+      - { id: project, text: "-p devforge-lab" }
+    right:
+      - { id: waitdep, text: "Starts a service only after its dependency's health check passes" }
+      - { id: returns, text: "Returns only once services are running or healthy" }
+      - { id: delvol, text: "Removes the project's containers and network, and deletes its named volumes" }
+      - { id: prefix, text: "Sets the project name that prefixes containers, networks and volumes" }
+      - { id: publish, text: "Publishes every service's ports on all interfaces" }
+    pairs: { healthy: waitdep, wait: returns, downv: delvol, project: prefix }
+    explanation: Plain docker compose down keeps named volumes; -v deletes them. Every service of a project is reachable on the project network at its service name.
+
+  - id: pid1-sigterm
+    type: output
+    level: intermediate
+    lesson: docker-health-logs-and-limits
+    prompt: Two containers run node -e 'setInterval(() => {}, 1000)' — a program with no SIGTERM handler — one plain, one started with --init. Both are stopped with a 3-second grace period. Why does the first take 3 seconds and end with 137?
+    command: |
+      echo "no handler:          stopped $(timed_stop -t 3 devforge-stubborn), exit code $(docker inspect -f '{{.State.ExitCode}}' devforge-stubborn)"
+      echo "no handler + --init: stopped $(timed_stop -t 3 devforge-tidy), exit code $(docker inspect -f '{{.State.ExitCode}}' devforge-tidy)"
+    output: |
+      no handler:          stopped after about 3 s, exit code 137
+      no handler + --init: stopped in under 2 s, exit code 143
+    options:
+      - { id: a, text: "node was PID 1, and Linux does not apply SIGTERM's default action to PID 1; Docker waited out the grace period and sent SIGKILL (128 + 9)" }
+      - { id: b, text: "The container ran out of memory while stopping" }
+      - { id: c, text: "--init makes Docker skip SIGTERM and send SIGKILL at once" }
+    answer: a
+    explanation: With --init, a small init process is PID 1 and passes SIGTERM on, so Node.js exits as the signal's default says (128 + 15 = 143). Best is to handle SIGTERM in the app and exit with 0 — and to use the exec form of CMD so the app receives the signal.
+
+  - id: unhealthy-action
+    type: single
+    level: intermediate
+    lesson: docker-health-logs-and-limits
+    prompt: A plain docker run container with a health check now shows (unhealthy) in docker ps. What does Docker do about it by itself?
+    options:
+      - { id: a, text: "It restarts the container at once" }
+      - { id: b, text: "Nothing beyond reporting the status: use an orchestrator, or alert on it" }
+      - { id: c, text: "It stops the container and removes it" }
+    answer: b
+    explanation: The lesson lists "expecting Docker to fix unhealthy containers" as a common mistake. A health check makes the state visible; something else — an orchestrator, an alert, or depends_on at startup — has to act on it.
+
+  - id: compose-diagram
+    type: diagram
+    level: intermediate
+    lesson: docker-networks-and-compose
+    prompt: This is the lesson's Compose project — an API that counts visits in Redis. Label the numbered boxes.
+    media: media:docker/quiz-compose-project.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+      - { id: "5", text: "Box 5" }
+    labels:
+      - { id: host, text: "A client on the host" }
+      - { id: network, text: "The project's network (devforge-lab_default)" }
+      - { id: api, text: "The api service" }
+      - { id: cache, text: "The cache service (Redis)" }
+      - { id: volume, text: "The named volume cache-data" }
+      - { id: registry, text: "A container registry" }
+    answers: { "1": host, "2": network, "3": api, "4": cache, "5": volume }
+    explanation: Only api is published, on 127.0.0.1:8096. Inside the project network api reaches Redis at its service name, cache. The named volume lives outside the containers, which is why the visit count survives docker compose down.
+
+  - id: leaky-image
+    type: output
+    level: advanced
+    lesson: docker-image-and-container-security
+    prompt: "The Dockerfile was FROM alpine:3.20, ENV DB_PASSWORD=lesson-only-password, WORKDIR /app, COPY . ., RUN rm -f .env. ls -A /app in the image shows no .env. What does this output prove?"
+    command: |
+      docker image inspect -f '{{range .Config.Env}}{{println .}}{{end}}' devforge-leaky:1 | grep PASSWORD
+      mkdir -p ../saved && docker save devforge-leaky:1 | tar -x -C ../saved
+      for layer in $(find ../saved -type f); do tar -tf "$layer" 2>/dev/null | grep -x 'app/.env' > /dev/null && tar -xOf "$layer" app/.env; done
+    output: |
+      DB_PASSWORD=lesson-only-password
+      API_TOKEN=lesson-only-token-123
+    options:
+      - { id: a, text: "Nothing — both values are only visible to the image's author" }
+      - { id: b, text: "ENV values are stored in the image's configuration, and deleting a file in a later layer hides it but leaves it in the earlier layer — anyone with the image can read both" }
+      - { id: c, text: "RUN rm -f .env failed, so the build should have stopped" }
+    answer: b
+    explanation: Keep secrets out of the build context with .dockerignore, never set them with ENV, and give them to the container at run time as a read-only file.
+
+  - id: hardening
+    type: multiple
+    level: advanced
+    lesson: docker-image-and-container-security
+    prompt: Which options reduce what a compromised container can do? Select all that apply.
+    options:
+      - { id: a, text: "USER node in the Dockerfile (or --user node)" }
+      - { id: b, text: "--read-only, with --tmpfs /tmp where the app must write" }
+      - { id: c, text: "--cap-drop ALL" }
+      - { id: d, text: "--security-opt no-new-privileges" }
+      - { id: e, text: "COPY . . followed by RUN rm -f .env" }
+    answers: [a, b, c, d]
+    explanation: Each removes a power — root, a writable filesystem, capabilities such as CHOWN, gaining privileges through setuid programs. Deleting a copied file in a later layer leaves it in the earlier layer.
+
+  - id: tag-vs-digest
+    type: single
+    level: advanced
+    lesson: docker-build-cache-and-supply-chain
+    prompt: Why pin a base image as FROM alpine:3.20@sha256:… rather than FROM alpine:3.20?
+    options:
+      - { id: a, text: "A tag is a movable name; the digest is the hash of the image's manifest, so the line always means the same image" }
+      - { id: b, text: "Digests make builds skip the cache" }
+      - { id: c, text: "Docker Hub deletes images that are pulled by tag" }
+    answer: a
+    explanation: With only a tag, a rebuild may silently use a different image. Updating a pinned base becomes a deliberate change — while --pull fetches the newest image for a tag, and the build cache alone cannot tell that packages have newer versions.
+
+  - id: sbom
+    type: single
+    level: advanced
+    lesson: docker-build-cache-and-supply-chain
+    prompt: What does an SBOM for an image contain, and what uses it?
+    options:
+      - { id: a, text: "The image's layers, so it can be rebuilt without the Dockerfile" }
+      - { id: b, text: "The components in the image — names, exact versions and package URLs — in a standard format such as CycloneDX or SPDX; vulnerability scanners compare it with vulnerability databases" }
+      - { id: c, text: "The signatures of everyone who pushed the image" }
+    answer: b
+    explanation: Tools such as Syft generate SBOMs, and BuildKit can attach one at build time. Scanners such as Grype, Trivy or Docker Scout use them; provenance attestations record how an image was built.
