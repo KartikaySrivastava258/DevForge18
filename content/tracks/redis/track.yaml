@@ -54,9 +54,9 @@ labs:
   - { title: "Simulate stale cache and invalidation", level: advanced, mode: simulation, status: planned }
   - { title: "Keep a cache stampede off the database", level: intermediate, mode: simulation, status: available, lab: redis-cache-under-load }
 projects:
-  - { title: "Product catalogue cache", level: beginner, status: planned }
-  - { title: "API rate limiter", level: intermediate, status: planned }
-  - { title: "Real-time notification stream", level: advanced, status: planned }
+  - { title: "Product catalogue cache", level: beginner, status: available, project: redis-catalogue-cache }
+  - { title: "API rate limiter", level: intermediate, status: available, project: redis-rate-limiter }
+  - { title: "Real-time notification stream", level: advanced, status: available, project: redis-notification-stream }
 resources:
   - title: Redis documentation
     url: https://redis.io/docs/latest/

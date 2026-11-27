@@ -1,0 +1,4 @@
+alt: 'Four numbered boxes. The application reads from and writes to box 1. From box 1, an arrow labelled "every write, everysec" goes to box 2, an arrow labelled "at intervals or BGSAVE" goes to box 3, and an arrow labelled "asynchronous copy" goes to box 4, which is marked read-only. The boxes are not named; the quiz asks which part of the setup each number is.'
+caption: 'Which part of a persistent, replicated Redis is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

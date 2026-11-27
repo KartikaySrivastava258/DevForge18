@@ -1,0 +1,236 @@
+id: redis-quiz
+track: redis
+title: Redis — track quiz
+description: Fourteen questions from keys, expiry and caching to streams, transactions, persistence and cache failures. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: expired-key
+    type: output
+    level: beginner
+    lesson: redis-data-structures
+    prompt: The key was set with SET otp:asha 482913 EX 3. Four seconds later you run these commands. What does the output mean?
+    command: |
+      GET otp:asha
+      TTL otp:asha
+    output: |
+      (nil)
+      (integer) -2
+    options:
+      - { id: a, text: "The key still exists but its value is empty" }
+      - { id: b, text: "The key expired and Redis deleted it: (nil) is no value, and -2 means there is no such key" }
+      - { id: c, text: "The key never expires (-2 means no expiry)" }
+    answer: b
+    explanation: After its time to live, Redis deletes the key by itself. TTL answers -1 for a key without an expiry and -2 for a key that does not exist.
+
+  - id: atomic-incr
+    type: single
+    level: beginner
+    lesson: redis-data-structures
+    prompt: Two application servers run INCR page:views at the same moment; the value was 12. What is it afterwards?
+    options:
+      - { id: a, text: "13 or 14, depending on timing" }
+      - { id: b, text: "14 — Redis runs commands one at a time, so each INCR is atomic and neither increment is lost" }
+      - { id: c, text: "An error, because two clients changed the key at once" }
+    answer: b
+    explanation: Each Redis command is atomic. That is why counters shared by many servers use INCR rather than reading the value, adding one in the application and writing it back.
+
+  - id: invalidate-on-write
+    type: single
+    level: beginner
+    lesson: redis-caching-and-rate-limiting
+    prompt: A course title is cached under course:CS101:title with a 60-second TTL. The title is changed in the database. What should the code that changed it do so that readers see the new title at once?
+    options:
+      - { id: a, text: "Nothing — the TTL will take care of it" }
+      - { id: b, text: "Delete the cached key, so the next read misses and loads the new title" }
+      - { id: c, text: "Remove the TTL from the key" }
+    answer: b
+    explanation: The TTL only bounds how stale a copy can get. Invalidation — deleting the key when the source changes — makes the next read fetch fresh data.
+
+  - id: limiter-count
+    type: output
+    level: beginner
+    lesson: redis-caching-and-rate-limiting
+    prompt: The limiter allows 3 requests per minute with INCR and EXPIRE. Asha sent 5 requests; 3 were allowed and 2 blocked. Why does the counter say 5?
+    command: |
+      GET ratelimit:asha
+      TTL ratelimit:asha
+    output: |
+      "5"
+      (integer) 60
+    options:
+      - { id: a, text: "The limiter is broken and allowed all 5" }
+      - { id: b, text: "INCR runs for every request, blocked or not; the limiter compares the count with 3, and the window ends when the key expires" }
+      - { id: c, text: "Redis counts every command, not every request" }
+    answer: b
+    explanation: The count is incremented before the decision, so blocked requests are counted too. When the key's 60 seconds are over, it expires and the count starts again from zero.
+
+  - id: eviction-policies
+    type: matching
+    level: beginner
+    lesson: redis-memory-and-eviction
+    prompt: Redis has reached maxmemory. Match each policy with what happens on the next write.
+    left:
+      - { id: noeviction, text: "noeviction" }
+      - { id: allkeys-lru, text: "allkeys-lru" }
+      - { id: allkeys-lfu, text: "allkeys-lfu" }
+      - { id: volatile-lru, text: "volatile-lru, when no key has a TTL" }
+    right:
+      - { id: refuse, text: "The write is refused with an OOM error; reads still work" }
+      - { id: lru, text: "A key that has not been used recently is evicted" }
+      - { id: lfu, text: "A key that is used rarely is evicted" }
+      - { id: nothing, text: "Nothing can be evicted, so the write is refused, as with noeviction" }
+      - { id: exact, text: "The oldest key in the whole database is found and evicted" }
+    pairs: { noeviction: refuse, allkeys-lru: lru, allkeys-lfu: lfu, volatile-lru: nothing }
+    explanation: The volatile policies only consider keys with an expiry. LRU in Redis is approximate — it samples a few keys — so no policy finds the exact oldest key.
+
+  - id: consumer-group-order
+    type: ordering
+    level: intermediate
+    lesson: redis-pubsub-and-streams
+    prompt: Put the steps of processing a stream with a consumer group in order, ending with a crashed worker's entry being taken over.
+    items:
+      - { id: create, text: "XGROUP CREATE orders shipping 0" }
+      - { id: read, text: "XREADGROUP GROUP shipping worker-1 COUNT 2 STREAMS orders >" }
+      - { id: ack, text: "XACK the entry worker-1 finished" }
+      - { id: pending, text: "XPENDING shows the entry worker-1 received but never acknowledged" }
+      - { id: claim, text: "XAUTOCLAIM gives that entry to worker-2" }
+    order: [create, read, ack, pending, claim]
+    explanation: The group must exist before anyone reads; > asks for entries nobody in the group has received; each finished entry is acknowledged; what stays pending after a crash is claimed by another consumer.
+
+  - id: publish-zero
+    type: single
+    level: intermediate
+    lesson: redis-pubsub-and-streams
+    prompt: PUBLISH news "exam timetable is out" returns 0. What happened to the message?
+    options:
+      - { id: a, text: "It is stored until a subscriber connects" }
+      - { id: b, text: "Nobody was subscribed, so it went nowhere — Pub/Sub stores nothing" }
+      - { id: c, text: "It was rejected because the channel does not exist" }
+    answer: b
+    explanation: PUBLISH returns the number of subscribers that received the message. Pub/Sub delivers at most once to whoever is listening; use a stream when a message must not be lost.
+
+  - id: transaction-facts
+    type: multiple
+    level: intermediate
+    lesson: redis-transactions-and-lua
+    prompt: Which statements about MULTI/EXEC, WATCH and Lua scripts are true? Select all that apply.
+    options:
+      - { id: a, text: "Between MULTI and EXEC, commands are queued; EXEC runs them with no other client's command in between" }
+      - { id: b, text: "If one command fails while EXEC runs, Redis rolls back the others" }
+      - { id: c, text: "If a WATCHed key changed before EXEC, EXEC returns a null reply and none of the queued commands run" }
+      - { id: d, text: "A Lua script run with EVAL can read a value, decide and write, with nothing else running in between" }
+      - { id: e, text: "WATCH locks the key, so other clients must wait until EXEC" }
+    answers: [a, c, d]
+    explanation: Redis never rolls back — a run-time error leaves the other commands applied. WATCH does not lock anything; it makes EXEC fail if someone else changed the key, and the client then retries.
+
+  - id: no-rollback
+    type: output
+    level: intermediate
+    lesson: redis-transactions-and-lua
+    prompt: label holds the text hello. What is the state after this transaction?
+    command: |
+      MULTI
+      SET a 1
+      INCR label
+      SET c 3
+      EXEC
+      MGET a c
+    output: |
+      OK
+      QUEUED
+      QUEUED
+      QUEUED
+      1) OK
+      2) (error) ERR value is not an integer or out of range
+      3) OK
+      1) "1"
+      2) "3"
+    options:
+      - { id: a, text: "Nothing changed, because one command failed" }
+      - { id: b, text: "a and c were set; only INCR label failed — Redis does not roll back, so check each reply in EXEC's result" }
+      - { id: c, text: "Only a was set; the transaction stopped at the error" }
+    answer: b
+    explanation: INCR on text fails only when it runs, and the other commands still apply. Redis rejects invalid commands when they are queued, but run-time errors do not undo the rest.
+
+  - id: watch-null
+    type: single
+    level: intermediate
+    lesson: redis-transactions-and-lua
+    prompt: A client WATCHes seats:NW301, reads 1, and runs MULTI, DECR seats:NW301, EXEC. EXEC returns (nil). What should the client do?
+    options:
+      - { id: a, text: "Report that the seat was taken successfully" }
+      - { id: b, text: "Read the key again and decide again — another client changed it, so the DECR did not run (retry with a limit)" }
+      - { id: c, text: "Run DECR without WATCH" }
+    answer: b
+    explanation: A null EXEC means the watched key changed and nothing in the transaction ran. Under contention that is normal; the client reads again — perhaps finding 0 seats — and retries a limited number of times.
+
+  - id: persistence-diagram
+    type: diagram
+    level: advanced
+    lesson: redis-persistence-and-replication
+    prompt: This Redis keeps its data across restarts and has a copy on another server. Label the numbered boxes.
+    media: media:redis/quiz-persistence-replication.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: primary, text: "Primary Redis server" }
+      - { id: aof, text: "Append-only file (AOF)" }
+      - { id: rdb, text: "RDB snapshot (dump.rdb)" }
+      - { id: replica, text: "Replica (replicaof)" }
+      - { id: pubsub, text: "Pub/Sub channel" }
+      - { id: backup, text: "Off-site backup copy" }
+    answers: { "1": primary, "2": aof, "3": rdb, "4": replica }
+    explanation: The primary takes the application's writes. The AOF appends every write (flushed every second by default), RDB writes point-in-time snapshots at intervals or on BGSAVE, and a replica copies the primary asynchronously and is read-only by default.
+
+  - id: everysec-loss
+    type: single
+    level: advanced
+    lesson: redis-persistence-and-replication
+    prompt: Redis runs with appendonly yes and the default appendfsync everysec, and the server crashes. Roughly how much acknowledged data can be lost?
+    options:
+      - { id: a, text: "Nothing — the AOF makes every write durable" }
+      - { id: b, text: "About the last second of writes" }
+      - { id: c, text: "Everything since the last RDB snapshot" }
+    answer: b
+    explanation: With everysec, the log is flushed to disk once a second, so about one second of writes can be lost. appendfsync always loses less but writes to disk on every command and is much slower.
+
+  - id: stampede-output
+    type: output
+    level: advanced
+    lesson: redis-cache-stampede-and-failures
+    prompt: Ten requests call the plain cache-aside function at the moment cache:week1 is missing. What does the result show?
+    command: |
+      redis-cli DEL stats:db_queries cache:week1 > /dev/null
+      for i in $(seq 1 10); do read_plain week1 > /dev/null & done; wait
+      echo "database queries: $(redis-cli GET stats:db_queries)"
+    output: |
+      database queries: 10
+    options:
+      - { id: a, text: "The cache works: each request was served once" }
+      - { id: b, text: "A stampede: all ten looked at the cache before any of them had written the value back, so all ten queried the database" }
+      - { id: c, text: "Redis was down, so every request fell back to the database" }
+    answer: b
+    explanation: One request at a time, cache-aside gives one miss and then hits. When many requests miss the same key at the same moment, each one reloads it — the fix is a short lock (SET … NX EX) so that one request rebuilds while the others wait.
+
+  - id: failure-fixes
+    type: matching
+    level: advanced
+    lesson: redis-cache-stampede-and-failures
+    prompt: Match each cache failure with its usual fix.
+    left:
+      - { id: stampede, text: "A hot key expires and many requests rebuild it at once" }
+      - { id: penetration, text: "Requests ask for data that does not exist, so they always miss" }
+      - { id: avalanche, text: "Keys written together with the same TTL expire together" }
+    right:
+      - { id: lock, text: "A short lock with SET lock:key token NX EX, so only one request rebuilds" }
+      - { id: negative, text: "Cache a \"not found\" marker with a short TTL" }
+      - { id: jitter, text: "Add random jitter to each TTL" }
+      - { id: nottl, text: "Remove the TTL from popular keys" }
+    pairs: { stampede: lock, penetration: negative, avalanche: jitter }
+    explanation: Each failure has a small, well-known fix — a lock for a stampede, negative caching for penetration, jitter for synchronised expiry. Removing TTLs fixes none of them.
