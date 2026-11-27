@@ -105,8 +105,8 @@ IMAGE=n8nio/n8n:2.49.6@sha256:a1a9955a4a9e5dd9fa65a62f59e0751351b45b9e5cd2c17e6e
 docker pull -q "$IMAGE"
 docker run -d --name devforge-n8n -p 127.0.0.1:5678:5678 -e N8N_DIAGNOSTICS_ENABLED=false "$IMAGE" > /dev/null
 N8N=http://127.0.0.1:5678
-for i in $(seq 1 90); do curl -sf "$N8N/healthz" > /dev/null && break; sleep 1; done
-curl -s "$N8N/healthz"; echo
+for i in $(seq 1 120); do curl -sf "$N8N/healthz/readiness" > /dev/null && break; sleep 1; done
+curl -s "$N8N/healthz/readiness"; echo
 ```
 
 ```text output
@@ -116,7 +116,7 @@ docker.io/n8nio/n8n:2.49.6@sha256:a1a9955a4a9e5dd9fa65a62f59e0751351b45b9e5cd2c1
 
 - The image is n8n's official one, pinned to version 2.49.6 and its digest. `docker pull -q` downloads it (about 1.3 GB, once).
 - `-p 127.0.0.1:5678:5678` publishes n8n's port on your own computer only. `N8N_DIAGNOSTICS_ENABLED=false` turns off sending usage data to n8n.
-- `/healthz` answers once the server is up.
+- `/healthz/readiness` answers 200 only once n8n's database is connected and **migrated**; plain `/healthz` answers as soon as the web server is up, which can be before that. Waiting for readiness matters here: the command-line tool used next opens the same database, and starting it during the migrations once crashed n8n in this lesson's tests ("index … already exists").
 
 ### 2. Two helpers for the command line
 

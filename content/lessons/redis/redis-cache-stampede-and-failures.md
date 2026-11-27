@@ -135,8 +135,9 @@ read_locked() {
     [ -n "$value" ] && { echo "$value"; return; }
     # Only one request gets the lock; it expires by itself if that request dies.
     if [ "$(redis-cli SET "lock:$1" "$$-$attempt" NX EX 5)" = OK ]; then
-      value=$(db_query "$1")
-      redis-cli SET "cache:$1" "$value" EX 60 > /dev/null
+      # Look again: another request may have rebuilt the value and released the lock just now.
+      value=$(redis-cli GET "cache:$1")
+      [ -n "$value" ] || { value=$(db_query "$1"); redis-cli SET "cache:$1" "$value" EX 60 > /dev/null; }
       redis-cli DEL "lock:$1" > /dev/null
       echo "$value"; return
     fi
@@ -156,6 +157,7 @@ requests that got the timetable: 10
 
 - `SET lock:week1 … NX EX 5` succeeds for exactly one request (`NX`: only if the key does not exist). That request queries the database; the others see the lock fail, wait 0.1 s and look in the cache again.
 - `EX 5` is the safety net: if the lock holder crashed, the lock would vanish after five seconds instead of blocking every request.
+- The second `GET`, right after taking the lock, matters. Without it, a request can find the cache empty, then win the lock a moment *after* another request has filled the cache and released it — and query the database again. An earlier version of this lesson had exactly that bug: on a busy CI machine it made two queries instead of one. Checking again after acquiring the lock ("double-checked locking") closes the gap.
 - Ten requests, one query — and every request still got its answer, a little later.
 
 ### 4. Cache penetration and negative caching
