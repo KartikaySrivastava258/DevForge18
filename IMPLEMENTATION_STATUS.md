@@ -1,13 +1,13 @@
 # Implementation status
 
-Last updated: 2026-11-26 (UTC) · Milestone: **8 — intermediate and advanced lessons**, in progress (Path 1, Terraform, Kubernetes 4–6 done) · Next: Kubernetes RBAC and network policies, Ingress/Gateway, then the remaining tracks, then milestones 9–11
+Last updated: 2026-11-27 (UTC) · Milestone: **9 — quizzes and projects**, in progress (quiz and project content types, pages and API done; Git quiz and Git projects done) · Next: quizzes and 3 mini-projects for each of the other 17 tracks, then milestones 10–11
 
 ## Session handoff
 
-- **Where I stopped:** every Milestone 8 lesson is written and tested locally (Jira done); waiting for the full-suite CI run that closes Milestone 8, then Milestone 9 (quizzes and projects).
+- **Where I stopped:** Milestone 8 is complete (full-suite CI run 45956974167 green on a8b28ac). Milestone 9: the quiz and project content types, server-side grading, faculty-only solutions, pages, scaffolds and project acceptance checks are done; the Git track has its quiz and its three mini-projects. Next: the other 17 tracks' quizzes and projects, track by track (Path 1 order).
 - **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC.
-- **Open issue:** `n8n-workflows-nodes-and-items` failed once in CI (run 45886569745): the n8n container stopped after a workflow import. Not reproduced locally in 3 runs under full CPU load. The runner now prints each container's state, OOM flag and last log lines when a lesson stops early, so the next occurrence shows the cause.
-- **How to work fast:** `npm run new:lesson -- <track> <id>` scaffolds; `npm run ci:record -- <id>` records in CI (no local tool downloads); `npm run lessons:stress -- <id>` reproduces timing failures; figures are `scripts/figures/<track>/<name>.py` (helper `scripts/figures/figlib.py`); research per track in `docs/research/<track>.md`.
+- **Open issue:** none blocking. `n8n-human-approval-steps` failed once locally (11 s, right after a recording run); not seen in CI.
+- **How to work fast:** `npm run new:lesson|new:lab|new:quiz|new:project -- <track> <id>` scaffolds; `npm run ci:record -- <id>` records in CI; `npm run lessons:stress -- <id>` reproduces timing failures; project checks run with `node --test scripts/lib/projects.test.ts`; research per track in `docs/research/<track>.md`.
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -25,7 +25,9 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
 | Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
-| Projects, quizzes, glossary, architecture studio | ⬜ Not started (planned phases below) |
+| Quizzes | 🟡 Six question types graded on the server (answers never sent before grading), attempts saved, paths show "skipped by quiz"; 1 of 18 track quizzes written (Git) |
+| Mini-projects | 🟡 Project pages (brief, stories, criteria, rubric, starter files, progressive hints, faculty-only solution) and executable acceptance checks (fail on the starter, pass on the solution); 3 of 54 written (Git) |
+| Glossary, architecture studio | ⬜ Milestone 10 |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub: a verify job (typecheck, lint, build, unit/API and browser tests) and executed lessons in three parallel shards, about 17 minutes in all. Docker Compose / production Nginx config still untested |
 
@@ -408,6 +410,14 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **Two new executed lessons** (host Python, standard library): Kanban and flow metrics (lead and cycle time from REST-shaped changelogs, percentiles, Little's Law and why it fails on an unstable window, a cumulative flow table); reports and anti-patterns (story-point inflation, work-item age against the 85th percentile, skipped statuses, reopening and bulk closing).
 - **All lesson lists in REMAINING_WORK §5 are ✅.** Milestone 8 is complete once the full-suite CI run (workflow_dispatch, see "Current work") is green.
 - **Lesson learned:** a lesson the content build rejects is silently not selected by the lesson tests — the build must pass before a lesson "pass" means anything.
+- **Milestone 8 complete:** full-suite run 45956974167 (workflow_dispatch on a8b28ac) green in all four jobs.
+
+### Milestone 9 — quiz and project foundations, Git track (2026-11-27)
+
+- **Quizzes** (`content/quizzes/<track>/<id>.yaml`): single, multiple, ordering, matching, output-reading and diagram-labelling questions; every quiz mixes all three levels and every question points to the lesson that teaches it. Graded on the server; a wrong answer links that lesson without revealing the answer; signed-in attempts are saved (migration 0004) and paths show a passed track as "Skipped by quiz".
+- **Mini-projects** (`content/projects/<track>/<id>.md` + `starter/`, `solution/`, optional `check.sh`): user stories in "As a …, I want … so that …" form, at least three acceptance criteria and rubric rows, progressive hints, stretch goals. The solution is served only to faculty and admins (401/403 otherwise; tested). `scripts/lib/projects.test.ts` runs each check script on the starter (must fail) and the solution (must pass); a solution's `prepare.sh` replays the Git history from the starter and ends with a `diff -r` against the solution files.
+- **Git track:** a 12-question quiz and three projects — portfolio repository (commit hygiene, .gitignore, no secrets in history), team task tracker (branch per backlog item, merge commits, PR template, CODEOWNERS, tested Python features), release workflow (bug fix with test, CI and tag-triggered release workflows, SHA-pinned actions with SHAs from the GitHub Actions research notes, least-privilege permissions, changelog, annotated tag). Each check was also run against deliberately broken versions (secret committed, commit on main, unpinned action, write permissions in CI) and reports each as FAIL.
+- **Fixes found on the way:** projects were listed alphabetically instead of in track-plan order (API test added); the Docker lesson's out-of-memory step now says what the Docker Engine source shows — `OOMKilled` is set only by a separate OOM event that can be missed, so exit code 137 is the dependable signal (CI run 45956197496 had `OOMKilled=false, exit code 137` even after a 10 s wait).
 
 ### Speed-ups and decisions (2026-11-26)
 
@@ -438,10 +448,12 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-27 | LangChain + LlamaIndex lessons 4–7 | 110 | 15 | |
 | 2026-11-27 | n8n lessons 4–7; Docker OOM flag wait; runner removes named volumes | 150 | 30 | the AI-agent lesson needed a fake OpenAI-compatible server and an older Agent node version |
 | 2026-11-27 | Jira lessons 4–5 (executed flow-metric scripts on REST-shaped sample data) | 60 | 5 | |
+| 2026-11-27 | Milestone 9 foundations: quiz/project types, grading, pages, scaffolds, check runner | 180 | 20 | |
+| 2026-11-27 | Git quiz and three Git mini-projects with acceptance checks and replayed histories; Docker OOM root cause | 120 | 10 | |
 
 ## Current work
 
-Milestone 8: Path 1 and Terraform are done (CI green on run 45843877395 for everything up to Docker lesson 7; the Terraform lessons are in CI now). Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana and OpenTelemetry are done too. Next: Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira.
+Milestone 9: foundations and the Git track are done. Next: a quiz and three mini-projects for each of the other 17 tracks, in Path 1 order (PostgreSQL, Postman, Redis, Nginx, Docker, then the rest).
 
 ## Pending work (ordered)
 

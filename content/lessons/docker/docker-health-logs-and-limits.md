@@ -89,8 +89,8 @@ verification:
   method: executed
   details: Every command is run by the test suite on a disposable Docker engine, after the previous lessons, and its output is compared with this lesson. First run locally with node:22-alpine and alpine:3.20 on 2026-11-26. Health status, restart policies, log rotation options and docker stop's SIGTERM-then-SIGKILL sequence were checked against the Docker documentation on 2026-11-26.
 owner: content-team
-last_reviewed: 2026-11-26
-content_version: 1
+last_reviewed: 2026-11-27
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -237,10 +237,10 @@ docker inspect -f 'OOMKilled={{.State.OOMKilled}}, exit code {{.State.ExitCode}}
 ```
 
 ```text output
-OOMKilled=true, exit code 137
+OOMKilled=…, exit code 137
 ```
 
-The program kept allocating 1 MB buffers. At 64 MB (`--memory-swap 64m` also rules out swap) the kernel killed it. Without the limit, it would have kept growing until the whole machine ran short. Exit code 137 means the process was ended by `SIGKILL` (128 + 9); `OOMKilled=true` says the kernel's out-of-memory killer sent it. Docker learns about the out-of-memory event separately from the exit, and on a busy machine this lesson once read the flag as `false` right after the container stopped — so the loop gives it up to ten seconds to appear.
+On most runs this prints `OOMKilled=true, exit code 137`. The program kept allocating 1 MB buffers. At 64 MB (`--memory-swap 64m` also rules out swap) the kernel killed it. Without the limit, it would have kept growing until the whole machine ran short. Exit code 137 means the process was ended by `SIGKILL` (128 + 9); `OOMKilled=true` says the kernel's out-of-memory killer sent it. Treat that flag as a helpful hint, not proof either way: Docker sets it only when it receives a separate out-of-memory event (the Docker Engine source sets `OOMKilled` in its handler for that event, and nowhere on exit), and that event can arrive late or not at all. In DevForge's own test runs the flag occasionally stayed `false` even after the loop above waited ten seconds, while the exit code was 137 every time. So when a container with a memory limit dies with 137 and no one ran `docker kill`, assume memory first, and confirm with its memory use (`docker stats`, or your monitoring) before it died.
 
 ### 6. Restarting after a crash
 
