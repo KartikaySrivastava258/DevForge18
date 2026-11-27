@@ -259,6 +259,8 @@ export const LabMetaSchema = z
     verification: z
       .object({ method: z.enum(["executed", "pending", "docs-checked"]), details: z.string().min(20) })
       .strict(),
+    /** As for lessons: the lab's commands set up everything they need, so tests do not replay its prerequisites. */
+    starts_fresh: z.boolean().optional(),
     owner: z.string().min(2),
     last_reviewed: isoDate,
     content_version: z.number().int().positive(),

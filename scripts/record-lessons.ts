@@ -50,8 +50,8 @@ for (const lesson of targets) {
   // The same replay rule as the tests (prerequisites first, none for lessons that start fresh).
   const setup = chainFor(lesson).flatMap(blocksOf);
   const own = blocksOf(lesson.id);
-  const needs = lessonNeeds(lesson.track, lesson.order);
-  const api = needs.api ? await startPracticeServer(contentRoot, needs.apiPort) : undefined;
+  const needs = lessonNeeds(lesson.track, lesson.order, lesson.id);
+  const api = needs.api ? await startPracticeServer(contentRoot, needs.apiPort, needs.apiEnv) : undefined;
   if (lesson.track === "redis" && !redisTestingEnabled()) {
     console.error(`${lesson.id}: skipped. Recording empties the current Redis database (FLUSHDB); use a throwaway Redis and set DEVFORGE_REDIS_TEST=1.`);
     process.exitCode = 1;

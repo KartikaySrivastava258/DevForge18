@@ -46,7 +46,7 @@ export function loadRunnables(contentRoot: string) {
     return runnables.filter((r) => {
       const chainFiles = chainFor(r).map((id) => `content/lessons/${bundle.lessons.find((x) => x.id === id)?.track}/${id}.md`);
       const own = `content/${r.kind === "lab" ? "labs" : "lessons"}/${r.track}/${r.id}.md`;
-      return isAffected(scope, [own, ...chainFiles], lessonNeeds(r.track, r.order).api);
+      return isAffected(scope, [own, ...chainFiles], lessonNeeds(r.track, r.order, r.id).api);
     });
   }
 

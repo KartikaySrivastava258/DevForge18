@@ -11,6 +11,7 @@ import type { AppConfig } from "../../server/src/config.ts";
 import { ContentStore } from "../../server/src/content/store.ts";
 import { migrate, openDatabase } from "../../server/src/db/database.ts";
 import { silentLogger } from "../../server/src/observability/logger.ts";
+import { Tracer, tracingConfigFromEnv } from "../../server/src/observability/tracing.ts";
 import { loadContent } from "./content-loader.ts";
 
 const contentRoot = process.argv[2] ?? join(import.meta.dirname, "..", "..", "content");
@@ -36,7 +37,10 @@ const config: AppConfig = {
 };
 const db = openDatabase(":memory:");
 migrate(db);
-const app = createApp({ config, db, content: new ContentStore(bundle), logger: silentLogger });
+// Tracing as in production: on when the environment names an OTLP endpoint (the OpenTelemetry lab).
+const tracing = tracingConfigFromEnv(process.env);
+const tracer = tracing ? new Tracer(tracing, { logger: silentLogger }) : undefined;
+const app = createApp({ config, db, content: new ContentStore(bundle), logger: silentLogger, ...(tracer ? { tracer } : {}) });
 const server = createHttpServer(app);
 server.on("error", (err) => {
   console.error(`practice server could not listen on port ${requestedPort}: ${err.message}`);
@@ -49,5 +53,5 @@ server.listen(requestedPort, "127.0.0.1", () => {
 process.on("SIGTERM", () => {
   app.close();
   server.closeAllConnections();
-  server.close(() => process.exit(0));
+  server.close(() => void (tracer?.shutdown() ?? Promise.resolve()).then(() => process.exit(0)));
 });

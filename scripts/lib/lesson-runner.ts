@@ -141,14 +141,24 @@ export function usesDocker(blocks: RunBlock[]): boolean {
  *   apiPort   0 = any free port; Nginx proxy lessons use 8080, the address learners proxy to
  *   timeoutMs overall limit for the lesson's commands (slow-starting servers need more)
  */
-export function lessonNeeds(track: string, order: number): { api: boolean; apiPort: number; timeoutMs: number } {
+/**
+ * Runnables that need DevForge started with extra environment variables, as the page tells learners to start
+ * their own copy. The OpenTelemetry lab traces DevForge's own requests into the lab's Collector (ADR 0009).
+ */
+const API_ENV: Record<string, Record<string, string>> = {
+  "opentelemetry-trace-devforge": { OTEL_EXPORTER_OTLP_ENDPOINT: "http://127.0.0.1:4318", OTEL_SERVICE_NAME: "devforge" },
+};
+
+export function lessonNeeds(track: string, order: number, id?: string): { api: boolean; apiPort: number; timeoutMs: number; apiEnv?: Record<string, string> } {
   // Only the reverse-proxy lesson (order 2) proxies to an API, which learners run on port 8080.
   const nginxProxy = track === "nginx" && order === 2;
   const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 300_000, opentelemetry: 300_000, kafka: 600_000, postman: 300_000, airflow: 600_000, mlflow: 600_000, "langchain-llamaindex": 300_000, n8n: 300_000, docker: 300_000 };
+  const apiEnv = id ? API_ENV[id] : undefined;
   return {
-    api: track === "postman" || track === "prometheus-grafana" || nginxProxy,
+    api: track === "postman" || track === "prometheus-grafana" || nginxProxy || apiEnv !== undefined,
     apiPort: nginxProxy ? 8080 : 0,
     timeoutMs: timeouts[track] ?? 60_000,
+    ...(apiEnv ? { apiEnv } : {}),
   };
 }
 

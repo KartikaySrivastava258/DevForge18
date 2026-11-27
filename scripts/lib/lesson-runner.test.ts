@@ -130,6 +130,13 @@ describe("background servers", () => {
     assert.equal(lessonNeeds("langchain-llamaindex", 3).timeoutMs, 300_000);
     assert.equal(lessonNeeds("n8n", 3).timeoutMs, 300_000);
     assert.equal(lessonNeeds("docker", 3).timeoutMs, 300_000);
+    assert.deepEqual(lessonNeeds("opentelemetry", 3, "opentelemetry-trace-devforge"), {
+      api: true,
+      apiPort: 0,
+      timeoutMs: 300_000,
+      apiEnv: { OTEL_EXPORTER_OTLP_ENDPOINT: "http://127.0.0.1:4318", OTEL_SERVICE_NAME: "devforge" },
+    }, "the OpenTelemetry lab traces a DevForge started like the learner's");
+    assert.deepEqual(lessonNeeds("opentelemetry", 3, "otel-collector-and-jaeger"), { api: false, apiPort: 0, timeoutMs: 300_000 });
   });
 });
 
@@ -262,7 +269,7 @@ describe("executed lessons and labs reproduce their documented output", { skip: 
     // PostgreSQL lessons, and lessons in other tracks that use a database from bash (e.g. Terraform's pg backend).
     const needsPg = lesson.track === "postgresql" || usesHostPostgres(ownBlocks);
     const needsNginx = lesson.track === "nginx";
-    const { api: needsApi, apiPort, timeoutMs } = lessonNeeds(lesson.track, lesson.order);
+    const { api: needsApi, apiPort, timeoutMs, apiEnv } = lessonNeeds(lesson.track, lesson.order, lesson.id);
     const blocksOf = (id: string, track: string) =>
       extractRunBlocks(splitFrontMatter(readFileSync(join(contentRoot, "lessons", track, `${id}.md`), "utf8"))?.body ?? "");
     const chain = chainFor(lesson);
@@ -296,7 +303,7 @@ describe("executed lessons and labs reproduce their documented output", { skip: 
       // HTTP lessons practise against a real DevForge server, exposed to the lesson as $API.
       let api;
       try {
-        api = needsApi ? await startPracticeServer(contentRoot, apiPort) : undefined;
+        api = needsApi ? await startPracticeServer(contentRoot, apiPort, apiEnv) : undefined;
       } catch (err) {
         // Nginx lessons need DevForge's real port; another program on this machine may already use it.
         if (apiPort !== 0 && String(err).includes("EADDRINUSE")) {
