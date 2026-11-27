@@ -1,0 +1,593 @@
+{
+  "id": "reminders00001",
+  "name": "Assignment reminders",
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata"
+  },
+  "nodes": [
+    {
+      "id": "m1",
+      "name": "Every morning at 8",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -100
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "m2",
+      "name": "Run for a given time",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        100
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "assignment-reminders",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "3c1e6a2b-7d4f-4e9a-8b10-2f5c6d7e8a01"
+    },
+    {
+      "id": "m3",
+      "name": "Pick now",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// The schedule passes no \"now\": use the current time in the college's time zone.\n// A test or a backfill can POST {\"now\": \"2026-12-01T08:00:00+05:30\"} to the webhook instead.\nconst given = $json.body?.now;\nconst now = given === undefined ? DateTime.now().setZone('Asia/Kolkata') : DateTime.fromISO(String(given), { setZone: true });\n// A Respond to Webhook node fails when nothing called the webhook, so remember how this run started.\nreturn [{ json: { now: now.isValid ? now.toISO() : null, given: given ?? null, via_webhook: 'headers' in $json } }];"
+      }
+    },
+    {
+      "id": "m4",
+      "name": "Valid time?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "m4c",
+              "leftValue": "={{ $json.now !== null }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "m5",
+      "name": "Bad time",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        160
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: `now must be an ISO 8601 date and time, got ${JSON.stringify($json.given)}` }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "id": "m6",
+      "name": "Get assignments",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        -40
+      ],
+      "parameters": {
+        "options": {
+          "timeout": 3000
+        },
+        "url": "http://127.0.0.1:9000/assignments"
+      }
+    },
+    {
+      "id": "m7",
+      "name": "Get reminder log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        -40
+      ],
+      "parameters": {
+        "options": {
+          "timeout": 3000
+        },
+        "url": "http://127.0.0.1:9000/reminders-sent"
+      }
+    },
+    {
+      "id": "m8",
+      "name": "Plan reminders",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        -40
+      ],
+      "parameters": {
+        "jsCode": "// Who gets a reminder: assignments due after now and at most 48 hours from now,\n// students who have not submitted, and nobody who was already reminded about that assignment.\nconst now = DateTime.fromISO($('Pick now').first().json.now, { setZone: true });\nconst until = now.plus({ hours: 48 });\nconst alreadySent = new Set($('Get reminder log').first().json.sent.map((s) => `${s.assignment_id}|${s.email}`));\nconst reminders = [];\nlet skipped = 0;\nfor (const a of $('Get assignments').first().json.assignments) {\n  const due = DateTime.fromISO(a.due, { setZone: true });   // the offset in the data is respected (+05:30 or Z)\n  if (!(due > now && due <= until)) continue;\n  for (const s of a.students) {\n    if (s.submitted) continue;\n    const email = s.email.trim().toLowerCase();\n    if (alreadySent.has(`${a.id}|${email}`)) { skipped++; continue; }\n    reminders.push({ assignment_id: a.id, title: a.title, course: a.course, name: s.name, email,\n                     due_local: due.setZone('Asia/Kolkata').toFormat('d LLL yyyy, HH:mm') + ' IST' });\n  }\n}\nreturn [{ json: { now: now.toISO(), reminders, skipped } }];"
+      }
+    },
+    {
+      "id": "m9",
+      "name": "Anything to send?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1320,
+        -40
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "m9c",
+              "leftValue": "={{ $json.reminders.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "m10",
+      "name": "Nothing to send",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        100
+      ],
+      "parameters": {
+        "jsCode": "return [{ json: { sent: 0, failed: 0, skipped: $json.skipped } }];"
+      }
+    },
+    {
+      "id": "m11",
+      "name": "One item per reminder",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        -100
+      ],
+      "parameters": {
+        "fieldToSplitOut": "reminders",
+        "options": {}
+      }
+    },
+    {
+      "id": "m12",
+      "name": "Send reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        -100
+      ],
+      "parameters": {
+        "options": {
+          "timeout": 3000
+        },
+        "method": "POST",
+        "url": "http://127.0.0.1:9000/mail",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ to: $json.email, subject: `Reminder: ${$json.title} is due ${$json.due_local}`, text: `Hello ${$json.name}, ${$json.title} (${$json.course}) is due on ${$json.due_local} and we have not received your submission yet.` }) }}"
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "m13",
+      "name": "Summarise",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        -100
+      ],
+      "parameters": {
+        "jsCode": "// One result per reminder, in the same order as the reminders (the mail node continues on error).\nconst planned = $('One item per reminder').all().map((i) => i.json);\nconst sent = [], failed = [];\n$input.all().forEach((result, i) => (result.json.error ? failed : sent).push(planned[i]));\nreturn [{ json: { sent, failed, skipped: $('Plan reminders').first().json.skipped } }];"
+      }
+    },
+    {
+      "id": "m14",
+      "name": "Log sent reminders",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2200,
+        -100
+      ],
+      "parameters": {
+        "options": {
+          "timeout": 3000
+        },
+        "method": "POST",
+        "url": "http://127.0.0.1:9000/reminders-sent",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ entries: $json.sent.map((r) => ({ assignment_id: r.assignment_id, email: r.email })) }) }}"
+      }
+    },
+    {
+      "id": "m15",
+      "name": "Any failures?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2420,
+        -100
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "m15c",
+              "leftValue": "={{ $('Summarise').first().json.failed.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "m16",
+      "name": "Alert coordinator",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        -200
+      ],
+      "parameters": {
+        "options": {
+          "timeout": 3000
+        },
+        "method": "POST",
+        "url": "http://127.0.0.1:9000/alerts",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ problem: 'reminders could not be sent', failed: $('Summarise').first().json.failed }) }}"
+      }
+    },
+    {
+      "id": "m17",
+      "name": "Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2860,
+        -100
+      ],
+      "parameters": {
+        "jsCode": "const s = $('Summarise').first().json;\nreturn [{ json: { sent: s.sent.length, failed: s.failed.length, skipped: s.skipped } }];"
+      }
+    },
+    {
+      "id": "m18",
+      "name": "Called by webhook?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3080,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "m18c",
+              "leftValue": "={{ $('Pick now').first().json.via_webhook }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "m19",
+      "name": "Reply",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3300,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every morning at 8": {
+      "main": [
+        [
+          {
+            "node": "Pick now",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run for a given time": {
+      "main": [
+        [
+          {
+            "node": "Pick now",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick now": {
+      "main": [
+        [
+          {
+            "node": "Valid time?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid time?": {
+      "main": [
+        [
+          {
+            "node": "Get assignments",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bad time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get assignments": {
+      "main": [
+        [
+          {
+            "node": "Get reminder log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get reminder log": {
+      "main": [
+        [
+          {
+            "node": "Plan reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan reminders": {
+      "main": [
+        [
+          {
+            "node": "Anything to send?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anything to send?": {
+      "main": [
+        [
+          {
+            "node": "One item per reminder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nothing to send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per reminder": {
+      "main": [
+        [
+          {
+            "node": "Send reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send reminder": {
+      "main": [
+        [
+          {
+            "node": "Summarise",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarise": {
+      "main": [
+        [
+          {
+            "node": "Log sent reminders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log sent reminders": {
+      "main": [
+        [
+          {
+            "node": "Any failures?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any failures?": {
+      "main": [
+        [
+          {
+            "node": "Alert coordinator",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert coordinator": {
+      "main": [
+        [
+          {
+            "node": "Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Report": {
+      "main": [
+        [
+          {
+            "node": "Called by webhook?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nothing to send": {
+      "main": [
+        [
+          {
+            "node": "Called by webhook?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Called by webhook?": {
+      "main": [
+        [
+          {
+            "node": "Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

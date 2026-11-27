@@ -55,9 +55,9 @@ labs:
   - { title: "Add branching and error handling", level: intermediate, mode: simulation, status: available, lab: n8n-branching-and-error-handling }
   - { title: "Require human approval before a consequential action", level: advanced, mode: local, status: available, lab: n8n-human-approval }
 projects:
-  - { title: "Student event registration automation", level: beginner, status: planned }
-  - { title: "Assignment reminder workflow", level: intermediate, status: planned }
-  - { title: "Support ticket triage automation", level: advanced, status: planned }
+  - { title: "Student event registration automation", level: beginner, status: available, project: n8n-event-registration }
+  - { title: "Assignment reminder workflow", level: intermediate, status: available, project: n8n-assignment-reminders }
+  - { title: "Support ticket triage automation", level: advanced, status: available, project: n8n-ticket-triage }
 resources:
   - title: n8n documentation
     url: https://docs.n8n.io/

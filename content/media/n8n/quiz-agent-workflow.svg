@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320">
+  <!-- Numbered diagram for the n8n track quiz: label the nodes of the AI-agent workflow from the lesson. -->
+  <text class="f-small" x="20" y="72">Start</text>
+  <text class="f-small" x="20" y="88">(manual)</text>
+  <g>
+    <path class="f-arrow" d="M80 80 L132 80"/>
+    <polygon class="f-head" points="140,80 132,84.5 132,75.5"/>
+  </g>
+  <rect class="f-box-faint" x="145" y="45" width="150" height="70" rx="8"/>
+  <text class="f-strong" x="220" y="87" text-anchor="middle">1</text>
+  <g>
+    <path class="f-arrow" d="M297 80 L367 80"/>
+    <polygon class="f-head" points="375,80 367,84.5 367,75.5"/>
+  </g>
+  <text class="f-small" x="336" y="68" text-anchor="middle">text</text>
+  <rect class="f-box-faint" x="380" y="45" width="170" height="70" rx="8"/>
+  <text class="f-strong" x="465" y="87" text-anchor="middle">2</text>
+  <g>
+    <path class="f-arrow" d="M552 80 L622 80"/>
+    <polygon class="f-head" points="630,80 622,84.5 622,75.5"/>
+  </g>
+  <text class="f-small" x="640" y="76">output +</text>
+  <text class="f-small" x="640" y="92">intermediate steps</text>
+  <rect class="f-box-faint" x="300" y="220" width="150" height="70" rx="8"/>
+  <text class="f-strong" x="375" y="262" text-anchor="middle">3</text>
+  <rect class="f-box-faint" x="500" y="220" width="150" height="70" rx="8"/>
+  <text class="f-strong" x="575" y="262" text-anchor="middle">4</text>
+  <g>
+    <path class="f-arrow" d="M390 218 L440 124"/>
+    <polygon class="f-head" points="444,117 443,126.5 435.5,122"/>
+  </g>
+  <text class="f-small f-mono" x="300" y="170">ai_languageModel</text>
+  <g>
+    <path class="f-arrow" d="M560 218 L500 124"/>
+    <polygon class="f-head" points="496,117 504.5,121.5 497,126"/>
+  </g>
+  <text class="f-small f-mono" x="545" y="170">ai_tool</text>
+</svg>

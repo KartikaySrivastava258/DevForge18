@@ -1,0 +1,19 @@
+{
+  "id": "triage00000001",
+  "name": "Support ticket triage",
+  "nodes": [
+    { "id": "t1", "name": "New ticket", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [0, 0], "webhookId": "8d2f4b6a-1c3e-4a5b-9d7f-0e1a2b3c4d01",
+      "parameters": { "httpMethod": "POST", "path": "support-ticket", "responseMode": "responseNode", "options": {} } },
+    { "id": "t9", "name": "Received", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [220, 0],
+      "parameters": { "respondWith": "json", "responseBody": "={{ JSON.stringify({ status: 'queued', ticket_id: $json.body.ticket_id }) }}", "options": { "responseCode": 202 } } },
+    { "id": "t11", "name": "Assign to queue", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [440, 0],
+      "parameters": { "method": "POST", "url": "={{ `http://127.0.0.1:9000/tickets/${$('New ticket').first().json.body.ticket_id}/assign` }}",
+        "sendHeaders": true, "headerParameters": { "parameters": [ { "name": "X-API-Key", "value": "hd_live_PLACEHOLDER_do_not_commit_keys" } ] },
+        "sendBody": true, "specifyBody": "json", "jsonBody": "={\"queue\": \"general\"}", "options": { "timeout": 3000 } } }
+  ],
+  "connections": {
+    "New ticket": { "main": [[{ "node": "Received", "type": "main", "index": 0 }]] },
+    "Received": { "main": [[{ "node": "Assign to queue", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

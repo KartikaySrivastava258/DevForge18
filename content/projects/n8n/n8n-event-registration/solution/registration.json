@@ -1,0 +1,45 @@
+{
+  "id": "eventreg000001",
+  "name": "Student event registration",
+  "nodes": [
+    { "id": "r1", "name": "Registration form", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [0, 0], "webhookId": "0b7f3d52-6a1e-4c8f-9d21-5e3a7c9b1f01",
+      "parameters": { "httpMethod": "POST", "path": "event-registration", "responseMode": "responseNode", "options": {} } },
+    { "id": "r2", "name": "Validate and normalise", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [220, 0],
+      "parameters": { "jsCode": "// One registration per request. Normalise first, so ' Asha@X.example ' and 'asha@x.example' are the same person.\nconst body = $json.body ?? {};\nconst EVENTS = ['hackathon', 'robotics-workshop', 'career-fair'];\nconst name = String(body.name ?? '').trim();\nconst email = String(body.email ?? '').trim().toLowerCase();\nconst roll_number = String(body.roll_number ?? '').trim().toUpperCase();\nconst event = String(body.event ?? '').trim().toLowerCase();\nconst errors = [];\nif (!name) errors.push('name is required');\nif (!/^[^@\\s]+@[^@\\s]+\\.[a-z]{2,}$/.test(email)) errors.push('email is not a valid address');\nif (!roll_number) errors.push('roll_number is required');\nif (!EVENTS.includes(event)) errors.push(`event must be one of ${EVENTS.join(', ')}`);\nreturn [{ json: { name, email, roll_number, event, errors } }];" } },
+    { "id": "r3", "name": "Valid?", "type": "n8n-nodes-base.if", "typeVersion": 2.2, "position": [440, 0],
+      "parameters": { "conditions": { "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" }, "combinator": "and", "conditions": [
+        { "id": "c1", "leftValue": "={{ $json.errors.length }}", "rightValue": 0, "operator": { "type": "number", "operation": "equals" } } ] }, "options": {} } },
+    { "id": "r4", "name": "Find registration", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [660, -100], "onError": "continueErrorOutput",
+      "parameters": { "url": "http://127.0.0.1:9000/registrations", "sendQuery": true, "queryParameters": { "parameters": [
+        { "name": "event", "value": "={{ $json.event }}" }, { "name": "email", "value": "={{ $json.email }}" } ] }, "options": { "timeout": 3000 } } },
+    { "id": "r5", "name": "Already registered?", "type": "n8n-nodes-base.if", "typeVersion": 2.2, "position": [880, -160],
+      "parameters": { "conditions": { "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" }, "combinator": "and", "conditions": [
+        { "id": "c2", "leftValue": "={{ $json.count }}", "rightValue": 0, "operator": { "type": "number", "operation": "gt" } } ] }, "options": {} } },
+    { "id": "r6", "name": "Save registration", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [1100, -100], "onError": "continueErrorOutput",
+      "parameters": { "method": "POST", "url": "http://127.0.0.1:9000/registrations", "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ name: $('Validate and normalise').item.json.name, email: $('Validate and normalise').item.json.email, roll_number: $('Validate and normalise').item.json.roll_number, event: $('Validate and normalise').item.json.event }) }}", "options": { "timeout": 3000 } } },
+    { "id": "r7", "name": "Send confirmation", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [1320, -160], "onError": "continueErrorOutput",
+      "parameters": { "method": "POST", "url": "http://127.0.0.1:9000/mail", "sendBody": true, "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ to: $('Validate and normalise').item.json.email, subject: `Registered: ${$('Validate and normalise').item.json.event}`, text: `Hello ${$('Validate and normalise').item.json.name}, you are registered for ${$('Validate and normalise').item.json.event}.` }) }}", "options": { "timeout": 3000 } } },
+    { "id": "r8", "name": "Registered", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [1540, -220],
+      "parameters": { "respondWith": "json", "responseBody": "={{ JSON.stringify({ status: 'registered', event: $('Validate and normalise').item.json.event, email: $('Validate and normalise').item.json.email }) }}", "options": { "responseCode": 201 } } },
+    { "id": "r9", "name": "Registered, e-mail failed", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [1540, -100],
+      "parameters": { "respondWith": "json", "responseBody": "={{ JSON.stringify({ status: 'registered', warning: 'the confirmation e-mail could not be sent' }) }}", "options": { "responseCode": 201 } } },
+    { "id": "r10", "name": "Duplicate", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [1100, -260],
+      "parameters": { "respondWith": "json", "responseBody": "={{ JSON.stringify({ status: 'already registered', event: $('Validate and normalise').item.json.event }) }}", "options": { "responseCode": 409 } } },
+    { "id": "r11", "name": "Service unavailable", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [1100, 60],
+      "parameters": { "respondWith": "json", "responseBody": "={\"error\": \"registrations are unavailable, please try again later\"}", "options": { "responseCode": 503 } } },
+    { "id": "r12", "name": "Rejected", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [660, 120],
+      "parameters": { "respondWith": "json", "responseBody": "={{ JSON.stringify({ errors: $json.errors }) }}", "options": { "responseCode": 400 } } }
+  ],
+  "connections": {
+    "Registration form": { "main": [[{ "node": "Validate and normalise", "type": "main", "index": 0 }]] },
+    "Validate and normalise": { "main": [[{ "node": "Valid?", "type": "main", "index": 0 }]] },
+    "Valid?": { "main": [[{ "node": "Find registration", "type": "main", "index": 0 }], [{ "node": "Rejected", "type": "main", "index": 0 }]] },
+    "Find registration": { "main": [[{ "node": "Already registered?", "type": "main", "index": 0 }], [{ "node": "Service unavailable", "type": "main", "index": 0 }]] },
+    "Already registered?": { "main": [[{ "node": "Duplicate", "type": "main", "index": 0 }], [{ "node": "Save registration", "type": "main", "index": 0 }]] },
+    "Save registration": { "main": [[{ "node": "Send confirmation", "type": "main", "index": 0 }], [{ "node": "Service unavailable", "type": "main", "index": 0 }]] },
+    "Send confirmation": { "main": [[{ "node": "Registered", "type": "main", "index": 0 }], [{ "node": "Registered, e-mail failed", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

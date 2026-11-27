@@ -1,0 +1,20 @@
+{
+  "id": "reminders00001",
+  "name": "Assignment reminders",
+  "nodes": [
+    { "id": "m1", "name": "Every hour", "type": "n8n-nodes-base.scheduleTrigger", "typeVersion": 1.2, "position": [0, -100],
+      "parameters": { "rule": { "interval": [{ "field": "hours" }] } } },
+    { "id": "m2", "name": "Run for a given time", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [0, 100], "webhookId": "3c1e6a2b-7d4f-4e9a-8b10-2f5c6d7e8a01",
+      "parameters": { "httpMethod": "POST", "path": "assignment-reminders", "responseMode": "responseNode", "options": {} } },
+    { "id": "m6", "name": "Get assignments", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [220, 0],
+      "parameters": { "url": "http://127.0.0.1:9000/assignments", "options": { "timeout": 3000 } } },
+    { "id": "m19", "name": "Reply", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [440, 0],
+      "parameters": { "respondWith": "json", "responseBody": "={{ JSON.stringify({ assignments: $json.assignments.length, sent: 0 }) }}", "options": { "responseCode": 200 } } }
+  ],
+  "connections": {
+    "Every hour": { "main": [[{ "node": "Get assignments", "type": "main", "index": 0 }]] },
+    "Run for a given time": { "main": [[{ "node": "Get assignments", "type": "main", "index": 0 }]] },
+    "Get assignments": { "main": [[{ "node": "Reply", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

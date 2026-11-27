@@ -1,0 +1,4 @@
+alt: 'Four numbered boxes. A manual Start leads to box 1, and box 1 passes "text" to box 2, which produces "output + intermediate steps". Box 3 connects up to box 2 with a connection labelled "ai_languageModel", and box 4 connects up to box 2 with a connection labelled "ai_tool". The boxes are not named; the quiz asks which node each number is.'
+caption: 'Which node of the agent workflow is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

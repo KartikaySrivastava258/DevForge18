@@ -1,0 +1,14 @@
+{
+  "id": "eventreg000001",
+  "name": "Student event registration",
+  "nodes": [
+    { "id": "r1", "name": "Registration form", "type": "n8n-nodes-base.webhook", "typeVersion": 2, "position": [0, 0], "webhookId": "0b7f3d52-6a1e-4c8f-9d21-5e3a7c9b1f01",
+      "parameters": { "httpMethod": "POST", "path": "event-registration", "responseMode": "responseNode", "options": {} } },
+    { "id": "r2", "name": "Thanks", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.1, "position": [220, 0],
+      "parameters": { "respondWith": "json", "responseBody": "={\"status\": \"ok\"}", "options": { "responseCode": 200 } } }
+  ],
+  "connections": {
+    "Registration form": { "main": [[{ "node": "Thanks", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}
