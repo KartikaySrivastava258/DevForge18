@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320">
+  <!-- Approval with a time limit and a four-eyes rule, from Human approval steps. -->
+  <rect class="f-box-faint" x="10" y="40" width="130" height="70" rx="8"/>
+  <text class="f-small f-strong" x="75" y="68" text-anchor="middle">Request</text>
+  <text class="f-small" x="75" y="90" text-anchor="middle">webhook</text>
+  <rect class="f-box-faint" x="170" y="40" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong" x="245" y="66" text-anchor="middle">Answer requester</text>
+  <text class="f-small" x="245" y="90" text-anchor="middle">202 + resume URL</text>
+  <rect class="f-box-accent" x="350" y="40" width="170" height="70" rx="8"/>
+  <text class="f-small f-strong" x="435" y="66" text-anchor="middle">Wait for decision</text>
+  <text class="f-small" x="435" y="90" text-anchor="middle">URL called or limit</text>
+  <rect class="f-box-accent" x="550" y="40" width="160" height="70" rx="8"/>
+  <text class="f-small f-strong" x="630" y="66" text-anchor="middle">Decide</text>
+  <text class="f-small" x="630" y="90" text-anchor="middle">rules in code</text>
+  <g>
+    <path class="f-arrow" d="M142 75 L160 75"/>
+    <polygon class="f-head" points="168,75 160,79.5 160,70.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M322 75 L340 75"/>
+    <polygon class="f-head" points="348,75 340,79.5 340,70.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M522 75 L540 75"/>
+    <polygon class="f-head" points="548,75 540,79.5 540,70.5"/>
+  </g>
+  <rect class="f-box-ok" x="400" y="140" width="310" height="36" rx="8"/>
+  <text class="f-small" x="555" y="163" text-anchor="middle">approved / declined by someone else</text>
+  <rect class="f-box-danger" x="400" y="184" width="310" height="36" rx="8"/>
+  <text class="f-small" x="555" y="207" text-anchor="middle">approver = requester → refused</text>
+  <rect class="f-box-danger" x="400" y="228" width="310" height="36" rx="8"/>
+  <text class="f-small" x="555" y="251" text-anchor="middle">no answer in time → escalated</text>
+  <g>
+    <path class="f-arrow" d="M630 112 L630 130"/>
+    <polygon class="f-head" points="630,138 625.5,130 634.5,130"/>
+  </g>
+  <rect class="f-box-faint" x="10" y="150" width="340" height="110" rx="8"/>
+  <text class="f-small f-strong" x="180" y="174" text-anchor="middle">while waiting</text>
+  <text class="f-small" x="180" y="198" text-anchor="middle">the execution is stored in n8n's database</text>
+  <text class="f-small" x="180" y="220" text-anchor="middle">→ survives a restart</text>
+  <text class="f-small" x="180" y="242" text-anchor="middle">(keep the database on a volume)</text>
+</svg>
