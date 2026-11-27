@@ -423,7 +423,7 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 
 - **Quizzes and projects** for four more tracks; every check runs real tools (PostgreSQL 16.15, promtool/amtool, Collector + Jaeger + Node services, Python on Jira REST-shaped exports) and was also run against deliberately broken variants.
 - **Quiz output rule enforced:** every "output" question shows output recorded in a lesson or produced by running the command (the PostgreSQL CHECK error was re-run on 2026-11-27); commands are the lessons' own (two invented script names in the Jira quiz were replaced).
-- **Version-age deviation found (decision):** otelcol 0.166.0 and Grafana 13.3.2 were released on 2026-11-24 and pinned in the lessons and CI on 2026-11-25, against the 14-day rule. Not downgraded — that would mean re-recording lessons for versions that pass the 14-day mark on 2026-12-08. New project checks use older pins instead (Collector 0.165.0 image, published 2026-11-07; dashboards are checked with Prometheus, without Grafana).
+- **Version-age deviation found (decision):** otelcol 0.166.0 and Grafana 13.3.2 were released on 2026-11-24 and pinned in the lessons and CI on 2026-11-25, against the 14-day rule. Not downgraded — that would mean re-recording lessons for versions that pass the 14-day mark on 2026-12-08. New project checks use older pins instead (Collector 0.165.0 image, published 2026-11-07; dashboards are checked with Prometheus, without Grafana). The same applies to the `python:3.12-slim@sha256:191083cd…` digest (published 2026-11-24, pinned from 2026-11-26 in lessons and checks); it passes the 14-day mark on 2026-12-08.
 
 ### Milestone 9 — ten more tracks (2026-11-27)
 

@@ -169,8 +169,6 @@ jobs:
       - name: Executed lessons and labs
         if: steps.select.outputs.count != '0'
         run: node --disable-warning=ExperimentalWarning --test scripts/lib/lesson-runner.test.ts
-      - name: Mini-project checks that need Docker (the verify job runs the others)
-        run: node --disable-warning=ExperimentalWarning --test scripts/lib/projects.test.ts
       - name: Save Terraform provider and npm caches
         if: always() && steps.select.outputs.count != '0'
         uses: actions/cache/save@v6
@@ -179,3 +177,63 @@ jobs:
             ~/.cache/devforge-terraform-plugins
             ~/.cache/devforge-npm
           key: lesson-pkg-caches-${{ hashFiles('content/lessons/terraform/**', 'content/labs/terraform/**', 'content/lessons/postman/**', 'content/labs/postman/**', 'content/lessons/opentelemetry/**') }}-shard${{ matrix.shard }}
+
+  projects:
+    permissions:
+      contents: read
+      actions: read   # to find the last successful run on main
+    # Mini-project checks that need Docker: each runs on the project's starter (must fail) and its reference
+    # solution (must pass). The verify job runs the checks that need no Docker.
+    name: Mini-project checks (shard ${{ matrix.shard }} of 4)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    env:
+      DEVFORGE_PROJECT_SHARD: "${{ matrix.shard }}/4"
+      DEVFORGE_DOCKER_TEST: "1"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Which files changed since main last passed (pushes), or against the base (pull requests)
+        env:
+          EVENT: ${{ github.event_name }}
+          AFTER: ${{ github.sha }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The newest commit on main whose CI run succeeded in full; changes since then are tested.
+          LAST_GREEN=""
+          if [ "$EVENT" = push ]; then
+            LAST_GREEN=$(gh run list --workflow ci.yml --branch main --event push --status success --limit 20 \
+              --json headSha -q '.[].headSha' | while read -r sha; do
+                git merge-base --is-ancestor "$sha" "$AFTER" 2> /dev/null && { echo "$sha"; break; }; done || true)
+          fi
+          if [ "$EVENT" = push ] && [ -n "$LAST_GREEN" ]; then
+            echo "comparing with the last fully successful run on main: $LAST_GREEN"
+            git diff --name-only "$LAST_GREEN" "$AFTER" > changed.txt
+          elif [ "$EVENT" = pull_request ] && [ -n "$BASE" ]; then
+            git diff --name-only "$BASE" "$AFTER" > changed.txt
+          else
+            echo all > changed.txt
+          fi
+          echo "changed files:"; cat changed.txt
+          { echo 'DEVFORGE_CHANGED_FILES<<DEVFORGE_EOF'; cat changed.txt; echo 'DEVFORGE_EOF'; } >> "$GITHUB_ENV"
+      - name: Select this shard's project checks
+        id: select
+        run: node --disable-warning=ExperimentalWarning scripts/affected-projects.ts
+      - name: Install lesson tools (kind and kubectl for the Kubernetes checks)
+        if: steps.select.outputs.count != '0'
+        uses: ./.github/actions/lesson-tools
+      - name: Mini-project checks
+        if: steps.select.outputs.count != '0'
+        run: node --disable-warning=ExperimentalWarning --test scripts/lib/projects.test.ts
