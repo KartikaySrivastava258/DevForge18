@@ -1,0 +1,14 @@
+{
+  "name": "semver-lite",
+  "version": "0.9.0",
+  "description": "Parse and compare semantic version numbers such as 1.4.2.",
+  "type": "module",
+  "main": "src/semver.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

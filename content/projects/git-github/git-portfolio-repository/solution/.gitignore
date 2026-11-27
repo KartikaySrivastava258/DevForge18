@@ -1,0 +1,8 @@
+# Local settings and secrets (for example the contact form key)
+.env
+.env.*
+# Logs written by local tools and the development server
+*.log
+# Editor and operating-system clutter
+.DS_Store
+.vscode/

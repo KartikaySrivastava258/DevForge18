@@ -7,13 +7,17 @@ const TRACK = "git-github";
 
 let server: TestServer;
 let student: Client;
+let faculty: Client;
 let anonymous: Client;
 before(async () => {
   server = await startTestServer();
   await server.createUser("quiz@example.edu", STRONG_PASSWORD);
+  await server.createUser("marker@example.edu", STRONG_PASSWORD, "faculty");
   student = new Client(server.url);
+  faculty = new Client(server.url);
   anonymous = new Client(server.url);
   await student.post("/api/auth/login", { email: "quiz@example.edu", password: STRONG_PASSWORD });
+  await faculty.post("/api/auth/login", { email: "marker@example.edu", password: STRONG_PASSWORD });
 });
 after(() => server.close());
 
@@ -112,5 +116,51 @@ describe("track quiz API", () => {
     const withoutQuiz = testContent().listTracks().find((t) => !testContent().getQuiz(t.slug));
     if (withoutQuiz) assert.equal((await anonymous.get(`/api/tracks/${withoutQuiz.slug}/quiz`)).status, 404);
     assert.equal((await anonymous.get("/api/me/quizzes")).status, 401);
+  });
+});
+
+describe("mini-project API", () => {
+  const PROJECT = "git-team-task-tracker";
+
+  it("lists a track's published projects in level order, matching the track's plan", async () => {
+    const res = await anonymous.get(`/api/tracks/${TRACK}/projects`);
+    assert.equal(res.status, 200);
+    assert.deepEqual(
+      res.json.projects.map((p: { id: string; level: string }) => [p.id, p.level]),
+      [
+        ["git-portfolio-repository", "beginner"],
+        ["git-team-task-tracker", "intermediate"],
+        ["git-release-workflow", "advanced"],
+      ],
+    );
+    const track = await anonymous.get(`/api/tracks/${TRACK}`);
+    const planned = track.json.track.projects.filter((p: { project?: string }) => p.project).map((p: { project: string }) => p.project);
+    assert.deepEqual(planned, ["git-portfolio-repository", "git-team-task-tracker", "git-release-workflow"]);
+  });
+
+  it("serves the brief, criteria, rubric, starter files and check script, but never the solution", async () => {
+    const res = await anonymous.get(`/api/projects/${PROJECT}`);
+    assert.equal(res.status, 200);
+    const p = res.json.project;
+    assert.ok(p.acceptanceCriteria.length >= 3 && p.rubric.length >= 3 && p.hints.length >= 2);
+    assert.ok(p.starterFiles.some((f: { path: string }) => f.path === "tasks.py"));
+    assert.match(p.checkScript, /^#!\/usr\/bin\/env bash/);
+    assert.match(p.html, /<h2 id="brief">/);
+    assert.ok(!("solutionFiles" in p) && !res.text.includes("feature/list-open"), "nothing from the reference solution");
+  });
+
+  it("serves the reference solution to faculty only", async () => {
+    assert.equal((await anonymous.get(`/api/projects/${PROJECT}/solution`)).status, 401);
+    assert.equal((await student.get(`/api/projects/${PROJECT}/solution`)).status, 403);
+    const res = await faculty.get(`/api/projects/${PROJECT}/solution`);
+    assert.equal(res.status, 200);
+    const paths = res.json.solution.files.map((f: { path: string }) => f.path);
+    assert.ok(paths.includes("prepare.sh") && paths.includes(".github/CODEOWNERS"), paths.join(", "));
+  });
+
+  it("answers 404 for an unknown project, and checks the role before saying whether a solution exists", async () => {
+    assert.equal((await anonymous.get("/api/projects/no-such-project")).status, 404);
+    assert.equal((await anonymous.get("/api/projects/no-such-project/solution")).status, 401);
+    assert.equal((await faculty.get("/api/projects/no-such-project/solution")).status, 404);
   });
 });

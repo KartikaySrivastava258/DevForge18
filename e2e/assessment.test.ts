@@ -90,3 +90,40 @@ describe("track quiz", () => {
     noProblems(problems);
   });
 });
+
+describe("mini-projects", () => {
+  it("opens a project from the track page, reveals hints one at a time, and hides the solution from students", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/git-github");
+    await page.locator("#projects").getByRole("link", { name: "Team task tracker with branches and pull requests" }).click();
+    await page.waitForURL("**/tracks/git-github/projects/git-team-task-tracker");
+    await page.getByRole("heading", { level: 1, name: "Team task tracker with branches and pull requests" }).waitFor();
+    await expectText(page.locator("main"), /Mini-project · intermediate · about 6 hours/);
+    for (const id of ["stories", "acceptance", "rubric", "starter", "check", "hints", "stretch"]) await page.locator(`h2#${id}`).waitFor();
+    assert.equal(await page.getByRole("row").count(), 5, "rubric header + 4 criteria");
+
+    await page.getByRole("button", { name: "Show hint 1 of 5" }).click();
+    await page.getByRole("button", { name: "Show hint 2 of 5" }).click();
+    assert.equal(await page.locator("#hints + p + ol li").count(), 2);
+
+    await page.getByLabel("Starter files").getByText("tasks.py", { exact: true }).click();
+    await expectText(page.getByLabel("Starter files"), /def add\(tasks, title\)/);
+    assert.equal(await page.getByRole("heading", { name: "Reference solution (faculty)" }).count(), 0);
+    noProblems(problems);
+  });
+
+  it("shows the reference solution to faculty", async () => {
+    await h.createUser({ email: "marker@example.edu", name: "Marker", password: "orbit lantern cobalt river", role: "faculty" });
+    const { page, problems } = await h.newPage();
+    await page.goto("/login?next=/tracks/git-github/projects/git-release-workflow");
+    await page.getByLabel("Email").fill("marker@example.edu");
+    await page.getByLabel("Password").fill("orbit lantern cobalt river");
+    await page.getByRole("button", { name: "Sign in" }).click();
+    await page.waitForURL("**/tracks/git-github/projects/git-release-workflow");
+    await page.getByRole("button", { name: "Show the reference solution" }).click();
+    const solution = page.getByLabel("Reference solution", { exact: true });
+    await solution.getByText(".github/workflows/release.yml", { exact: true }).click();
+    await expectText(solution, /gh release create/);
+    noProblems(problems);
+  });
+});

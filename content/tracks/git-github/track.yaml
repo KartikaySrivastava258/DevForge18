@@ -58,9 +58,9 @@ labs:
   - { title: "Create a pull request and review checklist", level: intermediate, mode: local, status: planned }
   - { title: "Diagnose an accidental commit and recover safely", level: advanced, mode: local, status: available, lab: git-recover-with-reflog }
 projects:
-  - { title: "Personal developer portfolio repository", level: beginner, status: planned }
-  - { title: "Team task tracker with branches and pull requests", level: intermediate, status: planned }
-  - { title: "Release workflow with automated tests", level: advanced, status: planned }
+  - { title: "Personal developer portfolio repository", level: beginner, status: available, project: git-portfolio-repository }
+  - { title: "Team task tracker with branches and pull requests", level: intermediate, status: available, project: git-team-task-tracker }
+  - { title: "Release workflow with automated tests", level: advanced, status: available, project: git-release-workflow }
 resources:
   - title: Pro Git (2nd edition)
     url: https://git-scm.com/book/en/v2
