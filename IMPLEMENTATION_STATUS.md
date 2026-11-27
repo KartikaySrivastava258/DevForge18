@@ -4,7 +4,7 @@ Last updated: 2026-11-26 (UTC) · Milestone: **8 — intermediate and advanced l
 
 ## Session handoff
 
-- **Where I stopped:** Airflow track complete (8 lessons); next: MLflow, then LangChain + LlamaIndex, n8n, Jira. (The machine restarted once mid-track; scratch tools under /tmp were lost — re-download Prometheus/Grafana/OTel binaries with checksums when those tracks are touched again.)
+- **Where I stopped:** MLflow track complete (6 lessons); next: LangChain + LlamaIndex, then n8n and Jira. (Scratch tools under /tmp were lost in a machine restart — re-download Prometheus/Grafana/OTel binaries with checksums when those tracks are touched again.)
 - **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC.
 - **Open issue:** `n8n-workflows-nodes-and-items` failed once in CI (run 45886569745): the n8n container stopped after a workflow import. Not reproduced locally in 3 runs under full CPU load. The runner now prints each container's state, OOM flag and last log lines when a lesson stops early, so the next occurrence shows the cause.
 - **How to work fast:** `npm run new:lesson -- <track> <id>` scaffolds; `npm run ci:record -- <id>` records in CI (no local tool downloads); `npm run lessons:stress -- <id>` reproduces timing failures; figures are `scripts/figures/<track>/<name>.py` (helper `scripts/figures/figlib.py`); research per track in `docs/research/<track>.md`.
@@ -17,11 +17,11 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 118 published, at least 3 in every track; 116 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Git, PostgreSQL, Postman, Redis, Nginx, Docker, Terraform, Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana, OpenTelemetry, Kafka and Airflow have 7–9 lessons each, beginner to advanced; MLflow, LangChain + LlamaIndex, n8n and Jira have 3 beginner lessons |
+| Lessons | ✅ 121 published, at least 3 in every track; 119 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Git, PostgreSQL, Postman, Redis, Nginx, Docker, Terraform, Kubernetes, GitHub Actions, Jenkins, Prometheus + Grafana, OpenTelemetry, Kafka, Airflow and MLflow have 6–9 lessons each, beginner to advanced; LangChain + LlamaIndex, n8n and Jira have 3 beginner lessons |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 119 figures (every lesson has at least one), 22 of them step-throughs — at least one in every track; tested |
+| Figures and step-through diagrams | ✅ 122 figures (every lesson has at least one), 22 of them step-throughs — at least one in every track; tested |
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
 | Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
@@ -384,6 +384,12 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **Fixes found on the way:** Airflow containers now run as the host user (`--user "$(id -u):0"`), so the test runner can delete files they write; a Jenkins commit ID changed by the grep -q fix was re-recorded (CI run 45922391534 found it; run 45924702495 green).
 - **Kafka track confirmed in CI:** run 45924702495, all four jobs green (full suite, because the runner changed).
 
+### Milestone 8 — MLflow (2026-11-27)
+
+- **Three new lessons, each run twice locally:** the tracking server and its stores (default storage lost with the container; PostgreSQL backend and a proxied artifact store; a client with no storage access; a stateless restart); a reproducible training pipeline in Airflow (an image with pinned mlflow-skinny/scikit-learn, lineage tags for Airflow run, data hash and code hash, identical metrics on re-run, a code change visible in the hashes); serving and monitoring (alias promotion needs a reload, signature enforcement, rollback, a prediction log and PSI drift on a labelled simulated shift).
+- **MLflow lessons get 600 s** (the pipeline lesson runs about 190 s locally, including an image build).
+- **Airflow track confirmed in CI:** run 45936864117, all four jobs green.
+
 ### Speed-ups and decisions (2026-11-26)
 
 - **Decisions recorded.** Licences: MIT for code (`LICENSE`), CC BY-SA 4.0 for `content/` (`LICENSE-CONTENT`, full legal code from creativecommons.org), Fira Sans OFL notice kept. `~/Downloads/devforge18` deleted after checking that every file's content exists in this repository's history (the only differences were three debugging logs and an older `package.json`). Terraform's plugin cache is enabled in CI with `TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE` (HashiCorp documents it for setups that discard lock files, as lesson folders do; without it the cache is never used for fresh folders); learners' commands are unchanged. Python packages are installed inside lesson containers, so no pip cache (it would change commands learners see). Quiz and project scaffolds come with their schemas in milestone 9.
@@ -408,6 +414,7 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-26 | OpenTelemetry lessons 4–7 (one research pass; no new CI tools) | 110 | 15 | lost ~10 min to a shell heredoc that ended early (lesson text now written with the editor, not heredocs) |
 | 2026-11-27 | Kafka lessons 4–9 (one research pass; `starts_fresh`; pipefail/grep -q race fixed in 33 files) | 170 | 35 | waiting = lesson runs (each tested twice); 25 min lost to a 300 s timeout whose cause was grep -q under pipefail |
 | 2026-11-27 | Airflow lessons 4–8 (one research pass; 3× stress run of lesson 7) | 150 | 30 | 15 min lost to an interrupted session (machine restart) |
+| 2026-11-27 | MLflow lessons 4–6 (one research pass; two extended images) | 120 | 25 | waiting = image builds and lesson runs |
 
 ## Current work
 

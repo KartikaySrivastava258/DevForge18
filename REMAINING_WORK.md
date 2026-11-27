@@ -324,7 +324,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.18 MLflow
 
-- **Lessons:** ✅ Experiments, runs, parameters and metrics · ✅ Comparing and searching runs · ✅ Models, signatures and the registry · The tracking server and backend store in depth · Reproducible pipelines with Airflow (advanced) · Serving and monitoring concepts (advanced).
+- **Lessons:** ✅ Experiments, runs, parameters and metrics · ✅ Comparing and searching runs · ✅ Models, signatures and the registry · ✅ The tracking server and backend store in depth · ✅ Reproducible pipelines with Airflow (advanced) · ✅ Serving and monitoring concepts (advanced).
 - ✅ **Simulation — experiment explorer:** a seeded set of runs with hyperparameters and metrics; sort, filter and plot; promote a model version by moving an alias. **Challenge:** pick the best run under a latency constraint and explain the trade-off.
 - **Labs:** track a scikit-learn experiment on synthetic data with a pinned MLflow in a container, then query runs through the MLflow REST API (executed in CI).
 - **Real world:** MLflow was introduced by Databricks in 2018. Sources: mlflow.org, Databricks blog.
