@@ -695,7 +695,7 @@ export function registerInstitutionRoutes(router: Router, { db, content, config,
     async (ctx) => {
       const user = requireUser(ctx);
       const body = await readJson(ctx, DeleteAccountBody);
-      if (!limiters.loginFailuresByEmail.hit(`delete:${user.id}`).allowed) throw new HttpError(429, "rate_limited", "Too many attempts. Try again later.");
+      if (!(await limiters.loginFailuresByEmail.hit(`delete:${user.id}`)).allowed) throw new HttpError(429, "rate_limited", "Too many attempts. Try again later.");
       const check = await verifyPassword(body.password, user.password_hash, config.passwordHashLogN);
       if (!check.ok) throw new HttpError(403, "wrong_password", "That password is not correct.");
       transaction(db, () => {
