@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330">
+  <!-- Leaders, followers and the ISR, from Replication and fault tolerance. -->
+  <rect class="f-box-faint" x="10" y="30" width="220" height="130" rx="8"/>
+  <text class="f-small f-strong f-mono" x="120" y="54" text-anchor="middle">kafka-1</text>
+  <text class="f-small f-mono" x="120" y="84" text-anchor="middle">p0 leader</text>
+  <text class="f-small f-mono" x="120" y="108" text-anchor="middle">p1 follower</text>
+  <text class="f-small f-mono" x="120" y="132" text-anchor="middle">p2 follower</text>
+  <rect class="f-box-faint" x="250" y="30" width="220" height="130" rx="8"/>
+  <text class="f-small f-strong f-mono" x="360" y="54" text-anchor="middle">kafka-2</text>
+  <text class="f-small f-mono" x="360" y="84" text-anchor="middle">p0 follower</text>
+  <text class="f-small f-mono" x="360" y="108" text-anchor="middle">p1 leader</text>
+  <text class="f-small f-mono" x="360" y="132" text-anchor="middle">p2 follower</text>
+  <rect class="f-box-danger" x="490" y="30" width="220" height="130" rx="8"/>
+  <text class="f-small f-strong f-mono" x="600" y="54" text-anchor="middle">kafka-3 (stopped)</text>
+  <text class="f-small f-mono" x="600" y="84" text-anchor="middle">p0 follower</text>
+  <text class="f-small f-mono" x="600" y="108" text-anchor="middle">p1 follower</text>
+  <text class="f-small f-mono" x="600" y="132" text-anchor="middle">p2 leader</text>
+  <text class="f-small" x="360" y="190" text-anchor="middle">after kafka-3 stops: p2 leader → kafka-1 (next in-sync replica); ISR = 1,2</text>
+  <rect class="f-box-accent" x="10" y="210" width="700" height="100" rx="8"/>
+  <text class="f-small" x="360" y="234" text-anchor="middle">acks=all + min.insync.replicas=2: acknowledged once 2 in-sync copies have it</text>
+  <text class="f-small" x="360" y="258" text-anchor="middle">2 brokers up → writes succeed, nothing acknowledged has only one copy</text>
+  <text class="f-small f-danger" x="360" y="282" text-anchor="middle">min.insync.replicas=3 with 2 up → NotEnoughReplicas (acks=1 still accepted: unsafe)</text>
+</svg>

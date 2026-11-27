@@ -1,0 +1,4 @@
+alt: 'Three brokers each hold a copy of partitions p0, p1 and p2. kafka-1 leads p0, kafka-2 leads p1 and kafka-3 leads p2; the other copies are followers. When kafka-3 stops, p2''s leadership moves to kafka-1, the next in-sync replica, and the in-sync replica set becomes brokers 1 and 2. Below: with acks=all and min.insync.replicas=2, a write is acknowledged once two in-sync copies have it, so with two brokers up writes succeed and nothing acknowledged has only one copy. With min.insync.replicas=3 and two brokers up, acks=all writes fail with NotEnoughReplicas, while acks=1 writes are still accepted, which is unsafe.'
+caption: 'Each partition has a leader and followers; acks=all with min.insync.replicas decides when a write is safe.'
+credit: DevForge 18 content team
+licence: project-content
