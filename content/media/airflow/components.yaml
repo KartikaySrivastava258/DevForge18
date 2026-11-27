@@ -1,0 +1,4 @@
+alt: 'The metadata database, PostgreSQL, sits in the middle. The API server, which serves the REST API, the UI and the execution API, the DAG processor, which parses DAG files, and the triggerer, which runs deferred tasks, all use it, as does the scheduler with its executor, which creates runs and queues tasks. The executor decides where tasks run: the LocalExecutor runs processes beside the scheduler, limited by parallelism; the CeleryExecutor uses a queue and workers; the KubernetesExecutor starts a pod per task.'
+caption: 'Separate components share one metadata database; the executor, inside the scheduler, decides where tasks run.'
+credit: DevForge 18 content team
+licence: project-content
