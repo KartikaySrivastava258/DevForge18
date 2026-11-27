@@ -234,7 +234,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.8 LangChain and LlamaIndex
 
-- **Lessons:** ✅ Prompts, models and output parsers (what an LLM application is; structured output) · ✅ Embeddings and similarity, with small vectors · ✅ Chunking, retrieval and the prompt a RAG system builds · Building a RAG pipeline with citations in depth · Tool calling and agents, safely · Evaluation and hallucination checks (advanced) · Prompt injection and data permissions (advanced).
+- **Lessons:** ✅ Prompts, models and output parsers (what an LLM application is; structured output) · ✅ Embeddings and similarity, with small vectors · ✅ Chunking, retrieval and the prompt a RAG system builds · ✅ Building a RAG pipeline with citations in depth · ✅ Tool calling and agents, safely · ✅ Evaluation and hallucination checks (advanced) · ✅ Prompt injection and data permissions (advanced).
 - ✅ **Simulation — RAG pipeline, end to end:** use small, deterministic, hand-made embedding vectors (clearly labelled as a teaching model) so learners can see chunking, vector similarity, top-k retrieval and prompt assembly without any API key. Show how chunk size changes what is retrieved. **Challenge:** choose a chunk size and k so the answer's supporting passage is retrieved.
 - **Labs:** run a retrieval pipeline over the course's own Markdown with a **local** embedding model or a deterministic fake for CI; real model calls only in an optional section that needs the learner's own key, never in CI.
 - **Real world:** LangChain was launched in October 2022 by Harrison Chase; LlamaIndex began as GPT Index by Jerry Liu in 2022. Sources: their official blogs and documentation; company case studies on their websites (verify each).
