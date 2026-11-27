@@ -9,6 +9,7 @@ import type { ZodError } from "zod/v4";
 import {
   AlternativesFileSchema,
   CapstoneMetaSchema,
+  IntegrationSchema,
   CaseStudySchema,
   LabMetaSchema,
   LessonMetaSchema,
@@ -18,6 +19,7 @@ import {
   TrackSchema,
   type CaseStudy,
   type CompiledCapstone,
+  type Integration,
   type CompiledLab,
   type CompiledLesson,
   type CompiledProject,
@@ -496,6 +498,37 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
     }
   }
 
+  // ---- Integrations: content/integrations/<id>.yaml — one per pair of related tracks ------------
+  const integrations: Integration[] = [];
+  const relatedPairs = new Set(tracks.flatMap((t) => t.related.map((r) => [t.slug, r.slug].sort().join(" "))));
+  const integrationDir = join(root, "integrations");
+  const seenPairs = new Set<string>();
+  for (const fileName of listFiles(integrationDir, ".yaml")) {
+    const file = join(integrationDir, fileName);
+    const rel = relative(root, file);
+    const raw = readYaml(file, errors, root);
+    if (raw === undefined) continue;
+    const parsed = IntegrationSchema.safeParse(raw);
+    if (!parsed.success) {
+      errors.push(...formatZod(rel, parsed.error));
+      continue;
+    }
+    const it = parsed.data;
+    if (`${it.id}.yaml` !== fileName) errors.push(`${rel}: id must match file name`);
+    if (it.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+    const pair = [it.from, it.to].sort().join(" ");
+    if (!relatedPairs.has(pair)) errors.push(`${rel}: ${it.from} and ${it.to} are not related tracks (add the relation to a track.yaml first)`);
+    if (seenPairs.has(pair)) errors.push(`${rel}: another integration already covers ${it.from} and ${it.to}`);
+    seenPairs.add(pair);
+    for (const r of it.practise) {
+      if (!reuseExists(r)) errors.push(`${rel}: unknown ${r.kind} "${r.id}"`);
+      const owner = r.kind === "lesson" ? lessons.find((l) => l.id === r.id)?.track : r.kind === "lab" ? labsById.get(r.id)?.track : projects.find((p) => p.id === r.id)?.track;
+      if (owner && owner !== it.from && owner !== it.to) errors.push(`${rel}: ${r.kind} "${r.id}" belongs to ${owner}, not to ${it.from} or ${it.to}`);
+    }
+    integrations.push(it);
+  }
+  integrations.sort((a, b) => a.id.localeCompare(b.id));
+
   for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson, quiz, project or capstone`);
   for (const key of media.diagrams.keys()) if (!usedMedia.has(`diagram:${key}`)) warnings.push(`media/${key}.steps.yaml is not used by any lesson, quiz or project`);
 
@@ -535,7 +568,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   }
 
   return {
-    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs, quizzes, projects, capstones },
+    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs, quizzes, projects, capstones, integrations },
     errors,
     warnings,
   };

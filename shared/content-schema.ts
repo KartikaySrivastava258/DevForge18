@@ -549,6 +549,28 @@ export interface CompiledCapstone extends CapstoneMeta {
   paths: string[];
 }
 
+// --- Integrations: how two related tools work together (the edges of the relationship graph). ---------------
+
+export const IntegrationSchema = z
+  .object({
+    id: slug,
+    /** The tool that starts the interaction, and the one it works with; must be related tracks. */
+    from: slug,
+    to: slug,
+    title: z.string().min(10),
+    summary: z.string().min(60),
+    /** What passes between the two tools (events, images, traces …). */
+    flow: z.string().min(15),
+    steps: z.array(z.string().min(15)).min(3),
+    pitfalls: z.array(z.string().min(15)).min(2),
+    /** Executed lessons and labs that practise this integration; at least one. */
+    practise: z.array(ReuseSchema).min(1),
+    owner: z.string().min(2),
+    last_reviewed: isoDate,
+  })
+  .strict();
+export type Integration = z.infer<typeof IntegrationSchema>;
+
 /** A lesson after compilation: Markdown rendered to safe HTML plus a table of contents. */
 export interface CompiledLesson extends LessonMeta {
   html: string;
@@ -575,4 +597,5 @@ export interface ContentBundle {
   quizzes: CompiledQuiz[];
   projects: CompiledProject[];
   capstones: CompiledCapstone[];
+  integrations: Integration[];
 }
