@@ -1,0 +1,9 @@
+case,title,date,capacity,venue,field
+title too short,AI,2027-09-15,50,Seminar Hall 2,title
+title too long,Annual inter-college cultural festival opening ceremony with guest performances and awards,2027-09-15,50,Seminar Hall 2,title
+date in the wrong format,Robotics workshop,15-09-2027,50,Seminar Hall 2,date
+date that does not exist,Robotics workshop,2027-02-30,50,Seminar Hall 2,date
+capacity zero (below the lower limit),Robotics workshop,2027-09-15,0,Seminar Hall 2,capacity
+capacity 501 (above the upper limit),Robotics workshop,2027-09-15,501,Seminar Hall 2,capacity
+capacity not a whole number,Robotics workshop,2027-09-15,2.5,Seminar Hall 2,capacity
+empty venue,Robotics workshop,2027-09-15,50,,venue

@@ -1,0 +1,33 @@
+name: API regression tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  api-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Start the API
+        run: |
+          node api/events-api.mjs > api.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:7403/health && break; sleep 1; done
+      - name: Run the regression suite
+        run: sh run-api-tests.sh http://127.0.0.1:7403
+      - name: Keep the test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: api-regression-reports
+          path: results/

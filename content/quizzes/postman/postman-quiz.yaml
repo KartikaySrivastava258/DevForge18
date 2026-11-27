@@ -1,0 +1,214 @@
+id: postman-quiz
+track: postman
+title: Postman — track quiz
+description: Fourteen questions from HTTP requests and status codes to authentication, Newman in CI and contract testing. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: unsupported-media-type
+    type: single
+    level: beginner
+    lesson: postman-http-basics
+    prompt: A POST to the sign-in endpoint, sent with curl -d 'email=…', answers 415 Unsupported Media Type. What should you change?
+    options:
+      - { id: a, text: "Use GET instead of POST" }
+      - { id: b, text: "Send the body as JSON with the header Content-Type: application/json — the server only accepts JSON bodies" }
+      - { id: c, text: "Wait and retry; 415 means the server is overloaded" }
+    answer: b
+    explanation: curl -d on its own sends form-encoded data. 415 is a 4xx — a problem with the request — and the error message says to send the body as application/json.
+
+  - id: method-not-allowed
+    type: output
+    level: beginner
+    lesson: postman-http-basics
+    prompt: What does this response tell you?
+    command: curl -s -X DELETE "$API/api/tracks"
+    output: |
+      {"error":{"code":"method_not_allowed","message":"DELETE is not supported here.","requestId":"…"}}
+    options:
+      - { id: a, text: "The track list was deleted" }
+      - { id: b, text: "The URL exists but does not accept DELETE — the status is 405 Method Not Allowed" }
+      - { id: c, text: "The URL does not exist (404)" }
+      - { id: d, text: "You must sign in first (401)" }
+    answer: b
+    explanation: The same URL can accept some methods and refuse others. /api/tracks only supports GET, so a DELETE gets 405 with the error code method_not_allowed.
+
+  - id: http-methods
+    type: matching
+    level: beginner
+    lesson: postman-http-basics
+    prompt: Match each HTTP method with what it usually does.
+    left:
+      - { id: get, text: "GET" }
+      - { id: post, text: "POST" }
+      - { id: put, text: "PUT" }
+      - { id: patch, text: "PATCH" }
+      - { id: delete, text: "DELETE" }
+    right:
+      - { id: read, text: "Reads" }
+      - { id: create, text: "Creates something or performs an action" }
+      - { id: replace, text: "Replaces or sets" }
+      - { id: part, text: "Changes part of something" }
+      - { id: remove, text: "Removes" }
+      - { id: auth, text: "Signs the client in" }
+    pairs: { get: read, post: create, put: replace, patch: part, delete: remove }
+    explanation: The method says what to do; the URL says what it is about. Signing in is an ordinary POST to a sign-in endpoint, not a method of its own.
+
+  - id: precise-assertion
+    type: single
+    level: beginner
+    lesson: postman-sessions-and-tests
+    prompt: Which test best checks the contract of a sign-in request sent with a wrong password?
+    options:
+      - { id: a, text: "pm.test('body is not empty', …) — check that something came back" }
+      - { id: b, text: "Status is 401 and error.code is invalid_credentials" }
+      - { id: c, text: "The whole response body equals the one recorded yesterday, including requestId" }
+    answer: b
+    explanation: Assert the contract — the status and the meaningful fields. "Not empty" asserts too little; an exact copy including a request ID that changes on every request asserts too much and fails for no reason.
+
+  - id: variable-scope
+    type: single
+    level: beginner
+    lesson: postman-collections-environments-newman
+    prompt: The environment sets slug to kafka, and the data file's current row sets slug to docker. Which value does {{slug}} use?
+    options:
+      - { id: a, text: "kafka — the environment always wins" }
+      - { id: b, text: "docker — data is a narrower scope than environment, and the narrowest scope wins" }
+      - { id: c, text: "Newman stops with a conflict error" }
+    answer: b
+    explanation: Postman's scopes run from global through collection, environment and data to local; when names clash, the narrowest one wins.
+
+  - id: ci-job-order
+    type: ordering
+    level: intermediate
+    lesson: postman-collections-in-ci
+    prompt: Put the steps of a CI job that runs a Postman collection in order.
+    items:
+      - { id: checkout, text: "Check out the repository" }
+      - { id: node, text: "Set up Node.js" }
+      - { id: start, text: "Start the API in the background and wait until /api/health answers" }
+      - { id: newman, text: "Run newman@6.2.3 with the collection, the data file and the JUnit reporter" }
+      - { id: upload, text: "Upload the JUnit report (with if: always())" }
+    order: [checkout, node, start, newman, upload]
+    explanation: Newman needs a running API, so the job starts it and waits for a health check first. The report is kept with if always(), so it survives exactly the runs where tests fail.
+
+  - id: auth-facts
+    type: multiple
+    level: intermediate
+    lesson: postman-authentication-flows
+    prompt: Which statements about API keys and bearer tokens are true? Select all that apply.
+    options:
+      - { id: a, text: "Anyone holding a JWT can read its payload, so it must never contain secrets" }
+      - { id: b, text: "Changing a JWT's payload breaks its signature, so the API refuses the token" }
+      - { id: c, text: "Sending an API key in the URL (?api_key=…) is as safe as sending it in a header" }
+      - { id: d, text: "After 403 insufficient_scope, fetching a new token for the same scope fixes the request" }
+    answers: [a, b]
+    explanation: A JWT's payload is only base64url-encoded, and its signature covers header and payload. URLs end up in logs and browser history, so keys belong in headers; and 403 means the token lacks a permission — a new token with the same scope will not have it either.
+
+  - id: wrong-scope
+    type: single
+    level: intermediate
+    lesson: postman-authentication-flows
+    prompt: A valid, unexpired token with scope status:read is sent to /grades, which needs grades:read. What should the API answer?
+    options:
+      - { id: a, text: "401 with error=\"invalid_token\"" }
+      - { id: b, text: "403 with error=\"insufficient_scope\" — the API knows who you are, but not that you may read grades" }
+      - { id: c, text: "200, because the token is valid" }
+    answer: b
+    explanation: 401 means authenticate (again); 403 means you are authenticated but lack the permission. RFC 6750 names the error insufficient_scope, and the WWW-Authenticate header says which scope is needed.
+
+  - id: failing-iteration
+    type: output
+    level: intermediate
+    lesson: postman-collections-in-ci
+    prompt: A row redis,404 was added to tracks.csv, and the redis track exists. What does the output tell you?
+    command: |
+      npx newman run tracks.postman_collection.json -e local.postman_environment.json -d tracks.csv --color off > run.log
+      echo "exit code: $?"
+      grep -A1 'AssertionError' run.log
+    output: |
+      exit code: 1
+       1.  AssertionError  status is 404
+           iteration: 4    expected response to have status code 404 but got 200
+    options:
+      - { id: a, text: "Newman crashed while reading the CSV file" }
+      - { id: b, text: "The fourth data row's test failed — the API answered 200 where the row expected 404 — and the non-zero exit code fails the CI step" }
+      - { id: c, text: "All four iterations failed" }
+    answer: b
+    explanation: Each CSV row is one iteration. Only iteration 4 is listed, and Newman's exit code 1 is what blocks the merge until the data or the API is fixed.
+
+  - id: mock-prefer
+    type: single
+    level: intermediate
+    lesson: postman-mock-servers-and-docs
+    prompt: A Prism mock serves an OpenAPI document that documents a 200 and a 404 response for GET /courses/{code}. How does the frontend team get the 404 example to build its error screen?
+    options:
+      - { id: a, text: "Send the header Prefer: code=404 — Prism answers with the documented 404 example" }
+      - { id: b, text: "Stop the mock so that the request fails" }
+      - { id: c, text: "Nothing: a mock only ever returns 200" }
+    answer: a
+    explanation: By default Prism picks the lowest 2XX response; the Prefer header asks for another documented status, so error paths can be built and tested without the real API.
+
+  - id: contract-proxy-diagram
+    type: diagram
+    level: advanced
+    lesson: postman-contract-testing
+    prompt: This setup turns every functional test into a contract test. Label the numbered boxes.
+    media: media:postman/quiz-contract-proxy.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: newman, text: "Newman running the collection" }
+      - { id: proxy, text: "Validating proxy (Prism with --errors)" }
+      - { id: api, text: "The real API" }
+      - { id: contract, text: "OpenAPI contract" }
+      - { id: mock, text: "Mock server" }
+      - { id: junit, text: "JUnit report" }
+    answers: { "1": newman, "2": proxy, "3": api, "4": contract }
+    explanation: The collection's requests go through the proxy, which forwards them to the real API and checks request and response against the OpenAPI document. A mismatch replaces the response with an error naming the violation.
+
+  - id: contract-violation
+    type: output
+    level: advanced
+    lesson: postman-contract-testing
+    prompt: The contract now lists lessonCount as a required field of track, and requests go through a validating proxy ($P) to the real API. What does this mean, and what happens next?
+    command: curl -s -w ' %{http_code}\n' "$P/api/tracks/kafka" | sed 's/.*"message":"\([^"]*\)".*} \([0-9]*\)$/\2 \1/'
+    output: |
+      500 Response body property track must have required property 'lessonCount'
+    options:
+      - { id: a, text: "The real API crashed" }
+      - { id: b, text: "The real response lacks a field the contract promises; the proxy reports the violation, and the teams must decide whether the API or the contract changes" }
+      - { id: c, text: "The request broke the contract, so it never reached the API" }
+    answer: b
+    explanation: The proxy replaced a valid-looking API response with a violation naming the exact missing field. In CI this fails the build until someone settles the disagreement.
+
+  - id: breaking-change
+    type: single
+    level: advanced
+    lesson: postman-contract-testing
+    prompt: The contract lists slug, title and number as required for a track and does not forbid extra fields. Which change to the API breaks the contract?
+    options:
+      - { id: a, text: "Adding a new field, lessonCount, to every track" }
+      - { id: b, text: "Returning number as a string, \"9\", instead of an integer" }
+      - { id: c, text: "Adding a new endpoint /api/tracks/{slug}/stats" }
+    answer: b
+    explanation: Extra fields are allowed unless the contract forbids them, so adding one never breaks it; removing or retyping a field clients rely on does.
+
+  - id: ci-practices
+    type: multiple
+    level: advanced
+    lesson: postman-collections-in-ci
+    prompt: Which practices make a collection run in CI trustworthy? Select all that apply.
+    options:
+      - { id: a, text: "Pin the runner's exact version, for example newman@6.2.3" }
+      - { id: b, text: "Wait for the API's health check before running the collection" }
+      - { id: c, text: "Pass tokens with --env-var from CI secrets instead of committing them in the data file" }
+      - { id: d, text: "Run the collection against production, where the data is real" }
+      - { id: e, text: "Upload the JUnit report only when the tests pass, to keep the artifacts small" }
+    answers: [a, b, c]
+    explanation: Pinning keeps runs reproducible, waiting avoids "connection refused" failures, and secrets belong in the CI system. CI tests create and change data, so they need a throwaway or test environment; and the report matters most when tests fail, which is why the workflow uploads it with if always().

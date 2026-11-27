@@ -1,0 +1,16 @@
+{
+  "info": {
+    "name": "College course API tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/health" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('status is 200', () => pm.response.to.have.status(200));",
+        "pm.test('says ok', () => pm.expect(pm.response.json().status).to.eql('ok'));"
+      ] } }]
+    }
+  ]
+}

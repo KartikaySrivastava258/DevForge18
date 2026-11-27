@@ -56,9 +56,9 @@ labs:
   - { title: "Run a collection in a CI pipeline", level: advanced, mode: local, status: planned }
   - { title: "Read status codes and chain requests with a session", level: intermediate, mode: simulation, status: available, lab: postman-status-codes-and-sessions }
 projects:
-  - { title: "API test suite for a college service", level: beginner, status: planned }
-  - { title: "Authentication flow test collection", level: intermediate, status: planned }
-  - { title: "Automated regression suite", level: advanced, status: planned }
+  - { title: "API test suite for a college service", level: beginner, status: available, project: postman-college-api-tests }
+  - { title: "Authentication flow test collection", level: intermediate, status: available, project: postman-auth-flow-tests }
+  - { title: "Automated regression suite", level: advanced, status: available, project: postman-regression-suite }
 resources:
   - title: Postman Learning Center
     url: https://learning.postman.com/

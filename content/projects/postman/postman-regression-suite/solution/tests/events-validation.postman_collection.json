@@ -1,0 +1,26 @@
+{
+  "info": {
+    "name": "Campus events API — validation cases",
+    "description": "Run once per row of validation-cases.csv (newman run … -d tests/validation-cases.csv). Each row is an event with exactly one invalid field; the API must refuse it and name that field. Needs baseUrl.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create with one invalid field",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/events",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"title\": \"{{title}}\", \"date\": \"{{date}}\", \"capacity\": {{capacity}}, \"venue\": \"{{venue}}\"}" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "const name = pm.iterationData.get('case');",
+        "const field = pm.iterationData.get('field');",
+        "pm.test(`${name}: status is 400`, () => pm.response.to.have.status(400));",
+        "const err = pm.response.json().error || {};",
+        "pm.test(`${name}: error code is validation_failed`, () => pm.expect(err.code).to.eql('validation_failed'));",
+        "pm.test(`${name}: details name only ${field}`, () => pm.expect((err.details || []).map((d) => d.field)).to.eql([field]));"
+      ] } }]
+    }
+  ]
+}

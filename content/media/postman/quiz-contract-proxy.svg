@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300">
+  <!-- Numbered diagram for the Postman track quiz: label the parts of a contract test run in CI. -->
+  <rect class="f-box-faint" x="20" y="60" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="95" y="107" text-anchor="middle">1</text>
+  <text class="f-small" x="95" y="160" text-anchor="middle">runs the collection</text>
+  <text class="f-small" x="95" y="177" text-anchor="middle">in the CI job</text>
+  <rect class="f-box-faint" x="305" y="60" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="380" y="107" text-anchor="middle">2</text>
+  <rect class="f-box-faint" x="590" y="60" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="665" y="107" text-anchor="middle">3</text>
+  <rect class="f-box-faint" x="305" y="205" width="150" height="70" rx="8"/>
+  <text class="f-strong" x="380" y="247" text-anchor="middle">4</text>
+  <g>
+    <path class="f-arrow" d="M172 100 L295 100"/>
+    <polygon class="f-head" points="303,100 295,104.5 295,95.5"/>
+  </g>
+  <text class="f-small" x="237" y="88" text-anchor="middle">requests</text>
+  <g>
+    <path class="f-arrow" d="M457 100 L580 100"/>
+    <polygon class="f-head" points="588,100 580,104.5 580,95.5"/>
+  </g>
+  <text class="f-small" x="522" y="88" text-anchor="middle">forwards each one</text>
+  <g>
+    <path class="f-arrow" d="M380 203 L380 150"/>
+    <polygon class="f-head" points="380,142 384.5,150 375.5,150"/>
+  </g>
+  <text class="f-small f-mono" x="392" y="180">paths, fields, status codes</text>
+  <text class="f-small" x="522" y="170" text-anchor="middle">a mismatch is reported</text>
+  <text class="f-small" x="522" y="187" text-anchor="middle">as a violation</text>
+</svg>

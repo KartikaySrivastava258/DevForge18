@@ -1,0 +1,27 @@
+{
+  "info": {
+    "name": "Campus events API — regression",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/health" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('status is 200', () => pm.response.to.have.status(200));"
+      ] } }]
+    },
+    {
+      "name": "Create an event",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/events",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"title\": \"Regression check\", \"date\": \"2027-09-15\", \"capacity\": 50, \"venue\": \"Seminar Hall 2\"}" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('status is 201', () => pm.response.to.have.status(201));"
+      ] } }]
+    }
+  ]
+}

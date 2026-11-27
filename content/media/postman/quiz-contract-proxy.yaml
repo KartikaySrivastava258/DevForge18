@@ -1,0 +1,4 @@
+alt: 'Four numbered boxes. Box 1, described as running the collection in the CI job, sends requests to box 2. Box 2 forwards each request to box 3. Box 4, below box 2, points up to it with the note "paths, fields, status codes". A note beside box 2 says a mismatch is reported as a violation. The boxes are not named; the quiz asks which part of the setup each number is.'
+caption: 'Which part of the contract-test setup is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content
