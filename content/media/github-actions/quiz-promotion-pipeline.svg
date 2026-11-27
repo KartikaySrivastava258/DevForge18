@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 240">
+  <!-- Numbered diagram for the GitHub Actions track quiz: label the stages of a build-once deployment workflow. -->
+  <rect class="f-box-faint" x="15" y="70" width="140" height="80" rx="8"/>
+  <text class="f-strong" x="85" y="117" text-anchor="middle">1</text>
+  <rect class="f-box-faint" x="210" y="70" width="140" height="80" rx="8"/>
+  <text class="f-strong" x="280" y="117" text-anchor="middle">2</text>
+  <rect class="f-box-faint" x="405" y="70" width="140" height="80" rx="8"/>
+  <text class="f-strong" x="475" y="117" text-anchor="middle">3</text>
+  <rect class="f-box-faint" x="600" y="70" width="140" height="80" rx="8"/>
+  <text class="f-strong" x="670" y="117" text-anchor="middle">4</text>
+  <g>
+    <path class="f-arrow" d="M157 110 L200 110"/>
+    <polygon class="f-head" points="208,110 200,114.5 200,105.5"/>
+  </g>
+  <text class="f-small" x="182" y="55" text-anchor="middle">starts the run</text>
+  <g>
+    <path class="f-arrow" d="M352 110 L395 110"/>
+    <polygon class="f-head" points="403,110 395,114.5 395,105.5"/>
+  </g>
+  <text class="f-small f-mono" x="377" y="55" text-anchor="middle">outputs.digest</text>
+  <g>
+    <path class="f-arrow" d="M547 110 L590 110"/>
+    <polygon class="f-head" points="598,110 590,114.5 590,105.5"/>
+  </g>
+  <text class="f-small" x="572" y="40" text-anchor="middle">needs, then waits</text>
+  <text class="f-small" x="572" y="55" text-anchor="middle">for a reviewer</text>
+  <text class="f-small" x="475" y="175" text-anchor="middle">deploys the digest</text>
+  <text class="f-small" x="670" y="175" text-anchor="middle">deploys the same digest</text>
+  <text class="f-small" x="670" y="192" text-anchor="middle">(its secrets only now)</text>
+</svg>

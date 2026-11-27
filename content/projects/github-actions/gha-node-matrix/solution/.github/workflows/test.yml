@@ -1,0 +1,36 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A newer push to the same branch or pull request supersedes the running tests: cancel them.
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    # The version is in the job's name, so each one appears as its own check on the pull request.
+    name: Node.js ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      # Deliberately false: when one version fails, the others keep running, so the pull request shows
+      # every version that breaks (here 22 and 24 broke for different reasons), not just the first.
+      fail-fast: false
+      matrix:
+        # Every release line that package.json "engines" (>=22) promises to support.
+        node-version: [22, 24, 26]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm # keyed on package-lock.json
+      - run: npm ci
+      - run: npm test

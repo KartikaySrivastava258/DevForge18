@@ -1,0 +1,4 @@
+alt: 'Four numbered boxes in a row joined by arrows. The arrow from box 1 to box 2 is labelled "starts the run"; from box 2 to box 3, "outputs.digest"; from box 3 to box 4, "needs, then waits for a reviewer". Box 3 is described as "deploys the digest" and box 4 as "deploys the same digest (its secrets only now)". The boxes are not named; the quiz asks which part of the workflow each number is.'
+caption: 'Which part of the deployment workflow is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

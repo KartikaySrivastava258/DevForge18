@@ -1,0 +1,191 @@
+id: github-actions-quiz
+track: github-actions
+title: GitHub Actions — track quiz
+description: Twelve questions from your first workflow to caches, reusable workflows, protected deployments, OIDC and supply-chain hardening. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: exit-code
+    type: single
+    level: beginner
+    lesson: github-actions-first-workflow
+    prompt: 'A step runs a check script that prints "FAIL: README.md is missing" and then ends with exit 0. What does GitHub Actions do?'
+    options:
+      - { id: a, text: "Marks the step as failed, because the output contains FAIL" }
+      - { id: b, text: "Marks the step as successful: only a non-zero exit code fails a step" }
+      - { id: c, text: "Retries the step once" }
+    answer: b
+    explanation: CI only sees the exit code. A script that reports a problem must also exit non-zero (set -euo pipefail helps), or the run stays green.
+
+  - id: run-order
+    type: ordering
+    level: beginner
+    lesson: github-actions-first-workflow
+    prompt: Put what happens after a push in order.
+    items:
+      - { id: event, text: "A push to main happens in the repository" }
+      - { id: match, text: "GitHub starts each workflow whose on: section matches the event" }
+      - { id: runner, text: "Each job is given a fresh runner" }
+      - { id: checkout, text: "actions/checkout copies the repository onto the runner" }
+      - { id: steps, text: "The remaining steps run in order; a non-zero exit code fails the job" }
+    order: [event, match, runner, checkout, steps]
+    explanation: An event starts the workflows that listen for it; every job starts on an empty runner, which is why checkout comes first; steps then run in order on that runner.
+
+  - id: unsafe-workflow
+    type: multiple
+    level: beginner
+    lesson: github-actions-pull-requests-and-safety
+    prompt: |
+      Which of these lines make this workflow unsafe? Select all that apply.
+      on: [pull_request] · no permissions block · uses: some-user/greeter@main · run: echo "Thanks for opening ${{ github.event.pull_request.title }}"
+    options:
+      - { id: a, text: "There is no permissions block, so the token gets the repository's default permissions" }
+      - { id: b, text: "The action is referenced by the branch @main, so its author's next push changes what runs" }
+      - { id: c, text: "The pull request title is pasted into the script before the shell runs it" }
+      - { id: d, text: "It runs on pull_request" }
+    answers: [a, b, c]
+    explanation: Least privilege, pinned actions and no untrusted input inside run are three of the lesson's four safety rules. Running on pull_request is normal; the safe version keeps the trigger and passes the title through env.
+
+  - id: cache-key-output
+    type: output
+    level: beginner
+    lesson: github-actions-caching-and-artifacts
+    prompt: The key is printed three times — before any change, after editing package.json's description, and after locking a new dependency in package-lock.json. What does the output show?
+    command: key; (edit package.json); key; (edit package-lock.json); key
+    output: |
+      npm-Linux-81a23ba9281a
+      npm-Linux-81a23ba9281a
+      npm-Linux-ea7d26c61d79
+    options:
+      - { id: a, text: "The key changes on every run" }
+      - { id: b, text: "The key changes only when the lockfile changes, so the next run after the description edit gets a cache hit" }
+      - { id: c, text: "Editing package.json invalidates the cache" }
+    answer: b
+    explanation: The key is built from a hash of package-lock.json. Same dependencies, same key; a newly locked dependency gives a new key, a miss, a fallback to restore-keys and a fresh cache.
+
+  - id: carry-data
+    type: matching
+    level: beginner
+    lesson: github-actions-caching-and-artifacts
+    prompt: Match each thing that must survive beyond one job with the right mechanism.
+    left:
+      - { id: downloads, text: "npm downloads you want to reuse in next week's runs" }
+      - { id: dist, text: "dist/ built by the build job, needed by the test job in the same run" }
+      - { id: token, text: "A deploy token that one step needs" }
+    right:
+      - { id: cache, text: "A cache keyed on the lockfile" }
+      - { id: artifact, text: "An artifact (upload, then download in a job that needs the first)" }
+      - { id: secret, text: "An encrypted secret, passed to that step through env" }
+      - { id: commit, text: "Committing the files to the repository" }
+    pairs: { downloads: cache, dist: artifact, token: secret }
+    explanation: Caches speed up later runs, artifacts carry a run's outputs between its jobs, and secrets never belong in caches or artifacts — anyone who can open a pull request can read the base branch's caches.
+
+  - id: reusable-location
+    type: single
+    level: intermediate
+    lesson: github-actions-reusable-workflows-and-composite-actions
+    prompt: A platform team tidies its repository by moving the reusable workflow to .github/workflows/shared/node-ci.yml. What happens to the callers?
+    options:
+      - { id: a, text: "Nothing, GitHub searches subfolders" }
+      - { id: b, text: "The calls break: reusable workflows must be directly in .github/workflows" }
+      - { id: c, text: "The workflow becomes a composite action" }
+    answer: b
+    explanation: GitHub only accepts reusable workflows directly in .github/workflows. Shared steps can go in a composite action under .github/actions instead.
+
+  - id: composite-or-reusable
+    type: single
+    level: intermediate
+    lesson: github-actions-reusable-workflows-and-composite-actions
+    prompt: In a composite action, a step reads run with cat followed by the expression for inputs.file. What should it do instead?
+    options:
+      - { id: a, text: "Nothing, inputs are always safe" }
+      - { id: b, text: "Pass the input through env (FILE set to the expression) and use \"$FILE\" in the script, and give the run step a shell" }
+      - { id: c, text: "Use secrets: inherit" }
+    answer: b
+    explanation: Expressions are pasted into the script before the shell runs it, so a value with shell syntax becomes code. In composite actions every run step also needs a shell.
+
+  - id: image-reference
+    type: single
+    level: intermediate
+    lesson: github-actions-building-and-pushing-images
+    prompt: The image that staging tested was pushed as course-site:main, course-site:1.2 and course-site:sha-e7750c5. What should the production deployment reference?
+    options:
+      - { id: a, text: "course-site:main, the newest image" }
+      - { id: b, text: "course-site:1.2" }
+      - { id: c, text: "course-site@sha256:… — the digest the build pushed, which always means exactly the tested image" }
+    answer: c
+    explanation: Tags are names that can be moved to another image; a digest is the hash of the content. Pipelines record the digest from the push and deploy that.
+
+  - id: promotion-diagram
+    type: diagram
+    level: intermediate
+    lesson: github-actions-environments-and-deployments
+    prompt: Label the numbered parts of this deployment workflow.
+    media: media:github-actions/quiz-promotion-pipeline.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: push, text: "A push to main" }
+      - { id: build, text: "The build job, which pushes the image once" }
+      - { id: staging, text: "The staging job (environment: staging)" }
+      - { id: production, text: "The production job (environment with required reviewers)" }
+      - { id: cache, text: "A dependency cache" }
+    answers: { "1": push, "2": build, "3": staging, "4": production }
+    explanation: The lesson's workflow builds once and passes the digest forward as a job output; production needs staging and waits for its environment's reviewers, and only then gets that environment's secrets.
+
+  - id: deploy-concurrency
+    type: single
+    level: intermediate
+    lesson: github-actions-environments-and-deployments
+    prompt: Two merges land a minute apart. The production job has concurrency with group deploy-production. Which cancel-in-progress setting fits a deployment, and why?
+    options:
+      - { id: a, text: "true — the newer deployment matters, so stop the old one wherever it is" }
+      - { id: b, text: "false — the second deployment waits in the queue, because a half-finished deployment is worse than a queued one" }
+      - { id: c, text: "Concurrency has no effect on jobs that use environments" }
+    answer: b
+    explanation: For test runs, cancelling outdated work saves time. A deployment cancelled halfway can leave production in a mixed state, so deployments queue instead.
+
+  - id: oidc-subject
+    type: single
+    level: advanced
+    lesson: github-actions-oidc-cloud-access
+    prompt: An AWS role trusts tokens whose sub equals (StringEquals) repo:asha-rao/course-site:environment:production. Which job can assume it?
+    options:
+      - { id: a, text: "Any job in asha-rao/course-site" }
+      - { id: b, text: "A pull request job in asha-rao/course-site without an environment" }
+      - { id: c, text: "Only a job in asha-rao/course-site that references the production environment" }
+    answer: c
+    explanation: A job with an environment gets a subject naming the environment; a pull request job without one gets …:pull_request, which does not match. Exact matches keep the role as narrow as intended.
+
+  - id: pin-and-update
+    type: ordering
+    level: advanced
+    lesson: github-actions-supply-chain-hardening
+    prompt: Put the life of a pinned action in order.
+    items:
+      - { id: resolve, text: "Resolve the release tag to its commit SHA (git ls-remote)" }
+      - { id: rewrite, text: "Write uses: owner/action@<full SHA> with the version in a comment" }
+      - { id: newrelease, text: "The action publishes a new release" }
+      - { id: dependabot, text: "Dependabot opens a pull request that changes the SHA and the comment together" }
+      - { id: review, text: "CI runs on that pull request and a person reviews and merges it" }
+    order: [resolve, rewrite, newrelease, dependabot, review]
+    explanation: A SHA always means the same code, even if a tag is moved. Pins must still be updated; Dependabot turns updates into reviewed pull requests.
+
+  - id: attest-permissions
+    type: multiple
+    level: advanced
+    lesson: github-actions-supply-chain-hardening
+    prompt: A build job attests the provenance of its release archive with actions/attest. Which permissions does that job need? Select all that apply.
+    options:
+      - { id: a, text: "id-token: write, to sign the attestation" }
+      - { id: b, text: "attestations: write, to store it" }
+      - { id: c, text: "contents: read, to check out the code" }
+      - { id: d, text: "contents: write" }
+      - { id: e, text: "packages: write" }
+    answers: [a, b, c]
+    explanation: The lesson's release workflow grants exactly these to the build job. Writing contents (for example, creating the release) belongs in a separate job that has only that permission.

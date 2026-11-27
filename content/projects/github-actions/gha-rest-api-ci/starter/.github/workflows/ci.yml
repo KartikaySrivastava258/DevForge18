@@ -1,0 +1,12 @@
+name: CI
+
+# Written in a hurry before the first deadline. It is always green, which is the problem.
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - run: npm install
+      - run: npm test || true

@@ -1,0 +1,17 @@
+{
+  "name": "gradebook-lib",
+  "version": "1.4.0",
+  "description": "Grade calculations shared by the campus gradebook and the course feedback tool.",
+  "type": "module",
+  "exports": "./src/grades.js",
+  "files": [
+    "src/"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

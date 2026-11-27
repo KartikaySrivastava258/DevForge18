@@ -1,0 +1,30 @@
+name: Tests (reusable)
+
+# Called by ci.yml (every push and pull request) and release.yml (before a release): one definition of
+# "the tests pass", so CI and the release can never drift apart.
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version to test with
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test on Node.js ${{ inputs.node-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm test

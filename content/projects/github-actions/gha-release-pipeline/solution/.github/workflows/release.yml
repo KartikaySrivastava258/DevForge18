@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+# Nothing by default: each job below asks for exactly what it needs.
+permissions: {}
+
+# One release per tag at a time, and never cancel one halfway (a half-published release is worse than a queue).
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/test.yml
+    with:
+      node-version: "24"
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write # to sign the provenance attestation
+      attestations: write # to store it
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Refuse a tag that does not match package.json
+        run: node scripts/check-version.mjs # reads GITHUB_REF_NAME, which GitHub sets to the tag
+      - name: Pack the package once, with checksums
+        run: |
+          mkdir -p dist
+          npm pack --pack-destination dist
+          cd dist && sha256sum ./*.tgz > SHA256SUMS
+      - name: Attest build provenance for the tarball
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: dist/*.tgz
+      - name: Hand the exact files to the release job
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Protected environment: required reviewers and "only v* tags" are configured in Settings > Environments.
+    environment:
+      name: release
+      url: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+    permissions:
+      contents: write # to create the release; the only job that can write
+    steps:
+      # No checkout and no build here: this job publishes the files the build job made and attested.
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: package
+          path: dist
+      - name: Verify the downloaded files against the build's checksums
+        working-directory: dist
+        run: sha256sum -c SHA256SUMS
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: gh release create "$TAG" dist/*.tgz dist/SHA256SUMS --verify-tag --generate-notes --title "$TAG"

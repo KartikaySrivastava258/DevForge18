@@ -56,9 +56,9 @@ labs:
   - { title: "Add a protected deployment stage", level: advanced, mode: local, status: available, lab: github-actions-protected-deployment }
   - { title: "Speed up a workflow with needs and a matrix", level: intermediate, mode: simulation, status: available, lab: github-actions-job-dependencies-and-matrix }
 projects:
-  - { title: "Full CI pipeline for a REST API", level: beginner, status: planned }
-  - { title: "Multi-version test matrix", level: intermediate, status: planned }
-  - { title: "Automated release workflow", level: advanced, status: planned }
+  - { title: "Full CI pipeline for a REST API", level: beginner, status: available, project: gha-rest-api-ci }
+  - { title: "Multi-version test matrix", level: intermediate, status: available, project: gha-node-matrix }
+  - { title: "Automated release workflow", level: advanced, status: available, project: gha-release-pipeline }
 resources:
   - title: GitHub Actions documentation
     url: https://docs.github.com/en/actions

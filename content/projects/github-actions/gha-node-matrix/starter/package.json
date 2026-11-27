@@ -1,0 +1,14 @@
+{
+  "name": "campus-search",
+  "version": "2.1.0",
+  "description": "Search helpers for the course catalogue: highlighting and pagination cursors.",
+  "type": "module",
+  "exports": "./src/index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}
