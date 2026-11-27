@@ -1,0 +1,4 @@
+alt: 'Three cases. Task export has execution_timeout 3 seconds and one retry: try 1 runs 3 seconds and raises AirflowTaskTimeout, triggering on_retry_callback; try 2 times out the same way and triggers on_failure_callback. Task validate has three retries but raises AirflowFailException, so it fails on try 1 without using any retries and triggers on_failure_callback. DAG slow_report has dagrun_timeout 10 seconds: the run fails at 10 seconds, the running task build is marked skipped, and the DAG-level on_failure_callback receives reason timed_out.'
+caption: 'execution_timeout bounds each attempt, dagrun_timeout the whole run; callbacks report what happened.'
+credit: DevForge 18 content team
+licence: project-content
