@@ -9,7 +9,7 @@ DevForge 18 aims for WCAG 2.1 level AA. This page records what is tested automat
 - **Rules:** every axe rule tagged `wcag2a`, `wcag2aa`, `wcag21a` or `wcag21aa`. No rule is disabled and no element is excluded; any future exclusion must be added to `EXCLUSIONS` in the test with its reason, and listed here.
 - **Colour schemes:** every page is audited twice, in the dark scheme (the default) and the light scheme (`prefers-color-scheme: light`); the test also checks that the page really switched (`<html data-theme>`).
 - **When:** after the page's own data has loaded (its heading and a page-specific element are visible, the network is idle, and entrance animations have finished, so contrast is measured on final colours).
-- **Pages (26, so 52 audits):**
+- **Pages (33, so 66 audits):**
 
 | Page | URL |
 |---|---|
@@ -30,6 +30,15 @@ DevForge 18 aims for WCAG 2.1 level AA. This page records what is tested automat
 | Dashboard (signed in) | `/dashboard` |
 | Page not found | `/definitely/not/here` |
 | Phone width (390 × 844): home with the menu open, lesson, quiz (signed in), project, dashboard with the menu open | as above |
+| Cohorts (signed in) | `/cohorts` |
+| Cohort as its teacher (learner table, assignments, join code) | `/cohorts/:id` |
+| Review queue (teacher) | `/reviews` |
+| Review form with rubric radio groups | `/reviews/submission/:id` |
+| Public portfolio | `/portfolio/:slug` |
+| Administration (admin) | `/admin` |
+| Content editor (faculty) | `/content-editor` |
+
+Not audited automatically yet: the certificate verification page (`/certificates/:id`) — creating one needs a learner who passed a quiz and verified labs through the real flows; its content is covered by API tests and it uses the same notice, heading and list components as the audited pages. Include it in the manual pass.
 
 ### Results
 
@@ -46,7 +55,7 @@ First run (2026-11-27, before fixes): 11 of 42 audits failed (the phone-width ca
 
 Found while checking the fixes visually (not an axe rule): a simulation embedded in a lab article kept its two-column layout, because the layout switched on the viewport width, so the Dockerfile editor was squeezed to about 250 px with one character per line. The layout now follows the simulation's own width (a CSS container query); a browser test guards it.
 
-Final run (2026-11-27): **52 of 52 audits pass, 0 violations** (26 pages × 2 schemes), as part of `npm run test:e2e` (all browser tests pass).
+Final run (2026-11-27): **52 of 52 audits pass, 0 violations** (26 pages × 2 schemes). After the Milestone 11 pages were added (cohorts, reviews, portfolio, administration, content editor, each with real data created by the test): **66 of 66 pass, 0 violations**, nothing excluded, as part of `npm run test:e2e` (all browser tests pass).
 
 ### What the automated audit does not cover
 

@@ -11,7 +11,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { AxeBuilder } from "@axe-core/playwright";
-import type { Page } from "playwright";
+import { request as playwrightRequest, type Page } from "playwright";
 import { startHarness, type Harness } from "./harness.ts";
 
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
@@ -24,7 +24,10 @@ interface AuditedPage {
   path: string;
   /** Visible once the page's data has loaded (the audit must not run on a loading skeleton). */
   ready: string;
-  signedIn?: boolean;
+  /** true: a new student account; "faculty" or "admin": an account with that role (created in the database). */
+  signedIn?: boolean | "faculty" | "admin";
+  /** Creates the data the page shows (after signing in) and returns the path to audit instead of `path`. */
+  setup?: (page: Page) => Promise<string>;
   /** Phone viewport (390 x 844), where the navigation collapses into a menu and the map into a list. */
   mobile?: boolean;
   /** Puts the page in the state to audit, after it has loaded (for example, opens the menu). */
@@ -58,6 +61,13 @@ const PAGES: AuditedPage[] = [
   { name: "registration", path: "/register", ready: "h1" },
   { name: "dashboard (signed in)", path: "/dashboard", ready: "h1", signedIn: true },
   { name: "page not found", path: "/definitely/not/here", ready: "h1" },
+  { name: "cohorts (signed in)", path: "/cohorts", ready: "#join-code", signedIn: true },
+  { name: "cohort as its teacher", path: "/cohorts", ready: ".join-code", signedIn: "faculty", setup: (page) => teacherWithSubmission(page).then((r) => `/cohorts/${r.cohortId}`) },
+  { name: "review queue", path: "/reviews", ready: "table", signedIn: "faculty", setup: async (page) => (await teacherWithSubmission(page), "/reviews") },
+  { name: "review form with the rubric", path: "/reviews", ready: "fieldset.rubric-row", signedIn: "faculty", setup: (page) => teacherWithSubmission(page).then((r) => `/reviews/submission/${r.submissionId}`) },
+  { name: "public portfolio", path: "/", ready: "h1", setup: publicPortfolio },
+  { name: "administration", path: "/admin", ready: "table", signedIn: "admin" },
+  { name: "content editor", path: "/content-editor", ready: "h1", signedIn: "faculty" },
   { name: "home at phone width, menu open", path: "/", ready: ".map-list", mobile: true, prepare: openMenu },
   { name: "lesson at phone width", path: "/tracks/docker/lessons/docker-images-vs-containers", ready: "article h2", mobile: true },
   { name: "quiz at phone width (signed in)", path: "/tracks/git-github/quiz", ready: "fieldset", signedIn: true, mobile: true },
@@ -72,13 +82,60 @@ before(async () => {
 after(() => h.close());
 
 let accounts = 0;
-async function signIn(page: Page): Promise<void> {
+async function signIn(page: Page, role: true | "faculty" | "admin" = true): Promise<void> {
   accounts += 1;
+  if (role !== true) {
+    const email = `axe-${role}-${accounts}@example.com`;
+    await h.createUser({ email, name: `Axe ${role}`, password: "correct horse battery staple 42", role });
+    const login = await page.context().request.post("/api/auth/login", { headers: { "X-DevForge-CSRF": "1", Origin: h.url }, data: { email, password: "correct horse battery staple 42" } });
+    assert.equal(login.status(), 200, `sign-in for the audit failed: ${await login.text()}`);
+    return;
+  }
   const res = await page.context().request.post("/api/auth/register", {
     headers: { "X-DevForge-CSRF": "1", Origin: h.url },
     data: { email: `axe-${accounts}@example.com`, displayName: "Axe Audit", password: "correct horse battery staple 42" },
   });
   assert.equal(res.status(), 201, `registration for the audit failed: ${await res.text()}`);
+}
+
+/** A separate signed-in student (its own cookie jar) for pages that show another person's work. */
+async function student(): Promise<{ post: (path: string, data: unknown, method?: string) => Promise<unknown>; dispose: () => Promise<void> }> {
+  accounts += 1;
+  const ctx = await playwrightRequest.newContext({ baseURL: h.url, extraHTTPHeaders: { "X-DevForge-CSRF": "1", Origin: h.url } });
+  const reg = await ctx.post("/api/auth/register", { data: { email: `axe-student-${accounts}@example.com`, displayName: `Learner ${accounts}`, password: "correct horse battery staple 42" } });
+  assert.equal(reg.status(), 201);
+  return {
+    post: async (path, data, method = "POST") => {
+      const r = await ctx.fetch(path, { method, data });
+      assert.ok(r.ok(), `${method} ${path}: ${r.status()} ${await r.text()}`);
+      return r.json().catch(() => null);
+    },
+    dispose: () => ctx.dispose(),
+  };
+}
+
+/** The signed-in teacher creates a cohort with an assignment; a student joins and submits the project. */
+async function teacherWithSubmission(page: Page): Promise<{ cohortId: string; submissionId: string }> {
+  const api = page.context().request;
+  const headers = { "X-DevForge-CSRF": "1", Origin: h.url };
+  const created = await (await api.post("/api/cohorts", { headers, data: { name: "Accessibility cohort", description: "Audit data" } })).json();
+  const { id, joinCode } = created.cohort as { id: string; joinCode: string };
+  const assigned = await api.post(`/api/cohorts/${id}/assignments`, { headers, data: { kind: "project", itemId: "docker-notes-api", dueAt: "2030-01-15T12:00:00Z", instructions: "Submit a link to your repository." } });
+  assert.equal(assigned.status(), 201);
+  const s = await student();
+  await s.post("/api/cohorts/join", { code: joinCode });
+  const sub = (await s.post("/api/me/submissions/project/docker-notes-api", { repositoryUrl: "https://git.example.edu/learner/notes-api", notes: "Ready for review." }, "PUT")) as { submission: { id: string } };
+  await s.dispose();
+  return { cohortId: id, submissionId: sub.submission.id };
+}
+
+/** A student publishes a portfolio; the audit visits it signed out. */
+async function publicPortfolio(): Promise<string> {
+  const s = await student();
+  const slug = `axe-portfolio-${accounts}`;
+  await s.post("/api/me/portfolio", { isPublic: true, slug, headline: "Learning DevOps" }, "PUT");
+  await s.dispose();
+  return `/portfolio/${slug}`;
 }
 
 /** Waits for the page's own content, not just the app shell: the route's heading and, when given, its data. */
@@ -108,8 +165,9 @@ for (const scheme of ["dark", "light"] as const) {
       it(`${target.name} (${target.path}) has no axe violations`, async () => {
         const { page, context, problems } = await h.newPage({ colorScheme: scheme, mobile: target.mobile });
         try {
-          if (target.signedIn) await signIn(page);
-          await page.goto(target.path);
+          if (target.signedIn) await signIn(page, target.signedIn);
+          const path = target.setup ? await target.setup(page) : target.path;
+          await page.goto(path);
           await waitUntilReady(page, target.ready);
           if (target.prepare) await target.prepare(page);
           assert.equal(await page.locator("html").getAttribute("data-theme"), scheme, "the page uses the requested colour scheme");
@@ -118,7 +176,7 @@ for (const scheme of ["dark", "light"] as const) {
           for (const { selector } of EXCLUSIONS) builder = builder.exclude(selector);
           const results = await builder.analyze();
           assert.ok(results.passes.length > 0, "axe ran its checks");
-          assert.equal(results.violations.length, 0, `axe violations on ${target.path} (${scheme}):\n${describeViolations(results.violations)}`);
+          assert.equal(results.violations.length, 0, `axe violations on ${path} (${scheme}):\n${describeViolations(results.violations)}`);
           assert.deepEqual(problems, [], `browser problems:\n${problems.join("\n")}`);
         } finally {
           await context.close();
