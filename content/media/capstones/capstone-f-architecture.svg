@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 400">
+  <!-- Capstone F architecture: from a work item to a monitored release. -->
+  <rect class="f-box" x="20" y="30" width="130" height="70" rx="8"/>
+  <text class="f-small f-strong" x="85" y="58" text-anchor="middle">Jira work item</text>
+  <text class="f-small" x="85" y="78" text-anchor="middle">key in branch</text>
+  <rect class="f-box" x="190" y="30" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong" x="265" y="58" text-anchor="middle">pull request</text>
+  <text class="f-small" x="265" y="78" text-anchor="middle">review, protected</text>
+  <g>
+    <path class="f-arrow" d="M152 65 L180 65"/>
+    <polygon class="f-head" points="188,65 180,69.5 180,60.5"/>
+  </g>
+  <rect class="f-box-accent" x="380" y="20" width="170" height="90" rx="8"/>
+  <text class="f-small f-strong" x="465" y="48" text-anchor="middle">CI: GitHub Actions</text>
+  <text class="f-small" x="465" y="68" text-anchor="middle">or Jenkins: test, build,</text>
+  <text class="f-small" x="465" y="86" text-anchor="middle">scan, attest image</text>
+  <g>
+    <path class="f-arrow" d="M342 65 L370 65"/>
+    <polygon class="f-head" points="378,65 370,69.5 370,60.5"/>
+  </g>
+  <rect class="f-box-ok" x="590" y="30" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong" x="665" y="58" text-anchor="middle">registry</text>
+  <text class="f-small" x="665" y="78" text-anchor="middle">image by digest</text>
+  <g>
+    <path class="f-arrow" d="M552 65 L580 65"/>
+    <polygon class="f-head" points="588,65 580,69.5 580,60.5"/>
+  </g>
+  <rect class="f-box-warn" x="20" y="160" width="260" height="90" rx="8"/>
+  <text class="f-small f-strong" x="150" y="188" text-anchor="middle">Terraform</text>
+  <text class="f-small" x="150" y="208" text-anchor="middle">environments as code; plan reviewed</text>
+  <text class="f-small" x="150" y="226" text-anchor="middle">in the pull request, then applied</text>
+  <rect class="f-box-faint" x="330" y="150" width="410" height="110" rx="8"/>
+  <text class="f-small f-strong" x="535" y="172" text-anchor="middle">Kubernetes: staging, then production</text>
+  <text class="f-small" x="535" y="196" text-anchor="middle">rolling update, readiness gate,</text>
+  <text class="f-small" x="535" y="214" text-anchor="middle">manual approval, automatic rollback</text>
+  <text class="f-small" x="535" y="234" text-anchor="middle">requests, limits, probes</text>
+  <g>
+    <path class="f-arrow" d="M282 205 L320 205"/>
+    <polygon class="f-head" points="328,205 320,209.5 320,200.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M665 102 L665 140"/>
+    <polygon class="f-head" points="665,148 660.5,140 669.5,140"/>
+  </g>
+  <rect class="f-box" x="330" y="300" width="410" height="80" rx="8"/>
+  <text class="f-small" x="535" y="326" text-anchor="middle">Prometheus + Grafana and OpenTelemetry:</text>
+  <text class="f-small" x="535" y="346" text-anchor="middle">deployment markers, SLO burn rates, traces</text>
+  <text class="f-small" x="535" y="364" text-anchor="middle">that decide whether a release stays</text>
+  <g>
+    <path class="f-arrow" d="M535 262 L535 290"/>
+    <polygon class="f-head" points="535,298 530.5,290 539.5,290"/>
+  </g>
+  <rect class="f-box" x="20" y="300" width="260" height="80" rx="8"/>
+  <text class="f-small" x="150" y="326" text-anchor="middle">release notes from work items;</text>
+  <text class="f-small" x="150" y="346" text-anchor="middle">every deployment traceable</text>
+  <text class="f-small" x="150" y="364" text-anchor="middle">to a commit and a review</text>
+</svg>

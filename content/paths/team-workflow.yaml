@@ -12,6 +12,6 @@ modules:
   - { track: postman, focus: "Shared API collections as executable documentation." }
   - { track: github-actions, focus: "Automated checks that gate every merge." }
   - { track: jenkins, focus: "When a self-managed pipeline is the better organisational fit." }
-capstone: { title: "Project F (team slice) — issue-to-pull-request delivery workflow", status: planned }
+capstone: { title: "Project F (team slice) — issue-to-pull-request delivery workflow", status: available, capstone: capstone-f }
 alternate_route: Teams already using Jira can start with GitHub Actions and return to the Jira acceptance-criteria lesson later.
 last_reviewed: 2026-11-24

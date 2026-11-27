@@ -15,6 +15,6 @@ modules:
   - { track: kubernetes, focus: "Deploy, scale, roll out and roll back workloads." }
   - { track: prometheus-grafana, focus: "Metrics, dashboards and symptom-based alerts." }
   - { track: opentelemetry, focus: "Traces that explain where time goes across services." }
-capstone: { title: "Project F — Automated Software Delivery Platform", status: planned }
+capstone: { title: "Project F — Automated software delivery platform", status: available, capstone: capstone-f }
 alternate_route: If you already use GitHub Actions daily, skim Jenkins for the comparison lesson only and spend the saved time on Kubernetes.
 last_reviewed: 2026-11-24

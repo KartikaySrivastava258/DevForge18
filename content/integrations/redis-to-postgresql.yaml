@@ -1,0 +1,21 @@
+id: redis-to-postgresql
+from: redis
+to: postgresql
+title: A Redis cache in front of PostgreSQL
+summary: The application reads Redis first and falls back to PostgreSQL on a miss; writes change PostgreSQL in a transaction and then delete the cached copy, so PostgreSQL stays the single source of truth.
+flow: Copies of rows (JSON with a TTL) from PostgreSQL to Redis on cache misses, and key deletions after every write
+steps:
+  - Read the key from Redis; on a hit, answer from the cached copy.
+  - On a miss, select the row from PostgreSQL, store a copy in Redis with an expiry (SET … EX 60), and answer.
+  - On a write, change PostgreSQL in a transaction, then delete the cached key so the next read loads fresh data.
+  - Give the Redis client short timeouts and no retries, so a dead cache falls back to PostgreSQL immediately.
+pitfalls:
+  - Writing the new value into the cache instead of deleting it — two writers finishing out of order can leave the older value cached.
+  - Invalidating in one code path only — admin scripts, migrations and other services that change the table bypass it; keep TTLs short enough that a missed invalidation is tolerable.
+  - No timeout, or default retries, on the cache client — a cache that does not answer becomes the slowest part of every request.
+practise:
+  - { kind: lesson, id: redis-cache-aside-with-postgresql }
+  - { kind: lesson, id: redis-caching-and-rate-limiting }
+  - { kind: lesson, id: redis-cache-stampede-and-failures }
+owner: content-team
+last_reviewed: 2026-11-27

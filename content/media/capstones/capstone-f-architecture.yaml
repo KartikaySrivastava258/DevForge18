@@ -1,0 +1,4 @@
+alt: 'A Jira work item''s key goes into a branch, which becomes a reviewed pull request into a protected main branch. CI — GitHub Actions or Jenkins — tests, builds, scans and attests the image and pushes it to a registry, addressed by digest. Terraform defines the environments as code; its plan is reviewed in the pull request and then applied. The image is deployed to Kubernetes, first to staging and then to production, with rolling updates, a readiness gate, manual approval and automatic rollback, and every workload has requests, limits and probes. Prometheus with Grafana and OpenTelemetry show deployment markers, SLO burn rates and traces that decide whether a release stays. Release notes come from the work items, and every deployment can be traced to a commit and a review.'
+caption: 'Every change travels the same audited path, and the monitoring decides whether it stays.'
+credit: DevForge 18 content team
+licence: project-content
