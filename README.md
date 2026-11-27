@@ -234,10 +234,10 @@ Found a vulnerability? Please report it privately to the maintainers rather than
 
 ## Known limitations
 
-- 80 lessons are published — at least three in every track, and seven or eight (beginner to advanced) in Git, PostgreSQL, Postman, Redis, Nginx and Docker — and every track has a simulation and two labs. Intermediate and advanced lessons for the other 12 tracks, quizzes and projects are still to come; projects are listed as planned.
+- 133 lessons are published (131 executed in CI, 2 docs-checked Jira lessons), 37 labs, a simulation and a quiz in every track, 54 mini-projects with executable acceptance checks, capstones A–G, 17 integrations and 10 reference architectures.
 - External resource links were all checked and reviewed on 2026-11-25. The weekly *Link check* workflow reports reachability; a person re-confirms each page before its date is updated.
-- Admin screens (users, roles, disabling accounts, audit log) and the content editor exist; other faculty screens are still to come. The content editor has been tested only against a local fake of the GitHub API (see [ADR 0011](docs/adr/0011-cms-pull-requests.md)).
-- Rate limits are kept in memory, so they apply per server process. See [ADR 0004](docs/adr/0004-auth-sessions.md).
+- Admin screens (users, roles, disabling accounts, audit log), faculty screens (cohorts, assignments, reviews against rubrics) and the content editor exist. The content editor has been tested only against a local fake of the GitHub API (see [ADR 0011](docs/adr/0011-cms-pull-requests.md)); try one pull request on a scratch repository first.
+- Rate limits are kept in memory, so they apply per server process, unless `REDIS_URL` points to a shared Redis. See [ADR 0004](docs/adr/0004-auth-sessions.md) and [ADR 0010](docs/adr/0010-shared-rate-limits-redis.md).
 - The full list, with workarounds, is in [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md#known-issues-and-limitations).
 
 ## Licence

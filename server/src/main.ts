@@ -1,10 +1,13 @@
 /** Process entry point: load config, migrate, load content, start the server. */
 import { resolve } from "node:path";
-import { createApp, createHttpServer } from "./app.ts";
+import { createApp, createHttpServer, sharedLimiters } from "./app.ts";
 import { loadConfig } from "./config.ts";
 import { ContentStore } from "./content/store.ts";
 import { migrate, openDatabase } from "./db/database.ts";
+import { RedisRateLimitStore } from "./http/rate-limit-redis.ts";
 import { createLogger } from "./observability/logger.ts";
+import { Tracer } from "./observability/tracing.ts";
+import { RedisClient } from "./redis/client.ts";
 
 const config = loadConfig();
 const logger = createLogger(config.logLevel);
@@ -14,7 +17,26 @@ try {
   const migrations = migrate(db);
   if (migrations.applied.length) logger.info("migrations applied", { applied: migrations.applied });
   const content = ContentStore.fromFile(resolve(config.contentPath));
-  const app = createApp({ config, db, content, logger });
+  // OpenTelemetry tracing, only when an OTLP endpoint is configured (ADR 0009).
+  const tracer = config.tracing ? new Tracer(config.tracing, { logger }) : undefined;
+  if (config.tracing) {
+    logger.info("tracing on", { receiver: new URL(config.tracing.tracesUrl).origin, service: config.tracing.serviceName, sampler: config.tracing.sampler });
+  }
+  // Rate limits shared through Redis when REDIS_URL is set, else per process (ADR 0010).
+  let rateLimitStore: RedisRateLimitStore | undefined;
+  if (config.redisUrl) {
+    const client = new RedisClient(config.redisUrl);
+    rateLimitStore = new RedisRateLimitStore(client, { logger, address: client.address });
+    logger.info("rate limits shared through Redis", { redis: client.address });
+  }
+  const app = createApp({
+    config,
+    db,
+    content,
+    logger,
+    ...(tracer ? { tracer } : {}),
+    ...(rateLimitStore ? { rateLimitStore, limiters: sharedLimiters(rateLimitStore) } : {}),
+  });
   const server = createHttpServer(app);
 
   server.on("error", (err: NodeJS.ErrnoException) => {
@@ -50,7 +72,9 @@ try {
     app.close();
     server.close(() => {
       db.close();
-      process.exit(0);
+      rateLimitStore?.close();
+      // Send the spans still queued (bounded by the exporter timeout and the 10 s limit below).
+      void (tracer?.shutdown() ?? Promise.resolve()).then(() => process.exit(0));
     });
     setTimeout(() => process.exit(1), 10_000).unref();
   };

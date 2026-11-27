@@ -13,11 +13,12 @@ export interface PracticeServer {
 }
 
 /** port 0 = any free port; Nginx lessons use 8080, the address learners proxy to. */
-export function startPracticeServer(contentRoot: string, port = 0): Promise<PracticeServer> {
+/** env: extra environment variables, e.g. OTEL_EXPORTER_OTLP_ENDPOINT for the OpenTelemetry lab. */
+export function startPracticeServer(contentRoot: string, port = 0, env: Record<string, string> = {}): Promise<PracticeServer> {
   const child = spawn(
     process.execPath,
     ["--disable-warning=ExperimentalWarning", join(import.meta.dirname, "practice-server-main.ts"), contentRoot, String(port)],
-    { stdio: ["ignore", "pipe", "pipe"] },
+    { stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, ...env } },
   );
   return new Promise((resolve, reject) => {
     let out = "";

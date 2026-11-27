@@ -41,11 +41,12 @@ Before going live:
 - **Public pages** show the display name only, never the e-mail address: a portfolio exists only after the learner switches it on, and lists only work a teacher accepted; a certificate's verification page is reachable only through its random 128-bit id.
 - **Your data** (dashboard): a JSON export of everything stored about the account (`/api/me/export`), and account deletion after re-entering the password and typing a confirmation phrase (`/api/me/delete`; rate-limited; the last administrator cannot delete themselves). Deletion cascades to every table and removes reviews of the deleted work; audit events keep the user id with no e-mail.
 - Submission links must be `https://` URLs (validated by the API and the database) and are rendered with `rel="noopener noreferrer"` (`nofollow` on public portfolios).
-- Logs contain request IDs, routes, statuses and timings — no bodies, cookies or passwords (sensitive-looking keys are redacted).
+- Logs contain request IDs, trace IDs (when tracing is on), routes, statuses and timings — no bodies, cookies or passwords (sensitive-looking keys are redacted). Trace spans follow the same rule and also leave out query strings, client IP addresses and user agents ([ADR 0009](adr/0009-opentelemetry-tracing.md)).
+- With `REDIS_URL`, rate-limit keys in Redis are SHA-256 hashes of the IP address or e-mail address they count, never the values themselves.
 - Use synthetic data in demos. Never load real student records into a public instance.
 
 ## Known gaps (tracked in IMPLEMENTATION_STATUS.md)
 
-- Rate limits are per process (in memory).
+- Rate limits are per process (in memory) unless `REDIS_URL` is set ([ADR 0010](adr/0010-shared-rate-limits-redis.md)); while Redis is unreachable they fall back to per-process limits.
 - No email verification or password reset yet (requires an email service; planned with Phase 5). Until then an admin can recreate an account.
 - Run `npm audit` after every dependency change. The first audit (2026-11-25) reported zod, js-yaml and docs-linter dependencies; all were upgraded (see IMPLEMENTATION_STATUS.md).

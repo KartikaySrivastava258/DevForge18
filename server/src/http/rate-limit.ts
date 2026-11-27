@@ -1,9 +1,9 @@
 /**
  * In-memory fixed-window rate limiter.
  *
- * Limitation (documented in docs/security.md): counters live in this process,
- * so limits are per instance and reset on restart. Running several instances
- * would need shared state — a genuine reason to introduce Redis later.
+ * Counters live in this process, so limits are per instance and reset on
+ * restart. With REDIS_URL set, the shared Redis limiter in rate-limit-redis.ts
+ * is used instead and this one is its fallback (ADR 0010).
  */
 export interface RateLimitDecision {
   allowed: boolean;
@@ -11,7 +11,16 @@ export interface RateLimitDecision {
   retryAfterSeconds: number;
 }
 
-export class FixedWindowLimiter {
+/** What routes use: the in-memory limiter answers at once, the Redis one asynchronously. */
+export interface RateLimiter {
+  hit(key: string): RateLimitDecision | Promise<RateLimitDecision>;
+  /** Clear the counter for a key (e.g. reset failed-login count after success). */
+  reset(key: string): void | Promise<void>;
+  /** Drop expired in-memory windows; called periodically. */
+  sweep(): void;
+}
+
+export class FixedWindowLimiter implements RateLimiter {
   private readonly hits = new Map<string, { count: number; resetAt: number }>();
   private readonly limit: number;
   private readonly windowMs: number;

@@ -1,19 +1,19 @@
 import type { AppConfig } from "../config.ts";
 import type { ContentStore } from "../content/store.ts";
 import type { Db } from "../db/database.ts";
-import type { FixedWindowLimiter } from "../http/rate-limit.ts";
+import type { RateLimiter } from "../http/rate-limit.ts";
 import type { Logger } from "../observability/logger.ts";
 import type { Metrics } from "../observability/metrics.ts";
 
 export interface Limiters {
   /** Account creation per client IP. */
-  register: FixedWindowLimiter;
+  register: RateLimiter;
   /** Login attempts per client IP (generous: a classroom may share one NAT address). */
-  loginByIp: FixedWindowLimiter;
+  loginByIp: RateLimiter;
   /** Failed logins per account — the main brute-force defence. */
-  loginFailuresByEmail: FixedWindowLimiter;
+  loginFailuresByEmail: RateLimiter;
   /** Coarse abuse guard for all API requests per IP. */
-  api: FixedWindowLimiter;
+  api: RateLimiter;
 }
 
 export interface AppDeps {

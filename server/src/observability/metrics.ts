@@ -24,6 +24,12 @@ export class Metrics {
   private readonly requests = new Map<string, { labels: Record<string, string>; value: number }>();
   private readonly durations = new Map<string, { labels: Record<string, string>; hist: Histogram }>();
   private readonly startedAt = Date.now();
+  private readonly collectors: (() => string[])[] = [];
+
+  /** Add lines rendered on every scrape (e.g. tracing and rate-limit store counters). */
+  addCollector(collect: () => string[]): void {
+    this.collectors.push(collect);
+  }
 
   observeRequest(method: string, route: string, status: number, seconds: number): void {
     const reqLabels = { method, route, status: String(status) };
@@ -71,6 +77,7 @@ export class Metrics {
     lines.push("# HELP devforge_process_uptime_seconds Seconds since the server started.");
     lines.push("# TYPE devforge_process_uptime_seconds gauge");
     lines.push(`devforge_process_uptime_seconds ${Math.round((Date.now() - this.startedAt) / 1000)}`);
+    for (const collect of this.collectors) lines.push(...collect());
     return `${lines.join("\n")}\n`;
   }
 }

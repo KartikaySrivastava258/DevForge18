@@ -11,12 +11,14 @@ import type { Db } from "./db/database.ts";
 import type { JsonResult, RequestContext } from "./http/context.ts";
 import { parseCookies } from "./http/cookies.ts";
 import { HttpError, forbidden, unauthorized } from "./http/errors.ts";
-import { FixedWindowLimiter } from "./http/rate-limit.ts";
+import { FixedWindowLimiter, type RateLimiter } from "./http/rate-limit.ts";
+import { RedisFixedWindowLimiter, type RedisRateLimitStore } from "./http/rate-limit-redis.ts";
 import { Router } from "./http/router.ts";
 import { applySecurityHeaders, clientIp, csrfProblem } from "./http/security.ts";
 import { serveStatic } from "./http/static.ts";
 import type { Logger } from "./observability/logger.ts";
 import { Metrics } from "./observability/metrics.ts";
+import type { Tracer } from "./observability/tracing.ts";
 import { registerAdminRoutes } from "./routes/admin.ts";
 import { registerAuthRoutes } from "./routes/auth.ts";
 import { registerContentRoutes } from "./routes/content.ts";
@@ -32,13 +34,29 @@ import { registerCmsRoutes } from "./routes/cms.ts";
 const MUTATING = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 const MINUTE = 60_000;
 
+/** Limit and window of each limiter (ADR 0004). */
+const LIMITS: Record<keyof Limiters, { limit: number; windowMs: number }> = {
+  register: { limit: 60, windowMs: 60 * MINUTE },
+  loginByIp: { limit: 200, windowMs: 15 * MINUTE },
+  loginFailuresByEmail: { limit: 10, windowMs: 15 * MINUTE },
+  api: { limit: 1200, windowMs: MINUTE },
+};
+
+const mapLimits = (make: (name: keyof Limiters, limit: number, windowMs: number) => RateLimiter): Limiters => ({
+  register: make("register", LIMITS.register.limit, LIMITS.register.windowMs),
+  loginByIp: make("loginByIp", LIMITS.loginByIp.limit, LIMITS.loginByIp.windowMs),
+  loginFailuresByEmail: make("loginFailuresByEmail", LIMITS.loginFailuresByEmail.limit, LIMITS.loginFailuresByEmail.windowMs),
+  api: make("api", LIMITS.api.limit, LIMITS.api.windowMs),
+});
+
+/** Per-process limiters in memory (one instance, or REDIS_URL not set). */
 export function defaultLimiters(): Limiters {
-  return {
-    register: new FixedWindowLimiter(60, 60 * MINUTE),
-    loginByIp: new FixedWindowLimiter(200, 15 * MINUTE),
-    loginFailuresByEmail: new FixedWindowLimiter(10, 15 * MINUTE),
-    api: new FixedWindowLimiter(1200, MINUTE),
-  };
+  return mapLimits((_name, limit, windowMs) => new FixedWindowLimiter(limit, windowMs));
+}
+
+/** The same limits, counted in Redis and shared by every instance (ADR 0010). */
+export function sharedLimiters(store: RedisRateLimitStore): Limiters {
+  return mapLimits((name, limit, windowMs) => new RedisFixedWindowLimiter(name, limit, windowMs, store));
 }
 
 /** Loopback and private-network addresses (used to restrict /metrics). */
@@ -48,6 +66,13 @@ export function isPrivateAddress(ip: string): boolean {
   const m = /^172\.(\d+)\./.exec(v4);
   if (m && Number(m[1]) >= 16 && Number(m[1]) <= 31) return true;
   return ip === "::1" || /^f[cd][0-9a-f]{2}:/i.test(ip);
+}
+
+/** The scheme the client used: https behind a trusted proxy that says so, or on a TLS socket. */
+function requestScheme(req: IncomingMessage, trustProxy: boolean): "http" | "https" {
+  const forwarded = req.headers["x-forwarded-proto"];
+  if (trustProxy && typeof forwarded === "string") return forwarded.split(",")[0]?.trim() === "https" ? "https" : "http";
+  return (req.socket as { encrypted?: boolean }).encrypted ? "https" : "http";
 }
 
 export interface App {
@@ -63,8 +88,15 @@ export function createApp(input: {
   content: ContentStore;
   logger: Logger;
   limiters?: Limiters;
+  /** Set when OpenTelemetry tracing is on (OTEL_EXPORTER_OTLP_ENDPOINT); see observability/tracing.ts. */
+  tracer?: Tracer;
+  /** The Redis store behind sharedLimiters(), when REDIS_URL is set; its health goes to /metrics. */
+  rateLimitStore?: RedisRateLimitStore;
 }): App {
   const metrics = new Metrics();
+  const { tracer, rateLimitStore } = input;
+  if (tracer) metrics.addCollector(() => tracer.metricLines());
+  if (rateLimitStore) metrics.addCollector(() => rateLimitStore.metricLines());
   const deps: AppDeps = { ...input, metrics, limiters: input.limiters ?? defaultLimiters() };
   const { config, db, logger } = deps;
   const cookieName = sessionCookieName(config.cookieSecure);
@@ -121,14 +153,27 @@ export function createApp(input: {
     let route = "unmatched";
     res.setHeader("X-Request-Id", requestId);
     applySecurityHeaders(res, config.cookieSecure);
+    const rawUrl = req.url ?? "/";
+    // One SERVER span per request when tracing is on; it joins the caller's trace if a traceparent came in.
+    const span = tracer?.startServerSpan({
+      method,
+      path: rawUrl.split("?")[0] ?? "/",
+      scheme: requestScheme(req, config.trustProxy),
+      httpVersion: req.httpVersion,
+      traceparent: req.headers.traceparent,
+      tracestate: req.headers.tracestate,
+      requestId,
+    });
+    const traceFields = span ? { traceId: span.traceId, spanId: span.spanId } : {};
 
     res.on("finish", () => {
       const seconds = Number(process.hrtime.bigint() - started) / 1e9;
       metrics.observeRequest(method, route, res.statusCode, seconds);
-      logger.info("request", { requestId, method, route, status: res.statusCode, ms: Math.round(seconds * 1000) });
+      // Span name and http.route use the route template; requests that matched no route get the method only.
+      span?.end({ route: route === "unmatched" || route === "static" ? undefined : route, statusCode: res.statusCode });
+      logger.info("request", { requestId, ...traceFields, method, route, status: res.statusCode, ms: Math.round(seconds * 1000) });
     });
 
-    const rawUrl = req.url ?? "/";
     if (rawUrl.length > 4096) {
       sendJson(res, errorResult(new HttpError(414, "uri_too_long", "URL is too long."), requestId));
       return;
@@ -177,7 +222,7 @@ export function createApp(input: {
 
     let result: JsonResult;
     try {
-      const apiLimit = deps.limiters.api.hit(`api:${ip}`);
+      const apiLimit = await deps.limiters.api.hit(`api:${ip}`);
       if (!apiLimit.allowed) {
         throw new HttpError(429, "rate_limited", "Too many requests. Slow down and try again shortly.", {
           retryAfterSeconds: apiLimit.retryAfterSeconds,
@@ -209,7 +254,7 @@ export function createApp(input: {
           if (retry) result.headers = { "Retry-After": String(retry) };
         }
       } else {
-        logger.error("unhandled error", { requestId, route, err });
+        logger.error("unhandled error", { requestId, ...traceFields, route, err });
         result = errorResult(new HttpError(500, "internal_error", "Something went wrong on our side. Please try again."), requestId);
       }
     }
