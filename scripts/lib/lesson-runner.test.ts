@@ -270,7 +270,8 @@ describe("executed lessons and labs reproduce their documented output", { skip: 
     // A lesson that continues from a Docker lesson replays its docker commands too, so it needs the same opt-in.
     const needsDocker = lesson.track === "docker" || usesDocker([...setupBlocks, ...ownBlocks]);
     const missingTools = toolsUsed([...setupBlocks, ...ownBlocks]).filter((tool) => !hasCommand(tool) || (tool === "grafana" && !process.env.GRAFANA_HOME));
-    const needsRedis = lesson.track === "redis";
+    // The host Redis (redis-cli outside a container); a lesson that runs Redis in Docker needs Docker instead.
+    const needsRedis = usesRedis([...setupBlocks, ...ownBlocks]);
     const skip =
       needsGit && !hasCommand("git")
         ? "git not installed"

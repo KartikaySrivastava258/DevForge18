@@ -1,0 +1,4 @@
+alt: 'The application first reads the key course:CS101 from Redis (step 1). On a miss it selects the row from the courses table in PostgreSQL, the source of truth (step 2), and stores a copy in Redis with a 60-second TTL (step 3). A separate write path updates PostgreSQL in a transaction and then deletes the cached key.'
+caption: 'Cache-aside: Redis holds copies; PostgreSQL holds the truth; every write removes the copy it makes stale.'
+credit: DevForge 18 content team
+licence: project-content
