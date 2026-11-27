@@ -602,3 +602,17 @@
 .adr { display: grid; gap: 1rem; margin-top: 1rem; }
 .adr textarea, .adr input { width: 100%; }
 .adr__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* Administration and content editor (institutional screens) */
+.table-wrap:has(.admin-table) { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-m); }
+.admin-table { font-size: 0.9375rem; min-width: 44rem; }
+.admin-table code { white-space: nowrap; }
+.admin-table th, .admin-table td { text-align: left; vertical-align: middle; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--line); }
+.admin-table thead th { color: var(--muted); font-weight: 500; background: var(--panel); }
+.admin-table tbody tr:last-child > * { border-bottom: 0; }
+.admin-table__meta { font-family: var(--font-mono); font-size: var(--step--1); overflow-wrap: anywhere; max-width: 22rem; }
+.admin-pager { margin: var(--space-3) 0 var(--space-7); }
+.cms-editor { width: 100%; min-height: 28rem; font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.5; padding: var(--space-3); border-radius: var(--radius-m); border: 1px solid var(--line-strong); background: var(--panel); color: var(--text); tab-size: 2; }
+.cms-editor:focus { outline: 2px solid var(--focus); outline-offset: 0; }
+.cms-note { padding: var(--space-2) var(--space-3); min-height: 5rem; }
+.cms-errors { margin: 0; padding-left: 1.1rem; font-family: var(--font-mono); font-size: var(--step--1); }

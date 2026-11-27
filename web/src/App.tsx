@@ -19,6 +19,8 @@ import { SearchPage } from "./pages/Search.tsx";
 import { SimulationPage } from "./pages/Simulation.tsx";
 import { TrackPage } from "./pages/Track.tsx";
 import { TracksPage } from "./pages/Tracks.tsx";
+import { AdminPage } from "./pages/Admin.tsx";
+import { ContentEditorPage } from "./pages/ContentEditor.tsx";
 
 function NotFoundPage() {
   useTitle("Page not found");
@@ -51,6 +53,9 @@ function Routes({ pathname }: { pathname: string }) {
   if (pathname === "/login") return <LoginPage />;
   if (pathname === "/register") return <RegisterPage />;
   if (pathname === "/dashboard") return <DashboardPage />;
+  // Institutional screens (admin, content editor).
+  if (pathname === "/admin") return <AdminPage />;
+  if (pathname === "/content-editor") return <ContentEditorPage />;
   return <NotFoundPage />;
 }
 

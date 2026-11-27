@@ -22,7 +22,7 @@ export interface Harness {
 }
 
 /** Runs the real server (built frontend + compiled content, in-memory DB) and a headless Chromium. */
-export async function startHarness(): Promise<Harness> {
+export async function startHarness(overrides: Partial<AppConfig> = {}): Promise<Harness> {
   // Bind the port first so the app is created with the exact origin the browser will send.
   let app: App | undefined;
   const server = createServer((req, res) => {
@@ -48,6 +48,7 @@ export async function startHarness(): Promise<Harness> {
     logLevel: "error",
     contentPath: join(root, "build", "content.json"),
     webRoot: join(root, "build", "web"),
+    ...overrides,
   };
   const db = openDatabase(":memory:");
   migrate(db);

@@ -39,3 +39,16 @@ export function NotFoundState() {
     </div>
   );
 }
+
+/** Shown to signed-in users whose role does not allow a page (the server enforces the same rule). */
+export function NotAllowedState({ message }: { message: string }) {
+  return (
+    <div className="state" role="alert">
+      <h2>You are not allowed to use this page</h2>
+      <p>{message}</p>
+      <p>
+        <Link to="/dashboard">Go to my progress</Link>
+      </p>
+    </div>
+  );
+}
