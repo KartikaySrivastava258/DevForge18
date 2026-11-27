@@ -1,0 +1,13 @@
+// Deploys main straight to production. Nobody approves, nobody checks that it started.
+pipeline {
+  agent any
+  stages {
+    stage('Deploy') {
+      steps {
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+          sh 'kubectl apply -n production -f k8s/'
+        }
+      }
+    }
+  }
+}

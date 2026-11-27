@@ -1,0 +1,65 @@
+// Deployment pipeline for the Campus Notes API: test, deploy the commit's image to staging, wait for a person
+// to approve, deploy the same image to production. A rollout that does not become ready is rolled back.
+pipeline {
+  agent none // the approval below must not hold an executor while it waits
+  options {
+    timeout(time: 2, unit: 'HOURS') // includes the time waiting for approval
+    disableConcurrentBuilds()       // two deployments to the same namespaces must never overlap
+  }
+  stages {
+    stage('Test') {
+      agent any
+      steps {
+        sh 'npm ci'
+        sh 'npm run test:ci'
+      }
+      post {
+        always {
+          junit 'reports/*.xml'
+        }
+        cleanup {
+          deleteDir()
+        }
+      }
+    }
+    stage('Deploy to staging') {
+      agent any
+      steps {
+        script {
+          // The image the container pipeline pushed for this commit; staging and production get the same one.
+          env.IMAGE = "${env.REGISTRY}/campus-notes-api:sha-" + env.GIT_COMMIT.substring(0, 7)
+        }
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+          sh 'bash scripts/deploy.sh staging "$IMAGE"'
+        }
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'out/*.yaml', allowEmptyArchive: true
+        }
+        cleanup {
+          deleteDir()
+        }
+      }
+    }
+    stage('Deploy to production') {
+      // Evaluated before an agent is allocated: nobody's executor waits for the reviewer.
+      input {
+        id 'Promote'
+        message 'Staging is healthy. Deploy this image to production?'
+        ok 'Deploy to production'
+      }
+      agent any
+      steps {
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+          sh 'bash scripts/deploy.sh production "$IMAGE"'
+        }
+      }
+      post {
+        cleanup {
+          deleteDir()
+        }
+      }
+    }
+  }
+}

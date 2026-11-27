@@ -1,0 +1,88 @@
+// Container pipeline for the Campus Notes API (a multibranch job: every branch is built and tested,
+// only main is pushed). REGISTRY comes from the Jenkins configuration; the push credentials stay in Jenkins.
+pipeline {
+  agent any
+  options {
+    timeout(time: 20, unit: 'MINUTES')
+    disableConcurrentBuilds()
+  }
+  environment {
+    IMAGE = "${env.REGISTRY}/campus-notes-api" // not a secret, so Groovy interpolation is fine here
+  }
+  stages {
+    stage('Test') {
+      steps {
+        sh 'npm ci'
+        sh 'npm run test:ci'
+      }
+      post {
+        always {
+          junit 'reports/*.xml'
+        }
+      }
+    }
+    stage('Build image') {
+      steps {
+        script {
+          // One tag per commit, never reused: sha-<first 7 characters of the commit>.
+          env.TAG = 'sha-' + env.GIT_COMMIT.substring(0, 7)
+        }
+        sh 'docker build --build-arg REVISION="$GIT_COMMIT" -t "$IMAGE:$TAG" .'
+      }
+    }
+    stage('Smoke test') {
+      steps {
+        // The image's HEALTHCHECK calls /health; wait until Docker reports the container healthy.
+        sh '''
+          docker run -d --name "smoke-$BUILD_TAG" "$IMAGE:$TAG"
+          for i in $(seq 1 30); do
+            [ "$(docker inspect --format '{{.State.Health.Status}}' "smoke-$BUILD_TAG")" = healthy ] && exit 0
+            sleep 1
+          done
+          docker logs "smoke-$BUILD_TAG"
+          exit 1
+        '''
+      }
+      post {
+        always {
+          sh 'docker rm -f "smoke-$BUILD_TAG" > /dev/null 2>&1 || true'
+        }
+      }
+    }
+    stage('Push') {
+      when {
+        branch 'main'
+      }
+      environment {
+        // This build's own Docker login, in its workspace: builds of other branches run on the same agent at
+        // the same time and must not see it, overwrite it or log it out halfway through a push.
+        DOCKER_CONFIG = "${env.WORKSPACE}/.docker-login"
+      }
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'registry-push', usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASSWORD')]) {
+          // Single quotes and --password-stdin: the password reaches docker through the shell's environment
+          // and a pipe, never through Groovy or a command line that other processes could see.
+          sh 'echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY" -u "$REGISTRY_USER" --password-stdin'
+        }
+        sh 'docker push "$IMAGE:$TAG"'
+        sh 'docker tag "$IMAGE:$TAG" "$IMAGE:main" && docker push "$IMAGE:main"'
+      }
+      post {
+        always {
+          sh 'docker logout "$REGISTRY" > /dev/null 2>&1 || true'
+          // Only main builds create the local main tag, so only they remove it.
+          sh 'docker rmi "$IMAGE:main" > /dev/null 2>&1 || true'
+        }
+      }
+    }
+  }
+  post {
+    always {
+      // The agent is shared: leave none of this build's images behind.
+      sh 'docker rmi "$IMAGE:$TAG" > /dev/null 2>&1 || true'
+    }
+    cleanup {
+      deleteDir()
+    }
+  }
+}

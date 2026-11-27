@@ -1,0 +1,16 @@
+// Builds and pushes the image on every branch. Works on the maintainer's machine.
+pipeline {
+  agent any
+  environment {
+    REGISTRY_PASSWORD = credentials('registry-push')
+  }
+  stages {
+    stage('Image') {
+      steps {
+        sh "docker login ${env.REGISTRY} -u ci-bot -p ${REGISTRY_PASSWORD_PSW}"
+        sh "docker build -t ${env.REGISTRY}/campus-notes-api:latest ."
+        sh "docker push ${env.REGISTRY}/campus-notes-api:latest"
+      }
+    }
+  }
+}

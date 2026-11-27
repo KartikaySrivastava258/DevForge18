@@ -56,9 +56,9 @@ labs:
   - { title: "Store credentials safely", level: advanced, mode: local, status: available, lab: jenkins-store-credentials-safely }
   - { title: "Size agents and executors for a build queue", level: intermediate, mode: simulation, status: available, lab: jenkins-labels-and-executors }
 projects:
-  - { title: "Jenkins CI pipeline for a backend", level: beginner, status: planned }
-  - { title: "Container build pipeline", level: intermediate, status: planned }
-  - { title: "Jenkins + Kubernetes deployment lab", level: advanced, status: planned }
+  - { title: "Jenkins CI pipeline for a backend", level: beginner, status: available, project: jenkins-backend-ci }
+  - { title: "Container build pipeline", level: intermediate, status: available, project: jenkins-container-pipeline }
+  - { title: "Jenkins + Kubernetes deployment lab", level: advanced, status: available, project: jenkins-k8s-deploy }
 resources:
   - title: Jenkins user documentation
     url: https://www.jenkins.io/doc/

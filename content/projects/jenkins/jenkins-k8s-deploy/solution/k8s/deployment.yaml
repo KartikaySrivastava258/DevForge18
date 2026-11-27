@@ -1,0 +1,50 @@
+# The image is filled in by the pipeline (IMAGE_PLACEHOLDER → $REGISTRY/campus-notes-api:sha-<commit>).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: campus-notes-api
+  labels:
+    app.kubernetes.io/name: campus-notes-api
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: campus-notes-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0 # never go below two ready pods during a rollout
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: campus-notes-api
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: api
+          image: IMAGE_PLACEHOLDER
+          ports:
+            - containerPort: 3000
+          readinessProbe: # traffic only once /health answers
+            httpGet:
+              path: /health
+              port: 3000
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false

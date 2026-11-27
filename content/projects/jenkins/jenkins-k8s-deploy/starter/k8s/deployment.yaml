@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: campus-notes-api
+  labels:
+    app.kubernetes.io/name: campus-notes-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: campus-notes-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: campus-notes-api
+    spec:
+      containers:
+        - name: api
+          image: registry.campus.example/campus-notes-api:latest
+          ports:
+            - containerPort: 3000

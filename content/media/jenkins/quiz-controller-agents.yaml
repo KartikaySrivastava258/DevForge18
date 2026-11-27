@@ -1,0 +1,4 @@
+alt: 'Four numbered boxes. An arrow labelled "Jenkinsfile, webhook or polling" goes from box 1 to box 2. An arrow labelled "@Library(''devforge-lib@v1.1'')" goes from box 4 to box 2. Box 2 is described as having 0 executors of its own. An arrow labelled "connects (WebSocket)" goes from box 3 to box 2, and an arrow labelled "runs a stage on an executor (label linux)" goes from box 2 to box 3. The boxes are not named; the quiz asks which part of the installation each number is.'
+caption: 'Which part of the Jenkins installation is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

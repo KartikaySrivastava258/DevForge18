@@ -1,0 +1,50 @@
+// CI for the Campus Notes API: install exactly the locked dependencies, lint and test side by side, then
+// package the build. Test results are published whatever happens, and only a tested build is archived.
+pipeline {
+  agent any
+  options {
+    timeout(time: 15, unit: 'MINUTES')            // a stuck test must not hold an executor forever
+    buildDiscarder(logRotator(numToKeepStr: '20')) // keep the last 20 builds, not every build ever
+    disableConcurrentBuilds()                      // one build of this branch at a time
+  }
+  stages {
+    stage('Install') {
+      steps {
+        sh 'npm ci'
+      }
+    }
+    stage('Checks') {
+      parallel {
+        stage('Lint') {
+          steps {
+            sh 'npm run lint'
+          }
+        }
+        stage('Test') {
+          steps {
+            sh 'npm run test:ci'
+          }
+        }
+      }
+    }
+    stage('Package') {
+      steps {
+        sh 'npm run build'
+        // Single quotes: the shell, not Groovy, expands BUILD_NUMBER (a habit that matters for secrets).
+        sh 'tar -czf "campus-notes-api-$BUILD_NUMBER.tar.gz" -C dist .'
+        archiveArtifacts artifacts: 'campus-notes-api-*.tar.gz', fingerprint: true
+      }
+    }
+  }
+  post {
+    always {
+      junit 'reports/*.xml'
+    }
+    failure {
+      echo 'The build failed: open the Test Result page or the failing stage log.'
+    }
+    cleanup {
+      deleteDir() // the next build starts from a clean workspace
+    }
+  }
+}

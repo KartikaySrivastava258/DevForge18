@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300">
+  <!-- Numbered diagram for the Jenkins track quiz: label the parts of a Jenkins installation. -->
+  <rect class="f-box-faint" x="20" y="40" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="95" y="87" text-anchor="middle">1</text>
+  <rect class="f-box-faint" x="305" y="110" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="380" y="157" text-anchor="middle">2</text>
+  <rect class="f-box-faint" x="590" y="110" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="665" y="157" text-anchor="middle">3</text>
+  <rect class="f-box-faint" x="20" y="190" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="95" y="237" text-anchor="middle">4</text>
+  <g>
+    <path class="f-arrow" d="M172 90 L297 135"/>
+    <polygon class="f-head" points="304,138 295,139 298,131"/>
+  </g>
+  <text class="f-small" x="235" y="90" text-anchor="middle">Jenkinsfile,</text>
+  <text class="f-small" x="235" y="104" text-anchor="middle">webhook or polling</text>
+  <g>
+    <path class="f-arrow" d="M172 228 L297 168"/>
+    <polygon class="f-head" points="304,165 298,172 295,164"/>
+  </g>
+  <text class="f-small f-mono" x="230" y="245" text-anchor="middle">@Library('devforge-lib@v1.1')</text>
+  <g>
+    <path class="f-arrow" d="M588 135 L463 135"/>
+    <polygon class="f-head" points="456,135 464,130.5 464,139.5"/>
+  </g>
+  <text class="f-small" x="522" y="125" text-anchor="middle">connects (WebSocket)</text>
+  <g>
+    <path class="f-arrow" d="M457 170 L582 170"/>
+    <polygon class="f-head" points="589,170 581,174.5 581,165.5"/>
+  </g>
+  <text class="f-small" x="522" y="190" text-anchor="middle">runs a stage on an</text>
+  <text class="f-small" x="522" y="204" text-anchor="middle">executor (label linux)</text>
+  <text class="f-small" x="380" y="215" text-anchor="middle">0 executors of its own</text>
+</svg>

@@ -1,0 +1,188 @@
+id: jenkins-quiz
+track: jenkins
+title: Jenkins — track quiz
+description: Thirteen questions from running Jenkins and writing Jenkinsfiles to configuration as code, agents, shared libraries and security. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: controller-role
+    type: single
+    level: beginner
+    lesson: jenkins-in-docker
+    prompt: In a Jenkins installation set up as the Jenkins documentation recommends, where do the build steps run?
+    options:
+      - { id: a, text: "On the controller, which also stores jobs, credentials and build history" }
+      - { id: b, text: "On agents; the controller schedules builds and stores configuration, and runs no builds itself" }
+      - { id: c, text: "In the browser of the person who started the build" }
+    answer: b
+    explanation: Build steps run whatever code is in a repository. On the controller that code could read every credential and job, so real installations give the built-in node no executors and use agents.
+
+  - id: pin-jenkins
+    type: single
+    level: beginner
+    lesson: jenkins-in-docker
+    prompt: Why do the lessons start jenkins/jenkins:2.580.2-lts-jdk21 instead of jenkins/jenkins:lts?
+    options:
+      - { id: a, text: "The lts tag does not exist" }
+      - { id: b, text: "A moving tag changes the version underneath you; a pinned release is upgraded deliberately, after reading what changed" }
+      - { id: c, text: "Pinned images start faster" }
+    answer: b
+    explanation: Tags such as latest and lts move to new releases. Pinning keeps every restart on the version you tested.
+
+  - id: groovy-quotes
+    type: single
+    level: beginner
+    lesson: jenkins-pipeline-as-code
+    prompt: DEPLOY_TOKEN comes from credentials('deploy-token'). Which sh step passes it safely to curl?
+    options:
+      - { id: a, text: "sh \"curl -H 'Authorization: Bearer ${DEPLOY_TOKEN}' https://deploy.example.invalid/\"" }
+      - { id: b, text: "sh 'curl -H \"Authorization: Bearer $DEPLOY_TOKEN\" https://deploy.example.invalid/'" }
+      - { id: c, text: "Write the token into the Jenkinsfile's environment block" }
+    answer: b
+    explanation: In a double-quoted string Groovy substitutes the secret into the command text before the shell runs. With single quotes the command text only contains $DEPLOY_TOKEN, and the shell reads the value from the environment.
+
+  - id: build-order
+    type: ordering
+    level: beginner
+    lesson: jenkins-pipeline-as-code
+    prompt: Put a run of a "Pipeline script from SCM" job in order.
+    items:
+      - { id: fetch, text: "Jenkins fetches the Jenkinsfile from the repository" }
+      - { id: agent, text: "An executor is allocated for agent any" }
+      - { id: stages, text: "The stages run one after another" }
+      - { id: post, text: "The post section runs its always, success or failure steps" }
+    order: [fetch, agent, stages, post]
+    explanation: The pipeline definition lives in the repository, so Jenkins reads it first; post runs after the stages finish, with conditions that depend on the outcome.
+
+  - id: parallel-executors
+    type: single
+    level: beginner
+    lesson: jenkins-parallel-artifacts-tests
+    prompt: A stage has three parallel branches that take 2, 5 and 3 minutes, and only one executor is free. Roughly how long does the stage take?
+    options:
+      - { id: a, text: "About 5 minutes, the longest branch" }
+      - { id: b, text: "About 10 minutes: extra branches wait for a free executor, so they run one after another" }
+      - { id: c, text: "About 2 minutes" }
+    answer: b
+    explanation: Parallel only helps when there is capacity. With enough free executors the stage would take about as long as its slowest branch.
+
+  - id: pipeline-steps
+    type: matching
+    level: beginner
+    lesson: jenkins-parallel-artifacts-tests
+    prompt: Match each piece of a Jenkinsfile with what it does.
+    left:
+      - { id: archive, text: "archiveArtifacts artifacts: 'dist/*.tar.gz'" }
+      - { id: fingerprint, text: "fingerprint: true" }
+      - { id: junit, text: "junit 'reports/*.xml'" }
+      - { id: always, text: "post { always { … } }" }
+    right:
+      - { id: keep, text: "Keeps files from the workspace for download from the build's page" }
+      - { id: track, text: "Records which builds produced and used a file" }
+      - { id: report, text: "Reads JUnit XML and publishes the test results; a failing test marks the build unstable" }
+      - { id: whatever, text: "Runs whatever the outcome of the build" }
+      - { id: parallel, text: "Runs two stages at the same time" }
+    pairs: { archive: keep, fingerprint: track, junit: report, always: whatever }
+    explanation: Archive what someone will download or deploy, publish test results in post always so the report exists exactly when tests fail, and fingerprint artefacts to trace them between builds.
+
+  - id: crumb-output
+    type: output
+    level: intermediate
+    lesson: jenkins-configuration-as-code
+    prompt: A script starts the job hello twice with a user name and password — first without, then with a CSRF crumb and its session cookie. What does the output show?
+    command: curl -X POST -u "$A" "$J/job/hello/build" (twice), then read the result
+    output: |
+      without a crumb: HTTP 403
+      with a crumb:    HTTP 201
+      {"_class":"org.jenkinsci.plugins.workflow.job.WorkflowRun","result":"SUCCESS"}
+      Hello from a job defined as code
+      Finished: SUCCESS
+    options:
+      - { id: a, text: "The user lacks permission to build" }
+      - { id: b, text: "CSRF protection refused the first request; with the crumb, Jenkins queued build 1 (201 Created), which succeeded" }
+      - { id: c, text: "The job ran twice" }
+    answer: b
+    explanation: Password-authenticated changing requests need a crumb. Scripts usually authenticate with an API token instead, which is exempt from the crumb.
+
+  - id: pin-plugins
+    type: single
+    level: intermediate
+    lesson: jenkins-configuration-as-code
+    prompt: Why does plugins.txt list exact plugin versions?
+    options:
+      - { id: a, text: "jenkins-plugin-cli refuses names without versions" }
+      - { id: b, text: "Without them each image build may install newer plugins, so two \"identical\" Jenkins images can behave differently; pins make upgrades deliberate and reviewable" }
+      - { id: c, text: "Pinned plugins never have security problems" }
+    answer: b
+    explanation: Pinning is not a security guarantee — read the security advisories and update the pins on purpose. Dependencies of the pinned plugins are still chosen by the plugin CLI.
+
+  - id: installation-diagram
+    type: diagram
+    level: intermediate
+    lesson: jenkins-agents-and-labels
+    prompt: Label the numbered parts of this Jenkins installation.
+    media: media:jenkins/quiz-controller-agents.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: repo, text: "The application's Git repository" }
+      - { id: controller, text: "The controller (built-in node with 0 executors)" }
+      - { id: agent, text: "An inbound agent with the label linux" }
+      - { id: library, text: "A shared library repository" }
+      - { id: console, text: "The script console" }
+    answers: { "1": repo, "2": controller, "3": agent, "4": library }
+    explanation: The controller reads the Jenkinsfile and the library code, schedules the work and runs none of it; the inbound agent opens the connection to the controller and runs the stages that ask for its label.
+
+  - id: missing-label
+    type: single
+    level: intermediate
+    lesson: jenkins-agents-and-labels
+    prompt: A pipeline asks for agent { label 'windwos' } (a typo). What happens?
+    options:
+      - { id: a, text: "It runs on any agent" }
+      - { id: b, text: "It waits in the queue, and the queue's reason says there are no nodes with that label" }
+      - { id: c, text: "The declarative linter rejects the label" }
+    answer: b
+    explanation: Labels are only matched when the build is scheduled. A typo looks exactly like missing capacity, so read the queue's reason first.
+
+  - id: library-version
+    type: single
+    level: advanced
+    lesson: jenkins-shared-libraries
+    prompt: The shared library devforge-lib defaults to v1.0. One team wants to try v1.1 first. What do they change?
+    options:
+      - { id: a, text: "The library's default version, for everyone" }
+      - { id: b, text: "Their own Jenkinsfile, to @Library('devforge-lib@v1.1') _ — other pipelines stay on v1.0 (if the library allows overriding the version)" }
+      - { id: c, text: "They copy the library into their repository" }
+    answer: b
+    explanation: Each build records which library revision it resolved. Pinning per pipeline lets teams move one at a time.
+
+  - id: api-tokens
+    type: multiple
+    level: advanced
+    lesson: jenkins-securing-jenkins
+    prompt: Why should a deployment script use its own API token rather than a person's password? Select all that apply.
+    options:
+      - { id: a, text: "A token can be revoked on its own without changing the person's password" }
+      - { id: b, text: "A token cannot be used to log in to the web interface" }
+      - { id: c, text: "Requests with an API token need no CSRF crumb" }
+      - { id: d, text: "A token gives the script administrator rights automatically" }
+    answers: [a, b, c]
+    explanation: Tokens are per purpose and revocable, and the account behind them should have only the permissions the script needs — such as Job/Build on one job.
+
+  - id: script-console
+    type: single
+    level: advanced
+    lesson: jenkins-securing-jenkins
+    prompt: An account is granted Overall/Administer "just for the deployment script". Why is that a serious risk?
+    options:
+      - { id: a, text: "It makes builds slower" }
+      - { id: b, text: "Administer includes the script console, which runs any Groovy code inside the controller with access to every credential and file Jenkins has" }
+      - { id: c, text: "Administrators cannot start jobs" }
+    answer: b
+    explanation: Treat Overall/Administer as full control of the server and every secret in it; give scripts Overall/Read, Job/Read and Job/Build, ideally on one job only.
