@@ -144,7 +144,7 @@ export function usesDocker(blocks: RunBlock[]): boolean {
 export function lessonNeeds(track: string, order: number): { api: boolean; apiPort: number; timeoutMs: number } {
   // Only the reverse-proxy lesson (order 2) proxies to an API, which learners run on port 8080.
   const nginxProxy = track === "nginx" && order === 2;
-  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 300_000, opentelemetry: 300_000, kafka: 300_000, postman: 300_000, airflow: 600_000, mlflow: 300_000, "langchain-llamaindex": 300_000, n8n: 300_000, docker: 300_000 };
+  const timeouts: Record<string, number> = { kubernetes: 900_000, jenkins: 300_000, terraform: 180_000, "prometheus-grafana": 300_000, opentelemetry: 300_000, kafka: 600_000, postman: 300_000, airflow: 600_000, mlflow: 300_000, "langchain-llamaindex": 300_000, n8n: 300_000, docker: 300_000 };
   return {
     api: track === "postman" || track === "prometheus-grafana" || nginxProxy,
     apiPort: nginxProxy ? 8080 : 0,
@@ -185,6 +185,14 @@ export function usesRedis(blocks: RunBlock[]): boolean {
 
 export function usesPostgres(blocks: RunBlock[]): boolean {
   return blocks.some((b) => b.kind === "sql");
+}
+
+/**
+ * Bash blocks that use the host's PostgreSQL (createdb, dropdb or psql as commands, e.g. Terraform's pg backend).
+ * psql run inside a container (docker exec/run …) talks to that container's own database, so it does not count.
+ */
+export function usesHostPostgres(blocks: RunBlock[]): boolean {
+  return blocks.some((b) => b.code.split("\n").some((line) => /(^|[\s;&|(])(createdb|dropdb|psql)\s/.test(line) && !/\bdocker\s+(run|exec|compose)\b/.test(line)));
 }
 
 export interface RunOptions {

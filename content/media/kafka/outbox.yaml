@@ -1,0 +1,4 @@
+alt: 'The order service places order o3. In one PostgreSQL transaction it inserts the order into the orders table and an outbox row with the event ID, o3 and the payload. A relay reads outbox rows, publishes them to the Kafka topic order-events and then marks them as published. The shipping service consumes the topic and skips event IDs it has already handled. A dual write, committing and then publishing, can lose events; the outbox cannot, it can only repeat them.'
+caption: 'Order and event are committed together; the relay publishes at least once and consumers deduplicate by event ID.'
+credit: DevForge 18 content team
+licence: project-content

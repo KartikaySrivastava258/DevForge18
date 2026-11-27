@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, lessonNeeds, toolsUsed, usesDocker, outputMatches, pipesIntoQuietGrep, redisTestingEnabled, runLesson, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
+import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, lessonNeeds, toolsUsed, usesDocker, outputMatches, pipesIntoQuietGrep, redisTestingEnabled, runLesson, usesHostPostgres, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
 import { splitFrontMatter } from "./markdown.ts";
 import { startPracticeServer } from "./practice-server.ts";
 import { scopeFromEnv } from "./affected.ts";
@@ -193,6 +193,14 @@ describe("kind clusters", () => {
   });
 });
 
+describe("host PostgreSQL", () => {
+  it("is needed for psql, createdb or dropdb run on the host, not inside a container", () => {
+    assert.ok(usesHostPostgres(extractRunBlocks("```bash run\ncreatedb shop && psql -d shop -c 'select 1'\n```")));
+    assert.ok(usesHostPostgres(extractRunBlocks("```bash run\nterraform init; psql -c x\n```")));
+    assert.ok(!usesHostPostgres(extractRunBlocks("```bash run\nsql() { docker exec -i devforge-shop-db psql -X -U shop \"$@\"; }\n```")));
+  });
+});
+
 describe("pipes into grep -q", () => {
   it("are flagged, because the writer can die of SIGPIPE and fail the pipeline under pipefail", () => {
     assert.ok(pipesIntoQuietGrep("for i in 1 2; do curl -s x | grep -q ready && break; done"));
@@ -251,7 +259,7 @@ describe("executed lessons and labs reproduce their documented output", { skip: 
     const needsGit = ["git-github", "github-actions", "jenkins"].includes(lesson.track);
     const ownBlocks = extractRunBlocks(splitFrontMatter(readFileSync(lesson.file, "utf8"))?.body ?? "");
     // PostgreSQL lessons, and lessons in other tracks that use a database from bash (e.g. Terraform's pg backend).
-    const needsPg = lesson.track === "postgresql" || ownBlocks.some((b) => /(^|[\s;&|(])(createdb|dropdb|psql)\s/.test(b.code));
+    const needsPg = lesson.track === "postgresql" || usesHostPostgres(ownBlocks);
     const needsNginx = lesson.track === "nginx";
     const { api: needsApi, apiPort, timeoutMs } = lessonNeeds(lesson.track, lesson.order);
     const blocksOf = (id: string, track: string) =>
