@@ -170,7 +170,7 @@ git commit -m "Run checks in parallel, archive the package, publish test results
 ```
 
 ```text output
-[main ed15514] Run checks in parallel, archive the package, publish test results
+[main e565fd7] Run checks in parallel, archive the package, publish test results
  2 files changed, 32 insertions(+), 7 deletions(-)
  create mode 100644 scripts/test.sh
 ```
