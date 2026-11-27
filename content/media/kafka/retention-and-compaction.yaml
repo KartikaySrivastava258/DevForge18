@@ -1,0 +1,4 @@
+alt: 'Top: with cleanup.policy delete, a partition is made of segments. Segment 0 to 99, whose newest record is more than 7 days old, is deleted whole, so the log start moves to 100; segment 100 to 199 is closed and kept; the active segment from 200 receives appends and is never deleted. Middle: with cleanup.policy compact, the records tea 10, coffee 20, tea 12, samosa 15, coffee 22 and tea 14 at offsets 0 to 5 become samosa 15 at 3, coffee 22 at 4 and tea 14 at 5: the latest value per key, with gaps in the offsets. Bottom: replay changes the committed offset, a number per partition, with to-offset, shift-by or to-datetime, after a dry run, while the group is idle. An offset below the log start falls back to auto.offset.reset.'
+caption: 'Retention deletes whole old segments; compaction keeps the latest value per key; replay moves a group''s offset.'
+credit: DevForge 18 content team
+licence: project-content

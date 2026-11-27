@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330">
+  <!-- Segments, retention, compaction and replay, from Offsets, retention and replay in depth. -->
+  <text class="f-small f-strong" x="360" y="26" text-anchor="middle">cleanup.policy=delete (retention)</text>
+  <rect class="f-box-danger" x="10" y="40" width="160" height="60" rx="8"/>
+  <text class="f-small f-mono" x="90" y="64" text-anchor="middle">segment 0–99</text>
+  <text class="f-small" x="90" y="86" text-anchor="middle">newest record &gt; 7 d old</text>
+  <rect class="f-box-faint" x="185" y="40" width="160" height="60" rx="8"/>
+  <text class="f-small f-mono" x="265" y="64" text-anchor="middle">segment 100–199</text>
+  <text class="f-small" x="265" y="86" text-anchor="middle">closed, kept</text>
+  <rect class="f-box-accent" x="360" y="40" width="160" height="60" rx="8"/>
+  <text class="f-small f-strong" x="440" y="64" text-anchor="middle">active segment</text>
+  <text class="f-small f-mono" x="440" y="86" text-anchor="middle">200 → (appends)</text>
+  <text class="f-small" x="620" y="64" text-anchor="middle">deleted whole;</text>
+  <text class="f-small f-mono" x="620" y="84" text-anchor="middle">log start → 100</text>
+  <text class="f-small f-strong" x="360" y="140" text-anchor="middle">cleanup.policy=compact</text>
+  <rect class="f-box-faint" x="10" y="155" width="330" height="60" rx="8"/>
+  <text class="f-small f-mono" x="175" y="179" text-anchor="middle">0 tea:10 · 1 coffee:20 · 2 tea:12</text>
+  <text class="f-small f-mono" x="175" y="201" text-anchor="middle">3 samosa:15 · 4 coffee:22 · 5 tea:14</text>
+  <g>
+    <path class="f-arrow" d="M342 185 L370 185"/>
+    <polygon class="f-head" points="378,185 370,189.5 370,180.5"/>
+  </g>
+  <rect class="f-box-ok" x="380" y="155" width="330" height="60" rx="8"/>
+  <text class="f-small f-mono" x="545" y="179" text-anchor="middle">3 samosa:15 · 4 coffee:22 · 5 tea:14</text>
+  <text class="f-small" x="545" y="201" text-anchor="middle">latest per key; offsets keep gaps</text>
+  <text class="f-small f-strong" x="360" y="252" text-anchor="middle">replay: committed offset is just a number per partition</text>
+  <text class="f-small f-mono" x="360" y="276" text-anchor="middle">--to-offset · --shift-by · --to-datetime · --dry-run first · group must be idle</text>
+  <text class="f-small f-danger" x="360" y="304" text-anchor="middle">an offset below the log start falls back to auto.offset.reset</text>
+</svg>
