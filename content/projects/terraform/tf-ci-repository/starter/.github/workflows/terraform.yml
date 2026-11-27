@@ -1,0 +1,16 @@
+name: terraform
+
+on: [push]
+
+permissions: write-all
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: hashicorp/setup-terraform@v4
+      - run: terraform init
+        working-directory: infra
+      - run: terraform apply -auto-approve -var environment=staging
+        working-directory: infra

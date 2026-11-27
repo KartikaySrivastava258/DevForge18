@@ -1,0 +1,11 @@
+# Downloaded providers and modules: recreated by terraform init.
+.terraform/
+# State and saved plans can contain secrets in plain text; they never belong in Git.
+*.tfstate
+*.tfstate.*
+tfplan
+plan.txt
+crash.log
+# Rendered by terraform apply.
+infra/out/
+# .terraform.lock.hcl is NOT ignored: it pins the exact provider builds for everyone, CI included.

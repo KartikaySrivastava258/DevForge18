@@ -1,0 +1,4 @@
+alt: 'Four numbered boxes. Box 1 sends a "plan summary" to box 2; from box 2 an arrow labelled "merged to main" leads to box 3; from box 3 an arrow labelled "approved" leads to box 4. A second arrow from box 1, labelled "tfplan (saved plan artifact)", also leads to box 4. The boxes are not named; the quiz asks which part of the pipeline each number is.'
+caption: 'Which part of the reviewed Terraform pipeline is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

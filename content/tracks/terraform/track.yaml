@@ -53,9 +53,9 @@ labs:
   - { title: "Inspect a plan before applying", level: intermediate, mode: simulation, status: available, lab: terraform-plan-before-apply }
   - { title: "Detect configuration drift", level: advanced, mode: local, status: available, lab: terraform-detect-drift }
 projects:
-  - { title: "Reproducible development environment", level: beginner, status: planned }
-  - { title: "Reusable infrastructure module", level: intermediate, status: planned }
-  - { title: "CI-validated infrastructure repository", level: advanced, status: planned }
+  - { title: "Reproducible development environment", level: beginner, status: available, project: tf-dev-environment }
+  - { title: "Reusable infrastructure module", level: intermediate, status: available, project: tf-reusable-module }
+  - { title: "CI-validated infrastructure repository", level: advanced, status: available, project: tf-ci-repository }
 resources:
   - title: Terraform tutorials
     url: https://developer.hashicorp.com/terraform/tutorials

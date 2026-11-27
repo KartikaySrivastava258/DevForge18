@@ -1,0 +1,187 @@
+id: terraform-quiz
+track: terraform
+title: Terraform — track quiz
+description: Thirteen questions from init, plan and apply to modules, state locking, drift, tests and plan review in CI. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: what-init-does
+    type: single
+    level: beginner
+    lesson: terraform-first-configuration
+    prompt: What does terraform init do in a new configuration that uses the hashicorp/local provider?
+    options:
+      - { id: a, text: "Downloads the provider into .terraform/ and records its exact version and checksums in .terraform.lock.hcl" }
+      - { id: b, text: "Creates the resources described in the configuration" }
+      - { id: c, text: "Shows which resources would change" }
+    answer: a
+    explanation: init prepares the working directory — providers (and modules) are installed and the lock file pins the exact provider build. plan shows changes; apply makes them.
+
+  - id: workflow-order
+    type: ordering
+    level: beginner
+    lesson: terraform-first-configuration
+    prompt: Put the commands of a first Terraform session in order.
+    items:
+      - { id: init, text: "terraform init" }
+      - { id: validate, text: "terraform validate" }
+      - { id: plan, text: "terraform plan" }
+      - { id: apply, text: "terraform apply" }
+      - { id: destroy, text: "terraform destroy" }
+    order: [init, validate, plan, apply, destroy]
+    explanation: Install providers, check the configuration, read what would change, make the change — and remove everything when the lab is over. A plan run right after apply should say "No changes".
+
+  - id: terms
+    type: matching
+    level: beginner
+    lesson: terraform-first-configuration
+    prompt: Match each Terraform term with what it is.
+    left:
+      - { id: provider, text: "Provider" }
+      - { id: resource, text: "Resource" }
+      - { id: output, text: "Output" }
+      - { id: state, text: "State" }
+    right:
+      - { id: plugin, text: "A plugin for one kind of system, such as hashicorp/local for files" }
+      - { id: thing, text: "A thing Terraform manages, such as one file" }
+      - { id: report, text: "A value reported back after apply" }
+      - { id: record, text: "Terraform's record of what it manages — important, and it can contain secrets" }
+      - { id: plan, text: "A list of commands Terraform runs one by one" }
+    pairs: { provider: plugin, resource: thing, output: report, state: record }
+    explanation: Configuration describes resources; providers turn them into real API calls; state remembers which real objects belong to which addresses; outputs report values such as a file path.
+
+  - id: what-to-commit
+    type: multiple
+    level: beginner
+    lesson: terraform-variables-outputs-state
+    prompt: Which files belong in the Git repository of a Terraform configuration? Select all that apply.
+    options:
+      - { id: a, text: "The .tf files" }
+      - { id: b, text: ".terraform.lock.hcl" }
+      - { id: c, text: "The .terraform/ folder" }
+      - { id: d, text: "terraform.tfstate" }
+    answers: [a, b]
+    explanation: Commit the configuration and the lock file so everyone gets the same provider builds. .terraform/ holds downloaded plugins, and state can hold secrets in plain text — a typical .gitignore lists .terraform/, *.tfstate and *.tfstate.*.
+
+  - id: pipeline-diagram
+    type: diagram
+    level: intermediate
+    lesson: terraform-in-ci-with-plan-review
+    prompt: Label the numbered parts of this reviewed Terraform pipeline.
+    media: media:terraform/quiz-ci-plan-review.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: planjob, text: "Plan job: fmt, validate, test, plan -out=tfplan" }
+      - { id: reviewers, text: "Reviewers reading the plan" }
+      - { id: approval, text: "Approval on the production environment" }
+      - { id: applyjob, text: "Apply job: terraform apply tfplan" }
+      - { id: autoapprove, text: "terraform apply -auto-approve on every push" }
+    answers: { "1": planjob, "2": reviewers, "3": approval, "4": applyjob }
+    explanation: Pull requests are tested and planned, and people review the plan. After the merge, the saved plan waits for approval, and the apply job applies exactly that file — never a fresh -auto-approve, which would plan again.
+
+  - id: detailed-exitcode
+    type: output
+    level: intermediate
+    lesson: terraform-in-ci-with-plan-review
+    prompt: A CI script runs terraform plan -detailed-exitcode twice. What do the exit codes mean?
+    command: 'plan_code() { local code=0; terraform plan -no-color -input=false -detailed-exitcode "$@" > plan.txt 2>&1 || code=$?; echo "$code"; }'
+    output: |
+      plan with changes:   exit 2
+      undeclared variable: exit 1
+    options:
+      - { id: a, text: "2 means the plan worked and has changes; 1 means an error. Only 1 should fail the job" }
+      - { id: b, text: "Both are failures, because both are non-zero" }
+      - { id: c, text: "2 means two resources will change" }
+    answer: a
+    explanation: With -detailed-exitcode, 0 is no changes, 1 is an error and 2 is changes. Treating 2 as failure — or every non-zero code as success — is a common CI mistake.
+
+  - id: move-without-moved
+    type: single
+    level: intermediate
+    lesson: terraform-modules-and-refactoring
+    prompt: "You move local_file.cs101 into a module, and the plan says: Plan: 1 to add, 0 to change, 1 to destroy. What should you do?"
+    options:
+      - { id: a, text: "Add a moved block from local_file.cs101 to module.cs101.local_file.roster, so the plan only changes the address" }
+      - { id: b, text: "Apply — the file will be recreated with the same content anyway" }
+      - { id: c, text: "Delete the state file and apply again" }
+    answer: a
+    explanation: Terraform tracks objects by address. Without a moved block it plans to destroy the old address and create the new one; with it, the plan reads "has moved to" and destroys nothing.
+
+  - id: state-lock
+    type: single
+    level: intermediate
+    lesson: terraform-remote-state-locking-workspaces
+    prompt: "terraform apply stops with \"Error acquiring the state lock\". What is the right reaction?"
+    options:
+      - { id: a, text: "Another run holds the lock: find it and wait (or use -lock-timeout); force-unlock is a last resort" }
+      - { id: b, text: "Run again with -lock=false" }
+      - { id: c, text: "Delete the remote state and apply again" }
+    answer: a
+    explanation: The lock stops two runs writing the same state at once, which can corrupt it. Disabling it to get past the error removes exactly that protection.
+
+  - id: stop-managing
+    type: single
+    level: intermediate
+    lesson: terraform-import-and-drift
+    prompt: Terraform manages a Docker network that another team will look after from now on. How do you stop managing it without deleting it?
+    options:
+      - { id: a, text: "Replace its resource block with a removed block with lifecycle { destroy = false }" }
+      - { id: b, text: "Delete the resource block and apply" }
+      - { id: c, text: "Run terraform destroy -target on it" }
+    answer: a
+    explanation: Deleting the resource block plans a destroy. A removed block with destroy = false drops the resource from state and leaves the real network alone.
+
+  - id: stale-plan
+    type: single
+    level: advanced
+    lesson: terraform-in-ci-with-plan-review
+    prompt: "After approval, terraform apply tfplan fails with \"Saved plan is stale\". What happened?"
+    options:
+      - { id: a, text: "Another operation changed the state after the plan was made, so Terraform refused to apply a plan based on old information" }
+      - { id: b, text: "The plan file is older than one day" }
+      - { id: c, text: "The provider was upgraded during apply" }
+    answer: a
+    explanation: A saved plan records the state it was made from. If the state changed meanwhile, applying it could do something nobody reviewed — so plan again and review again.
+
+  - id: terraform-test-facts
+    type: multiple
+    level: advanced
+    lesson: terraform-testing-and-policy
+    prompt: Which statements about terraform test are true? Select all that apply.
+    options:
+      - { id: a, text: "A run with command = plan checks its assertions against a plan, without creating anything" }
+      - { id: b, text: "A run with expect_failures = [var.students] passes only if that variable's validation fails" }
+      - { id: c, text: "Resources created by apply runs are destroyed when the test file finishes" }
+      - { id: d, text: "Policy checks are most reliable when they search the .tf source files" }
+    answers: [a, b, c]
+    explanation: Plan runs are fast and safe for logic, expect_failures tests refusals, and apply runs clean up after themselves. Policies belong on the plan JSON — text searches miss values computed by modules and variables.
+
+  - id: notice-drift
+    type: single
+    level: advanced
+    lesson: terraform-import-and-drift
+    prompt: Someone sometimes changes resources by hand in an emergency. How do you find such drift before the next planned change?
+    options:
+      - { id: a, text: "Run a scheduled plan (for example nightly in CI) and alert when it is not empty" }
+      - { id: b, text: "Apply every night, so the configuration always wins" }
+      - { id: c, text: "Nothing can detect it until someone edits the configuration" }
+    answer: a
+    explanation: Every plan refreshes and compares reality with state. Applying blindly would undo a deliberate emergency fix; find out why the resource drifted first.
+
+  - id: workspaces-production
+    type: single
+    level: advanced
+    lesson: terraform-remote-state-locking-workspaces
+    prompt: A team keeps staging and production as two workspaces of one configuration and one backend. What is the main risk?
+    options:
+      - { id: a, text: "Anyone who can run the configuration can reach production — workspaces separate state, not permissions; use separate configurations and backends" }
+      - { id: b, text: "Workspaces cannot have different variable values" }
+      - { id: c, text: "Terraform does not lock state in workspaces" }
+    answer: a
+    explanation: Workspaces are named copies of the state for one configuration. As the only wall around production they are weak; separate configurations and backends with separate permissions are safer, and terraform workspace show before every apply avoids the classic mistake.
