@@ -1,6 +1,6 @@
 import type { AddressInfo } from "node:net";
 import { join } from "node:path";
-import { chromium, type Browser, type BrowserContext, type Page } from "playwright";
+import { chromium, type Browser, type BrowserContext, type Locator, type Page } from "playwright";
 import { createServer } from "node:http";
 import { createApp, type App } from "../server/src/app.ts";
 import type { AppConfig } from "../server/src/config.ts";
@@ -104,4 +104,22 @@ export async function samplePhases(page: Page, action: () => void, condition: ()
   return page.evaluate(
     `new Promise((resolve) => { (${a})(); queueMicrotask(() => { const afterMicrotasks = (${c})(); setTimeout(() => resolve({ afterMicrotasks, afterNextTask: (${c})() }), 0); }); })`,
   ) as Promise<{ afterMicrotasks: unknown; afterNextTask: unknown }>;
+}
+
+/**
+ * Waits until the locator's text matches, then returns it. Assertions made straight after a click or a
+ * select race the UI's re-render and can read the previous text; this waits on the real condition
+ * (the text the user would see) and fails with the last text it saw.
+ */
+export async function expectText(locator: Locator, pattern: RegExp, message?: string, timeoutMs = 5000): Promise<string> {
+  const deadline = Date.now() + timeoutMs;
+  let last = "";
+  for (;;) {
+    last = await locator.innerText();
+    if (pattern.test(last)) return last;
+    if (Date.now() > deadline) {
+      throw new Error(`${message ? `${message}: ` : ""}text did not match ${pattern} within ${timeoutMs} ms. Last text: ${JSON.stringify(last)}`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
 }

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { after, before, describe, it } from "node:test";
-import { samplePhases, startHarness, type Harness } from "./harness.ts";
+import { expectText, samplePhases, startHarness, type Harness } from "./harness.ts";
 
 const SHOTS = join(import.meta.dirname, "..", "build", "screenshots");
 mkdirSync(SHOTS, { recursive: true });
@@ -19,7 +19,7 @@ describe("discovery (anonymous visitor)", () => {
     const { page, problems } = await h.newPage();
     await page.goto("/");
     await page.getByRole("heading", { level: 1 }).waitFor();
-    assert.match(await page.getByRole("heading", { level: 1 }).innerText(), /Learn the tools/);
+    await expectText(page.getByRole("heading", { level: 1 }), /Learn the tools/);
     assert.equal(await page.locator(".map-node").count(), 18);
     assert.ok((await page.locator(".map-edge").count()) >= 20, "map draws connection edges");
     assert.equal(await page.locator(".split h3").count(), 8);
@@ -34,8 +34,8 @@ describe("discovery (anonymous visitor)", () => {
     await page.locator('.map-node[aria-label="Track 2: Docker"]').hover();
     const panel = page.locator(".map__panel");
     await panel.getByRole("heading", { name: "Docker" }).waitFor();
-    assert.match(await panel.innerText(), /Kubernetes/);
-    assert.match(await panel.innerText(), /container images/i);
+    await expectText(panel, /Kubernetes/);
+    await expectText(panel, /container images/i);
     assert.ok((await page.locator('.map-edge[data-on="true"]').count()) >= 3);
     await page.screenshot({ path: join(SHOTS, "map-docker-focus.png") });
     await page.locator('.map-node[aria-label="Track 10: Apache Kafka"]').click();
@@ -73,7 +73,7 @@ describe("discovery (anonymous visitor)", () => {
     // The count comes from the API, so the test survives new lessons.
     const { lessons } = (await (await fetch(`${h.url}/api/tracks/docker`)).json()) as { lessons: unknown[] };
     assert.ok(lessons.length >= 2);
-    assert.match(await page.locator(".notice--warn").innerText(), new RegExp(`${lessons.length} lessons are published`));
+    await expectText(page.locator(".notice--warn"), new RegExp(`${lessons.length} lessons are published`));
     assert.equal(await page.locator(".resource").count(), 3);
     // Every Docker resource was reviewed after the link check (2026-11-25), so each shows its check date.
     assert.equal(await page.getByText(/^Link checked /).count(), 3);
@@ -90,7 +90,7 @@ describe("discovery (anonymous visitor)", () => {
     const studies = page.locator(".case-study");
     assert.ok((await studies.count()) >= 2);
     const linkedin = page.getByRole("article", { name: "LinkedIn" });
-    assert.match(await linkedin.locator("blockquote").first().innerText(), /^“We use Kafka for moving every type of data around/);
+    await expectText(linkedin.locator("blockquote").first(), /^“We use Kafka for moving every type of data around/);
     assert.equal(await linkedin.getByRole("link", { name: "Running Kafka At Scale" }).first().getAttribute("href"), "https://engineering.linkedin.com/kafka/running-kafka-scale");
     assert.ok(await linkedin.getByText("Confirmed").first().isVisible());
     assert.ok(await page.getByRole("heading", { level: 2, name: "Alternatives and how to choose" }).isVisible());
@@ -112,10 +112,10 @@ describe("discovery (anonymous visitor)", () => {
     const { lessons: gitLessons } = (await (await fetch(`${h.url}/api/tracks/git-github`)).json()) as { lessons: unknown[] };
     assert.ok(gitLessons.length >= 3);
     assert.equal(await page.locator(".lesson-list li").count(), gitLessons.length);
-    assert.match(await page.locator(".notice--warn").innerText(), new RegExp(`${gitLessons.length} lessons are published`));
+    await expectText(page.locator(".notice--warn"), new RegExp(`${gitLessons.length} lessons are published`));
     await page.getByRole("link", { name: "Your first repository and commits" }).click();
     await page.getByRole("heading", { level: 1, name: "Your first repository and commits" }).waitFor();
-    assert.match(await page.locator(".verified--executed").innerText(), /Tested commands\./);
+    await expectText(page.locator(".verified--executed"), /Tested commands\./);
     assert.ok((await page.locator(".code-block--output").count()) >= 8);
     assert.equal(await page.locator(".code-block--output .code-block__lang").first().innerText(), "Expected output");
     await page.locator(".pager").getByRole("link", { name: /Next lesson/ }).click();
@@ -125,7 +125,7 @@ describe("discovery (anonymous visitor)", () => {
     await page.goto("/tracks/docker/lessons/docker-images-vs-containers");
     await page.locator(".verified--executed").waitFor();
     await page.goto("/tracks/postgresql/lessons/postgresql-tables-and-constraints");
-    assert.match(await page.locator(".verified--executed").innerText(), /Tested commands\..*PostgreSQL 16/);
+    await expectText(page.locator(".verified--executed"), /Tested commands\..*PostgreSQL 16/);
     assert.ok((await page.locator('.code-block[data-lang="sql"]').count()) >= 8);
     noProblems(problems);
   });
@@ -137,7 +137,7 @@ describe("discovery (anonymous visitor)", () => {
     await page.locator("#search-header").press("Enter");
     await page.waitForURL("**/search?q=k8s");
     await page.locator(".results li").first().waitFor();
-    assert.match(await page.locator(".results li a").first().innerText(), /Kubernetes/);
+    await expectText(page.locator(".results li a").first(), /Kubernetes/);
     noProblems(problems);
   });
 
@@ -175,7 +175,7 @@ describe("learning journey (registered student)", () => {
     // Anonymous attempt: all correct but not saved
     const pick = async (n: number, text: RegExp) => page.locator(".check fieldset").nth(n).locator(".option", { hasText: text }).click();
     await page.getByRole("button", { name: "Check answers" }).click();
-    assert.match(await page.locator(".check .field__error").innerText(), /Answer all 4 questions/);
+    await expectText(page.locator(".check .field__error"), /Answer all 4 questions/);
 
     // Register from the lesson; should return here
     await page.getByRole("link", { name: "Sign in", exact: true }).first().click();
@@ -198,7 +198,7 @@ describe("learning journey (registered student)", () => {
     await page.getByRole("button", { name: "Check answers" }).click();
     await page.getByText("3 of 4 correct.").waitFor();
     assert.equal(await page.locator(".feedback--no").count(), 1);
-    assert.match(await page.locator(".feedback--no").innerText(), /Not quite/);
+    await expectText(page.locator(".feedback--no"), /Not quite/);
 
     // Fix it: lesson complete and saved
     await pick(3, /just the default tag name/);
@@ -216,7 +216,7 @@ describe("learning journey (registered student)", () => {
     await page.waitForURL("**/dashboard");
     await page.getByText("lessons completed").waitFor();
     assert.equal(await page.locator(".stat b").first().innerText(), "1");
-    assert.match(await page.locator("#saved-h + ul").innerText(), /Images vs Containers/);
+    await expectText(page.locator("#saved-h + ul"), /Images vs Containers/);
     await page.screenshot({ path: join(SHOTS, "dashboard.png"), fullPage: true });
 
     // Sign out
@@ -244,7 +244,7 @@ describe("learning journey (registered student)", () => {
     await page.getByRole("button", { name: "Create account" }).click();
     await page.waitForURL("**/tracks/git-github/labs/git-resolve-a-merge-conflict");
     await page.getByRole("button", { name: "Mark the lab as done" }).click();
-    assert.match(await page.locator(".check .field__error").innerText(), /Tick every checkpoint/);
+    await expectText(page.locator(".check .field__error"), /Tick every checkpoint/);
     for (const box of await page.locator(".check input[type=checkbox]").all()) await box.check();
     await page.getByRole("button", { name: "Mark the lab as done" }).click();
     await page.getByText(/Lab complete.*self-reported/).waitFor();
@@ -396,7 +396,7 @@ describe("figures and step-through diagrams", () => {
     assert.match(await fig.locator(".figure__svg").getAttribute("aria-labelledby") ?? "", /-title$/);
     assert.match(await fig.locator(".figure__svg title").textContent() ?? "", /How a change becomes a commit/);
     assert.equal(await stepOf(fig), "Step 1 of 5");
-    assert.match(await fig.locator(".step-diagram__caption").innerText(), /untracked/);
+    await expectText(fig.locator(".step-diagram__caption"), /untracked/);
     const hiddenAtStart = await fig.locator('[data-step-state="future"]').count();
     assert.ok(hiddenAtStart > 0, "later steps are hidden at step 1");
     assert.equal(await fig.getByRole("button", { name: "Previous" }).getAttribute("aria-disabled"), "true");
@@ -482,7 +482,7 @@ describe("simulations", () => {
     await sim.waitFor();
     assert.ok(await sim.locator(".tag--sim", { hasText: "Simulation" }).isVisible(), "labelled as a simulation");
     await sim.getByText("A teaching model, not the real tool").click();
-    assert.match(await sim.locator(".sim__limits").innerText(), /no files/);
+    await expectText(sim.locator(".sim__limits"), /no files/);
 
     // Keyboard only: choose the challenge, pick the command, run it.
     await sim.getByRole("button", { name: "Undo a pushed commit safely" }).focus();
@@ -494,16 +494,16 @@ describe("simulations", () => {
     await sim.getByRole("button", { name: "Run" }).focus();
     await page.keyboard.press("Enter");
     await sim.locator(".sim__status", { hasText: "Solved and saved to your progress." }).waitFor();
-    assert.match(await sim.locator(".sim__log li").first().innerText(), /Revert "Add broken link"/);
-    assert.match(await sim.locator(".git-sim__list").innerText(), /Revert "Add broken link"/);
+    await expectText(sim.locator(".sim__log li").first(), /Revert "Add broken link"/);
+    await expectText(sim.locator(".git-sim__list"), /Revert "Add broken link"/);
 
     // Commands that cannot work are explained: in the form before running, or in the log when Git would refuse.
     await sim.getByLabel("Command", { exact: true }).selectOption("merge");
-    assert.match(await sim.locator(".sim__problem").innerText(), /no other branch yet/);
+    await expectText(sim.locator(".sim__problem"), /no other branch yet/);
     await sim.getByLabel("Command", { exact: true }).selectOption("branch");
     await sim.getByLabel("New branch name").fill("main");
     await sim.getByRole("button", { name: "Run" }).click();
-    assert.match(await sim.locator('.sim__log li[data-refused="true"]').first().innerText(), /A branch named main already exists/);
+    await expectText(sim.locator('.sim__log li[data-refused="true"]').first(), /A branch named main already exists/);
 
     await page.reload();
     await sim.getByRole("button", { name: /Undo a pushed commit safely/ }).locator(".tag", { hasText: "Done" }).waitFor();
@@ -517,17 +517,17 @@ describe("simulations", () => {
     const sim = page.locator(".sim");
     await sim.locator(".k8s-sim").waitFor();
     assert.equal(await sim.locator(".k8s-pod").count(), 3);
-    assert.match(await sim.locator(".k8s-sim__summary").innerText(), /3 of 3/);
+    await expectText(sim.locator(".k8s-sim__summary"), /3 of 3/);
     await sim.locator(".k8s-pod__delete").first().click();
-    assert.match(await sim.locator(".k8s-sim__summary").innerText(), /2 of 3/);
+    await expectText(sim.locator(".k8s-sim__summary"), /2 of 3/);
     for (let i = 0; i < 4; i++) await sim.getByRole("button", { name: "Step" }).click();
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
-    assert.match(await sim.locator(".k8s-sim__summary").innerText(), /3 of 3/);
-    assert.match(await sim.locator(".sim__log").innerText(), /ReplicaSet .* wants 3: created/);
+    await expectText(sim.locator(".k8s-sim__summary"), /3 of 3/);
+    await expectText(sim.locator(".sim__log"), /ReplicaSet .* wants 3: created/);
 
     await sim.getByRole("button", { name: "Text mode" }).click();
     assert.equal(await sim.getByRole("button", { name: "Text mode" }).getAttribute("aria-pressed"), "true");
-    assert.match(await sim.locator(".sim__text").innerText(), /Deployment web wants 3 replica\(s\)/);
+    await expectText(sim.locator(".sim__text"), /Deployment web wants 3 replica\(s\)/);
     await page.screenshot({ path: join(SHOTS, "simulation-kubernetes-light.png"), fullPage: true });
     noProblems(problems);
   });
@@ -565,12 +565,12 @@ describe("simulations", () => {
     assert.ok(wrong > 15, `rate(sum()) overestimates after a restart (got ${wrong})`);
     await sim.getByLabel("Query", { exact: true }).selectOption("sum-rate");
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
-    assert.match(await sim.locator(".prom-sim__result").innerText(), /\{\} 15 per second/);
+    await expectText(sim.locator(".prom-sim__result"), /\{\} 15 per second/);
     assert.equal(await sim.locator(".prom-sim__promql").innerText(), "sum(rate(devforge_http_requests_total[1m]))");
 
     await sim.getByLabel("Scenario").selectOption("latency");
     await sim.getByLabel("Aggregation").selectOption("none");
-    assert.match(await sim.locator(".prom-sim__result").innerText(), /removes the le label/);
+    await expectText(sim.locator(".prom-sim__result"), /removes the le label/);
     noProblems(problems);
   });
 
@@ -581,16 +581,16 @@ describe("simulations", () => {
     await sim.locator(".otel-sim__waterfall").waitFor();
     // The gateway's bar is the longest, but it is only waiting for its children.
     await sim.locator(".otel-sim__row", { hasText: "gateway Server" }).click();
-    assert.match(await sim.locator(".sim__status").innerText(), /Not solved/);
+    await expectText(sim.locator(".sim__status"), /Not solved/);
     await sim.locator(".otel-sim__row", { hasText: "payment Server" }).focus();
     await page.keyboard.press("Enter");
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
 
     await sim.getByLabel("Scenario").selectOption("slow-database");
-    assert.match(await sim.locator(".otel-sim__summary").innerText(), /209 ms/);
+    await expectText(sim.locator(".otel-sim__summary"), /209 ms/);
     await sim.getByLabel("Database and payment calls").selectOption("parallel");
     await sim.getByRole("button", { name: "Send a checkout request" }).click();
-    assert.match(await sim.locator(".otel-sim__summary").innerText(), /: 145 ms/);
+    await expectText(sim.locator(".otel-sim__summary"), /: 145 ms/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     assert.equal(await sim.locator('.otel-sim__row[data-critical="true"]', { hasText: "SELECT cart (database)" }).count(), 1, "the slow database is now the critical path");
     noProblems(problems);
@@ -606,14 +606,14 @@ describe("simulations", () => {
     await sim.getByRole("button", { name: "Add a consumer" }).click();
     for (let i = 0; i < 3; i++) await sim.getByRole("button", { name: "Step" }).click();
     assert.ok((await lag()) > 10, "two members: one of them owns both busy partitions");
-    assert.match(await sim.locator(".kafka-sim__members").innerText(), /consumer-2: P1/);
+    await expectText(sim.locator(".kafka-sim__members"), /consumer-2: P1/);
     await sim.getByRole("button", { name: "Add a consumer" }).click();
     for (let i = 0; i < 20 && (await lag()) > 0; i++) await sim.getByRole("button", { name: "Step" }).click();
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
 
     await sim.getByLabel("Scenario").selectOption("four-partitions");
     await sim.getByRole("button", { name: "Add a consumer" }).click();
-    assert.match(await sim.locator(".kafka-sim__members").innerText(), /consumer-5: idle — no partition/);
+    await expectText(sim.locator(".kafka-sim__members"), /consumer-5: idle — no partition/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
@@ -627,17 +627,17 @@ describe("simulations", () => {
     await sim.getByLabel("Retries").selectOption("1");
     for (let i = 0; i < 6; i++) await sim.getByRole("button", { name: "Step" }).click();
     assert.equal(await runs.count(), 7);
-    assert.match(await runs.nth(2).innerText(), /success\s+scheduled · 2 tries/);
+    await expectText(runs.nth(2), /success\s+scheduled · 2 tries/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
 
     await sim.getByLabel("Scenario").selectOption("broken-week");
-    assert.match(await runs.nth(4).innerText(), /failed/);
-    assert.match(await runs.nth(4).innerText(), /6 \/ 13 — wrong/);
+    await expectText(runs.nth(4), /failed/);
+    await expectText(runs.nth(4), /6 \/ 13 — wrong/);
     // Re-running the failed dates while the task appends adds the rows on top of the half-written ones.
     await sim.getByLabel("Reprocess").selectOption("failed");
     await sim.getByRole("button", { name: "Create backfill" }).click();
-    assert.match(await runs.nth(4).innerText(), /success\s+backfill/);
-    assert.match(await runs.nth(4).innerText(), /19 \/ 13 — wrong/);
+    await expectText(runs.nth(4), /success\s+backfill/);
+    await expectText(runs.nth(4), /19 \/ 13 — wrong/);
     assert.doesNotMatch(await sim.locator(".sim__status").innerText(), /^Solved/, "appending again is not a fix");
     await sim.getByLabel("Load task writes by").selectOption("replace");
     await sim.getByLabel("Reprocess").selectOption("completed");
@@ -655,7 +655,7 @@ describe("simulations", () => {
     const rows = sim.locator(".mlflow-sim__runs tbody tr");
     assert.equal(await rows.count(), 10);
     await sim.getByLabel("Sort by").selectOption("rmse asc");
-    assert.match(await rows.first().innerText(), /boost-1000/);
+    await expectText(rows.first(), /boost-1000/);
     await sim.getByRole("button", { name: "Register boost-1000" }).click();
     await sim.getByRole("button", { name: "Make version 1 champion" }).click();
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
@@ -664,10 +664,10 @@ describe("simulations", () => {
     await sim.getByLabel("Max latency").selectOption("5");
     await sim.getByLabel("Sort by").selectOption("rmse asc");
     assert.equal(await rows.count(), 7);
-    assert.match(await rows.first().innerText(), /boost-300/);
+    await expectText(rows.first(), /boost-300/);
     await sim.getByRole("button", { name: "Register boost-300" }).click();
     await sim.getByRole("button", { name: "Make version 1 champion" }).click();
-    assert.match(await sim.locator(".k8s-sim__summary").innerText(), /version 1: boost-300/);
+    await expectText(sim.locator(".k8s-sim__summary"), /version 1: boost-300/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
@@ -678,15 +678,15 @@ describe("simulations", () => {
     const sim = page.locator(".sim");
     await sim.locator(".rag-sim").waitFor();
     const summary = sim.locator(".k8s-sim__summary");
-    assert.match(await summary.innerText(), /not retrieved/);
+    await expectText(summary, /not retrieved/);
     await sim.getByLabel("k (chunks retrieved)").selectOption("3");
-    assert.match(await summary.innerText(), /in the prompt/);
-    assert.match(await summary.innerText(), /133 \/ 70 words/, "found, but the prompt is far too long");
+    await expectText(summary, /in the prompt/);
+    await expectText(summary, /133 \/ 70 words/, "found, but the prompt is far too long");
     assert.doesNotMatch(await sim.locator(".sim__status").innerText(), /^Solved/);
     await sim.getByLabel("Chunk size (sentences)").selectOption("1");
-    assert.match(await summary.innerText(), /65 \/ 70 words/);
+    await expectText(summary, /65 \/ 70 words/);
     assert.equal(await sim.locator('.rag-sim__chunk[data-retrieved="true"]').count(), 3);
-    assert.match(await sim.locator(".rag-sim__prompt pre").innerText(), /file: operations\.md\nA cache entry expires when its TTL runs out/);
+    await expectText(sim.locator(".rag-sim__prompt pre"), /file: operations\.md\nA cache entry expires when its TTL runs out/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
@@ -698,19 +698,19 @@ describe("simulations", () => {
     await sim.locator(".n8n-sim").waitFor();
     const summary = sim.locator(".k8s-sim__summary");
     await sim.getByRole("button", { name: "Run the workflow" }).click();
-    assert.match(await summary.innerText(), /Dropped silently\s+#2 #3 #4/);
+    await expectText(summary, /Dropped silently\s+#2 #3 #4/);
     assert.doesNotMatch(await sim.locator(".sim__status").innerText(), /^Solved/);
     await sim.getByLabel("Valid? false output").selectOption("errorWorkflow");
     await sim.getByRole("button", { name: "Run the workflow" }).click();
-    assert.match(await summary.innerText(), /Error workflow\s+#2 #3 #4/);
+    await expectText(summary, /Error workflow\s+#2 #3 #4/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
 
     await sim.getByLabel("Scenario").selectOption("flaky-service");
     await sim.getByRole("button", { name: "Run the workflow" }).click();
-    assert.match(await summary.innerText(), /Last execution\s+failed/);
+    await expectText(summary, /Last execution\s+failed/);
     await sim.getByLabel("Check seats: retries").selectOption("1");
     await sim.getByRole("button", { name: "Run the workflow" }).click();
-    assert.match(await summary.innerText(), /Saved\s+#1 #5/);
+    await expectText(summary, /Saved\s+#1 #5/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
@@ -721,14 +721,14 @@ describe("simulations", () => {
     const sim = page.locator(".sim");
     await sim.locator(".sprint-sim").waitFor();
     const summary = sim.locator(".k8s-sim__summary");
-    assert.match(await summary.innerText(), /34 points/);
+    await expectText(summary, /34 points/);
     for (let i = 0; i < 10; i++) await sim.getByRole("button", { name: "Step" }).click();
-    assert.match(await summary.innerText(), /Sprint goal\s+missed/);
-    assert.match(await summary.innerText(), /Points left\s+19\.0/);
+    await expectText(summary, /Sprint goal\s+missed/);
+    await expectText(summary, /Points left\s+19\.0/);
     await sim.getByRole("button", { name: "Reset" }).click();
     await sim.getByLabel("In Progress WIP limit").selectOption("3");
     for (let i = 0; i < 10; i++) await sim.getByRole("button", { name: "Step" }).click();
-    assert.match(await summary.innerText(), /Sprint goal\s+met/);
+    await expectText(summary, /Sprint goal\s+met/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     assert.equal(await sim.getByRole("button", { name: "Remove DEV-8 from the sprint" }).isDisabled(), true, "planning is over once the sprint starts");
 
@@ -745,8 +745,8 @@ describe("simulations", () => {
     const summary = sim.locator(".k8s-sim__summary");
     await sim.getByRole("button", { name: "Edit the source code" }).click();
     await sim.getByRole("button", { name: "Build", exact: true }).click();
-    assert.match(await summary.innerText(), /Last build\s+46 s/);
-    assert.match(await summary.innerText(), /secrets\.env/);
+    await expectText(summary, /Last build\s+46 s/);
+    await expectText(summary, /secrets\.env/);
     await sim.getByRole("button", { name: "Move COPY requirements.txt /app/ up" }).click();
     await sim.getByRole("button", { name: "Remove COPY . /app/" }).click();
     await sim.getByRole("button", { name: "Add COPY requirements.txt /app/" }).click();
@@ -754,7 +754,7 @@ describe("simulations", () => {
     await sim.getByRole("button", { name: "Build", exact: true }).click();
     await sim.getByRole("button", { name: "Edit the source code" }).click();
     await sim.getByRole("button", { name: "Build", exact: true }).click();
-    assert.match(await summary.innerText(), /Last build\s+1 s/);
+    await expectText(summary, /Last build\s+1 s/);
     assert.doesNotMatch(await summary.innerText(), /secrets\.env/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
@@ -770,13 +770,13 @@ describe("simulations", () => {
     await sim.getByLabel("Index column 1").selectOption("status");
     await sim.getByRole("button", { name: "Create index" }).click();
     await sim.getByRole("button", { name: "Run EXPLAIN" }).click();
-    assert.match(await summary.innerText(), /Seq Scan/);
-    assert.match(await summary.innerText(), /100,000/);
+    await expectText(summary, /Seq Scan/);
+    await expectText(summary, /100,000/);
     await sim.getByLabel("Index column 2").selectOption("day");
     await sim.getByRole("button", { name: "Create index" }).click();
     await sim.getByRole("button", { name: "Run EXPLAIN" }).click();
-    assert.match(await summary.innerText(), /Index Scan using orders_status_day_idx/);
-    assert.match(await summary.innerText(), /Rows touched\s+27 \(0\.03 %\)/);
+    await expectText(summary, /Index Scan using orders_status_day_idx/);
+    await expectText(summary, /Rows touched\s+27 \(0\.03 %\)/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
@@ -788,18 +788,18 @@ describe("simulations", () => {
     await sim.locator(".tfplan-sim").waitFor();
     const planBox = sim.locator(".tfplan-sim__plan");
     await sim.getByRole("button", { name: "Rename", exact: true }).click();
-    assert.match(await planBox.innerText(), /Plan: 1 to add, 0 to change, 1 to destroy/);
+    await expectText(planBox, /Plan: 1 to add, 0 to change, 1 to destroy/);
     await sim.getByRole("button", { name: "Add moved block (server.web → server.frontend)" }).click();
-    assert.match(await planBox.innerText(), /Plan: 0 to add, 0 to change, 0 to destroy/);
-    assert.match(await planBox.innerText(), /has moved to server\.frontend/);
+    await expectText(planBox, /Plan: 0 to add, 0 to change, 0 to destroy/);
+    await expectText(planBox, /has moved to server\.frontend/);
     await sim.getByRole("button", { name: "terraform apply" }).click();
-    assert.match(await planBox.innerText(), /No changes/);
+    await expectText(planBox, /No changes/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
 
     await sim.getByLabel("Scenario").selectOption("drift");
-    assert.match(await planBox.innerText(), /size changed outside Terraform: medium → large/);
+    await expectText(planBox, /size changed outside Terraform: medium → large/);
     await sim.getByRole("button", { name: "terraform apply" }).click();
-    assert.match(await planBox.innerText(), /No changes/);
+    await expectText(planBox, /No changes/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
@@ -811,11 +811,11 @@ describe("simulations", () => {
     await sim.locator(".ghrun-sim").waitFor();
     const summary = sim.locator(".k8s-sim__summary");
     await sim.getByRole("button", { name: "Run the workflow" }).click();
-    assert.match(await summary.innerText(), /22 min/);
+    await expectText(summary, /22 min/);
     const row = (job: string) => sim.locator(".ghrun-sim__needs tbody tr", { has: page.locator(`th:text-is("${job}")`).or(page.locator("th", { hasText: new RegExp(`^${job}`) })) });
     for (const [job, on] of [["build", "lint"], ["e2e", "unit"], ["e2e", "build"], ["docs", "e2e"], ["deploy", "docs"], ["deploy", "unit"], ["deploy", "e2e"]]) await row(job!).getByLabel(on!, { exact: true }).click();
     await sim.getByRole("button", { name: "Run the workflow" }).click();
-    assert.match(await summary.innerText(), /12 min/);
+    await expectText(summary, /12 min/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
@@ -827,11 +827,11 @@ describe("simulations", () => {
     await sim.locator(".cache-sim").waitFor();
     const summary = sim.locator(".k8s-sim__summary");
     await sim.getByRole("button", { name: "Run the rest of the minute" }).click();
-    assert.match(await summary.innerText(), /272 \/ s/);
+    await expectText(summary, /272 \/ s/);
     await sim.getByRole("button", { name: "Reset" }).click();
     await sim.getByLabel("Single flight").check();
     await sim.getByRole("button", { name: "Run the rest of the minute" }).click();
-    assert.match(await summary.innerText(), /9 \/ s/);
+    await expectText(summary, /9 \/ s/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
@@ -842,11 +842,11 @@ describe("simulations", () => {
     const sim = page.locator(".sim");
     await sim.locator(".ngx-sim").waitFor();
     await sim.getByRole("button", { name: "Send request" }).click();
-    assert.match(await sim.locator(".ngx-sim__log").innerText(), /\/api\/docs\/index\.html → location ~ \\\.html\$ \(app\)/);
+    await expectText(sim.locator(".ngx-sim__log"), /\/api\/docs\/index\.html → location ~ \\\.html\$ \(app\)/);
     await sim.getByLabel("Add a location").selectOption("api-docs-stop");
     await sim.getByRole("button", { name: "Add", exact: true }).click();
     await sim.getByRole("button", { name: "Send request" }).click();
-    assert.match(await sim.locator(".ngx-sim__log").innerText(), /location \^~ \/api\/docs\/ \(static\)/);
+    await expectText(sim.locator(".ngx-sim__log"), /location \^~ \/api\/docs\/ \(static\)/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
@@ -879,12 +879,12 @@ describe("simulations", () => {
     await sim.locator(".queue-sim").waitFor();
     const summary = sim.locator(".k8s-sim__summary");
     await sim.getByRole("button", { name: "Run the half hour" }).click();
-    assert.match(await summary.innerText(), /Longest wait\s+30 min/);
+    await expectText(summary, /Longest wait\s+30 min/);
     await sim.getByRole("button", { name: "Reset" }).click();
     await sim.getByLabel("Executors").selectOption("2");
     await sim.getByRole("button", { name: "Add agent" }).click();
     await sim.getByRole("button", { name: "Run the half hour" }).click();
-    assert.match(await summary.innerText(), /Longest wait\s+0 min/);
+    await expectText(summary, /Longest wait\s+0 min/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });
@@ -896,7 +896,7 @@ describe("simulations", () => {
     await embed.locator(".k8s-sim").waitFor();
     assert.equal(await embed.getByRole("heading", { level: 3, name: "The reconciliation loop" }).count(), 1);
     assert.equal(await embed.getByLabel("Scenario").inputValue(), "broken-release");
-    assert.match(await embed.locator(".k8s-sim__summary").innerText(), /4 of 5/, "same stalled state as the real cluster in the lesson");
+    await expectText(embed.locator(".k8s-sim__summary"), /4 of 5/, "same stalled state as the real cluster in the lesson");
     assert.equal(await page.locator(".sim-embed__fallback").isVisible(), false);
 
     await page.goto("/tracks/kubernetes");
@@ -910,7 +910,7 @@ describe("simulations", () => {
       const { simulations } = (await (await fetch(`${h.url}/api/tracks/${slug}`)).json()) as { simulations: unknown[] };
       if (simulations.length) continue;
       await page.goto(`/tracks/${slug}`);
-      assert.match(await page.locator("#simulations").innerText(), /No simulation is published for this track yet/);
+      await expectText(page.locator("#simulations"), /No simulation is published for this track yet/);
       break;
     }
     noProblems(problems);
