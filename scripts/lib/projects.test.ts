@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import type { CompiledProject, ProjectFile } from "../../shared/content-schema.ts";
@@ -53,6 +53,9 @@ function runCheck(project: CompiledProject, files: ProjectFile[]): { status: num
       GIT_COMMITTER_DATE: "2026-01-15T10:00:00Z",
       GIT_CONFIG_NOSYSTEM: "1",
       STARTER_DIR: starterDir,
+      // HOME is isolated, but Docker's own settings and per-user CLI plugins (such as Compose v2 in
+      // ~/.docker/cli-plugins) must still be found.
+      DOCKER_CONFIG: process.env.DOCKER_CONFIG ?? join(homedir(), ".docker"),
     };
     let output = "";
     if (prepare) {
