@@ -1,0 +1,52 @@
+groups:
+  - name: campus-api-slo
+    rules:
+      # Availability SLI: the share of requests that failed (5xx). SLO 99.5% over 30 days -> budget 0.005.
+      - record: job:sli_availability_errors:ratio_rate5m
+        expr: sum by (job) (rate(http_requests_total{code=~"5.."}[5m])) / sum by (job) (rate(http_requests_total[5m]))
+      - record: job:sli_availability_errors:ratio_rate30m
+        expr: sum by (job) (rate(http_requests_total{code=~"5.."}[30m])) / sum by (job) (rate(http_requests_total[30m]))
+      - record: job:sli_availability_errors:ratio_rate1h
+        expr: sum by (job) (rate(http_requests_total{code=~"5.."}[1h])) / sum by (job) (rate(http_requests_total[1h]))
+      - record: job:sli_availability_errors:ratio_rate6h
+        expr: sum by (job) (rate(http_requests_total{code=~"5.."}[6h])) / sum by (job) (rate(http_requests_total[6h]))
+      - record: job:sli_availability_errors:ratio_rate30d
+        expr: sum by (job) (rate(http_requests_total{code=~"5.."}[30d])) / sum by (job) (rate(http_requests_total[30d]))
+      # Latency SLI: the share of requests slower than 500 ms. SLO 99% under 500 ms over 30 days -> budget 0.01.
+      # The le="0.5" bucket counts requests that took 0.5 s or less.
+      - record: job:sli_latency_slow:ratio_rate5m
+        expr: 1 - sum by (job) (rate(http_request_duration_seconds_bucket{le="0.5"}[5m])) / sum by (job) (rate(http_request_duration_seconds_count[5m]))
+      - record: job:sli_latency_slow:ratio_rate30m
+        expr: 1 - sum by (job) (rate(http_request_duration_seconds_bucket{le="0.5"}[30m])) / sum by (job) (rate(http_request_duration_seconds_count[30m]))
+      - record: job:sli_latency_slow:ratio_rate1h
+        expr: 1 - sum by (job) (rate(http_request_duration_seconds_bucket{le="0.5"}[1h])) / sum by (job) (rate(http_request_duration_seconds_count[1h]))
+      - record: job:sli_latency_slow:ratio_rate6h
+        expr: 1 - sum by (job) (rate(http_request_duration_seconds_bucket{le="0.5"}[6h])) / sum by (job) (rate(http_request_duration_seconds_count[6h]))
+      - record: job:sli_latency_slow:ratio_rate30d
+        expr: 1 - sum by (job) (rate(http_request_duration_seconds_bucket{le="0.5"}[30d])) / sum by (job) (rate(http_request_duration_seconds_count[30d]))
+      # Error budget left over the 30-day window: 1 = untouched, 0 = spent, negative = overspent.
+      - record: job:slo_availability_budget_remaining:ratio30d
+        expr: 1 - job:sli_availability_errors:ratio_rate30d / 0.005
+      - record: job:slo_latency_budget_remaining:ratio30d
+        expr: 1 - job:sli_latency_slow:ratio_rate30d / 0.01
+      # Multiwindow, multi-burn-rate alerts (SRE workbook): a fast burn pages, a slow burn opens a ticket.
+      - alert: AvailabilityFastBurn
+        expr: job:sli_availability_errors:ratio_rate1h > (14.4 * 0.005) and job:sli_availability_errors:ratio_rate5m > (14.4 * 0.005)
+        labels: { severity: page }
+        annotations:
+          summary: "{{ $labels.job }} availability budget burning 14.4x too fast: 2% of the monthly budget per hour"
+      - alert: AvailabilitySlowBurn
+        expr: job:sli_availability_errors:ratio_rate6h > (6 * 0.005) and job:sli_availability_errors:ratio_rate30m > (6 * 0.005)
+        labels: { severity: ticket }
+        annotations:
+          summary: "{{ $labels.job }} availability budget burning 6x too fast: 5% of the monthly budget per 6 hours"
+      - alert: LatencyFastBurn
+        expr: job:sli_latency_slow:ratio_rate1h > (14.4 * 0.01) and job:sli_latency_slow:ratio_rate5m > (14.4 * 0.01)
+        labels: { severity: page }
+        annotations:
+          summary: "{{ $labels.job }} latency budget burning 14.4x too fast: 2% of the monthly budget per hour"
+      - alert: LatencySlowBurn
+        expr: job:sli_latency_slow:ratio_rate6h > (6 * 0.01) and job:sli_latency_slow:ratio_rate30m > (6 * 0.01)
+        labels: { severity: ticket }
+        annotations:
+          summary: "{{ $labels.job }} latency budget burning 6x too fast: 5% of the monthly budget per 6 hours"

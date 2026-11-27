@@ -1,0 +1,27 @@
+# Who gets which alert. Receivers are placeholders: wire them to your real pager and mail settings.
+route:
+  receiver: team-email              # default: anything not matched below
+  group_by: [alertname, instance]   # one notification per problem per host
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  routes:
+    - matchers: [severity="critical"]
+      receiver: oncall-pager
+      repeat_interval: 1h
+    - matchers: [severity="warning"]
+      receiver: team-email
+
+# A host that is down also stops reporting CPU, memory and disk: do not page about those separately.
+inhibit_rules:
+  - source_matchers: [alertname="HostDown"]
+    target_matchers: [severity=~"warning|critical", alertname!="HostDown"]
+    equal: [instance]
+
+receivers:
+  - name: oncall-pager
+    webhook_configs:
+      - url: http://pager.example:9095/alert
+  - name: team-email
+    webhook_configs:
+      - url: http://mail-relay.example:9096/alert

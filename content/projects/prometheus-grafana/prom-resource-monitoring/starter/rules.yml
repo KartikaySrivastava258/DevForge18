@@ -1,0 +1,14 @@
+# The rules the team has today. Read README.md for what they must do instead.
+groups:
+  - name: host-resources
+    rules:
+      - record: instance:node_cpu_utilisation:rate5m
+        expr: 1 - avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m]))
+
+      - alert: HostHighCpu
+        expr: instance:node_cpu_utilisation:rate5m > 0.9
+        labels: { severity: critical }
+
+      - alert: HostDiskAlmostFull
+        expr: node_filesystem_avail_bytes < 1000000000
+        labels: { severity: critical }

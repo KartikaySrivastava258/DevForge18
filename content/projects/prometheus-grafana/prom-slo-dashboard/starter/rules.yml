@@ -1,0 +1,9 @@
+# First attempt: one window, one SLI, and everything pages. See README.md for the SLOs.
+groups:
+  - name: campus-api-slo
+    rules:
+      - record: job:sli_availability_errors:ratio_rate1h
+        expr: sum by (job) (rate(http_requests_total{code=~"5.."}[1h])) / sum by (job) (rate(http_requests_total[1h]))
+      - alert: AvailabilityFastBurn
+        expr: job:sli_availability_errors:ratio_rate1h > 0.01
+        labels: { severity: page }

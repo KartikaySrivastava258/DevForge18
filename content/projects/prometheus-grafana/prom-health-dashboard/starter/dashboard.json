@@ -1,0 +1,14 @@
+{
+  "uid": "campus-api-health",
+  "title": "Campus API health",
+  "schemaVersion": 39,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Requests",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "http_requests_total" }]
+    }
+  ]
+}

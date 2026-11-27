@@ -1,0 +1,14 @@
+{
+  "uid": "campus-api-slo",
+  "title": "Campus API SLOs",
+  "schemaVersion": 39,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Errors",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(rate(http_requests_total{code=~\"5..\"}[5m]))" }]
+    }
+  ]
+}

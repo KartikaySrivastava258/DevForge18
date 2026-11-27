@@ -1,0 +1,51 @@
+{
+  "uid": "campus-api-slo",
+  "title": "Campus API SLOs",
+  "description": "Availability 99.5% and latency (99% under 500 ms) over 30 days. Queries read the recording rules in rules.yml.",
+  "schemaVersion": 39,
+  "time": { "from": "now-7d", "to": "now" },
+  "panels": [
+    {
+      "type": "stat", "title": "Availability budget left (30 days)",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percentunit" } },
+      "targets": [{ "refId": "A", "expr": "job:slo_availability_budget_remaining:ratio30d{job=\"campus-api\"}" }]
+    },
+    {
+      "type": "stat", "title": "Latency budget left (30 days)",
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percentunit" } },
+      "targets": [{ "refId": "A", "expr": "job:slo_latency_budget_remaining:ratio30d{job=\"campus-api\"}" }]
+    },
+    {
+      "type": "timeseries", "title": "Availability burn rate (1 h and 6 h)",
+      "description": "1 spends the budget in exactly 30 days. Above 14.4 (1 h) pages; above 6 (6 h) opens a ticket.",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "none" } },
+      "targets": [
+        { "refId": "A", "expr": "job:sli_availability_errors:ratio_rate1h{job=\"campus-api\"} / 0.005", "legendFormat": "1 h" },
+        { "refId": "B", "expr": "job:sli_availability_errors:ratio_rate6h{job=\"campus-api\"} / 0.005", "legendFormat": "6 h" }
+      ]
+    },
+    {
+      "type": "timeseries", "title": "Latency burn rate (1 h and 6 h)",
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "none" } },
+      "targets": [
+        { "refId": "A", "expr": "job:sli_latency_slow:ratio_rate1h{job=\"campus-api\"} / 0.01", "legendFormat": "1 h" },
+        { "refId": "B", "expr": "job:sli_latency_slow:ratio_rate6h{job=\"campus-api\"} / 0.01", "legendFormat": "6 h" }
+      ]
+    },
+    {
+      "type": "timeseries", "title": "Availability SLI (5-minute success ratio)",
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0.98, "max": 1 } },
+      "targets": [{ "refId": "A", "expr": "1 - job:sli_availability_errors:ratio_rate5m{job=\"campus-api\"}" }]
+    }
+  ]
+}

@@ -55,9 +55,9 @@ labs:
   - { title: "Trigger and investigate an alert", level: advanced, mode: local, status: available, lab: prometheus-trigger-an-alert }
   - { title: "Query request rates and latency percentiles", level: intermediate, mode: simulation, status: available, lab: prometheus-rate-and-percentile-queries }
 projects:
-  - { title: "Application health dashboard", level: beginner, status: planned }
-  - { title: "Resource monitoring lab", level: intermediate, status: planned }
-  - { title: "SLO dashboard for a sample API", level: advanced, status: planned }
+  - { title: "Application health dashboard", level: beginner, status: available, project: prom-health-dashboard }
+  - { title: "Resource monitoring lab", level: intermediate, status: available, project: prom-resource-monitoring }
+  - { title: "SLO dashboard for a sample API", level: advanced, status: available, project: prom-slo-dashboard }
 resources:
   - title: Prometheus overview
     url: https://prometheus.io/docs/introduction/overview/

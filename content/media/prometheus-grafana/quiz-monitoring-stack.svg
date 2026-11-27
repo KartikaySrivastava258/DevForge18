@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300">
+  <!-- Numbered diagram for the Prometheus + Grafana track quiz: label the parts of a monitoring stack. -->
+  <rect class="f-box-faint" x="20" y="110" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="95" y="157" text-anchor="middle">1</text>
+  <text class="f-small f-mono" x="95" y="210" text-anchor="middle">GET /metrics</text>
+  <rect class="f-box-faint" x="300" y="110" width="160" height="80" rx="8"/>
+  <text class="f-strong" x="380" y="157" text-anchor="middle">2</text>
+  <rect class="f-box-faint" x="590" y="30" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="665" y="77" text-anchor="middle">3</text>
+  <rect class="f-box-faint" x="590" y="190" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="665" y="237" text-anchor="middle">4</text>
+  <g>
+    <path class="f-arrow" d="M298 150 L180 150"/>
+    <polygon class="f-head" points="172,150 180,145.5 180,154.5"/>
+  </g>
+  <text class="f-small" x="236" y="140" text-anchor="middle">scrapes every 15 s</text>
+  <g>
+    <path class="f-arrow" d="M462 130 L582 82"/>
+    <polygon class="f-head" points="589,79 582,86 579,78"/>
+  </g>
+  <text class="f-small" x="505" y="90" text-anchor="middle">firing alerts</text>
+  <g>
+    <path class="f-arrow" d="M588 225 L470 178"/>
+    <polygon class="f-head" points="463,175 472,173 469,182"/>
+  </g>
+  <text class="f-small" x="520" y="232" text-anchor="middle">PromQL queries</text>
+  <text class="f-small" x="665" y="128" text-anchor="middle">groups, silences, routes</text>
+</svg>

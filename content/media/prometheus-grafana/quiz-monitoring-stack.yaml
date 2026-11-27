@@ -1,0 +1,4 @@
+alt: 'Four numbered boxes. Box 2 has an arrow labelled "scrapes every 15 s" pointing to box 1, which is marked GET /metrics. Box 2 sends "firing alerts" to box 3, described as grouping, silencing and routing. Box 4 sends "PromQL queries" to box 2. The boxes are not named; the quiz asks which component each number is.'
+caption: 'Which component is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

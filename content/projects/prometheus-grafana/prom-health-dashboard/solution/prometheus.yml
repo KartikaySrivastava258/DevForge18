@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: campus-api
+    scrape_interval: 5s          # short, so a fresh lab shows data within seconds
+    static_configs:
+      - targets: ["app:8000"]    # the app's service name and port on the shared network
+        labels:
+          env: lab

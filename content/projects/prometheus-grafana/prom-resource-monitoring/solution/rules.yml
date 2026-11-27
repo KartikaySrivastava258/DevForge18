@@ -1,0 +1,36 @@
+groups:
+  - name: host-resources
+    rules:
+      # Recording rules: computed once per evaluation, reused by alerts and dashboards.
+      - record: instance:node_cpu_utilisation:rate5m
+        # Busy fraction of all CPUs of a host: 1 minus the share of time spent idle.
+        expr: 1 - avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m]))
+      - record: instance:node_memory_utilisation:ratio
+        expr: 1 - max by (instance) (node_memory_MemAvailable_bytes) / max by (instance) (node_memory_MemTotal_bytes)
+
+      - alert: HostHighCpu
+        expr: instance:node_cpu_utilisation:rate5m > 0.9
+        for: 10m                 # a short spike is normal; ten minutes is not
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $labels.instance }} CPU is above 90% for 10 minutes"
+      - alert: HostMemoryPressure
+        expr: instance:node_memory_utilisation:ratio > 0.9
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $labels.instance }} has less than 10% memory available"
+      - alert: HostDiskWillFillIn4Hours
+        # Extrapolates the last hour's trend 4 hours ahead. Alerting on the trend gives time to act,
+        # unlike a fixed "90% full" threshold that fires too late on a fast fill and forever on a slow one.
+        expr: max by (instance, mountpoint) (predict_linear(node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"}[1h], 4 * 3600)) < 0
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "{{ $labels.instance }} {{ $labels.mountpoint }} will be full within 4 hours at the current rate"
+      - alert: HostDown
+        expr: max by (instance) (up{job="node"}) == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: "{{ $labels.instance }} has not been scraped for 2 minutes"

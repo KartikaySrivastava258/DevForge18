@@ -1,0 +1,13 @@
+rule_files: [rules.yml]
+evaluation_interval: 1m
+tests:
+  - name: CPU at 95% raises an alert
+    interval: 1m
+    input_series:
+      - series: 'node_cpu_seconds_total{instance="web-1:9100", job="node", cpu="0", mode="idle"}'
+        values: '0+3x30'       # 3 idle seconds per minute: 95% busy
+    alert_rule_test:
+      - alertname: HostHighCpu
+        eval_time: 10m
+        exp_alerts:
+          - exp_labels: { severity: critical, instance: "web-1:9100" }

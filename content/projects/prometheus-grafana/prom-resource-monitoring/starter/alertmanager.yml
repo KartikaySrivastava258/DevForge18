@@ -1,0 +1,10 @@
+route:
+  receiver: team-email
+
+receivers:
+  - name: oncall-pager
+    webhook_configs:
+      - url: http://pager.example:9095/alert
+  - name: team-email
+    webhook_configs:
+      - url: http://mail-relay.example:9096/alert

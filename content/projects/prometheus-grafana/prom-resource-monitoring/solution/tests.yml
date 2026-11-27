@@ -1,0 +1,61 @@
+rule_files: [rules.yml]
+evaluation_interval: 1m
+tests:
+  - name: CPU at 95% pages after ten minutes, not before
+    interval: 1m
+    input_series:
+      - series: 'node_cpu_seconds_total{instance="web-1:9100", job="node", cpu="0", mode="idle"}'
+        values: '0+3x30'        # 3 idle seconds per 60-second minute: 95% busy
+    promql_expr_test:
+      - expr: round(instance:node_cpu_utilisation:rate5m * 100)
+        eval_time: 10m
+        exp_samples:
+          - labels: '{instance="web-1:9100"}'
+            value: 95
+    alert_rule_test:
+      - alertname: HostHighCpu
+        eval_time: 8m
+        exp_alerts: []
+      - alertname: HostHighCpu
+        eval_time: 20m
+        exp_alerts:
+          - exp_labels: { severity: warning, instance: "web-1:9100" }
+            exp_annotations: { summary: "web-1:9100 CPU is above 90% for 10 minutes" }
+  - name: a disk that loses 100 MB a minute
+    interval: 1m
+    input_series:
+      - series: 'node_filesystem_avail_bytes{instance="db-1:9100", job="node", mountpoint="/", fstype="ext4"}'
+        values: '10000000000-100000000x90'
+    alert_rule_test:
+      - alertname: HostDiskWillFillIn4Hours
+        eval_time: 70m
+        exp_alerts:
+          - exp_labels: { severity: critical, instance: "db-1:9100", mountpoint: "/" }
+            exp_annotations: { summary: "db-1:9100 / will be full within 4 hours at the current rate" }
+  - name: a host that stops answering
+    interval: 1m
+    input_series:
+      - series: 'up{instance="web-1:9100", job="node"}'
+        values: '1 1 1 0 0 0 0 0'
+    alert_rule_test:
+      - alertname: HostDown
+        eval_time: 4m
+        exp_alerts: []
+      - alertname: HostDown
+        eval_time: 6m
+        exp_alerts:
+          - exp_labels: { severity: critical, instance: "web-1:9100" }
+            exp_annotations: { summary: "web-1:9100 has not been scraped for 2 minutes" }
+  - name: memory pressure
+    interval: 1m
+    input_series:
+      - series: 'node_memory_MemTotal_bytes{instance="web-1:9100", job="node"}'
+        values: '8000000000x20'
+      - series: 'node_memory_MemAvailable_bytes{instance="web-1:9100", job="node"}'
+        values: '400000000x20'
+    alert_rule_test:
+      - alertname: HostMemoryPressure
+        eval_time: 10m
+        exp_alerts:
+          - exp_labels: { severity: warning, instance: "web-1:9100" }
+            exp_annotations: { summary: "web-1:9100 has less than 10% memory available" }

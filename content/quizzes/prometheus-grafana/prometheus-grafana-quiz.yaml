@@ -1,0 +1,185 @@
+id: prometheus-grafana-quiz
+track: prometheus-grafana
+title: Prometheus and Grafana — track quiz
+description: Thirteen questions from metric types and PromQL to alerting, cardinality and SLOs. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: counter-drop
+    type: single
+    level: beginner
+    lesson: prometheus-metrics-and-labels
+    prompt: A graph of the counter devforge_http_requests_total suddenly drops from 5,000 to 12. What is the most likely explanation?
+    options:
+      - { id: a, text: "Users stopped sending requests" }
+      - { id: b, text: "The process restarted and the counter began again from zero" }
+      - { id: c, text: "Prometheus deleted old data" }
+    answer: b
+    explanation: A counter can only increase or reset to zero on restart. That is why you rarely graph a raw counter — rate() measures how fast it rises and treats a drop as a reset.
+
+  - id: metric-types
+    type: matching
+    level: beginner
+    lesson: prometheus-metric-types-done-right
+    prompt: Match each measurement with the metric type that fits it.
+    left:
+      - { id: served, text: "Requests served since the process started" }
+      - { id: queue, text: "Jobs waiting in the queue right now" }
+      - { id: latency, text: "How long requests take, so you can compute percentiles across replicas" }
+    right:
+      - { id: counter, text: "Counter" }
+      - { id: gauge, text: "Gauge" }
+      - { id: histogram, text: "Histogram" }
+      - { id: label, text: "A label on another metric" }
+    pairs: { served: counter, queue: gauge, latency: histogram }
+    explanation: Counters accumulate, gauges are current levels that go up and down, and histograms count observations in buckets — which, unlike summary quantiles, can be aggregated across replicas.
+
+  - id: up-zero
+    type: single
+    level: beginner
+    lesson: prometheus-scraping-and-promql
+    prompt: up{job="devforge"} is 0. What does that tell you?
+    options:
+      - { id: a, text: "Prometheus tried to scrape the target and the scrape failed" }
+      - { id: b, text: "The application has received no requests" }
+      - { id: c, text: "Prometheus itself has stopped" }
+    answer: a
+    explanation: Prometheus records up after every scrape attempt — 1 if it worked, 0 if it failed. If Prometheus had stopped, there would be no new samples at all.
+
+  - id: stack-diagram
+    type: diagram
+    level: beginner
+    lesson: prometheus-alerting-and-alertmanager
+    prompt: Label the numbered components of this monitoring stack.
+    media: media:prometheus-grafana/quiz-monitoring-stack.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: app, text: "The application exposing metrics" }
+      - { id: prometheus, text: "Prometheus" }
+      - { id: alertmanager, text: "Alertmanager" }
+      - { id: grafana, text: "Grafana" }
+      - { id: longterm, text: "A long-term storage system" }
+    answers: { "1": app, "2": prometheus, "3": alertmanager, "4": grafana }
+    explanation: Prometheus pulls metrics from the application's /metrics endpoint, evaluates alerting rules and sends firing alerts to Alertmanager, which groups, silences and routes them. Grafana stores no data; each panel sends PromQL to Prometheus when it is displayed.
+
+  - id: rate-then-sum
+    type: single
+    level: intermediate
+    lesson: prometheus-scraping-and-promql
+    prompt: Which query gives one number — total requests per second across all routes and statuses?
+    options:
+      - { id: a, text: "sum(devforge_http_requests_total)" }
+      - { id: b, text: "sum(rate(devforge_http_requests_total[1m]))" }
+      - { id: c, text: "rate(sum(devforge_http_requests_total)[1m])" }
+    answer: b
+    explanation: rate() turns each counter into a per-second rate, then sum() adds the rates — rate first, then aggregate, as the Prometheus documentation advises. Summing raw counters first hides resets.
+
+  - id: histogram-buckets
+    type: single
+    level: intermediate
+    lesson: prometheus-metrics-and-labels
+    prompt: A histogram shows _count 40 and the bucket le="0.1" at 38. What does that tell you?
+    options:
+      - { id: a, text: "38 requests took exactly 0.1 seconds" }
+      - { id: b, text: "38 of the 40 requests took 0.1 seconds or less, so 2 took longer" }
+      - { id: c, text: "The average request took 0.1 seconds" }
+    answer: b
+    explanation: Buckets are cumulative — each counts every observation less than or equal to its le bound. The average needs _sum divided by _count.
+
+  - id: error-budget-output
+    type: output
+    level: intermediate
+    lesson: prometheus-slos-and-error-budgets
+    prompt: What does this output show about adding "nines" to an SLO?
+    command: for slo in 99 99.9 99.99; do awk … ; done
+    output: |
+      SLO 99%    -> budget 1.00% of requests, about 432.0 minutes of full outage per 30 days
+      SLO 99.9%  -> budget 0.10% of requests, about 43.2 minutes of full outage per 30 days
+      SLO 99.99% -> budget 0.01% of requests, about 4.3 minutes of full outage per 30 days
+    options:
+      - { id: a, text: "Each extra nine divides the error budget by ten — 99.99% leaves about four minutes a month for every deployment, incident and dependency failure" }
+      - { id: b, text: "Each extra nine adds about 40 minutes of allowed outage" }
+      - { id: c, text: "The budget does not depend on the SLO" }
+    answer: a
+    explanation: The budget is 1 − SLO. Pick the SLO users actually need; a stricter one than necessary leaves almost no room to change anything.
+
+  - id: alert-flow
+    type: ordering
+    level: intermediate
+    lesson: prometheus-alerting-and-alertmanager
+    prompt: Put the life of an alert in order.
+    items:
+      - { id: scrape, text: "Prometheus scrapes the target and stores the samples" }
+      - { id: rule, text: "An alerting rule's expression is true at an evaluation" }
+      - { id: for, text: "It stays true for the rule's for duration, and the alert fires" }
+      - { id: send, text: "Prometheus sends the firing alert to Alertmanager" }
+      - { id: route, text: "Alertmanager groups it, applies silences and inhibitions, and notifies the receiver its route selects" }
+    order: [scrape, rule, for, send, route]
+    explanation: Prometheus decides that something is wrong; Alertmanager decides who hears about it and how often. The for duration is what keeps a short spike from paging anyone.
+
+  - id: inhibition
+    type: single
+    level: advanced
+    lesson: prometheus-alerting-and-alertmanager
+    prompt: ServiceDown and HighLatency both fire for the checkout service. An inhibit rule has source ServiceDown, target HighLatency and equal [service]. Who is notified about what?
+    options:
+      - { id: a, text: "Both alerts are sent" }
+      - { id: b, text: "Only ServiceDown is sent for checkout; HighLatency for other services is still sent" }
+      - { id: c, text: "Neither is sent until someone acknowledges" }
+    answer: b
+    explanation: Inhibition suppresses the target alert while the source alert fires, but only where the labels listed in equal match — here, the same service.
+
+  - id: user-label
+    type: single
+    level: advanced
+    lesson: prometheus-cardinality-and-long-term-storage
+    prompt: A developer adds a user_id label to a request counter on a site with 200,000 users. What happens?
+    options:
+      - { id: a, text: "Nothing — labels are free" }
+      - { id: b, text: "Up to 200,000 new time series per combination of the other labels, growing Prometheus' memory and slowing queries; per-user detail belongs in logs or traces" }
+      - { id: c, text: "Prometheus rejects the label automatically" }
+    answer: b
+    explanation: Every distinct label combination is a separate time series. Unbounded values such as user IDs or emails make cardinality explode.
+
+  - id: burn-rate
+    type: single
+    level: advanced
+    lesson: prometheus-slos-and-error-budgets
+    prompt: The error ratio over the last hour is 2%, and the SLO allows 0.1%. What is the burn rate?
+    options:
+      - { id: a, text: "2" }
+      - { id: b, text: "20 — above 14.4, so more than 2% of the monthly budget is spent within the hour" }
+      - { id: c, text: "0.02" }
+    answer: b
+    explanation: Burn rate = error ratio ÷ budgeted ratio = 0.02 ÷ 0.001 = 20. A burn rate of 1 would spend exactly the budget in 30 days.
+
+  - id: multiwindow
+    type: multiple
+    level: advanced
+    lesson: prometheus-slos-and-error-budgets
+    prompt: Why does a fast-burn alert require both the 1-hour and the 5-minute error ratio to be high? Select all that apply.
+    options:
+      - { id: a, text: "The 1-hour window shows that enough of the budget is at stake to wake someone" }
+      - { id: b, text: "The 5-minute window shows that the problem is still happening, so the alert stops soon after recovery" }
+      - { id: c, text: "Prometheus cannot evaluate a 1-hour window on its own" }
+      - { id: d, text: "Two windows make the alert fire earlier than the 5-minute window alone" }
+    answers: [a, b]
+    explanation: That is the multiwindow, multi-burn-rate approach from the SRE workbook. The long window measures significance; the short one stops an alert from paging long after an outage has ended.
+
+  - id: grafana-variables
+    type: single
+    level: advanced
+    lesson: grafana-dashboards-and-variables
+    prompt: A multi-value Grafana variable route has /api/tracks and /api/search selected. Which matcher should the query use?
+    options:
+      - { id: a, text: "route=\"$route\"" }
+      - { id: b, text: "route=~\"$route\" — Grafana joins the values as a regular-expression alternation" }
+      - { id: c, text: "route!=\"$route\"" }
+    answer: b
+    explanation: With several values selected, Grafana substitutes a regex alternation (escaping special characters for Prometheus). With = the query would match nothing.

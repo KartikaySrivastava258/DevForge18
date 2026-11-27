@@ -1,0 +1,76 @@
+rule_files: [rules.yml]
+evaluation_interval: 1m
+tests:
+  - name: 2% of requests fail -> burn rate 4, below the page threshold
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="campus-api", code="200"}'
+        values: '0+980x120'
+      - series: 'http_requests_total{job="campus-api", code="500"}'
+        values: '0+20x120'
+    promql_expr_test:
+      - expr: round(job:sli_availability_errors:ratio_rate1h / 0.005)    # burn rate 4 (2% / 0.5%)
+        eval_time: 1h
+        exp_samples:
+          - labels: '{job="campus-api"}'
+            value: 4
+    alert_rule_test:
+      - alertname: AvailabilityFastBurn
+        eval_time: 1h
+        exp_alerts: []          # burn rate 4 is below 14.4: no page
+  - name: a bad deploy, 10% of requests fail -> page within the hour
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="campus-api", code="200"}'
+        values: '0+900x120'
+      - series: 'http_requests_total{job="campus-api", code="500"}'
+        values: '0+100x120'
+    alert_rule_test:
+      - alertname: AvailabilityFastBurn
+        eval_time: 1h
+        exp_alerts:
+          - exp_labels: { severity: page, job: campus-api }
+            exp_annotations: { summary: "campus-api availability budget burning 14.4x too fast: 2% of the monthly budget per hour" }
+  - name: 5% slow requests for hours -> latency slow burn opens a ticket, no page
+    interval: 1m
+    input_series:
+      - series: 'http_request_duration_seconds_bucket{job="campus-api", le="0.5"}'
+        values: '0+950x400'
+      - series: 'http_request_duration_seconds_count{job="campus-api"}'
+        values: '0+1000x400'
+    alert_rule_test:
+      - alertname: LatencyFastBurn
+        eval_time: 6h
+        exp_alerts: []
+      - alertname: LatencySlowBurn
+        eval_time: 6h
+        exp_alerts: []          # burn rate 5 is below 6
+  - name: 8% slow requests for hours -> ticket
+    interval: 1m
+    input_series:
+      - series: 'http_request_duration_seconds_bucket{job="campus-api", le="0.5"}'
+        values: '0+920x400'
+      - series: 'http_request_duration_seconds_count{job="campus-api"}'
+        values: '0+1000x400'
+    alert_rule_test:
+      - alertname: LatencySlowBurn
+        eval_time: 6h
+        exp_alerts:
+          - exp_labels: { severity: ticket, job: campus-api }
+            exp_annotations: { summary: "campus-api latency budget burning 6x too fast: 5% of the monthly budget per 6 hours" }
+  - name: 4% of requests fail for 6 hours -> availability slow burn opens a ticket, no page
+    interval: 1m
+    input_series:
+      - series: 'http_requests_total{job="campus-api", code="200"}'
+        values: '0+960x400'
+      - series: 'http_requests_total{job="campus-api", code="500"}'
+        values: '0+40x400'
+    alert_rule_test:
+      - alertname: AvailabilityFastBurn
+        eval_time: 6h
+        exp_alerts: []
+      - alertname: AvailabilitySlowBurn
+        eval_time: 6h
+        exp_alerts:
+          - exp_labels: { severity: ticket, job: campus-api }
+            exp_annotations: { summary: "campus-api availability budget burning 6x too fast: 5% of the monthly budget per 6 hours" }

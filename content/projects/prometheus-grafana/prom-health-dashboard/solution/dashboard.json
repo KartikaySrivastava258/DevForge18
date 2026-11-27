@@ -1,0 +1,43 @@
+{
+  "uid": "campus-api-health",
+  "title": "Campus API health",
+  "description": "The four signals to check first: is it up, how busy, how many errors, how slow.",
+  "schemaVersion": 39,
+  "time": { "from": "now-1h", "to": "now" },
+  "refresh": "30s",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "API up",
+      "description": "1 when Prometheus scraped the API successfully, 0 when it could not.",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "none" } },
+      "targets": [{ "refId": "A", "expr": "min(up{job=\"campus-api\"})" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Requests per second by route",
+      "gridPos": { "x": 6, "y": 0, "w": 18, "h": 6 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "reqps" } },
+      "targets": [{ "refId": "A", "expr": "sum by (route) (rate(http_requests_total{job=\"campus-api\"}[$__rate_interval]))", "legendFormat": "{{route}}" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Error ratio (5xx share of requests)",
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "percentunit" } },
+      "targets": [{ "refId": "A", "expr": "sum(rate(http_requests_total{job=\"campus-api\", code=~\"5..\"}[$__rate_interval])) / sum(rate(http_requests_total{job=\"campus-api\"}[$__rate_interval]))" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "95th percentile latency by route",
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [{ "refId": "A", "expr": "histogram_quantile(0.95, sum by (route, le) (rate(http_request_duration_seconds_bucket{job=\"campus-api\"}[$__rate_interval])))", "legendFormat": "{{route}}" }]
+    }
+  ]
+}
