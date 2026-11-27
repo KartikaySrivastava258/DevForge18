@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320">
+  <!-- Pipeline and lineage, from Reproducible training pipelines with Airflow. -->
+  <rect class="f-box-faint" x="10" y="30" width="330" height="150" rx="8"/>
+  <text class="f-small f-strong" x="175" y="52" text-anchor="middle">Airflow run (ds = 2026-01-15)</text>
+  <rect class="f-box-accent" x="25" y="70" width="140" height="90" rx="8"/>
+  <text class="f-small f-strong f-mono" x="95" y="96" text-anchor="middle">prepare</text>
+  <text class="f-small" x="95" y="120" text-anchor="middle">seeded split</text>
+  <text class="f-small f-mono" x="95" y="140" text-anchor="middle">→ data/&lt;ds&gt;/</text>
+  <rect class="f-box-accent" x="185" y="70" width="140" height="90" rx="8"/>
+  <text class="f-small f-strong f-mono" x="255" y="96" text-anchor="middle">train</text>
+  <text class="f-small" x="255" y="120" text-anchor="middle">fixed params</text>
+  <text class="f-small" x="255" y="140" text-anchor="middle">log + register</text>
+  <g>
+    <path class="f-arrow" d="M167 115 L175 115"/>
+    <polygon class="f-head" points="183,115 175,119.5 175,110.5"/>
+  </g>
+  <rect class="f-box-ok" x="400" y="30" width="310" height="150" rx="8"/>
+  <text class="f-small f-strong" x="555" y="52" text-anchor="middle">MLflow run</text>
+  <text class="f-small f-mono" x="555" y="78" text-anchor="middle">rmse · alpha · random_state</text>
+  <text class="f-small f-mono" x="555" y="102" text-anchor="middle">tag airflow.run_id</text>
+  <text class="f-small f-mono" x="555" y="124" text-anchor="middle">tag data.sha256 · code.sha256</text>
+  <text class="f-small" x="555" y="148" text-anchor="middle">model → registered version</text>
+  <g>
+    <path class="f-arrow" d="M327 115 L390 115"/>
+    <polygon class="f-head" points="398,115 390,119.5 390,110.5"/>
+  </g>
+  <rect class="f-box-faint" x="10" y="220" width="700" height="70" rx="8"/>
+  <text class="f-small" x="360" y="244" text-anchor="middle">re-run, same inputs → same rmse, same hashes (reproducible)</text>
+  <text class="f-small" x="360" y="268" text-anchor="middle">change code (alpha) → new code hash, new rmse, new model version (traceable)</text>
+</svg>

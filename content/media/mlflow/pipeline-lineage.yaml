@@ -1,0 +1,4 @@
+alt: 'An Airflow run for ds 2026-01-15 has two tasks: prepare makes a seeded split and writes it to a folder for the date; train fits the model with fixed parameters, logs it and registers it. The resulting MLflow run holds the rmse metric, the alpha and random_state parameters, tags for the Airflow run ID, the data hash and the code hash, and the model, registered as a version. Re-running with the same inputs gives the same rmse and the same hashes, so the result is reproducible; changing the code, here alpha, gives a new code hash, a new rmse and a new model version, so the change is traceable.'
+caption: 'Fixed inputs make reruns identical; lineage tags tie every model version to its data, code and Airflow run.'
+credit: DevForge 18 content team
+licence: project-content
