@@ -58,9 +58,9 @@ labs:
   - { title: "Compare query plans before and after indexing", level: intermediate, mode: simulation, status: available, lab: postgresql-query-plans-and-indexes }
   - { title: "Demonstrate transaction rollback and isolation", level: advanced, mode: local, status: available, lab: postgresql-transactions-and-isolation }
 projects:
-  - { title: "College course registration database", level: beginner, status: planned }
-  - { title: "Expense tracking API database", level: intermediate, status: planned }
-  - { title: "Analytics-ready schema with indexes and migration scripts", level: advanced, status: planned }
+  - { title: "College course registration database", level: beginner, status: available, project: pg-course-registration }
+  - { title: "Expense tracking API database", level: intermediate, status: available, project: pg-expense-tracker }
+  - { title: "Analytics-ready schema with indexes and migration scripts", level: advanced, status: available, project: pg-analytics-migrations }
 resources:
   - title: PostgreSQL tutorial
     url: https://www.postgresql.org/docs/current/tutorial.html

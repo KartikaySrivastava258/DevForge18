@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300">
+  <!-- Numbered diagram for the PostgreSQL track quiz: label the parts of a pooled, replicated setup. -->
+  <rect class="f-box-faint" x="20" y="105" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="95" y="152" text-anchor="middle">1</text>
+  <text class="f-small" x="95" y="205" text-anchor="middle">many instances,</text>
+  <text class="f-small" x="95" y="222" text-anchor="middle">hundreds of connections</text>
+  <rect class="f-box-faint" x="240" y="105" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="315" y="152" text-anchor="middle">2</text>
+  <rect class="f-box-faint" x="470" y="30" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="545" y="77" text-anchor="middle">3</text>
+  <rect class="f-box-faint" x="470" y="190" width="150" height="80" rx="8"/>
+  <text class="f-strong" x="545" y="237" text-anchor="middle">4</text>
+  <g>
+    <path class="f-arrow" d="M172 145 L230 145"/>
+    <polygon class="f-head" points="238,145 230,149.5 230,140.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M392 132 L462 80"/>
+    <polygon class="f-head" points="468,75 463,84 458,77"/>
+  </g>
+  <text class="f-small" x="388" y="78" text-anchor="middle">reads, writes</text>
+  <text class="f-small" x="388" y="92" text-anchor="middle">(few connections)</text>
+  <g>
+    <path class="f-arrow" d="M392 158 L462 212"/>
+    <polygon class="f-head" points="468,217 458,215 463,208"/>
+  </g>
+  <text class="f-small" x="408" y="210" text-anchor="middle">reads only</text>
+  <g>
+    <path class="f-arrow" d="M545 112 L545 180"/>
+    <polygon class="f-head" points="545,188 540.5,180 549.5,180"/>
+  </g>
+  <text class="f-small f-mono" x="555" y="155">WAL stream</text>
+</svg>

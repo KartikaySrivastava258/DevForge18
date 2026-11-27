@@ -1,0 +1,4 @@
+alt: 'Four numbered boxes. Box 1, described as many instances with hundreds of connections, has an arrow to box 2. From box 2, one arrow labelled "reads, writes (few connections)" goes to box 3 and another labelled "reads only" goes to box 4. An arrow labelled "WAL stream" goes from box 3 down to box 4. The boxes are not named; the quiz asks which part of the system each number is.'
+caption: 'Which part of the system is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

@@ -1,0 +1,194 @@
+id: postgresql-quiz
+track: postgresql
+title: PostgreSQL — track quiz
+description: Thirteen questions from tables and constraints to isolation, replication and least privilege. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: unique-in-db
+    type: single
+    level: beginner
+    lesson: postgresql-tables-and-constraints
+    prompt: The application already checks that an email is unused before saving a new student. Why declare email UNIQUE in the database as well?
+    options:
+      - { id: a, text: "It makes INSERT faster" }
+      - { id: b, text: "Application checks can be bypassed or raced — two requests can both see \"unused\" and both insert; the database enforces UNIQUE for every writer, atomically" }
+      - { id: c, text: "PostgreSQL requires every text column to be unique" }
+    answer: b
+    explanation: Only the database sees every write. Two concurrent requests can pass the same application check; a UNIQUE constraint rejects the second insert no matter where it came from.
+
+  - id: check-error
+    type: output
+    level: beginner
+    lesson: postgresql-tables-and-constraints
+    prompt: What does this error tell you to fix?
+    command: psql -d registration -c "INSERT INTO courses VALUES ('CS301', 'Compilers', 9, 40)"
+    output: |
+      ERROR:  new row for relation "courses" violates check constraint "courses_credits_check"
+      DETAIL:  Failing row contains (CS301, Compilers, 9, 40).
+    options:
+      - { id: a, text: "The course code CS301 already exists" }
+      - { id: b, text: "The value 9 for credits breaks the CHECK rule on that column; the row was not inserted" }
+      - { id: c, text: "The table courses does not exist" }
+    answer: b
+    explanation: PostgreSQL names the violated constraint — default names follow table_column_check — and the DETAIL line shows the rejected row. A duplicate code would say "violates unique constraint".
+
+  - id: left-join
+    type: single
+    level: beginner
+    lesson: postgresql-relationships-and-joins
+    prompt: You want every student who has no enrolments. Why does the query use LEFT JOIN enrollments rather than JOIN enrollments?
+    options:
+      - { id: a, text: "JOIN returns only students with at least one matching enrolment; LEFT JOIN keeps every student and fills the enrolment columns with NULL where there is no match, which you can filter on" }
+      - { id: b, text: "LEFT JOIN is faster" }
+      - { id: c, text: "JOIN cannot join on a foreign key" }
+    answer: a
+    explanation: An inner join keeps only matching pairs, so students without enrolments disappear. A LEFT JOIN keeps them with NULLs on the right, and WHERE e.student_id IS NULL selects exactly those.
+
+  - id: constraint-match
+    type: matching
+    level: beginner
+    lesson: postgresql-tables-and-constraints
+    prompt: Match each constraint with the rule it enforces.
+    left:
+      - { id: pk, text: "PRIMARY KEY" }
+      - { id: fk, text: "FOREIGN KEY … REFERENCES" }
+      - { id: unique, text: "UNIQUE" }
+      - { id: check, text: "CHECK (credits BETWEEN 1 AND 6)" }
+    right:
+      - { id: identity, text: "Identifies each row: no duplicates and no NULL" }
+      - { id: exists, text: "The value must exist in another table's key" }
+      - { id: distinct, text: "No two rows may share the value" }
+      - { id: condition, text: "Each row's value must satisfy a condition" }
+      - { id: speed, text: "Makes queries on the column faster, with no rule attached" }
+    pairs: { pk: identity, fk: exists, unique: distinct, check: condition }
+    explanation: Constraints are rules the database enforces on every write. (PRIMARY KEY and UNIQUE also create an index, but their purpose is the rule; a plain index has no rule.)
+
+  - id: restore-order
+    type: ordering
+    level: intermediate
+    lesson: postgresql-backups-restores-migrations
+    prompt: Put the steps of a restore test in order, from taking the backup to trusting it.
+    items:
+      - { id: dump, text: "pg_dump -Fc -d shop -f shop.dump" }
+      - { id: create, text: "createdb shop_restore (a new, empty database)" }
+      - { id: restore, text: "pg_restore -d shop_restore shop.dump" }
+      - { id: verify, text: "Compare row counts and totals with the original" }
+    order: [dump, create, restore, verify]
+    explanation: Restore into a new database so the check cannot damage what is left of the original, and verify with numbers — a backup you have never restored is not yet a backup.
+
+  - id: transaction-facts
+    type: multiple
+    level: intermediate
+    lesson: postgresql-transactions-and-acid
+    prompt: Which statements about PostgreSQL transactions are true? Select all that apply.
+    options:
+      - { id: a, text: "Outside BEGIN … COMMIT, each statement is its own transaction" }
+      - { id: b, text: "After a statement fails inside a transaction, PostgreSQL ignores further commands until ROLLBACK" }
+      - { id: c, text: "ROLLBACK TO SAVEPOINT undoes only the work after the savepoint, and the transaction continues" }
+      - { id: d, text: "With default settings, a transaction whose COMMIT has returned can still be lost if the server crashes a second later" }
+    answers: [a, b, c]
+    explanation: COMMIT returns only after the transaction's write-ahead-log records are on permanent storage (synchronous commit, the default), so a committed transaction survives a crash. The other three statements are how transactions and savepoints behave.
+
+  - id: explain-output
+    type: output
+    level: intermediate
+    lesson: postgresql-indexes-and-explain
+    prompt: The orders table has 100,000 rows. What does this plan tell you?
+    command: EXPLAIN (ANALYZE, COSTS OFF, TIMING OFF, SUMMARY OFF) SELECT * FROM orders WHERE customer_id = 42;
+    output: |2
+                       QUERY PLAN
+      ---------------------------------------------
+       Seq Scan on orders (actual rows=20 loops=1)
+         Filter: (customer_id = 42)
+         Rows Removed by Filter: 99980
+      (3 rows)
+    options:
+      - { id: a, text: "The query is as fast as it can be" }
+      - { id: b, text: "PostgreSQL read every row to keep 20 — the classic sign that an index on customer_id is missing" }
+      - { id: c, text: "The table has 20 rows" }
+    answer: b
+    explanation: Rows Removed by Filter counts rows that were read and then rejected. Reading 100,000 rows to return 20 is what an index on the filtered column avoids.
+
+  - id: index-ignored
+    type: single
+    level: intermediate
+    lesson: postgresql-indexes-and-explain
+    prompt: There is an index on status, but a query for status = 'shipped' — nine orders in ten — uses a sequential scan. Why?
+    options:
+      - { id: a, text: "The index is broken and must be rebuilt" }
+      - { id: b, text: "When most rows match, reading the table in order is cheaper than fetching rows one by one through the index, and the planner chooses that" }
+      - { id: c, text: "Indexes only work on numeric columns" }
+    answer: b
+    explanation: An index pays off when few rows match. For a value that covers most of the table, the planner's cost estimate favours a sequential scan — correctly.
+
+  - id: lost-update
+    type: single
+    level: advanced
+    lesson: postgresql-isolation-and-anomalies
+    prompt: Two requests each read seats = 2, compute 2 − 1 in application code, and write seats = 1. One booking is lost. Which fix prevents it?
+    options:
+      - { id: a, text: "Let the database do the arithmetic — UPDATE … SET seats = seats - 1 WHERE seats > 0 — or lock the row with SELECT … FOR UPDATE before reading it" }
+      - { id: b, text: "Add an index on seats" }
+      - { id: c, text: "Run the two requests on different connections" }
+    answer: a
+    explanation: Read-modify-write in the application is unsafe at the default READ COMMITTED level. An atomic UPDATE, or a row lock taken before the read, makes the second request see the first one's result.
+
+  - id: serialization-failure
+    type: single
+    level: advanced
+    lesson: postgresql-isolation-and-anomalies
+    prompt: Your code runs at SERIALIZABLE and gets "could not serialize access due to read/write dependencies among transactions". What should it do?
+    options:
+      - { id: a, text: "Ignore the error; the data was saved" }
+      - { id: b, text: "Roll back and run the whole transaction again from its first statement" }
+      - { id: c, text: "Switch that transaction to READ UNCOMMITTED" }
+    answer: b
+    explanation: A serialization failure means PostgreSQL cancelled the transaction to keep the result equivalent to some serial order. Retrying the whole transaction is the documented remedy, so code using SERIALIZABLE needs a retry loop.
+
+  - id: replication-diagram
+    type: diagram
+    level: advanced
+    lesson: postgresql-replication-and-pooling
+    prompt: This is a common production setup. Label the numbered boxes.
+    media: media:postgresql/quiz-replication-pooling.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: app, text: "Application servers" }
+      - { id: pooler, text: "Connection pooler (for example PgBouncer)" }
+      - { id: primary, text: "Primary server" }
+      - { id: standby, text: "Hot standby (streaming replica)" }
+      - { id: dump, text: "pg_dump backup file" }
+    answers: { "1": app, "2": pooler, "3": primary, "4": standby }
+    explanation: Many application connections share a few server connections through the pooler. Only the primary accepts writes; it streams its write-ahead log to the hot standby, which replays it and serves read-only queries.
+
+  - id: replica-not-backup
+    type: single
+    level: advanced
+    lesson: postgresql-replication-and-pooling
+    prompt: Someone runs DROP TABLE orders on the primary by mistake. Does the streaming replica let you get the table back?
+    options:
+      - { id: a, text: "Yes — the replica keeps the table until you promote it" }
+      - { id: b, text: "No — the replica replays the DROP within moments; backups (and point-in-time recovery) are what take you back to before a mistake" }
+      - { id: c, text: "Yes — replicas ignore DROP statements" }
+    answer: b
+    explanation: A replica follows the primary, mistakes included. It protects against losing a server, not against a bad command.
+
+  - id: injection-defences
+    type: multiple
+    level: advanced
+    lesson: postgresql-roles-privileges-injection
+    prompt: A login form builds WHERE name = '<input>' by joining strings. Which measures actually defend against SQL injection or limit its damage? Select all that apply.
+    options:
+      - { id: a, text: "Send the input as a parameter of a prepared statement instead of joining it into the SQL" }
+      - { id: b, text: "Connect with a role that has only the privileges the application needs" }
+      - { id: c, text: "Remove quote characters from the input" }
+      - { id: d, text: "Hide database error messages from users" }
+    answers: [a, b]
+    explanation: Parameters are sent separately from the SQL, so input can never change the query's structure — OWASP's first defence. Least privilege limits what a successful attack can do. Filtering characters misses cases, and hiding errors only slows an attacker down.
