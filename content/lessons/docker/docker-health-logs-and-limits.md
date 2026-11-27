@@ -232,6 +232,7 @@ docker run --name devforge-hog --memory 64m --memory-swap 64m node:22-alpine nod
 ```
 
 ```bash run
+for i in $(seq 1 20); do [ "$(docker inspect -f '{{.State.OOMKilled}}' devforge-hog)" = true ] && break; sleep 0.5; done
 docker inspect -f 'OOMKilled={{.State.OOMKilled}}, exit code {{.State.ExitCode}}' devforge-hog
 ```
 
@@ -239,7 +240,7 @@ docker inspect -f 'OOMKilled={{.State.OOMKilled}}, exit code {{.State.ExitCode}}
 OOMKilled=true, exit code 137
 ```
 
-The program kept allocating 1 MB buffers. At 64 MB (`--memory-swap 64m` also rules out swap) the kernel killed it. Without the limit, it would have kept growing until the whole machine ran short.
+The program kept allocating 1 MB buffers. At 64 MB (`--memory-swap 64m` also rules out swap) the kernel killed it. Without the limit, it would have kept growing until the whole machine ran short. Exit code 137 means the process was ended by `SIGKILL` (128 + 9); `OOMKilled=true` says the kernel's out-of-memory killer sent it. Docker learns about the out-of-memory event separately from the exit, and on a busy machine this lesson once read the flag as `false` right after the container stopped — so the loop gives it up to ten seconds to appear.
 
 ### 6. Restarting after a crash
 
