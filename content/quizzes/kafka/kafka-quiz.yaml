@@ -1,0 +1,193 @@
+id: kafka-quiz
+track: kafka
+title: Apache Kafka — track quiz
+description: Thirteen questions on topics and partitions, consumer groups and offsets, producers, replication, delivery guarantees, schemas and the outbox pattern. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: key-ordering
+    type: single
+    level: beginner
+    lesson: kafka-topics-and-partitions
+    prompt: All events for customer asha are sent with the key asha. What does Kafka guarantee about them?
+    options:
+      - { id: a, text: "They are spread evenly over all partitions" }
+      - { id: b, text: "They all go to the same partition, so they are read in the order they were written" }
+      - { id: c, text: "They are deleted after they are read" }
+    answer: b
+    explanation: The default partitioner chooses the partition from a hash of the key, so one key always maps to one partition, and a partition is read in exactly the order it was written.
+
+  - id: parts-diagram
+    type: diagram
+    level: beginner
+    lesson: kafka-topics-and-partitions
+    prompt: Label the numbered parts.
+    media: media:kafka/quiz-kafka-parts.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: producer, text: "Producer" }
+      - { id: topic, text: "Topic" }
+      - { id: partition, text: "Partition (an ordered log of offsets)" }
+      - { id: group, text: "Consumer group" }
+      - { id: registry, text: "Schema registry" }
+    answers: { "1": producer, "2": topic, "3": partition, "4": group }
+    explanation: A producer writes events to a topic, which is split into partitions — each an append-only log numbered by offset. The consumers of one group share the partitions between them.
+
+  - id: why-partitions
+    type: single
+    level: beginner
+    lesson: kafka-topics-and-partitions
+    prompt: Why would a topic have several partitions instead of one?
+    options:
+      - { id: a, text: "To keep events in one global order" }
+      - { id: b, text: "A partition is the unit of parallelism — within a group, each partition is read by at most one consumer at a time, so more partitions let more consumers share the work" }
+      - { id: c, text: "To store each event twice" }
+    answer: b
+    explanation: Kafka orders events per partition, not across the topic; partitions are what let a consumer group scale out.
+
+  - id: two-groups
+    type: single
+    level: beginner
+    lesson: kafka-consumer-groups-and-offsets
+    prompt: The billing service and the email service both read the orders topic, each with its own group. Billing has read everything; email has read nothing. What happens to the events?
+    options:
+      - { id: a, text: "They were deleted when billing read them" }
+      - { id: b, text: "They stay for the topic's retention period; Kafka tracks each group's position separately, so email can still read all of them" }
+      - { id: c, text: "Email only sees events published after it starts" }
+    answer: b
+    explanation: Reading does not remove events. Many independent services can read the same stream, each with its own committed offsets.
+
+  - id: lag-output
+    type: output
+    level: intermediate
+    lesson: kafka-consumer-groups-and-offsets
+    prompt: How many events are waiting for the billing group?
+    command: kafka kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group billing
+    output: |2
+
+      Consumer group 'billing' has no active members.
+
+      GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID     HOST            CLIENT-ID
+      billing         orders          0          5               7               2               -               -               -
+      billing         orders          1          0               0               0               -               -               -
+      billing         orders          2          1               2               1               -               -               -
+    options:
+      - { id: a, text: "3 — the lag is 2 on partition 0 and 1 on partition 2" }
+      - { id: b, text: "7 — the log-end offset of partition 0" }
+      - { id: c, text: "None, because the group has no active members" }
+    answer: a
+    explanation: Lag is the log-end offset minus the committed offset — events written but not yet processed by this group. They wait even while no member is running.
+
+  - id: acks-zero
+    type: single
+    level: intermediate
+    lesson: kafka-producers-acks-and-retries
+    prompt: A producer sends with acks=0, and the broker crashes a moment later. What does the application know about its records?
+    options:
+      - { id: a, text: "Nothing — with acks=0 the producer does not wait for any acknowledgement, so lost records are lost silently" }
+      - { id: b, text: "It gets an error for each lost record" }
+      - { id: c, text: "The records are retried automatically and arrive later" }
+    answer: a
+    explanation: The lesson shows offset -1 for every acks=0 record. Use acks=0 only for data you can afford to lose silently.
+
+  - id: timeout-resend
+    type: single
+    level: intermediate
+    lesson: kafka-producers-acks-and-retries
+    prompt: Your code gets a timeout for a send. Should it assume the record was not written and send it again?
+    options:
+      - { id: a, text: "Yes, always" }
+      - { id: b, text: "No — a timed-out record may well be in the log; a blind resend can duplicate it. Let the idempotent producer's own retries handle it, and design consumers to tolerate duplicates" }
+      - { id: c, text: "Yes, but only with acks=0" }
+    answer: b
+    explanation: In the lesson's recording, records reported as timed out were in the log afterwards.
+
+  - id: commit-order
+    type: ordering
+    level: intermediate
+    lesson: kafka-delivery-guarantees-and-idempotence
+    prompt: Put the steps of an at-least-once consumer in the safe order.
+    items:
+      - { id: poll, text: "Poll the next event" }
+      - { id: work, text: "Do the work (for example, send the email)" }
+      - { id: commit, text: "Commit the event's offset" }
+      - { id: next, text: "Poll again" }
+    order: [poll, work, commit, next]
+    explanation: Work-then-commit can repeat work after a crash; commit-then-work can lose it. Repeated work is handled by making the effect idempotent.
+
+  - id: isr-output
+    type: output
+    level: advanced
+    lesson: kafka-replication-and-fault-tolerance
+    prompt: Before this command every partition was "in sync 1,2,3", and partition 2 was led by broker 3. What does the output show?
+    command: docker stop devforge-kafka-3 > /dev/null; show "$UP" orders
+    output: |
+      partition 0: leader 1, replicas 1,2,3, in sync 1,2
+      partition 1: leader 2, replicas 2,3,1, in sync 1,2
+      partition 2: leader 1, replicas 3,1,2, in sync 1,2
+    options:
+      - { id: a, text: "Broker 3 is out of the in-sync replicas everywhere, and partition 2's leadership moved to broker 1; the replica list still says where copies should be" }
+      - { id: b, text: "Partition 2 lost its data" }
+      - { id: c, text: "The topic now has replication factor 2" }
+    answer: a
+    explanation: The replica list is where copies should be; the ISR is which copies are currently up to date. A new leader is chosen from the ISR, and the ISR grows back when the broker returns.
+
+  - id: min-isr
+    type: single
+    level: advanced
+    lesson: kafka-replication-and-fault-tolerance
+    prompt: replication.factor=3, min.insync.replicas=2, acks=all. Two brokers go down. What happens to writes?
+    options:
+      - { id: a, text: "They succeed on the remaining broker" }
+      - { id: b, text: "They are refused, because fewer than 2 replicas are in sync — availability is traded for durability on purpose" }
+      - { id: c, text: "They are written to the producer's disk" }
+    answer: b
+    explanation: min.insync.replicas is a promise to acks=all producers only; with one replica left, acks=all writes fail rather than risk losing data.
+
+  - id: exactly-once-scope
+    type: multiple
+    level: advanced
+    lesson: kafka-delivery-guarantees-and-idempotence
+    prompt: Which statements about Kafka's exactly-once processing are true? Select all that apply.
+    options:
+      - { id: a, text: "It covers read–process–write within Kafka (consume, produce and commit offsets in one transaction)" }
+      - { id: b, text: "An email sent by the processing step can still be sent twice; such side effects need their own idempotency" }
+      - { id: c, text: "It makes every external call exactly-once automatically" }
+      - { id: d, text: "Offsets in a topic with aborted transactions are always consecutive" }
+    answers: [a, b]
+    explanation: Exactly-once in Kafka means read–process–write within Kafka. Transaction markers and aborted records also take offsets, so offsets are not consecutive.
+
+  - id: outbox
+    type: single
+    level: advanced
+    lesson: kafka-outbox-pattern
+    prompt: A service commits an order to PostgreSQL, then publishes OrderPlaced to Kafka. Why is that not enough?
+    options:
+      - { id: a, text: "Kafka cannot store order events" }
+      - { id: b, text: "There is no transaction spanning both systems — a crash between the two loses the event; the outbox writes the event in the same database transaction and a relay publishes it" }
+      - { id: c, text: "PostgreSQL commits too slowly" }
+    answer: b
+    explanation: The outbox makes publishing at-least-once; idempotent consumers turn that into effectively-once handling.
+
+  - id: backward-compat
+    type: matching
+    level: advanced
+    lesson: kafka-schemas-and-evolution
+    prompt: Match each schema-registry term with its meaning.
+    left:
+      - { id: backward, text: "BACKWARD compatibility" }
+      - { id: none, text: "Compatibility NONE" }
+      - { id: magic, text: "Bytes 00 00 00 00 02 at the start of a message" }
+    right:
+      - { id: new-reads-old, text: "New readers can read data written with the old schema, so consumers can be upgraded first" }
+      - { id: no-check, text: "Any change is accepted — nothing protects consumers from a breaking change" }
+      - { id: schema-id, text: "A format byte (0), then the ID of the writer's schema in the registry (2)" }
+      - { id: compressed, text: "The message is compressed" }
+    pairs: { backward: new-reads-old, none: no-check, magic: schema-id }
+    explanation: The consumer looks up the writer's schema by its ID and resolves it against its own reader schema; the compatibility mode decides which changes the registry accepts.

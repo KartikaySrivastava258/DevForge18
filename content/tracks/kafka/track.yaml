@@ -56,9 +56,9 @@ labs:
   - { title: "Simulate a consumer failure", level: intermediate, mode: simulation, status: planned }
   - { title: "Implement retry and dead-letter handling", level: advanced, mode: local, status: available, lab: kafka-retry-and-dead-letter }
 projects:
-  - { title: "Order event pipeline", level: beginner, status: planned }
-  - { title: "Live campus activity stream", level: intermediate, status: planned }
-  - { title: "Event-driven notification service", level: advanced, status: planned }
+  - { title: "Order event pipeline", level: beginner, status: available, project: kafka-order-pipeline }
+  - { title: "Live campus activity stream", level: intermediate, status: available, project: kafka-campus-activity }
+  - { title: "Event-driven notification service", level: advanced, status: available, project: kafka-notification-service }
 resources:
   - title: Apache Kafka documentation
     url: https://kafka.apache.org/documentation/

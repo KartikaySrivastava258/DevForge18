@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300">
+  <!-- Numbered diagram for the Kafka track quiz: label the parts of a Kafka set-up. -->
+  <rect class="f-box-faint" x="20" y="110" width="120" height="70" rx="8"/>
+  <text class="f-strong" x="80" y="150" text-anchor="middle">1</text>
+  <rect class="f-box-faint" x="200" y="30" width="250" height="240" rx="10"/>
+  <text class="f-strong" x="222" y="58">2</text>
+  <text class="f-small" x="325" y="58" text-anchor="middle">topic "orders"</text>
+  <rect class="f-box-faint" x="230" y="80" width="190" height="45" rx="6"/>
+  <text class="f-strong" x="250" y="108">3</text>
+  <text class="f-small f-mono" x="275" y="108">0 1 2 3 4 5 6 →</text>
+  <rect class="f-box-faint" x="230" y="140" width="190" height="45" rx="6"/>
+  <text class="f-small f-mono" x="275" y="168">0 1 2 3 →</text>
+  <rect class="f-box-faint" x="230" y="200" width="190" height="45" rx="6"/>
+  <text class="f-small f-mono" x="275" y="228">0 1 2 3 4 →</text>
+  <rect class="f-box-faint" x="510" y="60" width="230" height="190" rx="10"/>
+  <text class="f-strong" x="530" y="88">4</text>
+  <rect class="f-box-faint" x="540" y="105" width="170" height="50" rx="6"/>
+  <text class="f-small" x="625" y="135" text-anchor="middle">consumer A</text>
+  <rect class="f-box-faint" x="540" y="175" width="170" height="50" rx="6"/>
+  <text class="f-small" x="625" y="205" text-anchor="middle">consumer B</text>
+  <g><path class="f-arrow" d="M142 145 L190 145"/><polygon class="f-head" points="198,145 190,149.5 190,140.5"/></g>
+  <text class="f-small" x="170" y="135" text-anchor="middle">writes</text>
+  <g><path class="f-arrow" d="M455 150 L500 150"/><polygon class="f-head" points="508,150 500,154.5 500,145.5"/></g>
+  <text class="f-small" x="480" y="140" text-anchor="middle">reads</text>
+</svg>

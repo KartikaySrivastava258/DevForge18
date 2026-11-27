@@ -1,0 +1,4 @@
+alt: 'Box 1 has an arrow labelled "writes" to box 2, a large box marked topic "orders" that contains three numbered logs of offsets; the first log is box 3. An arrow labelled "reads" goes from box 2 to box 4, which contains consumer A and consumer B. The quiz asks which part of Kafka each number is.'
+caption: 'Which part of Kafka is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content
