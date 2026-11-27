@@ -24,6 +24,7 @@ hints:
   - Give both topics the building as the key. On campus-activity it keeps one building's swipes in order in one partition; on building-occupancy it is what compaction keeps the latest value of.
   - cleanup.policy=compact is a topic configuration; set it when creating the topic (--config cleanup.policy=compact).
   - To restore, read building-occupancy from the beginning with assign() (not subscribe) until you reach the end offsets you got from get_watermark_offsets(), keeping the last value per key.
+  - "Restore again every time the group assigns you partitions (subscribe(..., on_assign=...)), not only at start: after a rebalance another copy may have counted those buildings since you started."
   - Store the new occupancy value, then commit the swipe's offset — in that order, so a crash can repeat work but never lose it.
 stretch_goals:
   - Run three copies and stop one in the middle; watch the rebalance in kafka-consumer-groups.sh --describe.
@@ -34,7 +35,7 @@ solution: solution
 check_needs: [docker]
 owner: content-team
 last_reviewed: 2026-11-27
-content_version: 1
+content_version: 2
 ---
 
 ## Brief

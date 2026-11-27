@@ -31,11 +31,23 @@ def restore():
     return state
 
 
-inside = restore()
+inside = {}
+
+
+def on_assign(consumer, partitions):
+    """Reload state whenever the group hands this copy partitions — at start and after every rebalance.
+
+    Another copy may have counted these buildings since this one started; the compacted topic has its
+    latest values, because every copy stores a value before it commits the swipe.
+    """
+    inside.clear()
+    inside.update(restore())
+
+
 producer = Producer({"bootstrap.servers": bootstrap, "acks": "all", "enable.idempotence": True})
 consumer = Consumer({"bootstrap.servers": bootstrap, "group.id": "occupancy",
                      "auto.offset.reset": "earliest", "enable.auto.commit": False})
-consumer.subscribe(["campus-activity"])
+consumer.subscribe(["campus-activity"], on_assign=on_assign)
 processed = 0
 try:
     while True:
