@@ -4,7 +4,7 @@ Last updated: 2026-11-26 (UTC) · Milestone: **8 — intermediate and advanced l
 
 ## Session handoff
 
-- **Where I stopped:** LangChain + LlamaIndex track complete (7 lessons); next: n8n, then Jira — the last two Milestone 8 tracks. (Prometheus and Alertmanager binaries were re-downloaded with checksums after the restart; Grafana, otelcol and Jaeger were not — re-download if those tracks are touched again.)
+- **Where I stopped:** n8n track complete (7 lessons); next: Jira (the last Milestone 8 track), then the full-suite CI run that closes Milestone 8, then Milestone 9. (Prometheus/Alertmanager binaries re-downloaded after the restart; Grafana, otelcol and Jaeger not yet.)
 - **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC.
 - **Open issue:** `n8n-workflows-nodes-and-items` failed once in CI (run 45886569745): the n8n container stopped after a workflow import. Not reproduced locally in 3 runs under full CPU load. The runner now prints each container's state, OOM flag and last log lines when a lesson stops early, so the next occurrence shows the cause.
 - **How to work fast:** `npm run new:lesson -- <track> <id>` scaffolds; `npm run ci:record -- <id>` records in CI (no local tool downloads); `npm run lessons:stress -- <id>` reproduces timing failures; figures are `scripts/figures/<track>/<name>.py` (helper `scripts/figures/figlib.py`); research per track in `docs/research/<track>.md`.
@@ -17,11 +17,11 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 |---|---|
 | All 18 tracks present, searchable, with reviewed explanation and full curriculum outline | ✅ Done, tested |
 | 8 learning paths | ✅ Done, tested |
-| Lessons | ✅ 125 published, at least 3 in every track; 123 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Fifteen tracks have 6–9 lessons each, beginner to advanced; n8n and Jira have 3 beginner lessons |
+| Lessons | ✅ 129 published, at least 3 in every track; 127 **executed**, 2 Jira lessons **docs-checked** (Jira is a hosted service). Seventeen tracks have 6–9 lessons each, beginner to advanced; Jira has 3 |
 | Executable lessons (commands run in CI, output compared) | ✅ Done, tested |
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
-| Figures and step-through diagrams | ✅ 126 figures (every lesson has at least one), 22 of them step-throughs — at least one in every track; tested |
+| Figures and step-through diagrams | ✅ 130 figures (every lesson has at least one), 22 of them step-throughs — at least one in every track; tested |
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
 | Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
@@ -396,6 +396,13 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **Intermittent CI failures fixed at the root:** (1) 75 e2e assertions read text right after an action; `expectText()` now waits for the visible text (42/42 normal and 8× throttled). (2) Prometheus held back the first Watchdog alert for its 1-minute resend delay; the lesson sets `--rules.alert.resend-delay=2s`. (3) The Redis stampede lesson's lock had a real double-query race; it now re-checks the cache after locking (5/5 under load). (4) The long-standing n8n crash: the CLI ran during the server's database migrations; the lesson now waits for `/healthz/readiness`.
 - **MLflow track** was executed in run 45941753388 (its MLflow lessons passed; the run failed on items 1–2 above).
 
+### Milestone 8 — n8n (2026-11-27)
+
+- **Four new lessons, each run twice locally:** calling APIs and mapping data (pagination, Split Out, Edit Fields, Retry On Fail proven by a request counter); human approval steps (time limits with escalation, a four-eyes rule, a waiting execution surviving a restart; early resume calls answer 409); self-hosting securely (encryption key and encrypted credentials, the mismatched-key refusal, Execute Command blocked by default, `n8n audit`); AI agents and their risks (an n8n AI Agent with a scripted OpenAI-compatible stand-in model, an injected ticket steering the tool, rules enforced in the tool, Max Iterations — after three repeated refunds).
+- **CI fixes:** the Docker limits lesson waits up to 10 s for the `OOMKilled` flag (run 45949757257 read it as false right after exit); the lesson runner removes volumes created with `docker volume create`.
+- **Confirmed in CI:** run 45949757257 executed all LangChain lessons, the n8n lessons and lab, the fixed Prometheus alerting and Redis lessons — all green except the Docker OOM check (fixed since).
+- **Unexplained, watched:** one local failure of the human-approval lesson right after a recording run (11 s, output not kept); 5 runs since passed.
+
 ### Speed-ups and decisions (2026-11-26)
 
 - **Decisions recorded.** Licences: MIT for code (`LICENSE`), CC BY-SA 4.0 for `content/` (`LICENSE-CONTENT`, full legal code from creativecommons.org), Fira Sans OFL notice kept. `~/Downloads/devforge18` deleted after checking that every file's content exists in this repository's history (the only differences were three debugging logs and an older `package.json`). Terraform's plugin cache is enabled in CI with `TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE` (HashiCorp documents it for setups that discard lock files, as lesson folders do; without it the cache is never used for fresh folders); learners' commands are unchanged. Python packages are installed inside lesson containers, so no pip cache (it would change commands learners see). Quiz and project scaffolds come with their schemas in milestone 9.
@@ -423,6 +430,7 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-27 | MLflow lessons 4–6 (one research pass; two extended images) | 120 | 25 | waiting = image builds and lesson runs |
 | 2026-11-27 | CI fixes (e2e text waits ×75, Alertmanager resend delay, Redis double-checked lock, n8n readiness) | 70 | 35 | root causes for three intermittent failures, two of them long-standing |
 | 2026-11-27 | LangChain + LlamaIndex lessons 4–7 | 110 | 15 | |
+| 2026-11-27 | n8n lessons 4–7; Docker OOM flag wait; runner removes named volumes | 150 | 30 | the AI-agent lesson needed a fake OpenAI-compatible server and an older Agent node version |
 
 ## Current work
 

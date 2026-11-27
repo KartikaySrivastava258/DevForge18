@@ -315,7 +315,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.17 n8n
 
-- **Lessons:** ✅ Workflows, nodes and items · ✅ Webhooks and expressions · ✅ Validating input and handling errors (retries, error outputs, error workflows) · Calling APIs and data mapping in depth · Human approval steps · Self-hosting securely (advanced) · AI agents in workflows and their risks (advanced).
+- **Lessons:** ✅ Workflows, nodes and items · ✅ Webhooks and expressions · ✅ Validating input and handling errors (retries, error outputs, error workflows) · ✅ Calling APIs and data mapping in depth · ✅ Human approval steps · ✅ Self-hosting securely (advanced) · ✅ AI agents in workflows and their risks (advanced).
 - ✅ **Simulation — workflow executor:** nodes connected on a canvas; run items through them and show the data each node receives and outputs; add an error branch. **Challenge:** route invalid form submissions to an error workflow.
 - **Labs:** n8n in a pinned container; import a workflow from JSON and run it through the webhook against DevForge's practice API (executed in CI).
 - **Real world:** n8n was founded in 2019 by Jan Oberhauser and is distributed under a "fair-code" Sustainable Use License. Sources: n8n.io, docs.n8n.io.
