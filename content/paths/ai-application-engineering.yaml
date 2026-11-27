@@ -13,6 +13,6 @@ modules:
   - { track: langchain-llamaindex, focus: "Ingestion, retrieval, citations, tool use and evaluation." }
   - { track: redis, focus: "Caching responses and enforcing rate limits on expensive calls." }
   - { track: opentelemetry, focus: "Tracing retrieval and model calls to manage latency and cost." }
-capstone: { title: "Project C — Intelligent College Knowledge Assistant", status: planned }
+capstone: { title: "Project C — Intelligent college knowledge assistant", status: available, capstone: capstone-c }
 alternate_route: If you already run services in Docker, skip that module's beginner lessons and take its quiz to confirm.
 last_reviewed: 2026-11-24

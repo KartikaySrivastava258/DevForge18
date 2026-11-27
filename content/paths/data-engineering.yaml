@@ -12,6 +12,6 @@ modules:
   - { track: airflow, focus: "Scheduling idempotent batch jobs, retries and safe backfills." }
   - { track: docker, focus: "A reproducible local data platform." }
   - { track: prometheus-grafana, focus: "Pipeline health, task failures and freshness dashboards." }
-capstone: { title: "Project D — Data Engineering & Analytics Pipeline", status: planned }
+capstone: { title: "Project D — Data engineering and analytics pipeline", status: available, capstone: capstone-d }
 alternate_route: If you have used Airflow before, start with Kafka and treat the Airflow module as a review of backfills and idempotency.
 last_reviewed: 2026-11-24

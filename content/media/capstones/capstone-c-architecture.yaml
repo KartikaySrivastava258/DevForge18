@@ -1,0 +1,4 @@
+alt: 'College documents are chunked, embedded and labelled by an ingestion job and stored with metadata and access rules in PostgreSQL. Students ask the assistant API, which retrieves chunks, answers with citations or refuses, and may call allow-listed tools. It uses Redis for an answer cache and rate limits and calls a language model through an interface. Below: an evaluation set in Git with questions, expected sources and injection cases, run in CI as a release gate; and OpenTelemetry tracing each question through retrieval, the model call and tool calls with latency and cost.'
+caption: 'Every answer cites its sources or refuses; every release must pass the evaluation set.'
+credit: DevForge 18 content team
+licence: project-content

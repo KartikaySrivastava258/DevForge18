@@ -12,6 +12,6 @@ modules:
   - { track: redis, focus: "Idempotency keys and rate limiting for external calls." }
   - { track: docker, focus: "Self-hosting the automation stack locally." }
   - { track: opentelemetry, focus: "Tracing workflows across services to debug failures." }
-capstone: { title: "Project G — No-Code / Low-Code Campus Operations Automation", status: planned }
+capstone: { title: "Project G — No-code / low-code campus operations automation", status: available, capstone: capstone-g }
 alternate_route: Developers comfortable with HTTP can skim the Postman beginner lessons and start with n8n.
 last_reviewed: 2026-11-24

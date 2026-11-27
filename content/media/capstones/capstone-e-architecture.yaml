@@ -1,0 +1,4 @@
+alt: 'Code, configuration and a data card live in a Git repository. An Airflow training DAG prepares data, trains and evaluates, logging runs, parameters, metrics and lineage tags to MLflow tracking, whose backend store is PostgreSQL. A model is registered and given the alias champion only if it is better. In a Kubernetes cluster, a model API with two replicas and probes serves the champion, and a drift job compares live inputs with the training data. Prometheus and Grafana track latency, errors, predictions per minute and the drift score, and alerts trigger a retraining review. Docker images are pinned by digest and built, tested and scanned in CI.'
+caption: 'Every served model can be traced back to its code, data and run, and is replaced only by a better one.'
+credit: DevForge 18 content team
+licence: project-content

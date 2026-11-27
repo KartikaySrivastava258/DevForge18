@@ -1,0 +1,4 @@
+alt: 'Triggers — form webhooks, schedules and support e-mail — start workflows in a self-hosted n8n, which validates, deduplicates and then acts, with an error workflow, retries, human approval through Wait nodes, and credentials referenced rather than embedded. n8n stores records and an audit trail in PostgreSQL and idempotency keys and rate limits in Redis, and calls external APIs: e-mail, calendar, ticketing and an LLM classifier. Below: Postman collections test every API the workflows call and the webhooks themselves; OpenTelemetry and Docker Compose make the stack traced, reproducible and self-hosted.'
+caption: 'Automations validate before they act, never act twice, ask a person before anything risky, and leave an audit trail.'
+credit: DevForge 18 content team
+licence: project-content

@@ -1,0 +1,4 @@
+alt: 'Inside a Kubernetes cluster, shoppers reach Nginx, which routes to a catalogue service and an orders service. The catalogue service uses Redis for caching and stock holds. The orders service writes orders and an outbox table in one PostgreSQL transaction; a relay publishes order events to Kafka, where payment, shipping and email consumers process them in consumer groups with a dead-letter topic. Below the cluster: OpenTelemetry traces each order across HTTP and Kafka hops, and Prometheus with Grafana watches latency, errors, consumer lag and SLO burn rates.'
+caption: 'Orders are accepted synchronously and fulfilled asynchronously; the outbox ties the two together without losing events.'
+credit: DevForge 18 content team
+licence: project-content

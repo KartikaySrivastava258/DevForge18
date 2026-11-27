@@ -1,0 +1,4 @@
+alt: 'Badge, library and canteen events flow into raw Kafka topics, from which an idempotent landing consumer writes raw tables. Daily CSV exports of marks and loans arrive as files. Airflow DAGs, daily and backfillable, stage the data, audit it with quality checks, quarantine bad rows, alert on failures and publish to PostgreSQL, which holds raw, staging and warehouse schemas with indexes and views. Reports and dashboards read only published tables through a read-only role. Prometheus and Grafana watch freshness, failed runs, consumer lag and quarantined rows. Docker Compose runs the whole platform with one command.'
+caption: 'Data reaches the reports only through stage, audit and publish; everything can be rerun for any past day.'
+credit: DevForge 18 content team
+licence: project-content

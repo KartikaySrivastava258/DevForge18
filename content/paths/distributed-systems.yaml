@@ -15,6 +15,6 @@ modules:
   - { track: kubernetes, focus: "Self-healing, scaling and service discovery." }
   - { track: opentelemetry, focus: "Tracing a request across synchronous and asynchronous hops." }
   - { track: prometheus-grafana, focus: "Consumer lag, latency and error-rate dashboards." }
-capstone: { title: "Project A — Production-style E-commerce Platform", status: planned }
+capstone: { title: "Project A — Production-style e-commerce platform", status: available, capstone: capstone-a }
 alternate_route: Strong in databases already? Take the PostgreSQL transactions quiz and, if you pass, begin with Redis.
 last_reviewed: 2026-11-24
