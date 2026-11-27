@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280">
+  <!-- Reference architecture: web application with a cache. -->
+  <rect class="f-box" x="10" y="100" width="110" height="60" rx="8"/>
+  <text class="f-small" x="65" y="135" text-anchor="middle">users</text>
+  <rect class="f-box-accent" x="160" y="90" width="130" height="80" rx="8"/>
+  <text class="f-small f-strong" x="225" y="120" text-anchor="middle">Nginx</text>
+  <text class="f-small" x="225" y="140" text-anchor="middle">static, TLS,</text>
+  <text class="f-small" x="225" y="156" text-anchor="middle">proxy, limits</text>
+  <g>
+    <path class="f-arrow" d="M122 130 L150 130"/>
+    <polygon class="f-head" points="158,130 150,134.5 150,125.5"/>
+  </g>
+  <rect class="f-box" x="340" y="40" width="140" height="60" rx="8"/>
+  <text class="f-small" x="410" y="75" text-anchor="middle">API instance</text>
+  <rect class="f-box" x="340" y="160" width="140" height="60" rx="8"/>
+  <text class="f-small" x="410" y="195" text-anchor="middle">API instance</text>
+  <g>
+    <path class="f-arrow" d="M292 115 L332.0 80.2"/>
+    <polygon class="f-head" points="338,75 334.9,83.6 329.0,76.9"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M292 145 L332.0 179.8"/>
+    <polygon class="f-head" points="338,185 329.0,183.1 334.9,176.4"/>
+  </g>
+  <rect class="f-box-ok" x="540" y="20" width="160" height="80" rx="8"/>
+  <text class="f-small f-strong" x="620" y="50" text-anchor="middle">Redis</text>
+  <text class="f-small" x="620" y="70" text-anchor="middle">cache-aside,</text>
+  <text class="f-small" x="620" y="86" text-anchor="middle">TTLs, rate limits</text>
+  <rect class="f-box-ok" x="540" y="160" width="160" height="80" rx="8"/>
+  <text class="f-small f-strong" x="620" y="190" text-anchor="middle">PostgreSQL</text>
+  <text class="f-small" x="620" y="210" text-anchor="middle">source of truth,</text>
+  <text class="f-small" x="620" y="226" text-anchor="middle">constraints</text>
+  <g>
+    <path class="f-arrow" d="M482 65 L530.0 60.7"/>
+    <polygon class="f-head" points="538,60 530.4,65.2 529.6,56.2"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M482 80 L534.2 177.9"/>
+    <polygon class="f-head" points="538,185 530.3,180.1 538.2,175.8"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M482 180 L534.1 87.0"/>
+    <polygon class="f-head" points="538,80 538.0,89.2 530.2,84.8"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M482 195 L530.0 199.3"/>
+    <polygon class="f-head" points="538,200 529.6,203.8 530.4,194.8"/>
+  </g>
+  <text class="f-small" x="360" y="262" text-anchor="middle">everything packaged as containers (Docker Compose locally)</text>
+</svg>

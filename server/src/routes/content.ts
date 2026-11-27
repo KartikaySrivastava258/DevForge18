@@ -68,6 +68,14 @@ export function registerContentRoutes(router: Router, { content }: AppDeps): voi
     return ok({ path, modules, estimatedHours, capstone: capstone ? content.capstoneSummary(capstone) : null });
   });
 
+  router.get("/api/graph", () => ok(content.graph()));
+
+  router.get("/api/integrations/:id", (ctx) => {
+    const integration = content.getIntegration(ctx.params.id ?? "");
+    if (!integration) throw notFound("Integration");
+    return ok({ integration: content.publicIntegration(integration) });
+  });
+
   router.get("/api/capstones", () => ok({ capstones: content.listCapstones().map((c) => content.capstoneSummary(c)) }));
 
   router.get("/api/capstones/:id", (ctx) => {

@@ -571,6 +571,40 @@ export const IntegrationSchema = z
   .strict();
 export type Integration = z.infer<typeof IntegrationSchema>;
 
+// --- Architecture studio: reference architectures (content/architectures/<id>.md) ------------------------
+
+export const ArchitectureMetaSchema = z
+  .object({
+    id: slug,
+    title: z.string().min(10),
+    summary: z.string().min(60),
+    /** The problem this architecture solves, in one or two sentences. */
+    problem: z.string().min(40),
+    tracks: z.array(slug).min(2),
+    diagram: z.string().regex(/^media:architecture\/[a-z0-9-]+\.svg$/),
+    components: z.array(z.object({ name: z.string().min(2), track: slug.optional(), role: z.string().min(15) }).strict()).min(3),
+    /** How a request or a piece of data moves through the components, in order. */
+    flow: z.array(z.string().min(15)).min(3),
+    trade_offs: z.array(z.object({ choice: z.string().min(10), gain: z.string().min(10), cost: z.string().min(10) }).strict()).min(2),
+    failure_modes: z.array(z.object({ failure: z.string().min(10), effect: z.string().min(10), mitigation: z.string().min(10) }).strict()).min(2),
+    alternatives: z.array(z.object({ instead_of: z.string().min(3), consider: z.string().min(3), when: z.string().min(15) }).strict()).min(1),
+    /** Questions a learner answers in an architecture decision record for this design. */
+    decision_prompts: z.array(z.string().min(20)).min(3),
+    learn_more: z.array(ReuseSchema),
+    capstones: z.array(slug),
+    owner: z.string().min(2),
+    last_reviewed: isoDate,
+    content_version: z.number().int().positive(),
+  })
+  .strict();
+export type ArchitectureMeta = z.infer<typeof ArchitectureMetaSchema>;
+
+export interface CompiledArchitecture extends ArchitectureMeta {
+  html: string;
+  toc: { id: string; text: string }[];
+  diagram_html: string;
+}
+
 /** A lesson after compilation: Markdown rendered to safe HTML plus a table of contents. */
 export interface CompiledLesson extends LessonMeta {
   html: string;
@@ -598,4 +632,5 @@ export interface ContentBundle {
   projects: CompiledProject[];
   capstones: CompiledCapstone[];
   integrations: Integration[];
+  architectures: CompiledArchitecture[];
 }

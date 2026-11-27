@@ -11,6 +11,8 @@ import {
   type CompiledLesson,
   type CompiledProject,
   type CompiledCapstone,
+  type Integration,
+  type CompiledArchitecture,
   type CompiledQuiz,
   type QuizQuestion,
   type ContentBundle,
@@ -287,6 +289,72 @@ export class ContentStore {
 
   getCapstone(id: string): CompiledCapstone | undefined { return this.capstones.get(id); }
   listCapstones(): CompiledCapstone[] { return [...this.capstones.values()]; }
+
+  getArchitecture(id: string): CompiledArchitecture | undefined { return (this.bundle.architectures ?? []).find((a) => a.id === id); }
+  listArchitectures(): CompiledArchitecture[] { return this.bundle.architectures ?? []; }
+
+  architectureSummary(a: CompiledArchitecture) {
+    return { id: a.id, title: a.title, summary: a.summary, tracks: a.tracks };
+  }
+
+  publicArchitecture(a: CompiledArchitecture) {
+    const resolve = (r: { kind: "lesson" | "lab" | "project"; id: string }) => {
+      const item = r.kind === "lesson" ? this.lessons.get(r.id) : r.kind === "lab" ? this.labs.get(r.id) : this.projects.get(r.id);
+      return item ? { kind: r.kind, id: r.id, title: item.title, track: item.track } : null;
+    };
+    return {
+      ...this.architectureSummary(a),
+      problem: a.problem,
+      diagramHtml: a.diagram_html,
+      components: a.components,
+      flow: a.flow,
+      tradeOffs: a.trade_offs,
+      failureModes: a.failure_modes,
+      alternatives: a.alternatives,
+      decisionPrompts: a.decision_prompts,
+      learnMore: a.learn_more.map(resolve).filter(Boolean),
+      capstones: a.capstones.map((id) => this.capstones.get(id)).filter(Boolean).map((c) => ({ id: c!.id, letter: c!.letter, title: c!.title })),
+      html: a.html,
+      toc: a.toc,
+      lastReviewed: a.last_reviewed,
+    };
+  }
+
+  getIntegration(id: string): Integration | undefined { return (this.bundle.integrations ?? []).find((i) => i.id === id); }
+
+  /** The relationship graph: every track, and every pair of related tracks with both directions' reasons. */
+  graph() {
+    const integrations = this.bundle.integrations ?? [];
+    const edges = new Map<string, { a: string; b: string; reasons: { from: string; why: string }[]; integration: { id: string; title: string } | null }>();
+    for (const t of this.bundle.tracks) {
+      for (const r of t.related) {
+        const [a, b] = [t.slug, r.slug].sort() as [string, string];
+        const key = `${a} ${b}`;
+        const edge = edges.get(key) ?? { a, b, reasons: [], integration: null };
+        edge.reasons.push({ from: t.slug, why: r.why });
+        edges.set(key, edge);
+      }
+    }
+    for (const i of integrations) {
+      const edge = edges.get([i.from, i.to].sort().join(" "));
+      if (edge) edge.integration = { id: i.id, title: i.title };
+    }
+    return {
+      nodes: this.bundle.tracks.map((t) => ({ slug: t.slug, number: t.number, title: t.title, shortTitle: t.short_title, category: t.category })),
+      edges: [...edges.values()],
+      paths: this.bundle.paths.map((p) => ({ slug: p.slug, title: p.title, tracks: p.modules.map((m) => m.track) })),
+    };
+  }
+
+  /** An integration with its practice items resolved to titles and tracks. */
+  publicIntegration(i: Integration) {
+    const resolve = (r: { kind: "lesson" | "lab" | "project"; id: string }) => {
+      const item = r.kind === "lesson" ? this.lessons.get(r.id) : r.kind === "lab" ? this.labs.get(r.id) : this.projects.get(r.id);
+      return item ? { kind: r.kind, id: r.id, title: item.title, track: item.track } : null;
+    };
+    const name = (slug: string) => this.tracks.get(slug)?.short_title ?? slug;
+    return { ...i, fromTitle: name(i.from), toTitle: name(i.to), practise: i.practise.map(resolve).filter(Boolean) };
+  }
 
   capstoneSummary(c: CompiledCapstone) {
     return { id: c.id, letter: c.letter, title: c.title, summary: c.summary, level: c.level, estimatedHours: c.estimated_hours, tracks: c.tracks, paths: c.paths };

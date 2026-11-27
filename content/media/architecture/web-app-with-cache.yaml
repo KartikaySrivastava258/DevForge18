@@ -1,0 +1,4 @@
+alt: 'Users reach Nginx, which serves static files, terminates TLS, applies limits and proxies API requests to two API instances. Both instances read through a Redis cache with TTLs and rate limits and read and write PostgreSQL, the source of truth with constraints. Everything is packaged as containers, with Docker Compose locally.'
+caption: 'Nginx in front, stateless API instances, Redis for speed and PostgreSQL for truth.'
+credit: DevForge 18 content team
+licence: project-content

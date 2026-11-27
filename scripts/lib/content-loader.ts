@@ -10,6 +10,7 @@ import {
   AlternativesFileSchema,
   CapstoneMetaSchema,
   IntegrationSchema,
+  ArchitectureMetaSchema,
   CaseStudySchema,
   LabMetaSchema,
   LessonMetaSchema,
@@ -20,6 +21,7 @@ import {
   type CaseStudy,
   type CompiledCapstone,
   type Integration,
+  type CompiledArchitecture,
   type CompiledLab,
   type CompiledLesson,
   type CompiledProject,
@@ -529,6 +531,47 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   }
   integrations.sort((a, b) => a.id.localeCompare(b.id));
 
+  // ---- Architecture studio: content/architectures/<id>.md ---------------------------------------
+  const architectures: CompiledArchitecture[] = [];
+  const archDir = join(root, "architectures");
+  for (const fileName of listFiles(archDir, ".md")) {
+    const file = join(archDir, fileName);
+    const rel = relative(root, file);
+    const split = splitFrontMatter(readFileSync(file, "utf8"));
+    if (!split) {
+      errors.push(`${rel}: missing YAML front matter (--- ... ---)`);
+      continue;
+    }
+    let raw: unknown;
+    try {
+      raw = parseYaml(split.frontMatter, file);
+    } catch (err) {
+      errors.push(`${rel}: invalid front matter — ${(err as Error).message.split("\n")[0]}`);
+      continue;
+    }
+    const parsed = ArchitectureMetaSchema.safeParse(raw);
+    if (!parsed.success) {
+      errors.push(...formatZod(rel, parsed.error));
+      continue;
+    }
+    const meta = parsed.data;
+    if (`${meta.id}.md` !== fileName) errors.push(`${rel}: id must match file name`);
+    if (meta.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+    for (const t of meta.tracks) if (!trackSlugs.has(t)) errors.push(`${rel}: unknown track "${t}"`);
+    for (const c of meta.components) if (c.track && !meta.tracks.includes(c.track)) errors.push(`${rel}: component "${c.name}" uses track ${c.track}, which is not in tracks`);
+    for (const r of meta.learn_more) if (!reuseExists(r)) errors.push(`${rel}: unknown ${r.kind} "${r.id}"`);
+    for (const c of meta.capstones) if (!capstonesById.has(c)) errors.push(`${rel}: unknown capstone "${c}"`);
+    const resolve = mediaResolver(media, usedMedia, simulationsById);
+    const key = meta.diagram.replace(/^media:/, "").replace(/\.svg$/, "");
+    if (!media.figures.has(key)) errors.push(`${rel}: diagram ${meta.diagram} not found`);
+    const diagramHtml = media.figures.has(key) ? resolve.figure(meta.diagram.replace(/^media:/, ""), "", "") : "";
+    const rendered = renderMarkdown(split.body, { media: resolve });
+    for (const problem of rendered.problems) errors.push(`${rel}: ${problem}`);
+    for (const heading of ["When to use it", "How it works"]) if (!rendered.toc.some((t) => t.text === heading)) errors.push(`${rel}: an architecture needs a "## ${heading}" section`);
+    architectures.push({ ...meta, html: rendered.html, toc: rendered.toc, diagram_html: diagramHtml });
+  }
+  architectures.sort((a, b) => a.id.localeCompare(b.id));
+
   for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson, quiz, project or capstone`);
   for (const key of media.diagrams.keys()) if (!usedMedia.has(`diagram:${key}`)) warnings.push(`media/${key}.steps.yaml is not used by any lesson, quiz or project`);
 
@@ -568,7 +611,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   }
 
   return {
-    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs, quizzes, projects, capstones, integrations },
+    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs, quizzes, projects, capstones, integrations, architectures },
     errors,
     warnings,
   };
