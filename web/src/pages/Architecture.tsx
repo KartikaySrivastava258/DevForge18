@@ -1,3 +1,4 @@
+import { DecisionReviewPanel } from "./Coursework.tsx";
 import { useEffect, useState, type FormEvent } from "react";
 import { Crumbs } from "../components/Crumbs.tsx";
 import { ErrorState, Loading } from "../components/States.tsx";
@@ -216,6 +217,7 @@ export function ArchitecturePage({ id }: { id: string }) {
           <li key={p}>{p}</li>
         ))}
       </ul>
+      <DecisionReviewPanel architectureId={a.id} />
       <DecisionEditor architecture={a} />
     </div>
   );

@@ -602,3 +602,14 @@
 .adr { display: grid; gap: 1rem; margin-top: 1rem; }
 .adr textarea, .adr input { width: 100%; }
 .adr__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* Cohorts, reviews, portfolio and certificates (REMAINING_WORK §6.3) */
+.textarea { min-height: 5rem; padding: var(--space-2) var(--space-3); line-height: 1.5; resize: vertical; }
+.join-code { font-size: 1.125rem; letter-spacing: 0.12em; padding: 0.1em 0.4em; }
+.h-small { font-size: 1rem; margin: 0 0 var(--space-2); }
+.pre-wrap { white-space: pre-wrap; overflow-wrap: anywhere; }
+.rubric-row { border: 1px solid var(--line); border-radius: var(--radius-m); padding: var(--space-3) var(--space-4); margin: 0 0 var(--space-4); }
+.rubric-row legend { font-weight: 600; padding: 0 var(--space-1); }
+.rubric-option { display: flex; gap: var(--space-2); align-items: flex-start; padding: var(--space-1) 0; font-size: 0.9375rem; }
+.rubric-option input { margin-top: 0.3em; }
+.checkbox { display: flex; gap: var(--space-2); align-items: center; }

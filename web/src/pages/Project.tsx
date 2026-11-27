@@ -1,3 +1,4 @@
+import { SubmissionPanel } from "./Coursework.tsx";
 import { useState } from "react";
 import { Crumbs } from "../components/Crumbs.tsx";
 import { ErrorState, Loading } from "../components/States.tsx";
@@ -150,6 +151,8 @@ export function ProjectPage({ trackSlug, projectId }: { trackSlug: string; proje
           <li key={s}>{s}</li>
         ))}
       </ul>
+
+      <SubmissionPanel kind="project" itemId={p.id} />
 
       {canSeeSolution ? (
         <section aria-labelledby="solution">

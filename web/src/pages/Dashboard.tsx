@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { CourseworkPanels } from "./Coursework.tsx";
 import { ErrorState, Loading } from "../components/States.tsx";
 import { useAuth } from "../lib/auth.tsx";
 import { formatDate } from "../lib/format.ts";
@@ -83,6 +84,8 @@ export function DashboardPage() {
               <p className="small faint">Tracks appear here once their first lesson is published.</p>
             </section>
           </div>
+
+          <CourseworkPanels />
 
           <section className="section" aria-labelledby="saved-h">
             <h2 id="saved-h">Saved for later</h2>

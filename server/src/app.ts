@@ -25,6 +25,7 @@ import { registerLearningRoutes } from "./routes/learning.ts";
 import { registerLabRoutes } from "./routes/labs.ts";
 import { registerAssessmentRoutes } from "./routes/assessment.ts";
 import { registerArchitectureRoutes } from "./routes/architecture.ts";
+import { registerInstitutionRoutes } from "./routes/institution.ts";
 import { registerSimulationRoutes } from "./routes/simulations.ts";
 
 const MUTATING = new Set(["POST", "PUT", "PATCH", "DELETE"]);
@@ -80,6 +81,7 @@ export function createApp(input: {
   registerLabRoutes(router, deps);
   registerAssessmentRoutes(router, deps);
   registerArchitectureRoutes(router, deps);
+  registerInstitutionRoutes(router, deps);
   registerAdminRoutes(router, deps);
 
   const sweeper = setInterval(() => {

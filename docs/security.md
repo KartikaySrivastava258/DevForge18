@@ -33,7 +33,11 @@ Before going live:
 
 ## Privacy
 
-- Only email, display name, role, progress and bookmarks are stored. Faculty statistics are aggregated and contain no personal identifiers.
+- Stored per account: e-mail, display name, role, progress (lessons, labs, simulations, quizzes), bookmarks, architecture decision records, project/capstone submissions (a link and notes), reviews received, portfolio settings and certificates.
+- **Who sees a learner's data.** The learner; administrators; and the teachers of a cohort the learner joined — they see the learner's name, e-mail address, progress counts, assignment status and submitted work. The join form says this before the learner joins, and leaving a cohort ends it. Teachers of other cohorts see nothing (API tests check the 403/404 cases). `/api/faculty/overview` stays aggregated, without identifiers.
+- **Public pages** show the display name only, never the e-mail address: a portfolio exists only after the learner switches it on, and lists only work a teacher accepted; a certificate's verification page is reachable only through its random 128-bit id.
+- **Your data** (dashboard): a JSON export of everything stored about the account (`/api/me/export`), and account deletion after re-entering the password and typing a confirmation phrase (`/api/me/delete`; rate-limited; the last administrator cannot delete themselves). Deletion cascades to every table and removes reviews of the deleted work; audit events keep the user id with no e-mail.
+- Submission links must be `https://` URLs (validated by the API and the database) and are rendered with `rel="noopener noreferrer"` (`nofollow` on public portfolios).
 - Logs contain request IDs, routes, statuses and timings — no bodies, cookies or passwords (sensitive-looking keys are redacted).
 - Use synthetic data in demos. Never load real student records into a public instance.
 
@@ -41,5 +45,4 @@ Before going live:
 
 - Rate limits are per process (in memory).
 - No email verification or password reset yet (requires an email service; planned with Phase 5). Until then an admin can recreate an account.
-- No account self-deletion or data export screen yet (planned with privacy controls, Phase 5).
 - Run `npm audit` after every dependency change. The first audit (2026-11-25) reported zod, js-yaml and docs-linter dependencies; all were upgraded (see IMPLEMENTATION_STATUS.md).

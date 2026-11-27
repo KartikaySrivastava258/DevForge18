@@ -1,3 +1,4 @@
+import { SubmissionPanel } from "./Coursework.tsx";
 import { Crumbs } from "../components/Crumbs.tsx";
 import { ErrorState, Loading } from "../components/States.tsx";
 import { Link } from "../lib/router.tsx";
@@ -151,6 +152,7 @@ export function CapstonePage({ id }: { id: string }) {
           <li key={s}>{s}</li>
         ))}
       </ul>
+      <SubmissionPanel kind="capstone" itemId={c.id} />
     </div>
   );
 }

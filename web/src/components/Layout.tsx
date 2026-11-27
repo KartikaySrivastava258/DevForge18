@@ -136,6 +136,11 @@ export function Layout({ children }: { children: ReactNode }) {
               Capstones
             </Link>
             {user ? (
+              <Link to="/cohorts" aria-current={section("/cohorts")}>
+                Cohorts
+              </Link>
+            ) : null}
+            {user ? (
               <Link to="/dashboard" aria-current={section("/dashboard")}>
                 My progress
               </Link>

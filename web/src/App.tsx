@@ -1,6 +1,7 @@
 import { CapstonePage, CapstonesPage } from "./pages/Capstone.tsx";
 import { GraphPage, IntegrationPage } from "./pages/Graph.tsx";
 import { ArchitecturePage, ArchitecturesPage } from "./pages/Architecture.tsx";
+import { CertificatePage, CohortPage, CohortsPage, PortfolioPage, ReviewPage, ReviewsPage } from "./pages/Coursework.tsx";
 import { Component, useEffect, useRef, type ReactNode } from "react";
 import { Layout } from "./components/Layout.tsx";
 import { NotFoundState } from "./components/States.tsx";
@@ -51,6 +52,12 @@ function Routes({ pathname }: { pathname: string }) {
   if (pathname === "/login") return <LoginPage />;
   if (pathname === "/register") return <RegisterPage />;
   if (pathname === "/dashboard") return <DashboardPage />;
+  if (pathname === "/cohorts") return <CohortsPage />;
+  if ((m = matchPath("/cohorts/:id", pathname))) return <CohortPage key={m.id} id={m.id ?? ""} />;
+  if (pathname === "/reviews") return <ReviewsPage />;
+  if ((m = matchPath("/reviews/:type/:id", pathname))) return <ReviewPage key={`${m.type}:${m.id}`} type={m.type ?? ""} id={m.id ?? ""} />;
+  if ((m = matchPath("/portfolio/:slug", pathname))) return <PortfolioPage key={m.slug} slug={m.slug ?? ""} />;
+  if ((m = matchPath("/certificates/:id", pathname))) return <CertificatePage key={m.id} id={m.id ?? ""} />;
   return <NotFoundPage />;
 }
 
