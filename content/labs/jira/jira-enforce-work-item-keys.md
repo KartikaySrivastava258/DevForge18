@@ -76,7 +76,7 @@ first_line=$(head -n 1 "$1")
 case "$first_line" in
   "Merge "*|"Revert "*) exit 0 ;;  # messages Git writes itself
 esac
-if printf '%s\n' "$first_line" | grep -qE '^[A-Z][A-Z0-9]+-[0-9]+ [^ ]'; then
+if printf '%s\n' "$first_line" | grep -E '^[A-Z][A-Z0-9]+-[0-9]+ [^ ]' > /dev/null; then
   exit 0
 fi
 echo "commit-msg: start the message with a work item key in capitals, e.g. \"DEV-12 Fix the reset link\"" >&2

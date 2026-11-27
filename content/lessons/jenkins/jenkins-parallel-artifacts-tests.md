@@ -110,7 +110,7 @@ check() {
   if eval "$2"; then pass=$((pass + 1)); cases+="<testcase name=\"$1\"/>"
   else fail=$((fail + 1)); cases+="<testcase name=\"$1\"><failure message=\"failed\"/></testcase>"; fi
 }
-check "README has a title" "head -n 1 README.md | grep -q '^# '"
+check "README has a title" "head -n 1 README.md | grep '^# ' > /dev/null"
 check "README is not empty" "[ -s README.md ]"
 echo "<testsuite name=\"notes\" tests=\"$((pass + fail))\" failures=\"$fail\">$cases</testsuite>" > reports/notes.xml
 echo "$pass passed, $fail failed"

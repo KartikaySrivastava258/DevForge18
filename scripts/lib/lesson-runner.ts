@@ -166,6 +166,15 @@ export function usesNginx(blocks: RunBlock[]): boolean {
 }
 
 /**
+ * Run blocks execute with `set -o pipefail`. `cmd | grep -q x` is then a race: grep exits at the first match,
+ * cmd can die of SIGPIPE while writing the rest, and the pipeline fails even though x was found — a wait loop
+ * (`… | grep -q ready && break`) then never breaks. `grep x > /dev/null` reads all input and has no race.
+ */
+export function pipesIntoQuietGrep(code: string): boolean {
+  return /\|\s*grep\s+-[A-Za-z]*q/.test(code);
+}
+
+/**
  * Lessons that touch the host's Redis: redis blocks, or bash blocks calling redis-cli as a command.
  * redis-cli run inside a container (docker run/exec …) or quoted in a file (a Compose health check)
  * talks to a containerised Redis, so it does not count.

@@ -201,8 +201,8 @@ run() { docker exec -w /lab devforge-llm python "$@"; }
 check "the test set has at least 6 questions" '[ "$(docker exec devforge-llm python -c "import json; print(len(json.load(open(\"/lab/testset.json\"))))")" -ge 6 ]'
 check "the original embedding fails the gate" '! run evaluate.py keyword_embedding'
 check "the improved embedding passes the gate" 'run evaluate.py keyword_embedding_v2'
-check "the improved retriever finds every source (hit rate 1.00)" 'run evaluate.py keyword_embedding_v2 | grep -q "hit rate @2: 1.00"'
-check "the ungrounded citation is flagged" 'run grade_answers.py | grep -q "NOT grounded: cites \[.docker-image.\]"'
+check "the improved retriever finds every source (hit rate 1.00)" 'run evaluate.py keyword_embedding_v2 | grep "hit rate @2: 1.00" > /dev/null'
+check "the ungrounded citation is flagged" 'run grade_answers.py | grep "NOT grounded: cites \[.docker-image.\]" > /dev/null'
 if [ "$fail" -eq 0 ]; then echo "All checks passed"; else echo "Some checks failed"; exit 1; fi
 CHECK
 ```

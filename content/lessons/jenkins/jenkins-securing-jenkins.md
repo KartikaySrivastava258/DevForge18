@@ -198,7 +198,7 @@ VIEWER_TOKEN=$(new_token viewer viewer-lesson-pw)
 echo "dev, password, no crumb: $(code -X POST -u dev:dev-lesson-pw "$J/job/release/build")"
 echo "dev, API token:          $(code -X POST -u "dev:$DEV_TOKEN" "$J/job/release/build")"
 echo "viewer, API token:       $(code -X POST -u "viewer:$VIEWER_TOKEN" "$J/job/release/build")"
-for i in $(seq 1 60); do curl -sg -u admin:admin-lesson-pw "$J/job/release/1/api/json?tree=result" 2> /dev/null | grep -q '"result":"' && break; sleep 2; done
+for i in $(seq 1 60); do curl -sg -u admin:admin-lesson-pw "$J/job/release/1/api/json?tree=result" 2> /dev/null | grep '"result":"' > /dev/null && break; sleep 2; done
 curl -sg -u admin:admin-lesson-pw "$J/job/release/1/api/json?tree=result,actions[causes[shortDescription]]" | grep -oE '"shortDescription":"[^"]*"|"result":"[A-Z]+"'
 ```
 

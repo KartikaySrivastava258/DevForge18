@@ -108,7 +108,7 @@ Joining takes a few seconds. This helper waits until the group has the given num
 members() {
   for i in $(seq 1 90); do
     out=$(kafka kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group shipping --members 2>&1)
-    if [ "$(echo "$out" | grep -c console-consumer)" -eq "$1" ] && ! echo "$out" | grep -q rebalancing; then
+    if [ "$(echo "$out" | grep -c console-consumer)" -eq "$1" ] && ! echo "$out" | grep rebalancing > /dev/null; then
       echo "$out" | awk '/console-consumer/ {print "member with", $5, "partition(s)"}' | sort
       return 0
     fi

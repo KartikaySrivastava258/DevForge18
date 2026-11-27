@@ -128,7 +128,7 @@ importwf() {
   echo "$out" | tail -n 1
 }
 items() {
-  for i in $(seq 1 5); do raw=$(n8ncli execute --id="$1" --rawOutput 2>&1) && echo "$raw" | grep -q '^{' && break; sleep 2; done
+  for i in $(seq 1 5); do raw=$(n8ncli execute --id="$1" --rawOutput 2>&1) && echo "$raw" | grep '^{' > /dev/null && break; sleep 2; done
   echo "$raw" | docker exec -i devforge-n8n node -e '
     let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => {
       const start = s.search(/^\{/m);

@@ -189,9 +189,9 @@ check() { if eval "$2" > /dev/null 2>&1; then echo "PASS: $1"; else echo "FAIL: 
 MLF=http://127.0.0.1:5050
 version() { curl -s "$MLF/api/2.0/mlflow/model-versions/get?name=diabetes-gated&version=$1" | tr -d ' \n'; }
 check "gate.py exists and exits 1 when it rejects" '[ -f gate.py ] && grep -q "sys.exit(0 if passed else 1)" gate.py'
-check "the champion alias points to version 2" 'curl -s "$MLF/api/2.0/mlflow/registered-models/alias?name=diabetes-gated&alias=champion" | tr -d " \n" | grep -q "\"version\":\"2\""'
-check "version 2 is tagged gate=passed" 'version 2 | grep -q "{\"key\":\"gate\",\"value\":\"passed\"}"'
-check "version 3 is registered and tagged gate=failed" 'version 3 | grep -q "{\"key\":\"gate\",\"value\":\"failed\"}"'
+check "the champion alias points to version 2" 'curl -s "$MLF/api/2.0/mlflow/registered-models/alias?name=diabetes-gated&alias=champion" | tr -d " \n" | grep "\"version\":\"2\"" > /dev/null'
+check "version 2 is tagged gate=passed" 'version 2 | grep "{\"key\":\"gate\",\"value\":\"passed\"}" > /dev/null'
+check "version 3 is registered and tagged gate=failed" 'version 3 | grep "{\"key\":\"gate\",\"value\":\"failed\"}" > /dev/null'
 if [ "$fail" -eq 0 ]; then echo "All checks passed"; else echo "Some checks failed"; exit 1; fi
 CHECK
 ```

@@ -192,7 +192,7 @@ EOF
 kubectl apply -f quota.yaml
 kubectl -n team-b scale deployment web --replicas=5
 for i in $(seq 1 60); do [ "$(kubectl -n team-b get deployment web -o jsonpath='{.status.readyReplicas}')" = 3 ] && break; sleep 2; done
-for i in $(seq 1 30); do kubectl -n team-b get events --field-selector reason=FailedCreate --no-headers 2> /dev/null | grep -q . && break; sleep 1; done
+for i in $(seq 1 30); do kubectl -n team-b get events --field-selector reason=FailedCreate --no-headers 2> /dev/null | grep . > /dev/null && break; sleep 1; done
 kubectl -n team-b get deployment web -o jsonpath='ready {.status.readyReplicas} of {.spec.replicas}{"\n"}'
 kubectl -n team-b get events --field-selector reason=FailedCreate -o jsonpath='{.items[0].message}{"\n"}'
 ```

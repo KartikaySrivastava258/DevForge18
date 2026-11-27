@@ -175,7 +175,7 @@ Run this inside `drift-lab`.
 bash <<'CHECK'
 fail=0
 check() { if eval "$2" > /dev/null 2>&1; then echo "PASS: $1"; else echo "FAIL: $1"; fail=1; fi; }
-check "this folder has a Terraform state" '[ -f terraform.tfstate ] && terraform state list | grep -qx local_file.app_config'
+check "this folder has a Terraform state" '[ -f terraform.tfstate ] && terraform state list | grep -x local_file.app_config > /dev/null'
 check "the configuration sets port 9090" 'grep -q "port = 9090" main.tf'
 check "app.conf on disk says port 9090" 'grep -qx "port = 9090" app.conf'
 check "motd.txt exists again" '[ -f motd.txt ]'

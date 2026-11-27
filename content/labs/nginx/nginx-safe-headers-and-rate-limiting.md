@@ -264,10 +264,10 @@ check() { if eval "$2" > /dev/null 2>&1; then echo "PASS: $1"; else echo "FAIL: 
 headers() { curl -s -o /dev/null -D - "http://127.0.0.1:8089$1" | tr -d '\r'; }
 check "the configuration is valid" 'nginx -p "$PWD" -e error.log -c nginx.conf -t'
 for path in / /missing /downloads/week1.txt; do
-  check "$path has all four security headers" 'h=$(headers '"$path"'); for n in X-Content-Type-Options X-Frame-Options Referrer-Policy Content-Security-Policy; do echo "$h" | grep -qi "^$n:" || exit 1; done'
+  check "$path has all four security headers" 'h=$(headers '"$path"'); for n in X-Content-Type-Options X-Frame-Options Referrer-Policy Content-Security-Policy; do echo "$h" | grep -i "^$n:" > /dev/null || exit 1; done'
 done
-check "the Server header hides the version" 'headers / | grep -qx "Server: nginx"'
-check "a burst to /api/ is answered with 429" 'sleep 2; for i in 1 2 3 4 5 6 7 8; do curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8089/api/courses; done | grep -qx 429'
+check "the Server header hides the version" 'headers / | grep -x "Server: nginx" > /dev/null'
+check "a burst to /api/ is answered with 429" 'sleep 2; for i in 1 2 3 4 5 6 7 8; do curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8089/api/courses; done | grep -x 429 > /dev/null'
 if [ "$fail" -eq 0 ]; then echo "All checks passed"; else echo "Some checks failed"; exit 1; fi
 CHECK
 ```

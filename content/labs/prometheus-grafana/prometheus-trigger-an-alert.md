@@ -139,7 +139,7 @@ scrape_configs:
 EOF
 promtool check config prometheus.yml | grep 'prometheus.yml is valid'
 kill -HUP "$(cat prometheus.pid)"
-for i in $(seq 1 30); do curl -s http://127.0.0.1:9090/api/v1/rules | grep -q '"health":"ok"' && break; sleep 1; done
+for i in $(seq 1 30); do curl -s http://127.0.0.1:9090/api/v1/rules | grep '"health":"ok"' > /dev/null && break; sleep 1; done
 curl -s http://127.0.0.1:9090/api/v1/rules | grep -o '"name":"HighNotFoundRate"\|"health":"[a-z]*"' | head -n 2
 ```
 
@@ -215,7 +215,7 @@ check "rules.yml is valid and defines HighNotFoundRate" 'promtool check rules ru
 check "the rule has a for duration" 'grep -qE "^ +for: " rules.yml'
 check "the unit tests pass" 'promtool test rules tests.yml'
 check "the tests include a case where the alert must stay quiet" 'grep -q "exp_alerts: \[\]" tests.yml'
-check "the running Prometheus has loaded the rule" 'curl -s http://127.0.0.1:9090/api/v1/rules | grep -q "\"name\":\"HighNotFoundRate\""'
+check "the running Prometheus has loaded the rule" 'curl -s http://127.0.0.1:9090/api/v1/rules | grep "\"name\":\"HighNotFoundRate\"" > /dev/null'
 if [ "$fail" -eq 0 ]; then echo "All checks passed"; else echo "Some checks failed"; exit 1; fi
 CHECK
 ```

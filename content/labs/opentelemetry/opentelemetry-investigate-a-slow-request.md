@@ -184,7 +184,7 @@ for (const s of spans) {
   console.log(`  ${s.svc.padEnd(8)} ${s.name.padEnd(14)} ~${Math.round(ms / 100) * 100} ms  ${attrs}`.trimEnd());
 }
 EOF
-for i in $(seq 1 30); do node slow-traces.mjs shop 300ms | grep -q '^1 trace' && break; sleep 1; done
+for i in $(seq 1 30); do node slow-traces.mjs shop 300ms | grep '^1 trace' > /dev/null && break; sleep 1; done
 node slow-traces.mjs shop 300ms
 ```
 
@@ -223,7 +223,7 @@ curl -s "http://127.0.0.1:7001/orders?customer=c42"; echo
 Only traces since the fix count. Wait until the new trace has arrived, then search for slow ones again:
 
 ```bash run
-for i in $(seq 1 30); do node slow-traces.mjs catalog 0ms "$fixed_at" | grep -q '^1 trace' && break; sleep 1; done
+for i in $(seq 1 30); do node slow-traces.mjs catalog 0ms "$fixed_at" | grep '^1 trace' > /dev/null && break; sleep 1; done
 node slow-traces.mjs catalog 0ms "$fixed_at" | grep 'SELECT orders'
 node slow-traces.mjs shop 300ms "$fixed_at"
 ```
@@ -247,10 +247,10 @@ check "catalog.cjs adds a custom span with attributes" 'grep -q "startActiveSpan
 check "Jaeger is running" 'curl -sf -o /dev/null http://127.0.0.1:16686/'
 since=$(date -u +%Y-%m-%dT%H:%M:%SZ); sleep 1
 curl -s "http://127.0.0.1:7001/orders?customer=c42" > /dev/null 2>&1
-for i in $(seq 1 30); do node slow-traces.mjs catalog 0ms "$since" 2> /dev/null | grep -q '^1 trace' && break; sleep 1; done
-check "a new request for c42 is traced through both services" 'node slow-traces.mjs shop 0ms "$since" | grep -q "catalog  SELECT orders"'
-check "the span records the customer and the row count" 'node slow-traces.mjs catalog 0ms "$since" | grep -q "customer.id=c42 db.rows=5000"'
-check "no trace since then is over 300 ms" 'node slow-traces.mjs shop 300ms "$since" | grep -q "^0 trace"'
+for i in $(seq 1 30); do node slow-traces.mjs catalog 0ms "$since" 2> /dev/null | grep '^1 trace' > /dev/null && break; sleep 1; done
+check "a new request for c42 is traced through both services" 'node slow-traces.mjs shop 0ms "$since" | grep "catalog  SELECT orders" > /dev/null'
+check "the span records the customer and the row count" 'node slow-traces.mjs catalog 0ms "$since" | grep "customer.id=c42 db.rows=5000" > /dev/null'
+check "no trace since then is over 300 ms" 'node slow-traces.mjs shop 300ms "$since" | grep "^0 trace" > /dev/null'
 if [ "$fail" -eq 0 ]; then echo "All checks passed"; else echo "Some checks failed"; exit 1; fi
 CHECK
 ```

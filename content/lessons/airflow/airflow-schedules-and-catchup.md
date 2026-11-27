@@ -150,7 +150,7 @@ af "$AF/api/v2/dags/daily_report/dagRuns?order_by=logical_date" \
 ### 3. And without catchup
 
 ```bash run
-for i in $(seq 1 60); do af "$AF/api/v2/dags/daily_report_no_catchup" | grep -q '"dag_id"' && break; sleep 1; done
+for i in $(seq 1 60); do af "$AF/api/v2/dags/daily_report_no_catchup" | grep '"dag_id"' > /dev/null && break; sleep 1; done
 af "$AF/api/v2/dags/daily_report_no_catchup" | grep -o '"next_dagrun_run_after":[a-z0-9"]*'
 af "$AF/api/v2/dags/daily_report_no_catchup/dagRuns" | grep -o '"total_entries":[0-9]*'
 ```

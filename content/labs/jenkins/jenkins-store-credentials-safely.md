@@ -182,7 +182,7 @@ check "the token comes from a Jenkins credential" 'grep -qE "NOTES_TOKEN = crede
 check "no double-quoted string in the Jenkinsfile uses the token" '! grep -E "\"[^\"]*\\\$\{?NOTES_TOKEN" Jenkinsfile'
 check "no secret value is written in the repository" '! git grep -qE "demo-token-[0-9]+" -- Jenkinsfile scripts'
 check "publish.sh refuses to run without the token" '! env -u NOTES_TOKEN bash scripts/publish.sh'
-check "publish.sh never prints the token" 'out=$(NOTES_TOKEN=check-secret-value bash scripts/publish.sh) && ! echo "$out" | grep -q check-secret-value'
+check "publish.sh never prints the token" 'out=$(NOTES_TOKEN=check-secret-value bash scripts/publish.sh) && ! echo "$out" | grep check-secret-value > /dev/null'
 if [ "$fail" -eq 0 ]; then echo "All checks passed"; else echo "Some checks failed"; exit 1; fi
 CHECK
 ```

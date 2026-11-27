@@ -184,12 +184,12 @@ check() { if eval "$2" > /dev/null 2>&1; then echo "PASS: $1"; else echo "FAIL: 
 U=http://127.0.0.1:5678/webhook/refund
 post() { curl -s -X POST "$1" -H 'Content-Type: application/json' -d "$2"; }
 check "n8n is running" 'curl -sf http://127.0.0.1:5678/healthz'
-check "a refund of 40 is made automatically" 'post "$U" "{\"amount\": 40}" | grep -q "\"status\":\"refunded automatically\""'
+check "a refund of 40 is made automatically" 'post "$U" "{\"amount\": 40}" | grep "\"status\":\"refunded automatically\"" > /dev/null'
 url=$(post "$U" '{"amount": 500}' | grep -o '"approve_url":"[^"]*"' | cut -d'"' -f4)
-check "a refund of 500 waits for approval with a signed URL" 'echo "$url" | grep -q "signature="'
+check "a refund of 500 waits for approval with a signed URL" 'echo "$url" | grep "signature=" > /dev/null'
 sleep 1
 check "a forged signature is refused" '[ "$(curl -s -o /dev/null -w "%{http_code}" -X POST "${url%%signature=*}signature=0000" -H "Content-Type: application/json" -d "{}")" = 401 ]'
-check "approving refunds it and records the approver" 'post "$url" "{\"decision\": \"approve\", \"approver\": \"check\"}" | grep -q "\"approved_by\":\"check\""'
+check "approving refunds it and records the approver" 'post "$url" "{\"decision\": \"approve\", \"approver\": \"check\"}" | grep "\"approved_by\":\"check\"" > /dev/null'
 check "the approval URL cannot be used twice" '[ "$(curl -s -o /dev/null -w "%{http_code}" -X POST "$url" -H "Content-Type: application/json" -d "{}")" = 409 ]'
 if [ "$fail" -eq 0 ]; then echo "All checks passed"; else echo "Some checks failed"; exit 1; fi
 CHECK

@@ -231,7 +231,7 @@ fail=0
 check() { if eval "$2" > /dev/null 2>&1; then echo "PASS: $1"; else echo "FAIL: $1"; fail=1; fi; }
 q() { psql -X -A -t -d bank_lab -c "$1"; }
 check "the bank_lab database exists" 'q "SELECT 1"'
-check "the accounts table has the no-negative-balance rule" 'psql -X -d bank_lab -c "\d accounts" | grep -q accounts_balance_check'
+check "the accounts table has the no-negative-balance rule" 'psql -X -d bank_lab -c "\d accounts" | grep accounts_balance_check > /dev/null'
 check "no account is below zero" '[ "$(q "SELECT count(*) FROM accounts WHERE balance < 0")" = 0 ]'
 check "Asha has 40.00" '[ "$(q "SELECT balance FROM accounts WHERE id = 1")" = 40.00 ]'
 check "Ravi has 80.00" '[ "$(q "SELECT balance FROM accounts WHERE id = 2")" = 80.00 ]'

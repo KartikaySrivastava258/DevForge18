@@ -135,7 +135,7 @@ appendonly.aof.manifest
 ```bash run
 docker run -d --name devforge-redis-replica --network devforge-redis-net redis:7 redis-server --replicaof devforge-redis-durable 6379 > /dev/null
 R() { docker exec devforge-redis-replica redis-cli "$@"; }
-for i in $(seq 1 60); do R INFO replication 2> /dev/null | grep -q 'master_link_status:up' && break; sleep 0.5; done
+for i in $(seq 1 60); do R INFO replication 2> /dev/null | grep 'master_link_status:up' > /dev/null && break; sleep 0.5; done
 D SET exam:DB201 "12 December" > /dev/null
 echo "replicas that acknowledged: $(D WAIT 1 2000)"
 echo "read on the replica: $(R GET exam:DB201)"

@@ -154,10 +154,10 @@ fail=0
 check() { if eval "$2" > /dev/null 2>&1; then echo "PASS: $1"; else echo "FAIL: $1"; fail=1; fi; }
 u="check-$$"
 check "limiter.sh defines allow" '[ -f limiter.sh ] && . ./limiter.sh && type allow'
-check "three requests at the same second are allowed" '. ./limiter.sh && for t in 10 10 10; do allow "$u-a" $t; done | grep -c allowed | grep -qx 3'
-check "a fourth within 60 seconds is blocked" '. ./limiter.sh && for t in 10 10 10 69; do allow "$u-b" $t; done | tail -n 1 | grep -q blocked'
-check "the boundary burst (59, then 61) is blocked" '. ./limiter.sh && for t in 59 59 59 61; do allow "$u-c" $t; done | tail -n 1 | grep -q blocked'
-check "requests are allowed again after 60 seconds" '. ./limiter.sh && for t in 10 10 10 71; do allow "$u-d" $t; done | tail -n 1 | grep -q allowed'
+check "three requests at the same second are allowed" '. ./limiter.sh && for t in 10 10 10; do allow "$u-a" $t; done | grep -c allowed | grep -x 3 > /dev/null'
+check "a fourth within 60 seconds is blocked" '. ./limiter.sh && for t in 10 10 10 69; do allow "$u-b" $t; done | tail -n 1 | grep blocked > /dev/null'
+check "the boundary burst (59, then 61) is blocked" '. ./limiter.sh && for t in 59 59 59 61; do allow "$u-c" $t; done | tail -n 1 | grep blocked > /dev/null'
+check "requests are allowed again after 60 seconds" '. ./limiter.sh && for t in 10 10 10 71; do allow "$u-d" $t; done | tail -n 1 | grep allowed > /dev/null'
 redis-cli DEL "rl:sliding:$u-a" "rl:sliding:$u-b" "rl:sliding:$u-c" "rl:sliding:$u-d" > /dev/null 2>&1
 if [ "$fail" -eq 0 ]; then echo "All checks passed"; else echo "Some checks failed"; exit 1; fi
 CHECK

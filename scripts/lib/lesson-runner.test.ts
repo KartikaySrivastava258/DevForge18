@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, lessonNeeds, toolsUsed, usesDocker, outputMatches, redisTestingEnabled, runLesson, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
+import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, lessonNeeds, toolsUsed, usesDocker, outputMatches, pipesIntoQuietGrep, redisTestingEnabled, runLesson, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
 import { splitFrontMatter } from "./markdown.ts";
 import { startPracticeServer } from "./practice-server.ts";
 import { scopeFromEnv } from "./affected.ts";
@@ -190,6 +190,21 @@ describe("kind clusters", () => {
     } finally {
       rmSync(bin, { recursive: true, force: true });
     }
+  });
+});
+
+describe("pipes into grep -q", () => {
+  it("are flagged, because the writer can die of SIGPIPE and fail the pipeline under pipefail", () => {
+    assert.ok(pipesIntoQuietGrep("for i in 1 2; do curl -s x | grep -q ready && break; done"));
+    assert.ok(pipesIntoQuietGrep("x |grep -qE 'a|b'"));
+    assert.ok(!pipesIntoQuietGrep("grep -q ready log.txt && echo ok"), "grep -q on a file has no writer to kill");
+    assert.ok(!pipesIntoQuietGrep("curl -s x | grep ready > /dev/null && break"));
+  });
+  it("really race: the same wait loop fails with grep -q and passes with grep > /dev/null", () => {
+    const loop = (grep: string) =>
+      runLesson(extractRunBlocks(`\`\`\`bash run\nfound=no\nif seq 1 200000 | ${grep}; then found=yes; fi\necho "$found"\n\`\`\`\n\n\`\`\`text output\nyes\n\`\`\``));
+    assert.equal(loop("grep -q '^1$'").results[0]?.ok, false);
+    assert.equal(loop("grep '^1$' > /dev/null").results[0]?.ok, true);
   });
 });
 

@@ -168,7 +168,7 @@ docker pull -q "$AGENT_IMAGE" > /dev/null
 docker run -d --name devforge-agent --network devforge-jenkins-net \
   -e JENKINS_URL=http://devforge-jenkins:8080 -e JENKINS_SECRET="$secret" -e JENKINS_AGENT_NAME=agent-1 \
   -e JENKINS_WEB_SOCKET=true -e JENKINS_AGENT_WORKDIR=/home/jenkins/agent "$AGENT_IMAGE" > /dev/null
-for i in $(seq 1 60); do curl -sg -u "$A" "$J/computer/agent-1/api/json?tree=offline" | grep -q '"offline":false' && break; sleep 2; done
+for i in $(seq 1 60); do curl -sg -u "$A" "$J/computer/agent-1/api/json?tree=offline" | grep '"offline":false' > /dev/null && break; sleep 2; done
 curl -sg -u "$A" "$J/computer/agent-1/api/json?tree=offline" | json '`agent-1 is ${j.offline ? "offline" : "online"}`'
 ```
 
@@ -183,7 +183,7 @@ The secret came from the controller (`jenkins-agent.jnlp`, readable only by an a
 ```bash run
 crumb=$(curl -s -c cookies.txt -u "$A" "$J/crumbIssuer/api/json" | json '`${j.crumbRequestField}:${j.crumb}`')
 curl -s -o /dev/null -X POST -b cookies.txt -H "$crumb" -u "$A" "$J/job/on-agent/build"
-for i in $(seq 1 90); do curl -sg -u "$A" "$J/job/on-agent/1/api/json?tree=result" 2> /dev/null | grep -q '"result":"' && break; sleep 2; done
+for i in $(seq 1 90); do curl -sg -u "$A" "$J/job/on-agent/1/api/json?tree=result" 2> /dev/null | grep '"result":"' > /dev/null && break; sleep 2; done
 curl -s -u "$A" "$J/job/on-agent/1/consoleText" | grep -E '^Running on|^running on|^Finished'
 ```
 
@@ -199,7 +199,7 @@ The controller had no executors; the `linux` label sent the build to `agent-1`, 
 
 ```bash run
 curl -s -o /dev/null -X POST -b cookies.txt -H "$crumb" -u "$A" "$J/job/needs-windows/build"
-for i in $(seq 1 60); do curl -sg -u "$A" "$J/queue/api/json?tree=items[why]" | grep -q 'label' && break; sleep 2; done
+for i in $(seq 1 60); do curl -sg -u "$A" "$J/queue/api/json?tree=items[why]" | grep 'label' > /dev/null && break; sleep 2; done
 curl -sg -u "$A" "$J/queue/api/json?tree=items[task[name],why]" | json 'j.items.map((i) => `${i.task.name}: ${i.why}`).join("\n")'
 ```
 

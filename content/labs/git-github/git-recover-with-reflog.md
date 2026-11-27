@@ -168,7 +168,7 @@ bash <<'CHECK'
 fail=0
 check() { if eval "$2" > /dev/null 2>&1; then echo "PASS: $1"; else echo "FAIL: $1"; fail=1; fi; }
 check "this folder is a Git repository" 'git rev-parse --git-dir'
-check "the exam schedule commit is on main" 'git log --format=%s main | grep -qx "Add exam schedule"'
+check "the exam schedule commit is on main" 'git log --format=%s main | grep -x "Add exam schedule" > /dev/null'
 check "schedule.md is in the latest commit" 'git cat-file -e HEAD:schedule.md'
 check "no commit on main contains .env" '[ -z "$(git log --format=%h main -- .env)" ]'
 check ".gitignore ignores .env" 'git check-ignore -q .env'

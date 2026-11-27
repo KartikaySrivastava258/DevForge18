@@ -181,7 +181,7 @@ without one: 401
 ### 4. Look at the DAG through the API
 
 ```bash run
-for i in $(seq 1 60); do af "$AF/api/v2/dags/orders_etl" | grep -q '"dag_id"' && break; sleep 1; done
+for i in $(seq 1 60); do af "$AF/api/v2/dags/orders_etl" | grep '"dag_id"' > /dev/null && break; sleep 1; done
 af "$AF/api/v2/dags/orders_etl/tasks" | grep -o '"task_id":"[a-z_]*"\|"downstream_task_ids":\[[^]]*\]' | paste - - | sort
 ```
 

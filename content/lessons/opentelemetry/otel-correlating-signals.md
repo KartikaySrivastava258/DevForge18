@@ -181,7 +181,7 @@ for (let order = 1001; order <= 1020; order++) {
 await sdk.shutdown();
 JS
 OTEL_SERVICE_NAME=shop node shop.mjs
-for i in $(seq 1 30); do curl -s http://127.0.0.1:8889/metrics | grep -q '^checkout_requests_total' && break; sleep 1; done
+for i in $(seq 1 30); do curl -s http://127.0.0.1:8889/metrics | grep '^checkout_requests_total' > /dev/null && break; sleep 1; done
 # the alert's view: drop the per-process labels to keep the line short
 curl -s http://127.0.0.1:8889/metrics | grep '^checkout_requests_total' \
   | sed -E 's/instance="[^"]*",//; s/,otel_scope_[a-z_]*="[^"]*"//g'

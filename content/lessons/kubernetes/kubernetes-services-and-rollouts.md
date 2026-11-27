@@ -159,7 +159,7 @@ The rollout is stuck. What are users getting meanwhile?
 
 ```bash run
 reasons=$(kubectl get pods -l app=web -o jsonpath='{range .items[*]}{.status.containerStatuses[0].state.waiting.reason}{"\n"}{end}')
-echo "$reasons" | grep -qE 'ErrImagePull|ImagePullBackOff' && echo "new pods cannot pull their image"
+echo "$reasons" | grep -E 'ErrImagePull|ImagePullBackOff' > /dev/null && echo "new pods cannot pull their image"
 available=$(kubectl get deployment web -o jsonpath='{.status.availableReplicas}')
 echo "old pods still serving: $available available"
 ```

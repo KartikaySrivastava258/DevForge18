@@ -66,7 +66,7 @@ def daily_signups_v1():
 
 daily_signups_v1()
 EOF
-for i in $(seq 1 60); do af "$AF/api/v2/dags/daily_signups_v1" | grep -q '"dag_id"' && break; sleep 1; done
+for i in $(seq 1 60); do af "$AF/api/v2/dags/daily_signups_v1" | grep '"dag_id"' > /dev/null && break; sleep 1; done
 af "$AF/api/v2/dags/daily_signups_v1" | grep -o '"dag_id":"[a-z0-9_]*"'
 ```
 
@@ -97,10 +97,10 @@ backfill() {  # usage: backfill <dag_id> <none|failed|completed>
   [ -n "$id" ] || { echo "Airflow did not start the backfill: $reply"; return 1; }
   # Wait for completed_at (slow machines need minutes); say so plainly if it never comes.
   for i in $(seq 1 300); do
-    af "$AF/api/v2/backfills/$id" | grep -q '"completed_at":"' && break
+    af "$AF/api/v2/backfills/$id" | grep '"completed_at":"' > /dev/null && break
     sleep 1
   done
-  af "$AF/api/v2/backfills/$id" | grep -q '"completed_at":"' || { echo "backfill $id did not complete: $(af "$AF/api/v2/backfills/$id")"; return 1; }
+  af "$AF/api/v2/backfills/$id" | grep '"completed_at":"' > /dev/null || { echo "backfill $id did not complete: $(af "$AF/api/v2/backfills/$id")"; return 1; }
   echo "backfill of $1 ($2) completed"
 }
 backfill daily_signups_v1 none
@@ -174,7 +174,7 @@ def daily_signups_v2():
 
 daily_signups_v2()
 EOF
-for i in $(seq 1 60); do af "$AF/api/v2/dags/daily_signups_v2" | grep -q '"dag_id"' && break; sleep 1; done
+for i in $(seq 1 60); do af "$AF/api/v2/dags/daily_signups_v2" | grep '"dag_id"' > /dev/null && break; sleep 1; done
 backfill daily_signups_v2 none
 backfill daily_signups_v2 completed
 docker exec devforge-airflow sh -c 'cat /tmp/signups/*.csv'
@@ -204,7 +204,7 @@ TOKEN=$(curl -s -X POST "$AF/auth/token" -H 'Content-Type: application/json' -d 
 af() { curl -s -H "Authorization: Bearer $TOKEN" "$@"; }
 check "the idempotent DAG file exists" '[ -f dags/daily_signups_v2.py ]'
 check "it does not append to its output" '! grep -qE "open\([^)]*\"a\"" dags/daily_signups_v2.py'
-check "Airflow has loaded daily_signups_v2" 'af "$AF/api/v2/dags/daily_signups_v2" | grep -q "\"dag_id\":\"daily_signups_v2\""'
+check "Airflow has loaded daily_signups_v2" 'af "$AF/api/v2/dags/daily_signups_v2" | grep "\"dag_id\":\"daily_signups_v2\"" > /dev/null'
 check "it has a successful run for each of the three dates" '[ "$(af "$AF/api/v2/dags/daily_signups_v2/dagRuns?state=success" | grep -o "\"dag_run_id\":\"backfill__2026-01-0[123]" | sort -u | wc -l)" = 3 ]'
 check "its output has one line per date with the right counts" '[ "$(docker exec devforge-airflow sh -c "cat /tmp/signups/*.csv" | sort | tr "\n" " ")" = "2026-01-01,2 2026-01-02,1 2026-01-03,3 " ]'
 if [ "$fail" -eq 0 ]; then echo "All checks passed"; else echo "Some checks failed"; exit 1; fi

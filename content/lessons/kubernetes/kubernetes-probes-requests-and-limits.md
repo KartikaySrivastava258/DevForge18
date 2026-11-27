@@ -152,7 +152,7 @@ kubectl apply -f web.yaml
 kubectl rollout status deployment/web --timeout=180s
 for i in $(seq 1 60); do
   eps=$(kubectl get endpointslices -l kubernetes.io/service-name=web -o jsonpath='{range .items[*].endpoints[*]}{.conditions.ready}{"\n"}{end}')
-  [ "$(echo "$eps" | grep -c true)" -eq 2 ] && ! echo "$eps" | grep -q false && break
+  [ "$(echo "$eps" | grep -c true)" -eq 2 ] && ! echo "$eps" | grep false > /dev/null && break
   sleep 1
 done
 echo "$eps"
@@ -207,7 +207,7 @@ Liveness probe failed
 
 ```bash run
 kubectl run greedy --image=nginx:1.27-alpine --overrides='{"spec":{"containers":[{"name":"greedy","image":"nginx:1.27-alpine","resources":{"requests":{"cpu":"100"}}}]}}'
-for i in $(seq 1 60); do kubectl get events --field-selector involvedObject.name=greedy,reason=FailedScheduling --no-headers 2>/dev/null | grep -q . && break; sleep 1; done
+for i in $(seq 1 60); do kubectl get events --field-selector involvedObject.name=greedy,reason=FailedScheduling --no-headers 2>/dev/null | grep . > /dev/null && break; sleep 1; done
 kubectl get pod greedy --no-headers | awk '{ print $3 }'
 kubectl get events --field-selector involvedObject.name=greedy,reason=FailedScheduling -o jsonpath='{.items[0].message}{"\n"}' | grep -o 'Insufficient cpu'
 ```

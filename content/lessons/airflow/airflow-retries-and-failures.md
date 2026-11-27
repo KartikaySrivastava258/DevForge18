@@ -131,7 +131,7 @@ EOF
 ### 2. Run it and look at every task
 
 ```bash run
-for i in $(seq 1 60); do af "$AF/api/v2/dags/payments" | grep -q '"dag_id"' && break; sleep 1; done
+for i in $(seq 1 60); do af "$AF/api/v2/dags/payments" | grep '"dag_id"' > /dev/null && break; sleep 1; done
 RUN=$(run_dag payments)
 af "$AF/api/v2/dags/payments/dagRuns/$RUN" | grep -o '"state":"[a-z_]*"' | head -n 1
 af "$AF/api/v2/dags/payments/dagRuns/$RUN/taskInstances" \

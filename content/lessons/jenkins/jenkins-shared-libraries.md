@@ -208,7 +208,7 @@ Each `jobs:` entry is now a two-line Jenkinsfile: load the library, call its ste
 crumb=$(curl -s -c cookies.txt -u "$A" "$J/crumbIssuer/api/json" | node -e 'let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => { const c = JSON.parse(s); console.log(`${c.crumbRequestField}:${c.crumb}`); });')
 for job in course-site course-site-next; do
   curl -s -o /dev/null -X POST -b cookies.txt -H "$crumb" -u "$A" "$J/job/$job/build"
-  for i in $(seq 1 90); do curl -sg -u "$A" "$J/job/$job/1/api/json?tree=result" 2> /dev/null | grep -q '"result":"' && break; sleep 2; done
+  for i in $(seq 1 90); do curl -sg -u "$A" "$J/job/$job/1/api/json?tree=result" 2> /dev/null | grep '"result":"' > /dev/null && break; sleep 2; done
   echo "== $job"
   curl -s -u "$A" "$J/job/$job/1/consoleText" | grep -E '^Loading library|^Resolved tag|^Hello|^testing|^packaging|^Finished' | sed -E 's/revision [0-9a-f]{40}/revision …/'
 done

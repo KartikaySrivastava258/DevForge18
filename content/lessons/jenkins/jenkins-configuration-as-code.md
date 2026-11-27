@@ -217,7 +217,7 @@ workflow-aggregator 608.v67378e9d3db_1
 echo "without a crumb: HTTP $(curl -s -o /dev/null -w '%{http_code}' -X POST -u "$A" "$J/job/hello/build")"
 crumb=$(curl -s -c cookies.txt -u "$A" "$J/crumbIssuer/api/json" | node -e 'let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => { const c = JSON.parse(s); console.log(`${c.crumbRequestField}:${c.crumb}`); });')
 echo "with a crumb:    HTTP $(curl -s -o /dev/null -w '%{http_code}' -X POST -b cookies.txt -H "$crumb" -u "$A" "$J/job/hello/build")"
-for i in $(seq 1 90); do curl -sg -u "$A" "$J/job/hello/1/api/json?tree=result" 2> /dev/null | grep -q '"result":"' && break; sleep 2; done
+for i in $(seq 1 90); do curl -sg -u "$A" "$J/job/hello/1/api/json?tree=result" 2> /dev/null | grep '"result":"' > /dev/null && break; sleep 2; done
 curl -sg -u "$A" "$J/job/hello/1/api/json?tree=result"; echo
 curl -s -u "$A" "$J/job/hello/1/consoleText" | grep -E '^Hello|^Finished'
 ```

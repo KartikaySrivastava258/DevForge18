@@ -193,7 +193,7 @@ app.js
 ```bash run
 docker image inspect -f '{{range .Config.Env}}{{println .}}{{end}}' devforge-leaky:1 | grep PASSWORD
 mkdir -p ../saved && docker save devforge-leaky:1 | tar -x -C ../saved
-for layer in $(find ../saved -type f); do tar -tf "$layer" 2>/dev/null | grep -qx 'app/.env' && tar -xOf "$layer" app/.env; done
+for layer in $(find ../saved -type f); do tar -tf "$layer" 2>/dev/null | grep -x 'app/.env' > /dev/null && tar -xOf "$layer" app/.env; done
 cd ..
 ```
 

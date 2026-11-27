@@ -162,7 +162,7 @@ The private key is sitting in the repository folder. One careless `git add -A` w
 cat > .git/hooks/pre-commit <<'EOF'
 #!/bin/sh
 # Refuse commits whose staged changes contain a private key or a likely access key.
-if git diff --cached -U0 | grep -qE 'BEGIN [A-Z ]*PRIVATE KEY|AKIA[0-9A-Z]{16}'; then
+if git diff --cached -U0 | grep -E 'BEGIN [A-Z ]*PRIVATE KEY|AKIA[0-9A-Z]{16}' > /dev/null; then
   echo "pre-commit: this commit contains something that looks like a secret; remove it and try again" >&2
   exit 1
 fi

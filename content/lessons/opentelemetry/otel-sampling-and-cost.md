@@ -254,7 +254,7 @@ Both kinds of sampling above decide **without knowing how the request ended**. A
 
 ```bash run
 otelcol components | grep -E '^    - name: (probabilistic_sampler|tail_sampling)$' || true
-echo "tail_sampling available in this Collector: $(otelcol components | grep -qE 'name: tail_sampling$' && echo yes || echo no)"
+echo "tail_sampling available in this Collector: $(otelcol components | grep -E 'name: tail_sampling$' > /dev/null && echo yes || echo no)"
 ```
 
 ```text output

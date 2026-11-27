@@ -199,7 +199,7 @@ for i in $(seq 1 30); do grep -q 'on http' backend.log && grep -q 'on http' fron
 answer=$(curl -s http://127.0.0.1:7001/checkout)
 trace_id=$(echo "$answer" | grep -o '00-[0-9a-f]*-' | cut -d- -f2)
 for i in $(seq 1 30); do
-  curl -s http://127.0.0.1:16686/api/v3/services | grep -q backend && curl -s http://127.0.0.1:16686/api/v3/services | grep -q frontend && break
+  curl -s http://127.0.0.1:16686/api/v3/services | grep backend > /dev/null && curl -s http://127.0.0.1:16686/api/v3/services | grep frontend > /dev/null && break
   sleep 1
 done
 curl -s http://127.0.0.1:16686/api/v3/services | grep -o '"[a-z]*end"' | sort

@@ -189,9 +189,9 @@ read_topic() { kafka kafka-console-consumer.sh --bootstrap-server localhost:9092
 lag() { kafka kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group "$1" 2> /dev/null | awk -v t="$2" '$2 == t { print $6 }'; }
 check "process.sh exists" '[ -f process.sh ]'
 dlq=$(read_topic payments.dlq)
-check "p2 and p4 were dead-lettered as invalid" 'echo "$dlq" | grep -q "^id=p2 .*reason=invalid-amount" && echo "$dlq" | grep -q "^id=p4 reason=invalid-amount"'
-check "p6 was dead-lettered after 3 attempts" 'echo "$dlq" | grep -q "^id=p6 .*reason=retries-exhausted attempts=3"'
-check "p1, p3 and p5 are not in the dead-letter topic" '! echo "$dlq" | grep -qE "^id=p(1|3|5) "'
+check "p2 and p4 were dead-lettered as invalid" 'echo "$dlq" | grep "^id=p2 .*reason=invalid-amount" > /dev/null && echo "$dlq" | grep "^id=p4 reason=invalid-amount" > /dev/null'
+check "p6 was dead-lettered after 3 attempts" 'echo "$dlq" | grep "^id=p6 .*reason=retries-exhausted attempts=3" > /dev/null'
+check "p1, p3 and p5 are not in the dead-letter topic" '! echo "$dlq" | grep -E "^id=p(1|3|5) " > /dev/null'
 check "p3 was retried once" '[ "$(read_topic payments.retry | grep -c "^id=p3 ")" = 1 ]'
 check "the main group has read every payment" '[ "$(lag main payments)" = 0 ]'
 check "the retry group has read every retry" '[ "$(lag retry payments.retry)" = 0 ]'
