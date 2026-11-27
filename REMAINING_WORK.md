@@ -270,7 +270,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.12 Jira
 
-- **Lessons:** ✅ Work items, types and workflows (including writing good stories and acceptance criteria) · ✅ Sprints, boards and work-in-progress limits · ✅ Linking work items to branches and commits · Kanban and flow metrics in depth · Reports, cycle time and anti-patterns (advanced).
+- **Lessons:** ✅ Work items, types and workflows (including writing good stories and acceptance criteria) · ✅ Sprints, boards and work-in-progress limits · ✅ Linking work items to branches and commits · ✅ Kanban and flow metrics in depth · ✅ Reports, cycle time and anti-patterns (advanced).
 - ✅ **Simulation — sprint board:** a backlog of stories with estimates; plan a sprint against capacity; play the sprint day by day with random blockers (seeded) and watch the burndown and cumulative flow. **Challenge:** finish the sprint goal by limiting work in progress.
 - **Labs:** read-through and simulation labs; a real Jira site is optional (free plans exist — check current terms) and must never be required.
 - **Real world:** Jira was first released by Atlassian in 2002. Sources: Atlassian's website and blog.
