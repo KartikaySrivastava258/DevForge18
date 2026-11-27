@@ -56,9 +56,9 @@ labs:
   - { title: "Backfill a date range safely", level: advanced, mode: local, status: available, lab: airflow-backfill-safely }
   - { title: "Predict scheduler runs, retries and backfills", level: intermediate, mode: simulation, status: available, lab: airflow-scheduler-experiments }
 projects:
-  - { title: "Daily student attendance pipeline", level: beginner, status: planned }
-  - { title: "Scheduled report generation", level: intermediate, status: planned }
-  - { title: "Data quality pipeline", level: advanced, status: planned }
+  - { title: "Daily student attendance pipeline", level: beginner, status: available, project: airflow-attendance-pipeline }
+  - { title: "Scheduled report generation", level: intermediate, status: available, project: airflow-weekly-report }
+  - { title: "Data quality pipeline", level: advanced, status: available, project: airflow-data-quality }
 resources:
   - title: Apache Airflow documentation
     url: https://airflow.apache.org/docs/

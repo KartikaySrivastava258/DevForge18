@@ -1,0 +1,173 @@
+id: airflow-quiz
+track: airflow
+title: Apache Airflow — track quiz
+description: Twelve questions on DAGs and tasks, schedules and catchup, retries, idempotence, passing data, data quality and deployment. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: acyclic
+    type: single
+    level: beginner
+    lesson: airflow-dags-and-tasks
+    prompt: What does the "acyclic" in Directed Acyclic Graph rule out?
+    options:
+      - { id: a, text: "Tasks that run in parallel" }
+      - { id: b, text: "Cycles — if A waited for B and B waited for A, neither could ever run, so Airflow refuses such a DAG" }
+      - { id: c, text: "DAGs with more than ten tasks" }
+    answer: b
+    explanation: Edges have a direction (this task before that one) and there are no cycles.
+
+  - id: parts-diagram
+    type: diagram
+    level: beginner
+    lesson: airflow-dags-and-tasks
+    prompt: Label the numbered parts of Airflow 3.
+    media: media:airflow/quiz-airflow-parts.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: processor, text: "DAG processor" }
+      - { id: db, text: "Metadata database" }
+      - { id: scheduler, text: "Scheduler" }
+      - { id: api, text: "API server" }
+      - { id: xcom, text: "Object storage for XComs" }
+    answers: { "1": processor, "2": db, "3": scheduler, "4": api }
+    explanation: The DAG processor parses DAG files and stores the DAGs in the metadata database; the scheduler creates runs and hands ready tasks to its executor; the API server serves the web interface and the REST API, and tasks report their state through it.
+
+  - id: no-run-at-nine
+    type: single
+    level: beginner
+    lesson: airflow-dags-and-tasks
+    prompt: Airflow shows the DAG, but nothing happens at 09:00 although you expected a run. Which part of Airflow decides when a run should start?
+    options:
+      - { id: a, text: "The DAG processor, which reads DAG files" }
+      - { id: b, text: "The scheduler" }
+      - { id: c, text: "The API server" }
+    answer: b
+    explanation: The scheduler decides when runs happen and which tasks are ready. A paused DAG or a schedule of None also means no scheduled run.
+
+  - id: catchup-default
+    type: single
+    level: beginner
+    lesson: airflow-schedules-and-catchup
+    prompt: In Airflow 3 you deploy a daily DAG whose start_date is one month ago, with no catchup setting. How many runs does Airflow create for the past month?
+    options:
+      - { id: a, text: "About thirty, one per missed day" }
+      - { id: b, text: "None for the missed days — catchup is off by default in Airflow 3; only the most recent schedule time gets a run" }
+      - { id: c, text: "It refuses the DAG" }
+    answer: b
+    explanation: scheduler.catchup_by_default is False in Airflow 3. Set catchup=True, or run a backfill, to process past dates.
+
+  - id: logical-date
+    type: single
+    level: intermediate
+    lesson: airflow-idempotent-etl
+    prompt: A task loads "yesterday" using datetime.now() minus one day. Why is that a problem?
+    options:
+      - { id: a, text: "datetime.now() is slow" }
+      - { id: b, text: "A rerun or a backfill of an old day processes whatever day it happens to be now, not the day the run is responsible for — use the logical date (ds)" }
+      - { id: c, text: "It only works in UTC" }
+    answer: b
+    explanation: A run's logical date says which date it is responsible for, which makes reruns and backfills reproducible.
+
+  - id: upstream-failed
+    type: output
+    level: intermediate
+    lesson: airflow-retries-and-failures
+    prompt: Why did notify_finance not run?
+    command: af "$AF/api/v2/dags/payments/dagRuns/$RUN/taskInstances" | grep -o … | paste - - - | sort
+    output: |
+      "task_id":"charge"	"state":"success"	"try_number":2
+      "task_id":"notify_finance"	"state":"upstream_failed"	"try_number":0
+      "task_id":"refund_check"	"state":"failed"	"try_number":1
+      "task_id":"send_receipt"	"state":"success"	"try_number":1
+    options:
+      - { id: a, text: "It ran and failed" }
+      - { id: b, text: "refund_check, which it depends on, failed; with the default trigger rule all_success, notify_finance never started" }
+      - { id: c, text: "Its retries were used up" }
+    answer: b
+    explanation: upstream_failed means the task never started because something it needed failed. Fix the upstream task and clear it, and the downstream task runs. (charge needed a second try and succeeded.)
+
+  - id: retry-fit
+    type: multiple
+    level: intermediate
+    lesson: airflow-retries-and-failures
+    prompt: Which failures are a good fit for automatic retries? Select all that apply.
+    options:
+      - { id: a, text: "A network timeout calling an API" }
+      - { id: b, text: "A database lock that is released a few seconds later" }
+      - { id: c, text: "The input file is missing" }
+      - { id: d, text: "A bug that raises KeyError on every run" }
+    answers: [a, b]
+    explanation: Retries help with temporary problems. A missing file or a bug fails the same way every time, so retries only delay the error.
+
+  - id: xcom-size
+    type: single
+    level: intermediate
+    lesson: airflow-passing-data-between-tasks
+    prompt: A task produces a 200 MB table that the next task needs. What should it return?
+    options:
+      - { id: a, text: "The whole table, as an XCom" }
+      - { id: b, text: "A small reference, such as the path of the file it wrote to shared storage" }
+      - { id: c, text: "Nothing; the next task recomputes it" }
+    answer: b
+    explanation: XComs live in the metadata database by default and are meant for small values; references keep them tiny.
+
+  - id: wap-order
+    type: ordering
+    level: advanced
+    lesson: airflow-backfills-and-data-quality
+    prompt: Put the steps of write–audit–publish in order.
+    items:
+      - { id: write, text: "Load the day's data into a staging table" }
+      - { id: audit, text: "Run the data-quality checks on the staging table" }
+      - { id: publish, text: "Only if every check passes, replace the day in the final table" }
+      - { id: consumers, text: "Reports and users read the final table" }
+    order: [write, audit, publish, consumers]
+    explanation: Checking the final table is too late — readers would already have seen bad data. In the lesson, 3 January's duplicates and negative amount never reached the sales table.
+
+  - id: quality-retry
+    type: single
+    level: advanced
+    lesson: airflow-backfills-and-data-quality
+    prompt: Should a data-quality check task retry on failure?
+    options:
+      - { id: a, text: "Yes, three times, in case the data improves" }
+      - { id: b, text: "No — retries are for transient errors such as network problems or locks, not for wrong data" }
+      - { id: c, text: "Yes, but only on weekends" }
+    answer: b
+    explanation: Wrong data stays wrong; fail at once with a clear message and fix the source.
+
+  - id: timeouts
+    type: matching
+    level: advanced
+    lesson: airflow-timeouts-and-callbacks
+    prompt: Match each setting with what it limits or does.
+    left:
+      - { id: exec, text: "execution_timeout" }
+      - { id: run, text: "dagrun_timeout" }
+      - { id: callback, text: "on_failure_callback" }
+    right:
+      - { id: attempt, text: "How long one attempt of one task may run" }
+      - { id: whole, text: "How long a whole DAG run may take" }
+      - { id: alert, text: "Small code that runs when a task fails, for example to send an alert" }
+      - { id: retries, text: "How many times a task is retried" }
+    pairs: { exec: attempt, run: whole, callback: alert }
+    explanation: Keep callbacks small and reliable — send a message, write a record — and put real work in tasks, where retries and timeouts apply.
+
+  - id: idempotent-reload
+    type: single
+    level: advanced
+    lesson: airflow-idempotent-etl
+    prompt: The source file for 2 January was corrected — one order was removed. Which load gets the warehouse right when the day is rerun?
+    options:
+      - { id: a, text: "Appending the day's rows again" }
+      - { id: b, text: "An upsert by order id" }
+      - { id: c, text: "Replacing the whole 2 January partition with the corrected rows" }
+    answer: c
+    explanation: An upsert updates and adds rows but never removes the one that disappeared from the source; replacing the partition does.

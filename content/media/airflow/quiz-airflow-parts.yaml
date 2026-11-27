@@ -1,0 +1,4 @@
+alt: 'DAG files (dags/*.py) are parsed by box 1, which stores DAGs in box 2. Box 3 "decides runs, queues tasks" and also uses box 2. Box 4, described as "web UI, REST API, task state", reads and writes box 2. The quiz asks which Airflow component each number is.'
+caption: 'Which Airflow component is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content
