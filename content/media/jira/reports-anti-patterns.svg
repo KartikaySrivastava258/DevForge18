@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320">
+  <!-- What each report measures and what distorts it, from Reports, cycle time and anti-patterns. -->
+  <text class="f-small f-strong" x="110" y="26" text-anchor="middle">report</text>
+  <text class="f-small f-strong" x="320" y="26" text-anchor="middle">measures</text>
+  <text class="f-small f-strong" x="570" y="26" text-anchor="middle">distorted by</text>
+  <rect class="f-box-accent" x="10" y="40" width="200" height="52" rx="8"/>
+  <text class="f-small f-strong" x="110" y="71" text-anchor="middle">velocity chart</text>
+  <rect class="f-box-faint" x="220" y="40" width="200" height="52" rx="8"/>
+  <text class="f-small" x="320" y="71" text-anchor="middle">estimates committed, done</text>
+  <rect class="f-box-danger" x="430" y="40" width="280" height="52" rx="8"/>
+  <text class="f-small" x="570" y="71" text-anchor="middle">point inflation: same output, more points</text>
+  <rect class="f-box-accent" x="10" y="104" width="200" height="52" rx="8"/>
+  <text class="f-small f-strong" x="110" y="135" text-anchor="middle">burndown chart</text>
+  <rect class="f-box-faint" x="220" y="104" width="200" height="52" rx="8"/>
+  <text class="f-small" x="320" y="135" text-anchor="middle">remaining estimate per day</text>
+  <rect class="f-box-danger" x="430" y="104" width="280" height="52" rx="8"/>
+  <text class="f-small" x="570" y="135" text-anchor="middle">bulk closing → flat line, then a cliff</text>
+  <rect class="f-box-accent" x="10" y="168" width="200" height="52" rx="8"/>
+  <text class="f-small f-strong" x="110" y="199" text-anchor="middle">control chart</text>
+  <rect class="f-box-faint" x="220" y="168" width="200" height="52" rx="8"/>
+  <text class="f-small" x="320" y="199" text-anchor="middle">time between chosen statuses</text>
+  <rect class="f-box-danger" x="430" y="168" width="280" height="52" rx="8"/>
+  <text class="f-small" x="570" y="199" text-anchor="middle">skipped statuses, reopened items</text>
+  <rect class="f-box-ok" x="10" y="232" width="200" height="52" rx="8"/>
+  <text class="f-small f-strong" x="110" y="263" text-anchor="middle">work-item age</text>
+  <rect class="f-box-faint" x="220" y="232" width="200" height="52" rx="8"/>
+  <text class="f-small" x="320" y="263" text-anchor="middle">days in progress so far</text>
+  <rect class="f-box-faint" x="430" y="232" width="280" height="52" rx="8"/>
+  <text class="f-small" x="570" y="263" text-anchor="middle">(the early warning the others lack)</text>
+</svg>

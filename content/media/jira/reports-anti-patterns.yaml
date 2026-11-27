@@ -1,0 +1,4 @@
+alt: 'Four rows. The velocity chart measures estimates committed and done; it is distorted by point inflation: the same output, more points. The burndown chart measures remaining estimate per day; bulk closing makes it a flat line, then a cliff. The control chart measures time between chosen statuses; it is distorted by skipped statuses and reopened items. Work-item age measures days in progress so far for unfinished items; it is the early warning the others lack.'
+caption: 'Know what each report measures — estimates, remaining estimate, time between statuses — and what habits distort it.'
+credit: DevForge 18 content team
+licence: project-content
