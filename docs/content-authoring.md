@@ -25,6 +25,8 @@ Every resource has `verification: { status: unverified | verified | broken, chec
 5. A lesson that fails intermittently: `npm run lessons:stress -- <id>` runs it repeatedly with every CPU core busy. When a lesson stops early, the report includes the state and last log lines of its containers.
 6. Dates are UTC (as in CI): `last_reviewed` and `checked_on` cannot be later than today in UTC.
 
+- `npm run new:quiz -- <track> <id>` and `npm run new:project -- <track> <id> [level]` scaffold a track quiz (all six question types are documented in `content/quizzes/git-github/git-github-quiz.yaml`) and a mini-project with `starter/` and `solution/` folders.
+
 ## Executable lessons
 
 When the tool can run in CI (Git today; more tools as CI services are added), make the lesson **executable**:

@@ -28,6 +28,8 @@
     "ci:record": "bash scripts/ci-record.sh",
     "new:lesson": "node --disable-warning=ExperimentalWarning scripts/new-content.ts lesson",
     "new:lab": "node --disable-warning=ExperimentalWarning scripts/new-content.ts lab",
+    "new:quiz": "node --disable-warning=ExperimentalWarning scripts/new-content.ts quiz",
+    "new:project": "node --disable-warning=ExperimentalWarning scripts/new-content.ts project",
     "test:e2e:throttled": "DEVFORGE_E2E_CPU_THROTTLE=8 npm run test:e2e"
   },
   "dependencies": {
