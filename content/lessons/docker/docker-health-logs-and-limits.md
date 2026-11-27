@@ -197,7 +197,7 @@ devforge-web … / 64MiB
 ### 4. Stopping cleanly
 
 ```bash run
-timed_stop() { local t0 ms; t0=$(date +%s%N); docker stop "$@" > /dev/null; ms=$(( ($(date +%s%N) - t0) / 1000000 )); [ "$ms" -lt 2000 ] && echo "in under 2 s" || echo "after about $(( (ms + 500) / 1000 )) s"; }
+timed_stop() { local t0 ms; t0=$(date +%s%N); docker stop "$@" > /dev/null; ms=$(( ($(date +%s%N) - t0) / 1000000 )); [ "$ms" -lt 2000 ] && echo "in under 2 s" || echo "after about $(( ms / 1000 )) s"; }
 echo "app with a SIGTERM handler: stopped $(timed_stop devforge-web), exit code $(docker inspect -f '{{.State.ExitCode}}' devforge-web)"
 docker logs --tail 1 devforge-web
 ```

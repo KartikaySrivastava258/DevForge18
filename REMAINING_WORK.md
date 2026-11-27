@@ -385,9 +385,9 @@ Each milestone ends with CI green and `IMPLEMENTATION_STATUS.md` updated.
 6. ✅ Done (2026-11-26). **Real-world context.** Case-study and alternatives content types; at least two sourced case studies and an alternatives table per track. Status: 36 case studies and 89 alternatives, every quote checked against its source page; see IMPLEMENTATION_STATUS.md.
 7. ✅ Done (2026-11-26). **Labs.** Lab pages, verification scripts, lab progress; at least two labs per track, executed in CI where the tool allows. Status: 36 labs (18 local with check scripts, 17 simulation, 1 read-through); 19 executed in CI; see IMPLEMENTATION_STATUS.md.
 8. ✅ Done (verified in CI on 2026-11-27, full-suite run 45956974167). **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first. Status: every lesson list in section 5 is written and executed (or docs-checked for Jira's own screens): 131 lessons.
-9. ✅ Done (2026-11-27). **Quizzes and projects.** New question types, per-track quizzes, mini-project pages with rubrics and starter templates. Status: all 18 tracks have a quiz and three mini-projects with executable acceptance checks (54); Docker-based checks run in their own CI job.
-10. ✅ Done (2026-11-27). **Capstones A–G and integration lessons.** Including the architecture studio and the full relationship graph. Status: 7 capstones, 17 integrations (two with new executed lessons), 10 reference architectures with learner decision records, graph page with filters; see IMPLEMENTATION_STATUS.md.
-11. **Institutional features and hardening.** Section 6.3 and 6.4.
+9. ✅ Done (verified in CI on 2026-11-27, run 46065905790). **Quizzes and projects.** New question types, per-track quizzes, mini-project pages with rubrics and starter templates. Status: all 18 tracks have a quiz and three mini-projects with executable acceptance checks (54); Docker-based checks run in their own CI job.
+10. ✅ Done (verified in CI on 2026-11-27, run 46065905790). **Capstones A–G and integration lessons.** Including the architecture studio and the full relationship graph. Status: 7 capstones, 17 integrations (two with new executed lessons), 10 reference architectures with learner decision records, graph page with filters; see IMPLEMENTATION_STATUS.md.
+11. ✅ Done (verified in CI on 2026-11-27, run 46065905790). **Institutional features and hardening.** Section 6.3 and 6.4. Status: admin and faculty screens, cohorts, assignments, rubric reviews, portfolio, certificates, privacy controls, PR-opening content editor; OpenTelemetry tracing, shared Redis rate limits, Compose/Nginx smoke test, axe audit, k6 load test. Not done: the manual screen-reader pass (owner), and the PostgreSQL adapter, which ADR 0002 makes conditional on the deployment needing it.
 
 ## 8. How to verify every change
 
@@ -418,7 +418,7 @@ For facts: every new external claim has a source URL and a `checked_on` date; ru
 | ~~Assumed download names in CI (kind `.sha256sum` asset, Jenkins image tag `2.580.2-lts-jdk21`)~~ | ✅ Both exist: the kind checksum verified and the Jenkins image was pulled in CI run 45643638519 |
 | No licence chosen | Owner decision before the repository is public (for example MIT for code, CC BY-SA 4.0 for content) |
 | katex override for the docs linter | Only on the owner's machine if applied; add `overrides.katex` to `package.json` here if `npm audit` was clean with it |
-| Docker Compose and production Nginx untested | Milestone 11 (section 6.4) |
+| ~~Docker Compose and production Nginx untested~~ | ✅ Tested in CI by `npm run test:compose` (run 46065905790) |
 | CI duration grows with real Jenkins and Kubernetes runs | Move slow lesson tests to a separate job triggered on content changes and nightly, if needed |
 | Docker Hub anonymous pull limits | Add a Docker Hub login step with a read-only token if pulls fail |
 | Tool versions change monthly | Review pinned versions monthly from official release pages; update lessons with `lessons:record`; bump `content_version` and `last_reviewed` |

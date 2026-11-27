@@ -1,13 +1,14 @@
 # Implementation status
 
-Last updated: 2026-11-27 (UTC) · Milestones **9 and 10 done** (content complete; closing once CI is green) · Next: Milestone 11 — institutional features and hardening (REMAINING_WORK §6.3–6.4), then the release checklist
+Last updated: 2026-11-27 (UTC) · Milestones **9, 10 and 11 done** — green in CI run 46065905790 (push) · Next: the release checklist (waiting for the owner to resend it)
 
 ## Session handoff
 
-- **Where I stopped:** Milestone 9 (18 quizzes, 54 mini-projects with executable checks) and Milestone 10 (capstones A–G, 17 integrations, 10 reference architectures, learner ADRs, relationship graph) are written, executed locally and pushed. Last fixes: a stale unused-media warning test, and a race in the Kafka campus-activity check (the first consumer could finish all swipes before the second joined; the check now starts both copies and lets the swipes arrive over about 4 s).
-- **Next:** confirm CI green for the last push, then Milestone 11 in the order of REMAINING_WORK §6.3 (admin and faculty screens, cohorts and assignments, project/ADR review against rubrics, portfolio, certificates, CMS that opens pull requests) and §6.4.
+- **Where I stopped:** Milestones 9–11 are complete and green in CI (run 46065905790: verify, three lesson shards, four project-check shards, Compose/Nginx smoke test). A manual full run (46069455702: every lesson and check) passed the k6 load test on CI for the first time and found two timing-sensitive tests, both fixed at the root: the Docker lesson rounded a 3 s stop timeout to the nearest second (3.5 s on a busy runner printed "4 s"; now rounded down), and the k8s three-tier check sent its first end-to-end request without allowing Service routing to settle (now up to 30 s, and the failure shows wget's real error). Confirm with the next full run.
+- **Next:** the release checklist. The owner's order of work ends with "the release checklist from my previous message", but that message is not in the repository or any saved session transcript; it has been requested instead of invented.
+- **Watch for:** the k6 thresholds were set from runs on a laptop and have not yet run on a CI runner; adjust them from the first nightly result if needed (docs/load-testing.md).
 - **Disk:** keep at least 5 GB free; checks remove their containers with `-v` and the images they build.
-- **How to work fast:** `npm run new:quiz|new:project -- <track> <id>`; `DEVFORGE_DOCKER_TEST=1 DEVFORGE_CHANGED_FILES=<file> node --test scripts/lib/projects.test.ts` (or `lesson-runner.test.ts`); Docker project checks run in the CI "Mini-project checks" job (four shards), the others in the verify job.
+- **How to work fast:** `npm run new:quiz|new:project -- <track> <id>`; `DEVFORGE_DOCKER_TEST=1 DEVFORGE_CHANGED_FILES=<file> node --test scripts/lib/projects.test.ts` (or `lesson-runner.test.ts`); Docker project checks run in the CI "Mini-project checks" job (four shards), the others in the verify job; `npm run test:compose`, `npm run test:load`.
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -28,8 +29,8 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | Quizzes | ✅ Six question types graded on the server (answers never sent before grading), attempts saved, paths show "skipped by quiz"; all 18 track quizzes written |
 | Mini-projects | 🟡 Project pages (brief, stories, criteria, rubric, starter files, progressive hints, faculty-only solution) and executable acceptance checks (fail on the starter, pass on the solution); all 54 written, Docker-based checks in their own four-shard CI job |
 | Capstones, integrations, architecture studio, relationship graph | ✅ 7 capstones (A–G), 17 integrations between related tracks, 10 reference architectures with learner decision records; API and browser tests |
-| Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
-| CI | ✅ Runs on GitHub: a verify job (typecheck, lint, build, unit/API and browser tests) and executed lessons in three parallel shards, about 17 minutes in all. Docker Compose / production Nginx config still untested |
+| Admin / faculty screens, cohorts, CMS | ✅ Admin screens (roles, disable/enable, audit log), cohorts with join codes, assignments with due dates, rubric reviews of projects, capstones and decision records, portfolios, certificates, data export and deletion, and a content editor that opens pull requests (tested against a fake GitHub only) |
+| CI | ✅ Runs on GitHub: a verify job (typecheck, lint, build, unit/API tests with a Redis service, browser tests including 66 axe audits), executed lessons in three shards, Docker-based project checks in four shards, a Docker Compose + Nginx smoke test, and a nightly/manual k6 load test |
 
 ## Verified results (last run 2026-11-25)
 
@@ -45,7 +46,7 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | `db:migrate` (twice), `user:create` (success + 3 rejection cases), `db:backup` + restore check | ✅ behave as documented |
 | `npm run typecheck:web` | ✅ **Passed with the real `@types/react`** on the owner's machine (Ubuntu, Node 22.23.2), 2026-11-25 — 0 errors. |
 | `npm run content:check-links` | ✅ 55 unique links, 0 broken (CI *Link check* and locally, 2026-11-25); every resource reviewed and marked verified — see Milestone 1 below |
-| Docker build / Compose / Nginx config | ⚠️ **Untested.** YAML validated; Dockerfile and `nginx.conf` not executed. |
+| Docker build / Compose / Nginx config | ✅ `npm run test:compose` (49 checks through Nginx) passes locally and in CI (run 46065905790) |
 | GitHub Actions workflows | ⚠️ **Untested.** YAML validated. |
 
 ## Completed work
@@ -461,6 +462,14 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **Tests:** 18 API tests (permissions for every role, join-code rotation, rubric completeness, derived statuses, privacy of public pages, deletion) and 2 browser tests (teacher → learner → review → portfolio; export and deletion).
 - **Open item — release checklist:** the order of work ends with "the release checklist from my previous message", but that message is not in this repository or in any saved session transcript (earlier summaries already noted it was not visible). It will be requested from the owner instead of being invented.
 
+### Milestone 11 — part 2: administration, content editor, platform engineering, CI hardening (2026-11-27)
+
+- **Admin screens and the content editor** (helper agent, reviewed and merged): /admin with roles, disable/enable (sessions revoked at once, audited, last admin protected) and the audit log; /content-editor validates a file with the build's YAML parser and zod schema, then opens a GitHub pull request (branch, commit, PR via fetch), refusing to overwrite a file that changed on main. **Decision (ADR 0011):** js-yaml moves to the runtime dependencies so the server parses exactly like the build. Tested against a fake GitHub only.
+- **Platform engineering** (helper agent, merged): OpenTelemetry tracing for DevForge itself (ADR 0009: a small built-in OTLP/HTTP JSON exporter instead of 14 official packages; no bodies, headers, query strings or e-mail addresses in spans), shared rate limits in Redis (ADR 0010: minimal RESP client, atomic Lua counter, hashed keys, fail-open to the per-process limiter), and a new OpenTelemetry lab that traces DevForge's own requests through a Collector to Jaeger.
+- **Deployment, accessibility, load** (helper agent, merged): Compose + Nginx smoke test in CI (it found and fixed: image built without the lockfile, Nginx answering 503 instead of 429, Nginx not read-only, Nginx 1.27 end-of-life → 1.30.6 pinned by digest); axe-core audit — 11 of the first 42 audits failed (contrast, link names, keyboard-scrollable code, missing h1), all fixed in the UI with no rule disabled; extended here to the Milestone 11 pages with real data: 33 pages × 2 schemes, 66 of 66 pass; k6 load test (about 155 req/s, 0 errors, read p95 7–13 ms on a laptop).
+- **CI failures found and fixed at the root** (runs 46038301566 → 46065905790): grep -q at the end of a pipeline under pipefail (98 places in 27 check scripts; now rejected by the build); the Kafka check's consumer-group timing (warm the coordinator first) — which then exposed **a real bug in the reference solution** (state not reloaded after a rebalance; fixed with on_assign, plus a hint); Airflow lessons clearing a run before the scheduler had closed it (the clear could be undone); an implicit image pull in the new lab's output; failure reports now show a kind cluster's pods and events, and the k8s three-tier check names its own client Pod's state.
+- **Not done:** the manual screen-reader pass (checklist in docs/accessibility.md); the certificate page is not in the automated audit (needs a learner who met the threshold); PostgreSQL adapter — ADR 0002 makes it conditional on the deployment requiring it, and the owner's answer to ADR 0002's open question is still pending.
+
 ### Speed-ups and decisions (2026-11-26)
 
 - **Decisions recorded.** Licences: MIT for code (`LICENSE`), CC BY-SA 4.0 for `content/` (`LICENSE-CONTENT`, full legal code from creativecommons.org), Fira Sans OFL notice kept. `~/Downloads/devforge18` deleted after checking that every file's content exists in this repository's history (the only differences were three debugging logs and an older `package.json`). Terraform's plugin cache is enabled in CI with `TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE` (HashiCorp documents it for setups that discard lock files, as lesson folders do; without it the cache is never used for fresh folders); learners' commands are unchanged. Python packages are installed inside lesson containers, so no pip cache (it would change commands learners see). Quiz and project scaffolds come with their schemas in milestone 9.
@@ -497,10 +506,13 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-27 | Kubernetes, Terraform, GitHub Actions, Jenkins (agents, reviewed and merged); CI projects job | 90 | 20 | |
 | 2026-11-27 | Capstones A–G, graph, integrations (15 by an agent + 2 with new lessons), architecture studio and ADRs | 300 | 30 | |
 | 2026-11-27 | CI fixes: stale warning test, Kafka consumer-group race | 25 | 10 | |
+| 2026-11-27 | Milestone 11 part 1: cohorts, assignments, reviews, portfolio, certificates, privacy controls | 150 | 15 | |
+| 2026-11-27 | Milestone 11 part 2: review and merge of three helper agents; accessibility audit extended | 60 | 20 | |
+| 2026-11-27 | CI root causes: grep -q/pipefail, Kafka coordinator and rebalance bug, Airflow clear race, implicit pull, kind diagnostics | 120 | 90 | waiting = CI runs (about 25 min each) |
 
 ## Current work
 
-Milestone 11: institutional features and hardening (REMAINING_WORK §6.3–6.4), then the release checklist.
+The release checklist (waiting for the owner to resend it).
 
 ## Pending work (ordered)
 
@@ -538,10 +550,10 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | Issue | Impact | Plan |
 |---|---|---|
 | No `package-lock.json` (generated offline environment) | Dependency versions not locked transitively | Commit lockfile after first `npm install` online |
-| Rate limits in process memory | Limits are per process and reset on restart | Acceptable for one instance; Redis in Phase 6 if scaled out |
+| Rate limits per address | A class behind one NAT address can hit the 1,200 API requests/min limit before the server is busy (docs/load-testing.md) | Raise the limit or key it differently for campus networks before institution-wide use; with `REDIS_URL` limits are shared across instances (ADR 0010) |
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
-| Docker / Nginx / CI untested | Possible small configuration fixes needed | Test on first deployment |
+| Content editor never used against the real GitHub API | Unknown real-world errors | Open one pull request on a scratch repository first (ADR 0011) |
 | 54 beginner lessons | No intermediate or advanced lessons yet; labs and projects listed as planned | Milestones 7–9 |
 | CI duration | Real Jenkins and Kubernetes runs add several minutes per CI run | Acceptable; could move slow lesson tests to a separate, scheduled or path-filtered job later |
 | Python packages for the LangChain + LlamaIndex lessons | Only the top-level packages are pinned; a new release of one of their dependencies could change behaviour or break the install in CI | If it happens: pin the full set with a constraints file generated by `pip freeze` in the lesson container |

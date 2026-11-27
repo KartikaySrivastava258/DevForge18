@@ -115,8 +115,15 @@ if ! kubectl -n devforge-client wait --for=condition=Ready pod/client --timeout=
   client_note=" [the check's client Pod is not ready: $(kubectl -n devforge-client get pod client -o jsonpath='{.status.phase} {.status.containerStatuses[0].state}' 2>&1 | head -c 200)]"
 fi
 get_err="$tmp/get-err"
-get() { kubectl -n devforge-client exec client -- wget -qO- -T 5 "http://$1" 2> "$get_err"; }
-page="$(get "frontend.$ns.svc.cluster.local/")"
+# wget without -q: on an error it says why (connection refused, 502 ...) in $get_err.
+get() { kubectl -n devforge-client exec client -- wget -O- -T 5 "http://$1" 2> "$get_err"; }
+# Service routing can trail Pod readiness by a few seconds, so allow up to 30 s for the first answer;
+# a broken application never returns the page, however long it is given.
+for _ in $(seq 1 15); do
+  page="$(get "frontend.$ns.svc.cluster.local/")"
+  echo "$page" | grep_quiet "Campus notice board" && break
+  sleep 2
+done
 if echo "$page" | grep_quiet "Campus notice board"; then pass "GET / on the frontend Service returns the notice board page"
 else fail "GET http://frontend.$ns/ does not return the notice board page (${page:0:80})${client_note} $(tail -n 1 "$get_err" | head -c 200)"; fi
 v1="$(get "frontend.$ns.svc.cluster.local/api/visits" | sed -n 's/.*"visits": *\([0-9]*\).*/\1/p')"
