@@ -3,6 +3,7 @@
 # - verify: typecheck, lint, build, unit/API tests and browser tests, on every push and pull request.
 # - compose: builds deploy/Dockerfile, starts deploy/docker-compose.yml (app + Nginx) and smoke-tests it through
 #   Nginx (scripts/compose-smoke.sh), on every push and pull request.
+# - load: k6 load test of the API (load/api.js, thresholds on p95 latency and errors), nightly and on manual runs only.
 # - lessons: executed lessons and local labs, in three parallel shards. On pushes and pull requests only the
 #   lessons a change can affect run (scripts/lib/affected.ts); the nightly run and manual runs execute all of
 #   them. A lesson counts as "executed" only after a CI run that actually ran it.
@@ -94,6 +95,48 @@ jobs:
         env:
           DEVFORGE_HTTP_PORT: "8080"
         run: bash scripts/compose-smoke.sh
+
+  load:
+    name: API load test (k6)
+    # Minutes of sustained load: nightly and on manual runs, not on every push. See docs/load-testing.md.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      K6_VERSION: "v2.4.0" # GitHub release published 2026-11-12
+      K6_SHA256: "5a5ecf23529ccf93135bc7e5b0c1cd5126ecf5f2672e22eed1556a0ab74abb87" # k6-v2.4.0-linux-amd64.tar.gz
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Build content and frontend
+        run: npm run build
+      - name: Install k6 (pinned release; checksum pinned here and checked against the release's checksums file)
+        run: |
+          set -euo pipefail
+          d="$RUNNER_TEMP/k6"; mkdir -p "$d"; cd "$d"
+          tgz="k6-${K6_VERSION}-linux-amd64.tar.gz"
+          curl -fsSL --retry 3 -o "$tgz" "https://github.com/grafana/k6/releases/download/${K6_VERSION}/${tgz}"
+          curl -fsSL --retry 3 -o sums.txt "https://github.com/grafana/k6/releases/download/${K6_VERSION}/k6-${K6_VERSION}-checksums.txt"
+          echo "${K6_SHA256}  ${tgz}" | sha256sum -c -
+          grep " ${tgz}$" sums.txt | sha256sum -c -
+          tar -xzf "$tgz"
+          sudo install -m 0755 "k6-${K6_VERSION}-linux-amd64/k6" /usr/local/bin/k6
+          k6 version
+      - name: Load test (production server on a throwaway database)
+        run: npm run test:load -- --quiet --no-color --summary-export build/load-summary.json
+      - name: Upload the k6 summary
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: load-summary
+          path: build/load-summary.json
+          if-no-files-found: ignore
+          retention-days: 30
 
   lessons:
     permissions:
