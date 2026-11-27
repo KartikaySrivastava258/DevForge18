@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320">
+  <!-- What an evaluation measures, from Evaluation and hallucination checks. -->
+  <rect class="f-box-faint" x="10" y="40" width="180" height="110" rx="8"/>
+  <text class="f-small f-strong" x="100" y="64" text-anchor="middle">evaluation set</text>
+  <text class="f-small" x="100" y="88" text-anchor="middle">question + facts</text>
+  <text class="f-small" x="100" y="108" text-anchor="middle">+ expected source</text>
+  <text class="f-small" x="100" y="128" text-anchor="middle">+ unanswerable ones</text>
+  <rect class="f-box-accent" x="230" y="40" width="150" height="110" rx="8"/>
+  <text class="f-small f-strong" x="305" y="80" text-anchor="middle">system under</text>
+  <text class="f-small f-strong" x="305" y="100" text-anchor="middle">test</text>
+  <g>
+    <path class="f-arrow" d="M192 95 L220 95"/>
+    <polygon class="f-head" points="228,95 220,99.5 220,90.5"/>
+  </g>
+  <rect class="f-box-ok" x="430" y="20" width="280" height="50" rx="8"/>
+  <text class="f-small f-strong" x="570" y="42" text-anchor="middle">correctness</text>
+  <text class="f-small" x="570" y="60" text-anchor="middle">required facts present?</text>
+  <g>
+    <path class="f-arrow" d="M382 95 L422.6 50.9"/>
+    <polygon class="f-head" points="428,45 425.9,53.9 419.3,47.8"/>
+  </g>
+  <rect class="f-box-ok" x="430" y="82" width="280" height="50" rx="8"/>
+  <text class="f-small f-strong" x="570" y="104" text-anchor="middle">faithfulness</text>
+  <text class="f-small" x="570" y="122" text-anchor="middle">each sentence supported?</text>
+  <g>
+    <path class="f-arrow" d="M382 95 L420.3 105.0"/>
+    <polygon class="f-head" points="428,107 419.1,109.3 421.4,100.6"/>
+  </g>
+  <rect class="f-box-ok" x="430" y="144" width="280" height="50" rx="8"/>
+  <text class="f-small f-strong" x="570" y="166" text-anchor="middle">abstention</text>
+  <text class="f-small" x="570" y="184" text-anchor="middle">"I don't know" when right</text>
+  <g>
+    <path class="f-arrow" d="M382 95 L423.8 162.2"/>
+    <polygon class="f-head" points="428,169 420.0,164.6 427.6,159.8"/>
+  </g>
+  <rect class="f-box-faint" x="430" y="206" width="280" height="50" rx="8"/>
+  <text class="f-small f-strong" x="570" y="228" text-anchor="middle">judge check</text>
+  <text class="f-small" x="570" y="246" text-anchor="middle">agrees with human labels?</text>
+  <g>
+    <path class="f-arrow" d="M382 95 L425.4 223.4"/>
+    <polygon class="f-head" points="428,231 421.2,224.9 429.7,222.0"/>
+  </g>
+  <rect class="f-box-danger" x="10" y="270" width="700" height="40" rx="8"/>
+  <text class="f-small" x="360" y="295" text-anchor="middle">exact match: 0 for correct answers in other words — not a useful score for generated text</text>
+</svg>

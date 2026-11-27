@@ -1,0 +1,4 @@
+alt: 'An evaluation set of questions with required facts, expected sources and some unanswerable questions is run through the system under test. Its answers are scored for correctness (are the required facts present), faithfulness (is each sentence supported by its source), and abstention (does it say I don''t know when it should); an automated judge is itself checked for agreement with human labels. Exact match scores correct answers phrased differently as 0, so it is not a useful score for generated text.'
+caption: 'Score facts, faithfulness and abstention — and check the judge before trusting it.'
+credit: DevForge 18 content team
+licence: project-content
