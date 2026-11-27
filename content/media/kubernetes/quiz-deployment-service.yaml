@@ -1,0 +1,4 @@
+alt: 'Four numbered boxes. Box 1 has an arrow labelled "manages" to box 2, which has an arrow labelled "keeps 3 running" to box 3. Box 3 contains three smaller boxes, each labelled app=web. Box 4, marked web:80, has an arrow labelled "ready Pods with app=web" to box 3. The boxes are not named; the quiz asks which Kubernetes object each number is.'
+caption: 'Which Kubernetes object is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content

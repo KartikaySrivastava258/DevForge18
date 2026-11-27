@@ -60,9 +60,9 @@ labs:
   - { title: "Change replica count and observe self-healing", level: intermediate, mode: simulation, status: available, lab: kubernetes-self-healing-and-rollouts }
   - { title: "Break a configuration and debug events and logs", level: advanced, mode: read-through, status: available, lab: kubernetes-debug-broken-deployments }
 projects:
-  - { title: "Deploy a three-tier application", level: beginner, status: planned }
-  - { title: "Rolling deployment and rollback demo", level: intermediate, status: planned }
-  - { title: "Resource-limited service with health probes", level: advanced, status: planned }
+  - { title: "Deploy a three-tier application", level: beginner, status: available, project: k8s-three-tier-app }
+  - { title: "Rolling deployment and rollback demo", level: intermediate, status: available, project: k8s-rolling-rollback }
+  - { title: "Resource-limited service with health probes", level: advanced, status: available, project: k8s-probes-and-limits }
 resources:
   - title: Kubernetes Basics tutorial
     url: https://kubernetes.io/docs/tutorials/kubernetes-basics/

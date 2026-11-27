@@ -1,0 +1,71 @@
+# API tier. The script below is the whole "application": busybox httpd runs it for GET /cgi-bin/visits.
+# It reads the Redis host name from the REDIS_HOST environment variable. Do not change the script.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-scripts
+  namespace: campus
+data:
+  visits: |
+    #!/bin/sh
+    # Count a visit in Redis (INCR) and return the new total as JSON.
+    reply=$(printf 'INCR visits\r\nQUIT\r\n' | nc -w 2 "$REDIS_HOST" 6379 | head -n 1 | tr -d ':\r')
+    case "$reply" in
+      ''|*[!0-9]*) printf 'Status: 503 Service Unavailable\r\nContent-Type: application/json\r\n\r\n{"error": "cannot reach Redis at %s"}\n' "$REDIS_HOST" ;;
+      *) printf 'Content-Type: application/json\r\n\r\n{"visits": %s, "served_by": "%s"}\n' "$reply" "$(hostname)" ;;
+    esac
+---
+# Settings live outside the Deployment, so the same Deployment works in every environment.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+  namespace: campus
+data:
+  REDIS_HOST: redis   # the Service name; resolves inside the namespace campus
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: campus
+  labels: { app: campus, tier: api }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: campus, tier: api }
+  template:
+    metadata:
+      labels: { app: campus, tier: api }
+    spec:
+      containers:
+        - name: api
+          image: busybox:1.37@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec
+          command: ["httpd", "-f", "-p", "8080", "-h", "/www"]
+          env:
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef: { name: api-config, key: REDIS_HOST }
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: scripts
+              mountPath: /www/cgi-bin
+      volumes:
+        - name: scripts
+          configMap:
+            name: api-scripts
+            defaultMode: 0755   # CGI scripts must be executable
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: campus
+spec:
+  type: ClusterIP
+  # The selector must match the Pod template's labels — the starter's "tier: backend" matched no Pod at all.
+  selector: { app: campus, tier: api }
+  ports:
+    - port: 8080
+      targetPort: 8080

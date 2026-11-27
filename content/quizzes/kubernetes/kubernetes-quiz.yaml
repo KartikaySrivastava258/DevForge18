@@ -1,0 +1,189 @@
+id: kubernetes-quiz
+track: kubernetes
+title: Kubernetes — track quiz
+description: Thirteen questions from Deployments and Services to rollouts, probes, configuration, storage and cluster security. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: pod-deleted
+    type: single
+    level: beginner
+    lesson: kubernetes-deployments-and-self-healing
+    prompt: A Deployment asks for 3 replicas of web. You delete one of its Pods. What happens next?
+    options:
+      - { id: a, text: "Nothing — the Deployment now runs 2 Pods until you apply it again" }
+      - { id: b, text: "The ReplicaSet notices only 2 matching Pods and creates a replacement with a new name" }
+      - { id: c, text: "The deleted Pod is restarted with the same name and address" }
+    answer: b
+    explanation: The ReplicaSet keeps the number of Pods matching its selector at the desired count. The replacement gets a new name and address, which is why other programs reach Pods through a Service and select them by labels, never by name.
+
+  - id: objects-diagram
+    type: diagram
+    level: beginner
+    lesson: kubernetes-deployments-and-self-healing
+    prompt: Label the numbered objects of this application.
+    media: media:kubernetes/quiz-deployment-service.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: deployment, text: "Deployment" }
+      - { id: replicaset, text: "ReplicaSet" }
+      - { id: pods, text: "Pods" }
+      - { id: service, text: "Service" }
+      - { id: node, text: "Node" }
+    answers: { "1": deployment, "2": replicaset, "3": pods, "4": service }
+    explanation: A Deployment manages a ReplicaSet, which keeps the requested number of Pods running. The Service finds the Pods through the label selector app=web — not by name — and sends traffic only to those that are ready.
+
+  - id: probe-outcomes
+    type: matching
+    level: beginner
+    lesson: kubernetes-probes-requests-and-limits
+    prompt: Match each situation with what Kubernetes does about it.
+    left:
+      - { id: readiness, text: "The readiness probe fails" }
+      - { id: liveness, text: "The liveness probe keeps failing" }
+      - { id: memory, text: "The container goes over its memory limit" }
+      - { id: cpu, text: "The container wants more CPU than its limit" }
+    right:
+      - { id: endpoints, text: "The Pod is removed from its Services' endpoints; the container keeps running" }
+      - { id: restart, text: "The kubelet restarts the container" }
+      - { id: oom, text: "The kernel kills it — the status shows OOMKilled" }
+      - { id: throttle, text: "It is slowed down (throttled), never killed for it" }
+      - { id: pending, text: "The Pod goes back to Pending" }
+    pairs: { readiness: endpoints, liveness: restart, memory: oom, cpu: throttle }
+    explanation: Readiness decides traffic, liveness decides restarts. Memory limits are enforced by the out-of-memory killer, CPU limits by throttling. Pending is about requests — a Pod no node has room for.
+
+  - id: not-ready-output
+    type: output
+    level: beginner
+    lesson: kubernetes-probes-requests-and-limits
+    prompt: A Deployment's readiness probe asks nginx for /ready. What does this output show?
+    command: kubectl get pods -l app=web --no-headers | awk '{ print $2, $3 }'; kubectl get endpointslices -l kubernetes.io/service-name=web -o jsonpath='…{.conditions.ready}…'
+    output: |
+      0/1 Running
+      0/1 Running
+      false
+      false
+    options:
+      - { id: a, text: "Both containers run, but the probe fails (nginx has no /ready page), so the Pods are not ready and the Service sends them no traffic" }
+      - { id: b, text: "Both containers have crashed and are being restarted" }
+      - { id: c, text: "The Pods are ready, but the Service has not been created yet" }
+    answer: a
+    explanation: Running is about the process, ready is about traffic. The probe gets a 404 every few seconds, so the endpoints stay not ready; fixing the probe's path rolls out new Pods that become ready.
+
+  - id: rollback-order
+    type: ordering
+    level: beginner
+    lesson: kubernetes-services-and-rollouts
+    prompt: A release with a typo in the image tag goes wrong. Put the steps in the order they happen.
+    items:
+      - { id: set, text: "kubectl set image deployment/web nginx=nginx:does-not-exist" }
+      - { id: status, text: "kubectl rollout status --timeout=60s ends with \"timed out waiting for the condition\"" }
+      - { id: inspect, text: "The new Pods show ErrImagePull or ImagePullBackOff; old Pods are still serving" }
+      - { id: undo, text: "kubectl rollout undo deployment/web" }
+      - { id: done, text: "kubectl rollout status reports \"successfully rolled out\" with the previous image" }
+    order: [set, status, inspect, undo, done]
+    explanation: rollout status with a timeout turns a stuck release into a visible failure — in CI, a failed job. rollout undo returns the Pod template to the previous revision, and a second rollout status confirms the old version is fully back.
+
+  - id: max-unavailable
+    type: single
+    level: intermediate
+    lesson: kubernetes-services-and-rollouts
+    prompt: A Deployment with 5 replicas and the default rolling-update settings is updated to an image that cannot be pulled. How many Pods of the previous version keep serving while the rollout is stuck?
+    options:
+      - { id: a, text: "0 — they are all replaced at once" }
+      - { id: b, text: "4 — the default maxUnavailable of 25% lets only one old Pod be taken away" }
+      - { id: c, text: "5 — old Pods are only removed after the whole rollout succeeds" }
+    answer: b
+    explanation: The new Pods never become ready, so Kubernetes stops after removing the one Pod that maxUnavailable allows. Setting maxUnavailable to 0 keeps all five serving — the new Pods are then added on top (maxSurge) and old ones go only when new ones are ready.
+
+  - id: config-updates
+    type: multiple
+    level: intermediate
+    lesson: kubernetes-configmaps-and-secrets
+    prompt: A ConfigMap that a running Pod uses is changed. Which statements are true? Select all that apply.
+    options:
+      - { id: a, text: "Environment variables taken from it keep their old values until the container is restarted" }
+      - { id: b, text: "Keys mounted as files in a volume are refreshed by the kubelet some time later" }
+      - { id: c, text: "A file mounted with subPath is refreshed like any other mounted file" }
+      - { id: d, text: "The Pods are restarted automatically so they read the new values" }
+    answers: [a, b]
+    explanation: Environment variables are fixed when the container starts, mounted files are refreshed after a delay, and subPath mounts receive no updates at all. Nothing restarts Pods by itself — roll them (for example by changing the Pod template) when a value must take effect.
+
+  - id: cross-namespace
+    type: single
+    level: intermediate
+    lesson: kubernetes-namespaces-labels-selectors
+    prompt: A Pod in the namespace team-a needs the Service web that runs in the namespace team-b. Which name does it use?
+    options:
+      - { id: a, text: "web" }
+      - { id: b, text: "web.team-b.svc.cluster.local" }
+      - { id: c, text: "team-b/web" }
+    answer: b
+    explanation: The short name web resolves inside the Pod's own namespace — from team-a it would find team-a's web, if there is one. The full name web.team-b.svc.cluster.local works from anywhere in the cluster.
+
+  - id: route-specificity
+    type: single
+    level: intermediate
+    lesson: kubernetes-ingress-and-gateway-api
+    prompt: An HTTPRoute has a rule for the path prefix / and a rule for the path prefix /library/. Which rule handles GET /library/books?
+    options:
+      - { id: a, text: "The /library/ rule — the longest matching prefix is more specific" }
+      - { id: b, text: "The / rule, because it is listed first" }
+      - { id: c, text: "Both, alternately" }
+    answer: a
+    explanation: When several rules match, the most specific wins — an exact path, then the longest prefix, then method and headers. Rule order only breaks ties.
+
+  - id: good-liveness
+    type: multiple
+    level: advanced
+    lesson: kubernetes-probes-requests-and-limits
+    prompt: Which are sound practices for liveness probes? Select all that apply.
+    options:
+      - { id: a, text: "Point it at a cheap endpoint — it runs every few seconds on every Pod" }
+      - { id: b, text: "Give a slow-starting container a startup probe instead of letting liveness kill it while it starts" }
+      - { id: c, text: "Make it fail when the database is down, so the Pods restart until the database is back" }
+      - { id: d, text: "Use a heavy report endpoint, so the probe exercises as much code as possible" }
+    answers: [a, b]
+    explanation: A liveness failure means "restart me". If it depends on the database, every Pod restarts during a database outage and nothing improves; if it is expensive, probes themselves load the service. Start-up time belongs to a startup probe or a generous initialDelaySeconds.
+
+  - id: rbac-deny
+    type: single
+    level: advanced
+    lesson: kubernetes-rbac-and-network-policies
+    prompt: A ServiceAccount is bound to a Role that allows get and list on Pods. You want to make sure it cannot delete Pods. What do you do?
+    options:
+      - { id: a, text: "Nothing more — RBAC permissions are additive, so it can do only what some binding grants; check with kubectl auth can-i delete pods --as=…" }
+      - { id: b, text: "Add a deny rule for delete to the Role" }
+      - { id: c, text: "Bind cluster-admin and then remove delete" }
+    answer: a
+    explanation: There are no deny rules in RBAC. Least privilege means granting only the verbs and resources a workload needs, and kubectl auth can-i asks the API server what an identity may actually do.
+
+  - id: egress-dns
+    type: single
+    level: advanced
+    lesson: kubernetes-rbac-and-network-policies
+    prompt: After a default-deny egress NetworkPolicy is added to a namespace, its Pods can no longer reach other Services even by name. What is the likely cause?
+    options:
+      - { id: a, text: "Egress default-deny also blocks DNS lookups unless traffic to the cluster DNS is allowed" }
+      - { id: b, text: "NetworkPolicies delete the Services they select" }
+      - { id: c, text: "kind does not support NetworkPolicies, so the cluster broke" }
+    answer: a
+    explanation: Name lookups go to the cluster DNS, which is egress traffic like any other. Allow it explicitly next to the connections the application needs.
+
+  - id: statefulset-claims
+    type: single
+    level: advanced
+    lesson: kubernetes-persistent-volumes-and-statefulsets
+    prompt: The StatefulSet db (with volumeClaimTemplates) is scaled down from 2 replicas to 1. What happens to the claim data-db-1?
+    options:
+      - { id: a, text: "It is kept, still bound — scaling down or deleting a StatefulSet does not delete its claims" }
+      - { id: b, text: "It is deleted together with the Pod db-1" }
+      - { id: c, text: "It is moved to db-0" }
+    answer: a
+    explanation: Data safety comes first. A Pod with the same name finds the same claim again, as a replaced db-0 does in the lesson; deleting the claims (or the namespace) is a deliberate step, and with reclaimPolicy Delete it destroys the data.

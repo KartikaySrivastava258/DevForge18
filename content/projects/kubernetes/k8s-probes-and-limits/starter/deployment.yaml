@@ -1,0 +1,39 @@
+# The grades service. It runs — but Kubernetes knows nothing about its health or its size.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grades
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: grades }
+  template:
+    metadata:
+      labels: { app: grades }
+    spec:
+      containers:
+        - name: grades
+          image: busybox:1.37@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec
+          # Do not change the command: the service needs about 12 seconds to load its cache before it
+          # listens on port 8080, and it stops promptly on SIGTERM.
+          command: ["sh", "-c", "trap 'exit 0' TERM; echo 'loading grade cache'; sleep 12 & wait $!; echo 'listening on 8080'; httpd -f -p 8080 -h /www & wait $!"]
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: app
+              mountPath: /www/cgi-bin
+      volumes:
+        - name: app
+          configMap:
+            name: grades-app
+            defaultMode: 0755
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grades
+spec:
+  selector: { app: grades }
+  ports:
+    - port: 80
+      targetPort: 8080

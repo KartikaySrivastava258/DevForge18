@@ -1,0 +1,42 @@
+# The timetable web tier, set up for safe rolling releases.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  annotations:
+    kubernetes.io/change-cause: "initial release: nginx 1.27"
+spec:
+  replicas: 4
+  revisionHistoryLimit: 5       # old ReplicaSets kept for kubectl rollout undo
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1               # add one new Pod at a time ...
+      maxUnavailable: 0         # ... and never remove an old one before a new one is ready
+  selector:
+    matchLabels: { app: timetable }
+  template:
+    metadata:
+      labels: { app: timetable }
+    spec:
+      containers:
+        - name: web
+          image: nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+          ports:
+            - containerPort: 80
+          # Ready only when nginx answers. A Pod that is not ready gets no traffic from the Service and does
+          # not count as available, so a broken release stalls instead of replacing working Pods.
+          readinessProbe:
+            httpGet: { path: /, port: 80 }
+            periodSeconds: 2
+            failureThreshold: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  selector: { app: timetable }
+  ports:
+    - port: 80
+      targetPort: 80

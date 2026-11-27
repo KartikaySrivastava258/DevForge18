@@ -1,0 +1,47 @@
+# The grades service "application" — do not change this file. busybox httpd runs these scripts as CGI.
+# Endpoints (all under /cgi-bin/ on port 8080):
+#   grades   the real work: returns a small JSON document
+#   healthz  liveness: answers as long as the process is not hung
+#   ready    readiness: like healthz, but answers 503 while the Pod is draining
+#   drain / undrain / hang / hog   operations the check uses to simulate trouble
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grades-app
+data:
+  grades: |
+    #!/bin/sh
+    [ -f /tmp/hung ] && sleep 60
+    printf 'Content-Type: application/json\r\n\r\n{"course": "DF101", "published": 42, "served_by": "%s"}\n' "$(hostname)"
+  healthz: |
+    #!/bin/sh
+    # A hung process cannot answer anything — not even this.
+    [ -f /tmp/hung ] && sleep 60
+    printf 'Content-Type: text/plain\r\n\r\nalive\n'
+  ready: |
+    #!/bin/sh
+    [ -f /tmp/hung ] && sleep 60
+    if [ -f /tmp/draining ]; then
+      printf 'Status: 503 Service Unavailable\r\nContent-Type: text/plain\r\n\r\ndraining\n'
+    else
+      printf 'Content-Type: text/plain\r\n\r\nready\n'
+    fi
+  drain: |
+    #!/bin/sh
+    # Maintenance: stop taking new traffic, but keep running.
+    touch /tmp/draining
+    printf 'Content-Type: text/plain\r\n\r\ndraining\n'
+  undrain: |
+    #!/bin/sh
+    rm -f /tmp/draining
+    printf 'Content-Type: text/plain\r\n\r\nback in service\n'
+  hang: |
+    #!/bin/sh
+    # Simulates a deadlock: from now on every request hangs.
+    touch /tmp/hung
+    printf 'Content-Type: text/plain\r\n\r\nhanging\n'
+  hog: |
+    #!/bin/sh
+    # Simulates a memory leak: memory grows until something stops it.
+    printf 'Content-Type: text/plain\r\n\r\n'
+    tail /dev/zero

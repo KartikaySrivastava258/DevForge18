@@ -1,0 +1,62 @@
+# The grades service, with resources and probes that match how it actually behaves.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grades
+spec:
+  replicas: 3
+  selector:
+    matchLabels: { app: grades }
+  template:
+    metadata:
+      labels: { app: grades }
+    spec:
+      containers:
+        - name: grades
+          image: busybox:1.37@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec
+          # Do not change the command: the service needs about 12 seconds to load its cache before it
+          # listens on port 8080, and it stops promptly on SIGTERM.
+          command: ["sh", "-c", "trap 'exit 0' TERM; echo 'loading grade cache'; sleep 12 & wait $!; echo 'listening on 8080'; httpd -f -p 8080 -h /www & wait $!"]
+          ports:
+            - containerPort: 8080
+          # Requests: what the scheduler reserves. Limits: the most it may use. httpd needs a few MiB; 64Mi
+          # leaves room for real requests while a leak is stopped long before it hurts the node.
+          resources:
+            requests: { cpu: 50m, memory: 32Mi }
+            limits: { cpu: 250m, memory: 64Mi }
+          # Start-up: up to 2 s x 20 = 40 s to begin answering. Liveness and readiness wait until it succeeds,
+          # so the tight liveness probe below cannot kill a container that is still loading.
+          startupProbe:
+            httpGet: { path: /cgi-bin/healthz, port: 8080 }
+            periodSeconds: 2
+            failureThreshold: 20
+          # Readiness: /ready answers 503 while draining -> the Pod leaves the Service but keeps running.
+          readinessProbe:
+            httpGet: { path: /cgi-bin/ready, port: 8080 }
+            periodSeconds: 2
+            failureThreshold: 2
+          # Liveness: only "is the process stuck?" — never "is it draining?" (or a dependency's health), or a
+          # Pod in maintenance would be restarted. 3 failures x 3 s (1 s timeout each) -> restart in ~10 s.
+          livenessProbe:
+            httpGet: { path: /cgi-bin/healthz, port: 8080 }
+            periodSeconds: 3
+            timeoutSeconds: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: app
+              mountPath: /www/cgi-bin
+      volumes:
+        - name: app
+          configMap:
+            name: grades-app
+            defaultMode: 0755
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grades
+spec:
+  selector: { app: grades }
+  ports:
+    - port: 80
+      targetPort: 8080
