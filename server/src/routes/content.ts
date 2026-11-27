@@ -27,6 +27,8 @@ export function registerContentRoutes(router: Router, { content }: AppDeps): voi
       simulations: content.simulationsFor(track.slug).map((s) => content.simulationSummary(s)),
       caseStudies: content.caseStudiesFor(track.slug),
       labs: content.labsFor(track.slug).map((l) => content.labSummary(l)),
+      quiz: (() => { const q = content.getQuiz(track.slug); return q ? content.quizSummary(q) : null; })(),
+      projects: content.projectsFor(track.slug).map((p) => content.projectSummary(p)),
       prerequisites: track.prerequisites.map(summary).filter(Boolean),
       related: track.related.map((r) => ({ why: r.why, track: summary(r.slug) })).filter((r) => r.track),
       paths: content

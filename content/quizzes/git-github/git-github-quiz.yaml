@@ -1,0 +1,187 @@
+id: git-github-quiz
+track: git-github
+title: Git and GitHub — track quiz
+description: Twelve questions from first commits to protected branches. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: snapshot
+    type: single
+    level: beginner
+    lesson: git-what-and-why
+    prompt: What does a Git commit record?
+    options:
+      - { id: a, text: "Only the lines that changed, as a patch" }
+      - { id: b, text: "A snapshot of the tracked files, with an author, a message and a link to its parent commit(s)" }
+      - { id: c, text: "A copy of the whole disk" }
+    answer: b
+    explanation: Git stores snapshots (sharing unchanged files between them) and shows differences by comparing snapshots.
+
+  - id: three-areas
+    type: diagram
+    level: beginner
+    lesson: git-first-commits
+    prompt: A change moves through three places on its way into history. Label the numbered boxes.
+    media: media:git-github/quiz-three-areas.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+    labels:
+      - { id: working-tree, text: "Working tree (your files)" }
+      - { id: staging, text: "Staging area (index)" }
+      - { id: repository, text: "Repository (commit history)" }
+      - { id: remote, text: "Remote on GitHub" }
+    answers: { "1": working-tree, "2": staging, "3": repository }
+    explanation: git add copies changes from the working tree into the staging area; git commit records what is staged in the repository. The remote is only involved when you push.
+
+  - id: status-output
+    type: output
+    level: beginner
+    lesson: git-first-commits
+    prompt: Given this output, what will "git commit" record right now?
+    command: git status
+    output: |
+      On branch main
+      Changes to be committed:
+        (use "git restore --staged <file>..." to unstage)
+      	new file:   todo.txt
+
+      Changes not staged for commit:
+        (use "git add <file>..." to update what will be committed)
+        (use "git restore <file>..." to discard changes in working directory)
+      	modified:   README.md
+    options:
+      - { id: a, text: "Both todo.txt and the change to README.md" }
+      - { id: b, text: "Only the new file todo.txt; the README change stays in the working tree until it is added" }
+      - { id: c, text: "Nothing, because README.md is not staged" }
+    answer: b
+    explanation: A commit records exactly what is staged ("Changes to be committed"). The README change is listed as not staged.
+
+  - id: share-order
+    type: ordering
+    level: beginner
+    lesson: git-remotes-push-pull
+    prompt: Put the steps for sharing a fix with your team in order.
+    items:
+      - { id: edit, text: "Edit the file" }
+      - { id: add, text: "git add the file" }
+      - { id: commit, text: "git commit with a message" }
+      - { id: push, text: "git push to the remote" }
+    order: [edit, add, commit, push]
+    explanation: Changes are staged, then committed locally, and only a push sends the commits to the remote for others to pull.
+
+  - id: branch-facts
+    type: multiple
+    level: intermediate
+    lesson: git-branches-and-merging
+    prompt: Which statements about branches are true? Select all that apply.
+    options:
+      - { id: a, text: "A branch is a movable name that points to a commit" }
+      - { id: b, text: "Creating a branch copies every file in the repository" }
+      - { id: c, text: "HEAD normally names the branch you are on" }
+      - { id: d, text: "Deleting a merged branch deletes the commits it pointed to" }
+    answers: [a, c]
+    explanation: Branches are cheap pointers; HEAD points at the current branch. Deleting a merged branch removes only the name — its commits remain reachable through the merge.
+
+  - id: graph-output
+    type: output
+    level: intermediate
+    lesson: git-branches-and-merging
+    prompt: How many parent commits does c6b38a3 have?
+    command: git log --oneline --graph --all
+    output: |
+      *   c6b38a3 Merge feature
+      |\
+      | * 488cd2d Add a
+      * | 4552345 Add b
+      |/
+      * ff9fa06 Add README
+    options:
+      - { id: a, text: "One" }
+      - { id: b, text: "Two — it is a merge commit joining 4552345 and 488cd2d" }
+      - { id: c, text: "Three" }
+    answer: b
+    explanation: The graph shows two lines meeting at c6b38a3, the merge commit created by a non-fast-forward merge.
+
+  - id: undo-pushed
+    type: single
+    level: intermediate
+    lesson: git-undoing-work-safely
+    prompt: A commit that is already on the shared main branch broke the build. What is the safe way to undo it?
+    options:
+      - { id: a, text: "git reset --hard HEAD~1 and force-push" }
+      - { id: b, text: "git revert the commit: it adds a new commit that undoes the change, without rewriting shared history" }
+      - { id: c, text: "Delete the repository and push again" }
+    answer: b
+    explanation: Rewriting shared history breaks everyone who already pulled it; a revert is an ordinary new commit.
+
+  - id: undo-match
+    type: matching
+    level: intermediate
+    lesson: git-undoing-work-safely
+    prompt: Match each command to what it does.
+    left:
+      - { id: restore, text: "git restore notes.txt" }
+      - { id: unstage, text: "git restore --staged notes.txt" }
+      - { id: revert, text: "git revert <commit>" }
+      - { id: reset-hard, text: "git reset --hard HEAD~1" }
+    right:
+      - { id: discard, text: "Throws away unstaged changes to the file in the working tree" }
+      - { id: unstaged, text: "Takes the file out of the staging area, keeping the change in the working tree" }
+      - { id: new-commit, text: "Adds a new commit that undoes an earlier one" }
+      - { id: move-back, text: "Moves the branch back one commit and discards its changes and any uncommitted work" }
+      - { id: push, text: "Sends commits to the remote" }
+    pairs: { restore: discard, unstage: unstaged, revert: new-commit, reset-hard: move-back }
+    explanation: restore works on files, revert adds history, reset --hard moves the branch and discards work — the only one of the four that can lose uncommitted changes for good.
+
+  - id: review-purpose
+    type: single
+    level: intermediate
+    lesson: git-pull-requests-and-review
+    prompt: What is the main purpose of a pull request?
+    options:
+      - { id: a, text: "To copy a branch to another computer" }
+      - { id: b, text: "To propose merging a branch, so others can review the change and checks can run before it reaches the main branch" }
+      - { id: c, text: "To download the latest commits" }
+    answer: b
+    explanation: A pull request is a review and integration step; pulling commits is git pull, a different thing.
+
+  - id: rebase-shared
+    type: single
+    level: advanced
+    lesson: git-rebasing-and-history
+    prompt: Why should you not rebase a branch that others have already pulled?
+    options:
+      - { id: a, text: "Rebase is slower than merge" }
+      - { id: b, text: "Rebasing creates new commits with new IDs; others still have the old ones, so their history and yours diverge" }
+      - { id: c, text: "Rebase deletes the branch" }
+    answer: b
+    explanation: Rewrite only history that is yours alone; on shared branches, merge or revert instead.
+
+  - id: protections
+    type: multiple
+    level: advanced
+    lesson: git-protected-branches-signing-secrets
+    prompt: Which can a branch protection rule on GitHub enforce for main? Select all that apply.
+    options:
+      - { id: a, text: "Require a pull request with approving reviews before merging" }
+      - { id: b, text: "Require status checks (such as CI) to pass" }
+      - { id: c, text: "Block force pushes" }
+      - { id: d, text: "Encrypt the files in the repository" }
+    answers: [a, b, c]
+    explanation: Protection rules govern how changes reach a branch; they do not encrypt content.
+
+  - id: leaked-secret
+    type: single
+    level: advanced
+    lesson: git-protected-branches-signing-secrets
+    prompt: An API key was committed and pushed to a public repository an hour ago. What comes first?
+    options:
+      - { id: a, text: "Rewrite history to remove the commit, then carry on" }
+      - { id: b, text: "Revoke or rotate the key immediately — it must be treated as compromised; cleaning history comes after" }
+      - { id: c, text: "Make the repository private" }
+    answer: b
+    explanation: Anyone (and automated scanners) may already have copied it; removing it from history does not un-leak it.

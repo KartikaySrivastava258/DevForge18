@@ -2,12 +2,16 @@
  * In-memory access to the compiled content bundle (build/content.json).
  * Content is read-only at runtime; changes go through Git review and a rebuild.
  */
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import {
   type CaseStudy,
   type CompiledLab,
   CATEGORIES,
   type CompiledLesson,
+  type CompiledProject,
+  type CompiledQuiz,
+  type QuizQuestion,
   type ContentBundle,
   type LearningPath,
   type Simulation,
@@ -60,9 +64,13 @@ export class ContentStore {
   private readonly lessonsByTrack = new Map<string, CompiledLesson[]>();
   private readonly simulations = new Map<string, Simulation>();
   private readonly labs = new Map<string, CompiledLab>();
+  private readonly quizzes = new Map<string, CompiledQuiz>();
+  private readonly projects = new Map<string, CompiledProject>();
   private readonly index: SearchIndex;
 
   constructor(bundle: ContentBundle) {
+    for (const q of bundle.quizzes ?? []) this.quizzes.set(q.track, q);
+    for (const p of bundle.projects ?? []) this.projects.set(p.id, p);
     if (bundle.schema_version !== 1) throw new Error(`Unsupported content schema_version ${String(bundle.schema_version)}`);
     this.bundle = bundle;
     for (const t of bundle.tracks) this.tracks.set(t.slug, t);
@@ -228,7 +236,123 @@ export class ContentStore {
     return { lessonId, total, correct, score: total ? correct / total : 0, passed: correct === total, results };
   }
 
+  // ---- Quizzes ---------------------------------------------------------------
+
+  getQuiz(track: string): CompiledQuiz | undefined { return this.quizzes.get(track); }
+
+  quizSummary(q: CompiledQuiz) {
+    return { id: q.id, track: q.track, title: q.title, questionCount: q.questions.length, passMark: q.pass_mark };
+  }
+
+  /** The quiz as sent to browsers: no answers, and items to order or match in a stable shuffled order. */
+  publicQuiz(q: CompiledQuiz) {
+    return {
+      id: q.id,
+      track: q.track,
+      title: q.title,
+      description: q.description,
+      passMark: q.pass_mark,
+      lastReviewed: q.last_reviewed,
+      questions: q.questions.map((x) => publicQuestion(q, x)),
+    };
+  }
+
+  /**
+   * Grade a quiz. As with self-checks, a wrong answer gets the lesson to revisit, not the explanation,
+   * so the answer is not simply revealed; correct answers get the explanation.
+   */
+  gradeQuiz(track: string, answers: Record<string, QuizAnswer>) {
+    const quiz = this.quizzes.get(track);
+    if (!quiz) return undefined;
+    const results = quiz.questions.map((q) => {
+      const correct = isCorrect(q, answers[q.id]);
+      const lesson = this.lessons.get(q.lesson);
+      const review = { id: q.lesson, title: lesson?.title ?? q.lesson };
+      return correct ? { id: q.id, correct, explanation: q.explanation } : { id: q.id, correct, review };
+    });
+    const correct = results.filter((r) => r.correct).length;
+    const total = results.length;
+    const score = total ? correct / total : 0;
+    return { quizId: quiz.id, track, total, correct, score, passMark: quiz.pass_mark, passed: score >= quiz.pass_mark, results };
+  }
+
+  // ---- Projects --------------------------------------------------------------
+
+  getProject(id: string): CompiledProject | undefined { return this.projects.get(id); }
+  projectsFor(track: string): CompiledProject[] { return [...this.projects.values()].filter((p) => p.track === track); }
+
+  projectSummary(p: CompiledProject) {
+    return { id: p.id, track: p.track, title: p.title, level: p.level, estimatedHours: p.estimated_hours };
+  }
+
+  /** Everything a learner sees: never the reference solution. */
+  publicProject(p: CompiledProject) {
+    return {
+      ...this.projectSummary(p),
+      prerequisites: p.prerequisites.map((id) => { const l = this.lessons.get(id); return l ? this.lessonSummary(l) : null; }).filter(Boolean),
+      relatedTracks: p.related_tracks,
+      userStories: p.user_stories,
+      acceptanceCriteria: p.acceptance_criteria,
+      rubric: p.rubric,
+      hints: p.hints,
+      stretchGoals: p.stretch_goals,
+      html: p.html,
+      toc: p.toc,
+      starterFiles: p.starter_files,
+      lastReviewed: p.last_reviewed,
+    };
+  }
+
+  /** The reference solution, for faculty and admins only (the route enforces the role). */
+  projectSolution(p: CompiledProject) {
+    return { id: p.id, files: p.solution_files };
+  }
+
   search(query: string, options: { limit?: number; types?: SearchDocType[] }): SearchHit[] {
     return search(this.index, query, options);
+  }
+}
+
+export type QuizAnswer = string | string[] | Record<string, string>;
+
+/** A stable shuffle (same order every time for a quiz), never equal to the given order. */
+function stableShuffle<T extends { id: string }>(quizId: string, items: T[]): T[] {
+  const key = (i: T) => createHash("sha256").update(`${quizId}:${i.id}`).digest("hex");
+  const shuffled = [...items].sort((a, b) => key(a).localeCompare(key(b)));
+  return shuffled.every((x, n) => x.id === items[n]?.id) ? [...shuffled.slice(1), ...shuffled.slice(0, 1)] : shuffled;
+}
+
+function publicQuestion(quiz: CompiledQuiz, q: QuizQuestion) {
+  const base = { id: q.id, type: q.type, level: q.level, prompt: q.prompt };
+  switch (q.type) {
+    case "single":
+      return { ...base, options: q.options };
+    case "multiple":
+      return { ...base, options: q.options };
+    case "output":
+      return { ...base, command: q.command, output: q.output, options: q.options };
+    case "ordering":
+      return { ...base, items: stableShuffle(`${quiz.id}:${q.id}`, q.items) };
+    case "matching":
+      return { ...base, left: q.left, right: stableShuffle(`${quiz.id}:${q.id}`, q.right) };
+    case "diagram":
+      return { ...base, figureHtml: quiz.figures[q.id] ?? "", targets: q.targets, labels: stableShuffle(`${quiz.id}:${q.id}`, q.labels) };
+  }
+}
+
+function isCorrect(q: QuizQuestion, answer: QuizAnswer | undefined): boolean {
+  if (answer === undefined) return false;
+  switch (q.type) {
+    case "single":
+    case "output":
+      return answer === q.answer;
+    case "multiple":
+      return Array.isArray(answer) && answer.length === q.answers.length && q.answers.every((a) => answer.includes(a));
+    case "ordering":
+      return Array.isArray(answer) && answer.length === q.order.length && q.order.every((id, n) => answer[n] === id);
+    case "matching":
+      return typeof answer === "object" && !Array.isArray(answer) && Object.entries(q.pairs).every(([l, r]) => answer[l] === r);
+    case "diagram":
+      return typeof answer === "object" && !Array.isArray(answer) && Object.entries(q.answers).every(([t, l]) => answer[t] === l);
   }
 }

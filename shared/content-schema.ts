@@ -93,6 +93,8 @@ const PlannedWorkSchema = z
     status: z.enum(["planned", "available"]),
     /** Labs only: the id of the published lab page (content/labs/<track>/<id>.md). */
     lab: slug.optional(),
+    /** Projects only: the id of the published project page (content/projects/<track>/<id>.md). */
+    project: slug.optional(),
   })
   .strict();
 
@@ -377,6 +379,110 @@ export const CaseStudySchema = z
   .strict();
 export type CaseStudy = z.infer<typeof CaseStudySchema>;
 
+// --- Quizzes (REMAINING_WORK §4.7): one per track, mixing levels; graded on the server, answers never sent before grading.
+
+const QuizItemSchema = z.object({ id: z.string().regex(/^[a-z0-9-]{1,32}$/), text: z.string().min(1) }).strict();
+const quizBase = {
+  id: slug,
+  level: z.enum(LEVELS),
+  /** The lesson that teaches this, so a wrong answer can point the learner to it. */
+  lesson: slug,
+  prompt: z.string().min(10),
+  explanation: z.string().min(20, "explain why the answer is right"),
+};
+const uniqueIds = (items: { id: string }[]) => new Set(items.map((i) => i.id)).size === items.length;
+
+export const QuizQuestionSchema = z.discriminatedUnion("type", [
+  z.object({ ...quizBase, type: z.literal("single"), options: z.array(OptionSchema).min(2).max(6), answer: z.string().regex(/^[a-z]$/) })
+    .strict()
+    .refine((q) => uniqueIds(q.options) && q.options.some((o) => o.id === q.answer), "answer must be one of unique option ids"),
+  z.object({ ...quizBase, type: z.literal("multiple"), options: z.array(OptionSchema).min(3).max(8), answers: z.array(z.string().regex(/^[a-z]$/)).min(1) })
+    .strict()
+    .refine((q) => uniqueIds(q.options) && q.answers.every((a) => q.options.some((o) => o.id === a)) && new Set(q.answers).size === q.answers.length,
+      "answers must be distinct option ids"),
+  z.object({ ...quizBase, type: z.literal("ordering"), items: z.array(QuizItemSchema).min(3).max(8), order: z.array(z.string()).min(3) })
+    .strict()
+    .refine((q) => uniqueIds(q.items) && q.order.length === q.items.length && q.items.every((i) => q.order.includes(i.id)),
+      "order must list every item id exactly once"),
+  z.object({ ...quizBase, type: z.literal("matching"), left: z.array(QuizItemSchema).min(2).max(8), right: z.array(QuizItemSchema).min(2).max(10),
+    pairs: z.record(z.string(), z.string()) })
+    .strict()
+    .refine((q) => uniqueIds(q.left) && uniqueIds(q.right) && q.left.every((l) => q.right.some((r) => r.id === q.pairs[l.id])) &&
+      Object.keys(q.pairs).length === q.left.length, "pairs must map every left id to a right id"),
+  z.object({ ...quizBase, type: z.literal("output"), command: z.string().min(1), output: z.string().min(1),
+    options: z.array(OptionSchema).min(2).max(6), answer: z.string().regex(/^[a-z]$/) })
+    .strict()
+    .refine((q) => uniqueIds(q.options) && q.options.some((o) => o.id === q.answer), "answer must be one of unique option ids"),
+  z.object({ ...quizBase, type: z.literal("diagram"), media: z.string().regex(/^media:[a-z0-9-]+\/[a-z0-9-]+\.svg$/),
+    targets: z.array(QuizItemSchema).min(2).max(8), labels: z.array(QuizItemSchema).min(2).max(10), answers: z.record(z.string(), z.string()) })
+    .strict()
+    .refine((q) => uniqueIds(q.targets) && uniqueIds(q.labels) && q.targets.every((t) => q.labels.some((l) => l.id === q.answers[t.id])) &&
+      Object.keys(q.answers).length === q.targets.length, "answers must label every target"),
+]);
+export type QuizQuestion = z.infer<typeof QuizQuestionSchema>;
+
+export const QuizSchema = z
+  .object({
+    id: slug,
+    track: slug,
+    title: z.string().min(3),
+    description: z.string().min(20),
+    /** Share of questions that must be correct to pass (and, on learning paths, to skip the module). */
+    pass_mark: z.number().min(0.5).max(1),
+    questions: z.array(QuizQuestionSchema).min(8).max(30),
+    owner: z.string().min(2),
+    last_reviewed: isoDate,
+    content_version: z.number().int().positive(),
+  })
+  .strict()
+  .refine((q) => uniqueIds(q.questions), "question ids must be unique")
+  .refine((q) => LEVELS.every((level) => q.questions.some((x) => x.level === level)), "a track quiz must mix all three levels");
+export type Quiz = z.infer<typeof QuizSchema>;
+/** A quiz after compilation: diagram questions carry their figure as safe HTML (keyed by question id). */
+export type CompiledQuiz = Quiz & { figures: Record<string, string> };
+
+// --- Mini-projects (REMAINING_WORK §4.5): brief, stories, testable acceptance criteria, rubric, starter, hints, faculty-only solution.
+
+export const ProjectMetaSchema = z
+  .object({
+    id: slug,
+    track: slug,
+    title: z.string().min(3),
+    level: z.enum(LEVELS),
+    estimated_hours: z.number().positive().max(40),
+    prerequisites: z.array(slug),
+    related_tracks: z.array(slug),
+    user_stories: z.array(z.string().regex(/^As an? .+, I want .+ so that .+/, "write stories as: As a …, I want … so that …")).min(2),
+    acceptance_criteria: z.array(z.string().min(15)).min(3),
+    rubric: z
+      .array(z.object({ criterion: z.string().min(3), excellent: z.string().min(10), good: z.string().min(10), needs_work: z.string().min(10) }).strict())
+      .min(3),
+    hints: z.array(z.string().min(15)).min(2),
+    stretch_goals: z.array(z.string().min(10)).min(1),
+    /** Folder under projects/<track>/<id>/ that learners start from; must exist. */
+    starter: z.literal("starter"),
+    /** Folder with the reference solution; served to faculty and admins only. */
+    solution: z.literal("solution"),
+    owner: z.string().min(2),
+    last_reviewed: isoDate,
+    content_version: z.number().int().positive(),
+  })
+  .strict();
+export type ProjectMeta = z.infer<typeof ProjectMetaSchema>;
+
+export interface ProjectFile {
+  path: string;
+  content: string;
+}
+
+export interface CompiledProject extends ProjectMeta {
+  html: string;
+  toc: { id: string; text: string }[];
+  starter_files: ProjectFile[];
+  /** Never sent to students; the server strips it from public responses. */
+  solution_files: ProjectFile[];
+}
+
 /** A lesson after compilation: Markdown rendered to safe HTML plus a table of contents. */
 export interface CompiledLesson extends LessonMeta {
   html: string;
@@ -400,4 +506,6 @@ export interface ContentBundle {
   simulations: Simulation[];
   case_studies: CaseStudy[];
   labs: CompiledLab[];
+  quizzes: CompiledQuiz[];
+  projects: CompiledProject[];
 }

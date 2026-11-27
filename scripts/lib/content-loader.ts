@@ -12,10 +12,15 @@ import {
   LabMetaSchema,
   LessonMetaSchema,
   PathSchema,
+  ProjectMetaSchema,
+  QuizSchema,
   TrackSchema,
   type CaseStudy,
   type CompiledLab,
   type CompiledLesson,
+  type CompiledProject,
+  type ProjectFile,
+  type CompiledQuiz,
   type ContentBundle,
   type LearningPath,
   type Track,
@@ -52,6 +57,16 @@ function listDirs(dir: string): string[] {
   return readdirSync(dir)
     .filter((name) => !name.startsWith(".") && statSync(join(dir, name)).isDirectory())
     .sort();
+}
+
+/** Every file under dir (recursively), sorted, for project starter and solution folders. */
+function walkAll(dir: string): string[] {
+  return readdirSync(dir)
+    .sort()
+    .flatMap((name) => {
+      const full = join(dir, name);
+      return statSync(full).isDirectory() ? walkAll(full) : [full];
+    });
 }
 
 function listFiles(dir: string, ext: string): string[] {
@@ -303,10 +318,119 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       linkedLabs.add(item.lab);
     }
     for (const item of track.projects) if (item.lab) errors.push(`track ${track.slug}: projects cannot name a lab`);
+    for (const item of track.labs) if (item.project) errors.push(`track ${track.slug}: labs cannot name a project`);
   }
   for (const lab of labs) if (!linkedLabs.has(lab.id)) errors.push(`lab ${lab.id}: not listed in its track's labs`);
-  for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson`);
-  for (const key of media.diagrams.keys()) if (!usedMedia.has(`diagram:${key}`)) warnings.push(`media/${key}.steps.yaml is not used by any lesson`);
+
+  // ---- Quizzes (one YAML per track quiz) ---------------------------------------
+  const quizzes: CompiledQuiz[] = [];
+  const quizDir = join(root, "quizzes");
+  for (const trackDir of existsSync(quizDir) ? readdirSync(quizDir).sort() : []) {
+    if (!trackSlugs.has(trackDir)) errors.push(`quizzes/${trackDir}: unknown track folder`);
+    for (const fileName of listFiles(join(quizDir, trackDir), ".yaml")) {
+      const file = join(quizDir, trackDir, fileName);
+      const rel = relative(root, file);
+      const raw = readYaml(file, errors, root);
+      if (raw === undefined) continue;
+      const parsed = QuizSchema.safeParse(raw);
+      if (!parsed.success) {
+        errors.push(...formatZod(rel, parsed.error));
+        continue;
+      }
+      const quiz = parsed.data;
+      if (`${quiz.id}.yaml` !== fileName) errors.push(`${rel}: id must match file name`);
+      if (quiz.track !== trackDir) errors.push(`${rel}: track "${quiz.track}" must match folder "${trackDir}"`);
+      if (quiz.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+      const figures: Record<string, string> = {};
+      const quizMedia = mediaResolver(media, usedMedia, simulationsById);
+      for (const q of quiz.questions) {
+        const lesson = lessons.find((l) => l.id === q.lesson);
+        if (!lesson) errors.push(`${rel}: question ${q.id} names unknown lesson "${q.lesson}"`);
+        else if (lesson.track !== quiz.track) errors.push(`${rel}: question ${q.id} names lesson "${q.lesson}" from another track`);
+        if (q.type === "diagram") {
+          const key = q.media.replace(/^media:/, "").replace(/\.svg$/, "");
+          if (!media.figures.has(key)) errors.push(`${rel}: question ${q.id} uses unknown figure ${q.media}`);
+          else {
+            try {
+              figures[q.id] = quizMedia.figure(q.media.replace(/^media:/, ""), "", "");
+            } catch (err) {
+              errors.push(`${rel}: question ${q.id}: ${(err as Error).message}`);
+            }
+          }
+        }
+      }
+      quizzes.push({ ...quiz, figures });
+    }
+  }
+  quizzes.sort((a, b) => a.track.localeCompare(b.track));
+  for (const track of tracks) if (quizzes.filter((q) => q.track === track.slug).length > 1) errors.push(`track ${track.slug}: more than one quiz`);
+
+  // ---- Mini-projects: content/projects/<track>/<id>.md + <id>/starter and <id>/solution ----
+  const projects: CompiledProject[] = [];
+  const projectDir = join(root, "projects");
+  const readFolder = (dir: string): ProjectFile[] =>
+    (existsSync(dir) ? walkAll(dir) : []).map((f) => ({ path: relative(dir, f), content: readFileSync(f, "utf8") }));
+  for (const trackDir of existsSync(projectDir) ? readdirSync(projectDir).sort() : []) {
+    if (!trackSlugs.has(trackDir)) errors.push(`projects/${trackDir}: unknown track folder`);
+    for (const fileName of listFiles(join(projectDir, trackDir), ".md")) {
+      const file = join(projectDir, trackDir, fileName);
+      const rel = relative(root, file);
+      const split = splitFrontMatter(readFileSync(file, "utf8"));
+      if (!split) {
+        errors.push(`${rel}: missing YAML front matter (--- ... ---)`);
+        continue;
+      }
+      let raw: unknown;
+      try {
+        raw = parseYaml(split.frontMatter, file);
+      } catch (err) {
+        errors.push(`${rel}: invalid front matter — ${(err as Error).message.split("\n")[0]}`);
+        continue;
+      }
+      const parsed = ProjectMetaSchema.safeParse(raw);
+      if (!parsed.success) {
+        errors.push(...formatZod(rel, parsed.error));
+        continue;
+      }
+      const meta = parsed.data;
+      if (`${meta.id}.md` !== fileName) errors.push(`${rel}: id must match file name`);
+      if (meta.track !== trackDir) errors.push(`${rel}: track "${meta.track}" must match folder "${trackDir}"`);
+      if (meta.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+      for (const prereq of meta.prerequisites) if (!lessonIds.has(prereq)) errors.push(`${rel}: unknown prerequisite lesson "${prereq}"`);
+      for (const t of meta.related_tracks) if (!trackSlugs.has(t)) errors.push(`${rel}: unknown related track "${t}"`);
+      const starter = readFolder(join(projectDir, trackDir, meta.id, "starter"));
+      const solution = readFolder(join(projectDir, trackDir, meta.id, "solution"));
+      if (starter.length === 0) errors.push(`${rel}: the starter folder projects/${trackDir}/${meta.id}/starter is missing or empty`);
+      if (solution.length === 0) errors.push(`${rel}: the solution folder projects/${trackDir}/${meta.id}/solution is missing or empty`);
+      const rendered = renderMarkdown(split.body, { media: mediaResolver(media, usedMedia, simulationsById) });
+      for (const problem of rendered.problems) errors.push(`${rel}: ${problem}`);
+      for (const heading of ["Brief", "Getting started"]) if (!rendered.toc.some((t) => t.text === heading)) errors.push(`${rel}: a project needs a "## ${heading}" section`);
+      projects.push({ ...meta, html: rendered.html, toc: rendered.toc, starter_files: starter, solution_files: solution });
+    }
+  }
+  projects.sort((a, b) => (a.track === b.track ? a.id.localeCompare(b.id) : a.track.localeCompare(b.track)));
+  const projectsById = new Map(projects.map((p) => [p.id, p]));
+  const linkedProjects = new Set<string>();
+  for (const track of tracks) {
+    for (const item of track.projects) {
+      if (!item.project) {
+        if (item.status === "available") errors.push(`track ${track.slug}: project "${item.title}" is marked available but names no project page`);
+        continue;
+      }
+      const project = projectsById.get(item.project);
+      if (!project) errors.push(`track ${track.slug}: unknown project "${item.project}"`);
+      else {
+        if (project.track !== track.slug) errors.push(`track ${track.slug}: project "${item.project}" belongs to track ${project.track}`);
+        if (item.status !== "available") errors.push(`track ${track.slug}: project "${item.project}" is published, so its status must be "available"`);
+        if (project.level !== item.level || project.title !== item.title) errors.push(`track ${track.slug}: title or level of "${item.project}" differs from the project page`);
+      }
+      linkedProjects.add(item.project);
+    }
+  }
+  for (const project of projects) if (!linkedProjects.has(project.id)) errors.push(`project ${project.id}: not listed in its track's projects`);
+
+  for (const key of media.figures.keys()) if (!usedMedia.has(`figure:${key}`)) warnings.push(`media/${key}.svg is not used by any lesson, quiz or project`);
+  for (const key of media.diagrams.keys()) if (!usedMedia.has(`diagram:${key}`)) warnings.push(`media/${key}.steps.yaml is not used by any lesson, quiz or project`);
 
   // ---- Case studies -------------------------------------------------------
   const caseStudies: CaseStudy[] = [];
@@ -344,7 +468,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   }
 
   return {
-    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs },
+    bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs, quizzes, projects },
     errors,
     warnings,
   };
