@@ -1,0 +1,4 @@
+alt: 'The model registry holds version 1 with the champion alias and version 2 as a challenger. The model server resolves the alias when it loads and serves the invocations and ping endpoints; clients send requests that are checked against the model''s signature. Every request and prediction goes to a prediction log, and a drift check compares the logged inputs with the training data using the population stability index. Promoting or rolling back means moving the alias and then reloading the server. Monitor latency, errors and drift now, and accuracy once true outcomes arrive.'
+caption: 'Aliases decide what is served after a reload; logged predictions feed drift and quality monitoring.'
+credit: DevForge 18 content team
+licence: project-content

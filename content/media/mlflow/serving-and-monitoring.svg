@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330">
+  <!-- Serving, promotion and monitoring, from Serving and monitoring models. -->
+  <rect class="f-box-faint" x="10" y="30" width="200" height="100" rx="8"/>
+  <text class="f-small f-strong" x="110" y="54" text-anchor="middle">model registry</text>
+  <text class="f-small f-mono" x="110" y="80" text-anchor="middle">v1 ← @champion</text>
+  <text class="f-small f-mono" x="110" y="102" text-anchor="middle">v2 (challenger)</text>
+  <rect class="f-box-accent" x="260" y="30" width="200" height="100" rx="8"/>
+  <text class="f-small f-strong" x="360" y="54" text-anchor="middle">model server</text>
+  <text class="f-small" x="360" y="78" text-anchor="middle">resolves alias at load</text>
+  <text class="f-small f-mono" x="360" y="100" text-anchor="middle">/invocations · /ping</text>
+  <g>
+    <path class="f-arrow" d="M212 80 L250 80"/>
+    <polygon class="f-head" points="258,80 250,84.5 250,75.5"/>
+  </g>
+  <rect class="f-box-ok" x="510" y="30" width="200" height="100" rx="8"/>
+  <text class="f-small f-strong" x="610" y="54" text-anchor="middle">clients</text>
+  <text class="f-small" x="610" y="78" text-anchor="middle">signature-checked</text>
+  <text class="f-small" x="610" y="100" text-anchor="middle">requests</text>
+  <g>
+    <path class="f-arrow" d="M508 80 L470 80"/>
+    <polygon class="f-head" points="462,80 470,75.5 470,84.5"/>
+  </g>
+  <rect class="f-box-faint" x="260" y="180" width="200" height="70" rx="8"/>
+  <text class="f-small f-strong" x="360" y="206" text-anchor="middle">prediction log</text>
+  <text class="f-small" x="360" y="228" text-anchor="middle">inputs + outputs</text>
+  <g>
+    <path class="f-arrow" d="M360 132 L360 170"/>
+    <polygon class="f-head" points="360,178 355.5,170 364.5,170"/>
+  </g>
+  <rect class="f-box-danger" x="510" y="180" width="200" height="70" rx="8"/>
+  <text class="f-small f-strong" x="610" y="206" text-anchor="middle">drift check</text>
+  <text class="f-small" x="610" y="228" text-anchor="middle">PSI vs training data</text>
+  <g>
+    <path class="f-arrow" d="M462 215 L500 215"/>
+    <polygon class="f-head" points="508,215 500,219.5 500,210.5"/>
+  </g>
+  <text class="f-small f-strong" x="360" y="290" text-anchor="middle">promote / roll back = move the alias, then reload the server</text>
+  <text class="f-small" x="360" y="314" text-anchor="middle">watch latency · errors · drift now; accuracy once outcomes arrive</text>
+</svg>
