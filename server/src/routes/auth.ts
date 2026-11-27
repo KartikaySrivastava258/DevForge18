@@ -50,7 +50,7 @@ export function registerAuthRoutes(router: Router, deps: AppDeps): void {
     });
 
   router.post("/api/auth/register", async (ctx) => {
-    const limit = limiters.register.hit(`register:${ctx.ip}`);
+    const limit = await limiters.register.hit(`register:${ctx.ip}`);
     if (!limit.allowed) throw tooMany(limit.retryAfterSeconds);
 
     const body = await readJson(ctx, RegisterBody);
@@ -74,7 +74,7 @@ export function registerAuthRoutes(router: Router, deps: AppDeps): void {
   });
 
   router.post("/api/auth/login", async (ctx) => {
-    const ipLimit = limiters.loginByIp.hit(`login-ip:${ctx.ip}`);
+    const ipLimit = await limiters.loginByIp.hit(`login-ip:${ctx.ip}`);
     if (!ipLimit.allowed) throw tooMany(ipLimit.retryAfterSeconds);
 
     const body = await readJson(ctx, LoginBody);
@@ -86,11 +86,11 @@ export function registerAuthRoutes(router: Router, deps: AppDeps): void {
     const verification = await verifyPassword(body.password, user?.password_hash ?? (await dummyHash), config.passwordHashLogN);
 
     if (!user || !verification.ok || user.disabled_at) {
-      const failures = limiters.loginFailuresByEmail.hit(emailKey);
+      const failures = await limiters.loginFailuresByEmail.hit(emailKey);
       if (!failures.allowed) throw tooMany(failures.retryAfterSeconds);
       throw new HttpError(401, "invalid_credentials", "Email or password is incorrect.");
     }
-    limiters.loginFailuresByEmail.reset(emailKey);
+    await limiters.loginFailuresByEmail.reset(emailKey);
     if (verification.needsRehash) updatePasswordHash(db, user.id, await hashPassword(body.password, config.passwordHashLogN));
     recordAudit(db, { actorUserId: user.id, action: "user.login", targetType: "user", targetId: user.id });
     startSession(ctx, user);

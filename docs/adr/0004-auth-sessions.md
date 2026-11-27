@@ -17,8 +17,8 @@ JWTs in local storage (rejected: exposed to XSS, hard to revoke); a hosted ident
 
 ## Consequences
 
-Sessions can be revoked instantly. Rate-limit counters live in memory: per process and reset on restart (documented limitation).
+Sessions can be revoked instantly. Rate-limit counters live in memory: per process and reset on restart (documented limitation). **Amended 2026-11-27 by [ADR 0010](0010-shared-rate-limits-redis.md):** with `REDIS_URL` set, the counters are shared by all instances in Redis, and fall back to the per-process counters while Redis is unreachable.
 
 ## Revisit when
 
-The college wants single sign-on (add OIDC), or more than one instance runs (move limits and sessions to Redis or the database).
+The college wants single sign-on (add OIDC), or more than one instance runs (limits: done in ADR 0010; sessions still need a shared database).

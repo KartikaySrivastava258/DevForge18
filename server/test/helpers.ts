@@ -9,7 +9,9 @@ import { insertUser, type Role } from "../src/auth/users.ts";
 import type { AppConfig } from "../src/config.ts";
 import { ContentStore } from "../src/content/store.ts";
 import { migrate, openDatabase, type Db } from "../src/db/database.ts";
-import { silentLogger } from "../src/observability/logger.ts";
+import type { RedisRateLimitStore } from "../src/http/rate-limit-redis.ts";
+import { silentLogger, type Logger } from "../src/observability/logger.ts";
+import type { Tracer } from "../src/observability/tracing.ts";
 import type { Limiters } from "../src/routes/deps.ts";
 
 const repoRoot = join(import.meta.dirname, "..", "..");
@@ -35,7 +37,11 @@ export interface TestServer {
   createUser: (email: string, password: string, role?: Role) => Promise<void>;
 }
 
-export async function startTestServer(overrides: Partial<AppConfig> = {}, limiters?: Limiters): Promise<TestServer> {
+export async function startTestServer(
+  overrides: Partial<AppConfig> = {},
+  limiters?: Limiters,
+  extra: { tracer?: Tracer; rateLimitStore?: RedisRateLimitStore; logger?: Logger } = {},
+): Promise<TestServer> {
   const webRoot = mkdtempSync(join(tmpdir(), "devforge-web-"));
   mkdirSync(join(webRoot, "assets"));
   writeFileSync(join(webRoot, "index.html"), "<!doctype html><title>DevForge test shell</title>");
@@ -58,7 +64,7 @@ export async function startTestServer(overrides: Partial<AppConfig> = {}, limite
   };
   const db = openDatabase(":memory:");
   migrate(db);
-  const app = createApp({ config, db, content: testContent(), logger: silentLogger, ...(limiters ? { limiters } : {}) });
+  const app = createApp({ config, db, content: testContent(), logger: extra.logger ?? silentLogger, ...(limiters ? { limiters } : {}), ...(extra.tracer ? { tracer: extra.tracer } : {}), ...(extra.rateLimitStore ? { rateLimitStore: extra.rateLimitStore } : {}) });
   const server = createHttpServer(app);
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   const { port } = server.address() as AddressInfo;

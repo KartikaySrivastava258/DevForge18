@@ -236,7 +236,7 @@ Found a vulnerability? Please report it privately to the maintainers rather than
 - 80 lessons are published — at least three in every track, and seven or eight (beginner to advanced) in Git, PostgreSQL, Postman, Redis, Nginx and Docker — and every track has a simulation and two labs. Intermediate and advanced lessons for the other 12 tracks, quizzes and projects are still to come; projects are listed as planned.
 - External resource links were all checked and reviewed on 2026-11-25. The weekly *Link check* workflow reports reachability; a person re-confirms each page before its date is updated.
 - Admin and faculty features exist in the API but have no screens yet.
-- Rate limits are kept in memory, so they apply per server process. See [ADR 0004](docs/adr/0004-auth-sessions.md).
+- Rate limits are kept in memory, so they apply per server process, unless `REDIS_URL` points to a shared Redis. See [ADR 0004](docs/adr/0004-auth-sessions.md) and [ADR 0010](docs/adr/0010-shared-rate-limits-redis.md).
 - The full list, with workarounds, is in [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md#known-issues-and-limitations).
 
 ## Licence

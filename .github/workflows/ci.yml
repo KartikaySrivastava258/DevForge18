@@ -28,6 +28,18 @@ jobs:
     name: Typecheck, build, test
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    # Redis 7.4 for the shared rate-limit integration tests (server/test/rate-limit-redis.test.ts, ADR 0010);
+    # same pin as the Redis rate-limiter project check.
+    services:
+      redis:
+        image: redis:7.4.11-bookworm@sha256:44960b3100c48159a66d28c18b0588c193492e25f7551d60e51dd464fc3eca5b
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -48,6 +60,8 @@ jobs:
         # Executed lessons and labs run in the "lessons" job below, in parallel shards.
         env:
           DEVFORGE_LESSON_SHARD: "off"
+          # The tests write only keys under a unique prefix and delete them afterwards (no FLUSHDB).
+          DEVFORGE_TEST_REDIS_URL: redis://localhost:6379
         run: npm test
       - name: Playwright version
         id: playwright

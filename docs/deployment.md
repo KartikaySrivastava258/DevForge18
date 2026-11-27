@@ -53,3 +53,11 @@ histogram_quantile(0.95, sum by (le, route) (rate(devforge_http_request_duration
 ```
 
 Alert on symptoms (error ratio, p95 latency, `/api/ready` failing), not on causes.
+
+### Tracing (optional)
+
+Set `OTEL_EXPORTER_OTLP_ENDPOINT` (for example `http://otel-collector:4318`) and `OTEL_SERVICE_NAME=devforge` to send one span per request to an OpenTelemetry Collector as OTLP/HTTP JSON ([ADR 0009](adr/0009-opentelemetry-tracing.md)). Each access log line then carries a `traceId` you can paste into Jaeger or another trace UI. Watch `devforge_otel_spans_dropped_total`: it grows when the Collector is unreachable. The OpenTelemetry lab *Trace DevForge's own requests* walks through it with a Collector and Jaeger.
+
+## Several instances: shared rate limits
+
+Rate limits are counted in each process by default. When more than one DevForge instance serves the same site, set `REDIS_URL=redis://redis:6379/0` (Redis 7.x on the private network; `rediss://` for TLS, `redis://user:password@host:6379/0` with ACLs) so all instances share one limit ([ADR 0010](adr/0010-shared-rate-limits-redis.md)). If Redis becomes unreachable, each instance falls back to its own counters and logs `rate-limit store unavailable`; alert on `devforge_rate_limit_store_up == 0`. Sessions are still stored in SQLite, so several instances also need a shared database before this is useful in production.

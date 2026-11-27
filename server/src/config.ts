@@ -4,6 +4,7 @@
  * of failing later in a confusing way. See .env.example for documentation.
  */
 import { z } from "zod/v4";
+import { tracingConfigFromEnv, type TracingConfig } from "./observability/tracing.ts";
 
 const bool = z
   .enum(["true", "false", "1", "0"])
@@ -26,6 +27,12 @@ const EnvSchema = z.object({
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
   CONTENT_PATH: z.string().min(1).default("./build/content.json"),
   WEB_ROOT: z.string().min(1).default("./build/web"),
+  // Shared rate-limit counters for several instances (ADR 0010); unset = per-process counters in memory.
+  REDIS_URL: z
+    .string()
+    .url()
+    .refine((v) => /^rediss?:\/\/[^/]/.test(v), "must be a redis:// or rediss:// URL with a host")
+    .optional(),
 });
 
 export interface AppConfig {
@@ -41,6 +48,10 @@ export interface AppConfig {
   logLevel: "debug" | "info" | "warn" | "error";
   contentPath: string;
   webRoot: string;
+  /** OpenTelemetry tracing (ADR 0009); undefined = off. */
+  tracing?: TracingConfig;
+  /** redis:// or rediss:// URL for shared rate limits (ADR 0010); undefined = in-memory limits. */
+  redisUrl?: string;
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
@@ -50,6 +61,12 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     throw new Error(`Invalid configuration:\n${details}`);
   }
   const e = parsed.data;
+  let tracing: TracingConfig | undefined;
+  try {
+    tracing = tracingConfigFromEnv(env);
+  } catch (err) {
+    throw new Error(`Invalid configuration:\n  ${(err as Error).message}`);
+  }
   const cookieSecure = e.COOKIE_SECURE ?? e.NODE_ENV === "production";
   if (e.NODE_ENV === "production" && e.PUBLIC_ORIGIN.startsWith("https://") && !cookieSecure) {
     throw new Error("Invalid configuration: COOKIE_SECURE must not be false when serving production over HTTPS");
@@ -67,5 +84,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     logLevel: e.LOG_LEVEL,
     contentPath: e.CONTENT_PATH,
     webRoot: e.WEB_ROOT,
+    ...(tracing ? { tracing } : {}),
+    ...(e.REDIS_URL ? { redisUrl: e.REDIS_URL } : {}),
   };
 }

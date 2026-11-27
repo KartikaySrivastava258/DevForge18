@@ -137,8 +137,8 @@ The blueprint asks the team to explain the platform's own technology choices. De
 | Docker, Nginx | Yes (deployment) | Reproducible image; TLS, compression and edge limits in front of the app |
 | Prometheus | Yes (endpoint) | `/metrics` ready to scrape; dashboards come with deployment |
 | PostgreSQL | Not yet | SQLite is enough at college scale and needs no installation ([ADR 0002](adr/0002-database.md)) |
-| Redis | Not yet | Needed only when running several instances that must share rate limits or sessions |
-| OpenTelemetry | Planned | Valuable once there are multiple services |
+| Redis | Optional | With `REDIS_URL`, rate limits are shared by all instances; per-process limits if Redis is unreachable ([ADR 0010](adr/0010-shared-rate-limits-redis.md)) |
+| OpenTelemetry | Optional | With `OTEL_EXPORTER_OTLP_ENDPOINT`, one span per request goes to a Collector; trace ids appear in the logs ([ADR 0009](adr/0009-opentelemetry-tracing.md)) |
 | Kafka, Airflow, n8n, MLflow, Kubernetes, Terraform, Jenkins, LangChain/LlamaIndex | No | No genuine need in the core platform; the blueprint warns against adding them "merely to demonstrate that they are present" |
 
 Explaining *why not* is itself engineering judgement — the skill the platform exists to teach.
