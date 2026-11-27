@@ -182,7 +182,8 @@ scrape_configs:
     static_configs: [{ targets: ["127.0.0.1:9094"] }]
 EOF
 promtool check rules rules.yml | tail -n 2 | head -n 1
-prometheus --config.file=prometheus.yml --storage.tsdb.path=data --web.listen-address=127.0.0.1:9094 > prometheus.log 2>&1 &
+prometheus --config.file=prometheus.yml --storage.tsdb.path=data --web.listen-address=127.0.0.1:9094 \
+  --rules.alert.resend-delay=2s > prometheus.log 2>&1 &
 echo $! > prometheus.pid
 for i in $(seq 1 60); do [ "$(cat notifications.log 2> /dev/null | wc -l)" -ge 2 ] && break; sleep 1; done
 sort notifications.log
@@ -194,7 +195,7 @@ sort notifications.log
 /tickets firing: PrometheusSelfScrape(ticket)
 ```
 
-Each alert reached the receiver its labels route it to: the watchdog to `heartbeat`, the ticket to the team's default receiver. In production the heartbeat receiver is an external "dead man's switch" service that raises the alarm when these notifications *stop*.
+Each alert reached the receiver its labels route it to: the watchdog to `heartbeat`, the ticket to the team's default receiver. `--rules.alert.resend-delay=2s` makes Prometheus re-send firing alerts every 2 seconds instead of every minute — for the lab only: the watchdog fires at the very first rule evaluation, and if Prometheus has not yet connected to Alertmanager at that moment, the default would hold the alert back for a minute. (This happened on a busy CI machine while the lesson was being tested.) In production the heartbeat receiver is an external "dead man's switch" service that raises the alarm when these notifications *stop*.
 
 ### 3. A page, and its symptom inhibited
 
