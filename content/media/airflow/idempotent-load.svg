@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300">
+  <!-- Append versus replace on re-run, from Building an idempotent ETL. -->
+  <text class="f-small f-strong" x="130" y="26" text-anchor="middle">run for 2026-01-02</text>
+  <rect class="f-box-faint" x="10" y="40" width="240" height="60" rx="8"/>
+  <text class="f-small f-strong" x="130" y="66" text-anchor="middle">first run</text>
+  <text class="f-small f-mono" x="130" y="86" text-anchor="middle">ds = 2026-01-02</text>
+  <rect class="f-box-faint" x="10" y="120" width="240" height="60" rx="8"/>
+  <text class="f-small f-strong" x="130" y="146" text-anchor="middle">re-run</text>
+  <text class="f-small f-mono" x="130" y="166" text-anchor="middle">ds = 2026-01-02</text>
+  <rect class="f-box-faint" x="10" y="200" width="240" height="60" rx="8"/>
+  <text class="f-small f-strong" x="130" y="226" text-anchor="middle">re-run, corrected file</text>
+  <text class="f-small f-mono" x="130" y="246" text-anchor="middle">ds = 2026-01-02</text>
+  <text class="f-small f-strong" x="400" y="26" text-anchor="middle">append (INSERT)</text>
+  <text class="f-small f-strong" x="600" y="26" text-anchor="middle">replace the day</text>
+  <g>
+    <path class="f-arrow" d="M252 70 L300 70"/>
+    <polygon class="f-head" points="308,70 300,74.5 300,65.5"/>
+  </g>
+  <rect class="f-box-faint" x="310" y="40" width="180" height="60" rx="8"/>
+  <text class="f-small f-mono" x="400" y="76" text-anchor="middle">3 rows · 669</text>
+  <rect class="f-box-ok" x="510" y="40" width="180" height="60" rx="8"/>
+  <text class="f-small f-mono" x="600" y="76" text-anchor="middle">3 rows · 669</text>
+  <g>
+    <path class="f-arrow" d="M252 150 L300 150"/>
+    <polygon class="f-head" points="308,150 300,154.5 300,145.5"/>
+  </g>
+  <rect class="f-box-danger" x="310" y="120" width="180" height="60" rx="8"/>
+  <text class="f-small f-mono" x="400" y="156" text-anchor="middle">6 rows · 1338</text>
+  <rect class="f-box-ok" x="510" y="120" width="180" height="60" rx="8"/>
+  <text class="f-small f-mono" x="600" y="156" text-anchor="middle">3 rows · 669</text>
+  <g>
+    <path class="f-arrow" d="M252 230 L300 230"/>
+    <polygon class="f-head" points="308,230 300,234.5 300,225.5"/>
+  </g>
+  <rect class="f-box-danger" x="310" y="200" width="180" height="60" rx="8"/>
+  <text class="f-small f-mono" x="400" y="236" text-anchor="middle">8 rows · 1897</text>
+  <rect class="f-box-ok" x="510" y="200" width="180" height="60" rx="8"/>
+  <text class="f-small f-mono" x="600" y="236" text-anchor="middle">2 rows · 559</text>
+  <text class="f-small" x="360" y="290" text-anchor="middle">DELETE day = ds + INSERT, in one transaction: same input, same result, every time</text>
+</svg>
