@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300">
+  <!-- Fetch, split and map, from Calling APIs and mapping data in depth. -->
+  <rect class="f-box-accent" x="10" y="40" width="200" height="120" rx="8"/>
+  <text class="f-small f-strong" x="110" y="64" text-anchor="middle">HTTP Request</text>
+  <text class="f-small f-mono" x="110" y="88" text-anchor="middle">page = $pageCount + 1</text>
+  <text class="f-small f-mono" x="110" y="108" text-anchor="middle">until next_page = null</text>
+  <text class="f-small" x="110" y="132" text-anchor="middle">retry on 429</text>
+  <rect class="f-box-accent" x="260" y="40" width="200" height="120" rx="8"/>
+  <text class="f-small f-strong" x="360" y="64" text-anchor="middle">Split Out</text>
+  <text class="f-small" x="360" y="92" text-anchor="middle">2 page items</text>
+  <text class="f-small" x="360" y="112" text-anchor="middle">→ 3 customer items</text>
+  <rect class="f-box-ok" x="510" y="40" width="200" height="120" rx="8"/>
+  <text class="f-small f-strong" x="610" y="64" text-anchor="middle">Edit Fields</text>
+  <text class="f-small" x="610" y="88" text-anchor="middle">first + last → customer</text>
+  <text class="f-small f-mono" x="610" y="108" text-anchor="middle">city ?? 'unknown'</text>
+  <text class="f-small f-mono" x="610" y="128" text-anchor="middle">Number(total) → spent</text>
+  <g>
+    <path class="f-arrow" d="M212 100 L250 100"/>
+    <polygon class="f-head" points="258,100 250,104.5 250,95.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M462 100 L500 100"/>
+    <polygon class="f-head" points="508,100 500,104.5 500,95.5"/>
+  </g>
+  <rect class="f-box-faint" x="10" y="200" width="700" height="70" rx="8"/>
+  <text class="f-small f-mono" x="360" y="226" text-anchor="middle">{"customer":"Meera Das","city":"unknown","orders":1,"spent":300}</text>
+  <text class="f-small" x="360" y="250" text-anchor="middle">one flat, predictable item per record, whatever the API's shape</text>
+</svg>

@@ -1,0 +1,4 @@
+alt: 'The HTTP Request node sets the page parameter to $pageCount plus 1 until next_page is null, and retries on HTTP 429. Split Out turns the two page items into three customer items. Edit Fields joins first and last name into customer, defaults a missing city to unknown and converts order totals with Number before adding them into spent. The result is one flat, predictable item per record, for example customer Meera Das, city unknown, 1 order, 300 spent.'
+caption: 'Paginate, split, then map each record to the shape the next step needs.'
+credit: DevForge 18 content team
+licence: project-content
