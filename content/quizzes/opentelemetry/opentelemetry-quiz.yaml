@@ -1,0 +1,185 @@
+id: opentelemetry-quiz
+track: opentelemetry
+title: OpenTelemetry — track quiz
+description: Twelve questions on traces and context, instrumentation, the Collector, metrics and logs, sampling and correlating signals. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: trace-vs-span
+    type: single
+    level: beginner
+    lesson: otel-traces-spans-and-context
+    prompt: A request to /checkout made the API call a database and a payment service. At least how many traces and spans does that produce?
+    options:
+      - { id: a, text: "Three traces, one span each" }
+      - { id: b, text: "One trace with at least three spans that share its trace ID, each child pointing to its parent" }
+      - { id: c, text: "One span with three traces" }
+    answer: b
+    explanation: A trace is the whole journey of one request; each span is one piece of work within it. All spans share the trace ID, and each child records its parent's span ID.
+
+  - id: traceparent-fields
+    type: matching
+    level: beginner
+    lesson: otel-traces-spans-and-context
+    prompt: "Match each field of traceparent 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01 with its meaning."
+    left:
+      - { id: version, text: "00" }
+      - { id: trace, text: "4bf92f3577b34da6a3ce929d0e0e4736" }
+      - { id: parent, text: "00f067aa0ba902b7" }
+      - { id: flags, text: "01" }
+    right:
+      - { id: v, text: "Version of the format" }
+      - { id: t, text: "Trace ID (32 hexadecimal digits) — the whole request" }
+      - { id: p, text: "Parent ID (16 hexadecimal digits) — the caller's span" }
+      - { id: f, text: "Flags — 01 says the caller sampled the trace" }
+      - { id: s, text: "The service name" }
+    pairs: { version: v, trace: t, parent: p, flags: f }
+    explanation: The receiving service keeps the trace ID and records the caller's span ID as its new span's parent. The service name travels in resource attributes, not in traceparent.
+
+  - id: why-require
+    type: single
+    level: beginner
+    lesson: otel-instrumenting-nodejs
+    prompt: The services contain no OpenTelemetry code, yet they produce HTTP spans. How?
+    options:
+      - { id: a, text: "Node.js creates spans by itself" }
+      - { id: b, text: "Instrumentation libraries patch common modules such as http when they are loaded — which is why the SDK must start before the application code" }
+      - { id: c, text: "Jaeger reads the network traffic" }
+    answer: b
+    explanation: Loading the SDK first (--import or --require) lets the instrumentation wrap node:http before the application uses it.
+
+  - id: pipeline-diagram
+    type: diagram
+    level: beginner
+    lesson: otel-collector-and-jaeger
+    prompt: Label the numbered parts of this Collector set-up.
+    media: media:opentelemetry/quiz-collector-pipeline.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: receiver, text: "Receiver (OTLP)" }
+      - { id: processor, text: "Processor" }
+      - { id: exporter, text: "Exporter" }
+      - { id: backend, text: "Tracing back end (Jaeger)" }
+      - { id: instrumentation, text: "Instrumentation library" }
+    answers: { "1": receiver, "2": processor, "3": exporter, "4": backend }
+    explanation: A pipeline runs receivers → processors → exporters. Instrumentation libraries live in the services, not in the Collector; the back end stores and shows what the exporter sends.
+
+  - id: separate-trace
+    type: single
+    level: intermediate
+    lesson: otel-instrumenting-nodejs
+    prompt: The backend shows up in Jaeger as a separate trace with no parent, although the frontend called it. What is the most likely cause?
+    options:
+      - { id: a, text: "The backend's clock is wrong" }
+      - { id: b, text: "The call did not carry the traceparent header, so the backend started a new trace" }
+      - { id: c, text: "Jaeger cannot show two services in one trace" }
+    answer: b
+    explanation: A service can only join a trace if it receives the context. Without traceparent its server span becomes the root of a new trace.
+
+  - id: unused-processor
+    type: single
+    level: intermediate
+    lesson: otel-traces-spans-and-context
+    prompt: You add a processor under processors in the Collector's configuration, but nothing changes. What is the likely mistake?
+    options:
+      - { id: a, text: "Processors only work for metrics" }
+      - { id: b, text: "It is configured but not listed in a pipeline under service — configuring a component does not enable it" }
+      - { id: c, text: "The Collector must be reinstalled" }
+    answer: b
+    explanation: The Collector documentation says a component is only used when it is added to a pipeline in the service section.
+
+  - id: bucket-output
+    type: output
+    level: intermediate
+    lesson: otel-metrics-and-logs
+    prompt: Three requests took 0.08 s, 0.12 s and 0.31 s. The Collector's debug output for the duration histogram shows this. What is wrong?
+    command: "grep -E '^ExplicitBounds #[0-2]:|^Buckets #[0-2],' signals.log"
+    output: |
+      ExplicitBounds #0: 0.000000
+      ExplicitBounds #1: 5.000000
+      ExplicitBounds #2: 10.000000
+      Buckets #0, Count: 0
+      Buckets #1, Count: 3
+      Buckets #2, Count: 0
+    options:
+      - { id: a, text: "Nothing — all three requests were fast" }
+      - { id: b, text: "The default bucket boundaries (0, 5, 10, 25 …) suit milliseconds; with seconds every request lands in (0, 5], so percentiles are meaningless — advise boundaries in seconds" }
+      - { id: c, text: "The SDK lost two of the three measurements" }
+    answer: b
+    explanation: The SDK's default explicit boundaries are 0, 5, 10, 25 … 10000. For a histogram in seconds, give boundaries such as 0.05, 0.1, 0.25, 0.5, 1.
+
+  - id: correlate-order
+    type: ordering
+    level: intermediate
+    lesson: otel-correlating-signals
+    prompt: An alert fires on the checkout service's error rate. Put the investigation steps in order.
+    items:
+      - { id: metric, text: "Read the metric: how much is failing, since when" }
+      - { id: logs, text: "Find the error log records for that service and time" }
+      - { id: traceid, text: "Take the trace ID from a failing log record" }
+      - { id: trace, text: "Open that trace and find the span with the exception" }
+    order: [metric, logs, traceid, trace]
+    explanation: Metrics say that and how much, logs say what, traces say where. The shared service name, time and trace ID connect the three.
+
+  - id: sampling-output
+    type: output
+    level: advanced
+    lesson: otel-sampling-and-cost
+    prompt: What does this output show about the two samplers when the ratio is 0?
+    command: "for sampler in parentbased_traceidratio traceidratio; do echo \"$sampler, ratio 0:\"; OTEL_TRACES_SAMPLER=$sampler OTEL_TRACES_SAMPLER_ARG=0 node downstream.mjs; done"
+    output: |
+      parentbased_traceidratio, ratio 0:
+        caller says sampled     → recorded here: true
+        caller says not sampled → recorded here: false
+      traceidratio, ratio 0:
+        caller says sampled     → recorded here: false
+        caller says not sampled → recorded here: false
+    options:
+      - { id: a, text: "Both samplers ignore the caller" }
+      - { id: b, text: "The parent-based sampler follows the caller's decision, so kept traces stay complete; plain traceidratio decides on its own and can cut a trace the caller kept" }
+      - { id: c, text: "A ratio of 0 records every span" }
+    answer: b
+    explanation: Downstream services should normally use a ParentBased sampler, so a trace sampled at the edge is recorded everywhere.
+
+  - id: tail-sampling
+    type: single
+    level: advanced
+    lesson: otel-sampling-and-cost
+    prompt: You must keep every trace that contains an error, but only 5% of the others. Which kind of sampling can do that?
+    options:
+      - { id: a, text: "Head sampling with a 5% ratio" }
+      - { id: b, text: "Tail sampling — the decision is made after the trace's spans have arrived, so it can look at the outcome" }
+      - { id: c, text: "No sampling at all" }
+    answer: b
+    explanation: A head decision is made before anyone knows the request will fail. Tail sampling decides later — at the cost of buffering spans, and all spans of a trace must reach the same Collector instance.
+
+  - id: privacy
+    type: multiple
+    level: advanced
+    lesson: otel-context-propagation
+    prompt: Which of these are sensible ways to handle a user's email address in telemetry? Select all that apply.
+    options:
+      - { id: a, text: "Keep it out of baggage — baggage is not secured and travels with requests to other services" }
+      - { id: b, text: "Remove it from span and log attributes in the Collector before data leaves it" }
+      - { id: c, text: "Put it in baggage so every service can log it" }
+      - { id: d, text: "Use it as a metric attribute to count requests per user" }
+    answers: [a, b]
+    explanation: Baggage is visible to every service it passes through, and per-user metric attributes create unbounded cardinality. Removing personal data centrally in the Collector is one configuration change.
+
+  - id: root-cause-span
+    type: single
+    level: advanced
+    lesson: otel-correlating-signals
+    prompt: A failing trace has two spans with error status, but only one of them has an exception event. Which span shows the root cause?
+    options:
+      - { id: a, text: "The one with the exception event — the exception was recorded where it happened; the other span is a caller marked as failed" }
+      - { id: b, text: "The root span, always" }
+      - { id: c, text: "Neither; errors cannot be traced" }
+    answer: a
+    explanation: Record the exception where it happens and mark callers as failed, so the error is visible at every level but its origin is clear.

@@ -1,0 +1,6 @@
+# The OpenTelemetry Collector between the services and Jaeger. Incomplete: see README.md.
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318

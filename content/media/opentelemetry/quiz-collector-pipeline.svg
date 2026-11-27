@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 260">
+  <!-- Numbered diagram for the OpenTelemetry track quiz: label the parts of a Collector pipeline. -->
+  <rect class="f-box-faint" x="150" y="20" width="440" height="180" rx="10"/>
+  <text class="f-small" x="370" y="44" text-anchor="middle">OpenTelemetry Collector — traces pipeline</text>
+  <rect class="f-box-faint" x="20" y="100" width="100" height="60" rx="8"/>
+  <text class="f-small" x="70" y="135" text-anchor="middle">service</text>
+  <rect class="f-box-faint" x="170" y="90" width="110" height="80" rx="8"/>
+  <text class="f-strong" x="225" y="137" text-anchor="middle">1</text>
+  <rect class="f-box-faint" x="315" y="90" width="110" height="80" rx="8"/>
+  <text class="f-strong" x="370" y="137" text-anchor="middle">2</text>
+  <rect class="f-box-faint" x="460" y="90" width="110" height="80" rx="8"/>
+  <text class="f-strong" x="515" y="137" text-anchor="middle">3</text>
+  <rect class="f-box-faint" x="630" y="90" width="110" height="80" rx="8"/>
+  <text class="f-strong" x="685" y="137" text-anchor="middle">4</text>
+  <g><path class="f-arrow" d="M122 130 L160 130"/><polygon class="f-head" points="168,130 160,134.5 160,125.5"/></g>
+  <g><path class="f-arrow" d="M282 130 L305 130"/><polygon class="f-head" points="313,130 305,134.5 305,125.5"/></g>
+  <g><path class="f-arrow" d="M427 130 L450 130"/><polygon class="f-head" points="458,130 450,134.5 450,125.5"/></g>
+  <g><path class="f-arrow" d="M572 130 L620 130"/><polygon class="f-head" points="628,130 620,134.5 620,125.5"/></g>
+  <text class="f-small f-mono" x="140" y="120" text-anchor="middle">OTLP</text>
+  <text class="f-small" x="370" y="190" text-anchor="middle">batches, filters, removes attributes</text>
+  <text class="f-small" x="685" y="190" text-anchor="middle">stores, shows traces</text>
+</svg>

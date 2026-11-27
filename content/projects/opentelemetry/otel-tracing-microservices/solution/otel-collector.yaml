@@ -1,0 +1,23 @@
+# Services -> (OTLP/HTTP :4318) -> Collector -> (OTLP/gRPC) -> Jaeger.
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318      # all interfaces: the services reach it over the container network
+
+processors:
+  batch:
+    timeout: 1s                     # send a batch at least every second
+
+exporters:
+  otlp_grpc:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true                # plain gRPC inside the lab network; use TLS between hosts
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp_grpc]

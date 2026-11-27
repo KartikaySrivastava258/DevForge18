@@ -1,0 +1,63 @@
+# One Collector for all three signals of the orders API.
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  # First in every pipeline: refuse data instead of crashing when memory runs short.
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 400
+    spike_limit_mib: 100
+  # Where the data came from, added once here instead of in every service.
+  resource:
+    attributes:
+      - key: deployment.environment
+        value: lab
+        action: upsert
+  # Personal data never leaves the Collector.
+  attributes/redact:
+    actions:
+      - key: user.email
+        action: delete
+  # Health checks every few seconds are noise in the trace store.
+  filter/healthchecks:
+    error_mode: ignore
+    traces:
+      span:
+        - 'name == "GET /healthz"'
+  # Last: send in batches.
+  batch:
+    timeout: 1s
+
+exporters:
+  otlp_grpc/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    # Copy resource attributes (such as deployment.environment) onto every metric as labels.
+    resource_to_telemetry_conversion:
+      enabled: true
+  file/logs:
+    path: /out/logs.jsonl
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, filter/healthchecks, resource, attributes/redact, batch]
+      exporters: [otlp_grpc/jaeger]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, attributes/redact, batch]
+      exporters: [file/logs]

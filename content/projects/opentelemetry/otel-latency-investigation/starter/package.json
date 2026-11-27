@@ -1,0 +1,15 @@
+{
+  "name": "grade-report",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start:report": "OTEL_SERVICE_NAME=report node --require ./tracing.js report.js",
+    "start:grades": "OTEL_SERVICE_NAME=grades node --require ./tracing.js grades.js"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "1.10.0",
+    "@opentelemetry/exporter-trace-otlp-proto": "0.301.2",
+    "@opentelemetry/instrumentation-http": "0.301.2",
+    "@opentelemetry/sdk-node": "0.301.2"
+  }
+}

@@ -4,10 +4,10 @@ Last updated: 2026-11-27 (UTC) · Milestone: **9 — quizzes and projects**, in 
 
 ## Session handoff
 
-- **Where I stopped:** Milestone 8 is complete (full-suite CI run 45956974167 green on a8b28ac). Milestone 9: the quiz and project content types, server-side grading, faculty-only solutions, pages, scaffolds and project acceptance checks are done; the Git track has its quiz and its three mini-projects. Next: the other 17 tracks' quizzes and projects, track by track (Path 1 order).
-- **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC.
-- **Open issue:** none blocking. `n8n-human-approval-steps` failed once locally (11 s, right after a recording run); not seen in CI.
-- **How to work fast:** `npm run new:lesson|new:lab|new:quiz|new:project -- <track> <id>` scaffolds; `npm run ci:record -- <id>` records in CI; `npm run lessons:stress -- <id>` reproduces timing failures; project checks run with `node --test scripts/lib/projects.test.ts`; research per track in `docs/research/<track>.md`.
+- **Where I stopped:** Milestone 9 in progress. Done and pushed (quiz + 3 projects each): Git, PostgreSQL, Jira, Prometheus + Grafana, OpenTelemetry. Being built in parallel git worktrees by helper agents (merged only after review): Postman + Redis, Nginx + Docker, LangChain + n8n, GitHub Actions + Jenkins. Not started: Kubernetes, Terraform, Kafka, Airflow, MLflow.
+- **Disk:** the machine ran out of space on 2026-11-27 — 462 orphaned Docker volumes (13 GB) from `docker rm -f` without `-v`. Fixed in the lesson runner and the checks; keep at least 5 GB free and run at most four Docker-heavy agents at once.
+- **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC. Docker project checks run in the lesson shards.
+- **How to work fast:** `npm run new:quiz|new:project -- <track> <id>`; `DEVFORGE_DOCKER_TEST=1 node --test scripts/lib/projects.test.ts`; brief for helper agents in the session scratchpad (`M9_TRACK_BRIEF.md`) — copy it into docs if it is needed again.
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -25,8 +25,8 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
 | Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
-| Quizzes | 🟡 Six question types graded on the server (answers never sent before grading), attempts saved, paths show "skipped by quiz"; 1 of 18 track quizzes written (Git) |
-| Mini-projects | 🟡 Project pages (brief, stories, criteria, rubric, starter files, progressive hints, faculty-only solution) and executable acceptance checks (fail on the starter, pass on the solution); 3 of 54 written (Git) |
+| Quizzes | 🟡 Six question types graded on the server (answers never sent before grading), attempts saved, paths show "skipped by quiz"; 5 of 18 track quizzes written |
+| Mini-projects | 🟡 Project pages (brief, stories, criteria, rubric, starter files, progressive hints, faculty-only solution) and executable acceptance checks (fail on the starter, pass on the solution); 15 of 54 written |
 | Glossary, architecture studio | ⬜ Milestone 10 |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub: a verify job (typecheck, lint, build, unit/API and browser tests) and executed lessons in three parallel shards, about 17 minutes in all. Docker Compose / production Nginx config still untested |
@@ -419,6 +419,12 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **Git track:** a 12-question quiz and three projects — portfolio repository (commit hygiene, .gitignore, no secrets in history), team task tracker (branch per backlog item, merge commits, PR template, CODEOWNERS, tested Python features), release workflow (bug fix with test, CI and tag-triggered release workflows, SHA-pinned actions with SHAs from the GitHub Actions research notes, least-privilege permissions, changelog, annotated tag). Each check was also run against deliberately broken versions (secret committed, commit on main, unpinned action, write permissions in CI) and reports each as FAIL.
 - **Fixes found on the way:** projects were listed alphabetically instead of in track-plan order (API test added); the Docker lesson's out-of-memory step now says what the Docker Engine source shows — `OOMKilled` is set only by a separate OOM event that can be missed, so exit code 137 is the dependable signal (CI run 45956197496 had `OOMKilled=false, exit code 137` even after a 10 s wait).
 
+### Milestone 9 — PostgreSQL, Jira, Prometheus + Grafana, OpenTelemetry (2026-11-27)
+
+- **Quizzes and projects** for four more tracks; every check runs real tools (PostgreSQL 16.15, promtool/amtool, Collector + Jaeger + Node services, Python on Jira REST-shaped exports) and was also run against deliberately broken variants.
+- **Quiz output rule enforced:** every "output" question shows output recorded in a lesson or produced by running the command (the PostgreSQL CHECK error was re-run on 2026-11-27); commands are the lessons' own (two invented script names in the Jira quiz were replaced).
+- **Version-age deviation found (decision):** otelcol 0.166.0 and Grafana 13.3.2 were released on 2026-11-24 and pinned in the lessons and CI on 2026-11-25, against the 14-day rule. Not downgraded — that would mean re-recording lessons for versions that pass the 14-day mark on 2026-12-08. New project checks use older pins instead (Collector 0.165.0 image, published 2026-11-07; dashboards are checked with Prometheus, without Grafana).
+
 ### Speed-ups and decisions (2026-11-26)
 
 - **Decisions recorded.** Licences: MIT for code (`LICENSE`), CC BY-SA 4.0 for `content/` (`LICENSE-CONTENT`, full legal code from creativecommons.org), Fira Sans OFL notice kept. `~/Downloads/devforge18` deleted after checking that every file's content exists in this repository's history (the only differences were three debugging logs and an older `package.json`). Terraform's plugin cache is enabled in CI with `TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE` (HashiCorp documents it for setups that discard lock files, as lesson folders do; without it the cache is never used for fresh folders); learners' commands are unchanged. Python packages are installed inside lesson containers, so no pip cache (it would change commands learners see). Quiz and project scaffolds come with their schemas in milestone 9.
@@ -450,6 +456,7 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-27 | Jira lessons 4–5 (executed flow-metric scripts on REST-shaped sample data) | 60 | 5 | |
 | 2026-11-27 | Milestone 9 foundations: quiz/project types, grading, pages, scaffolds, check runner | 180 | 20 | |
 | 2026-11-27 | Git quiz and three Git mini-projects with acceptance checks and replayed histories; Docker OOM root cause | 120 | 10 | |
+| 2026-11-27 | PostgreSQL, Jira, Prometheus + Grafana, OpenTelemetry quizzes and projects; disk-full root cause (orphaned volumes) | 330 | 40 | waiting = usage limit (helper agents in parallel used it up) |
 
 ## Current work
 

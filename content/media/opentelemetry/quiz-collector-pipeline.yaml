@@ -1,0 +1,4 @@
+alt: 'A service sends OTLP into a box labelled "OpenTelemetry Collector — traces pipeline", which contains numbered boxes 1, 2 and 3 in a row; box 2 is described as "batches, filters, removes attributes". From box 3 an arrow leaves the Collector to box 4, described as "stores, shows traces". The quiz asks which component each number is.'
+caption: 'Which component is each numbered box?'
+credit: DevForge 18 content team
+licence: project-content
