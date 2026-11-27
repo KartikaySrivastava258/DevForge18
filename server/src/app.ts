@@ -27,6 +27,7 @@ import { registerAssessmentRoutes } from "./routes/assessment.ts";
 import { registerArchitectureRoutes } from "./routes/architecture.ts";
 import { registerInstitutionRoutes } from "./routes/institution.ts";
 import { registerSimulationRoutes } from "./routes/simulations.ts";
+import { registerCmsRoutes } from "./routes/cms.ts";
 
 const MUTATING = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 const MINUTE = 60_000;
@@ -83,6 +84,7 @@ export function createApp(input: {
   registerArchitectureRoutes(router, deps);
   registerInstitutionRoutes(router, deps);
   registerAdminRoutes(router, deps);
+  registerCmsRoutes(router, deps); // content editor that opens pull requests (ADR 0011)
 
   const sweeper = setInterval(() => {
     for (const limiter of Object.values(deps.limiters)) limiter.sweep();

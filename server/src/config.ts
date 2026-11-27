@@ -41,6 +41,55 @@ export interface AppConfig {
   logLevel: "debug" | "info" | "warn" | "error";
   contentPath: string;
   webRoot: string;
+  /** Content editor (CMS that opens pull requests). Absent means "not configured". */
+  cms?: CmsSettings;
+}
+
+// ---- Content editor (ADR 0011) ------------------------------------------------
+// Optional: a missing or invalid value disables the editor with a reason shown
+// to faculty; it never stops the server from starting.
+
+export interface GitHubSettings {
+  owner: string;
+  repo: string;
+  /** Fine-grained token: Contents and Pull requests read/write on this one repository. */
+  token: string;
+  /** REST API base URL without a trailing slash. */
+  apiUrl: string;
+}
+
+export type CmsSettings = { enabled: true; github: GitHubSettings } | { enabled: false; reason: string };
+
+export const CMS_NOT_CONFIGURED =
+  "The content editor is not configured on this server. An administrator must set GITHUB_REPOSITORY and GITHUB_TOKEN (see docs/deployment.md).";
+
+const isLoopback = (host: string) => host === "localhost" || host === "127.0.0.1" || host === "[::1]";
+
+export function cmsSettings(env: NodeJS.ProcessEnv): CmsSettings {
+  const repository = env.GITHUB_REPOSITORY?.trim() ?? "";
+  const token = env.GITHUB_TOKEN?.trim() ?? "";
+  if (!repository && !token) return { enabled: false, reason: CMS_NOT_CONFIGURED };
+  if (!repository || !token) {
+    return { enabled: false, reason: `The content editor is not fully configured: ${repository ? "GITHUB_TOKEN" : "GITHUB_REPOSITORY"} is missing.` };
+  }
+  const m = /^([A-Za-z0-9](?:[A-Za-z0-9-]{0,38}))\/([A-Za-z0-9._-]{1,100})$/.exec(repository);
+  if (!m || m[2] === "." || m[2] === "..") {
+    return { enabled: false, reason: "The content editor is disabled: GITHUB_REPOSITORY must look like owner/name." };
+  }
+  let apiUrl: URL;
+  try {
+    apiUrl = new URL(env.GITHUB_API_URL?.trim() || "https://api.github.com");
+  } catch {
+    return { enabled: false, reason: "The content editor is disabled: GITHUB_API_URL is not a valid URL." };
+  }
+  // The token travels with every request: plain HTTP is allowed only to this machine (a test double).
+  if (apiUrl.protocol !== "https:" && !(apiUrl.protocol === "http:" && isLoopback(apiUrl.hostname))) {
+    return { enabled: false, reason: "The content editor is disabled: GITHUB_API_URL must use https://." };
+  }
+  return {
+    enabled: true,
+    github: { owner: m[1] ?? "", repo: m[2] ?? "", token, apiUrl: `${apiUrl.origin}${apiUrl.pathname.replace(/\/+$/, "")}` },
+  };
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
@@ -67,5 +116,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     logLevel: e.LOG_LEVEL,
     contentPath: e.CONTENT_PATH,
     webRoot: e.WEB_ROOT,
+    cms: cmsSettings(env),
   };
 }

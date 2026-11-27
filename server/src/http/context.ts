@@ -46,12 +46,12 @@ async function readBody(req: IncomingMessage, limit: number): Promise<string> {
 }
 
 /** Read, parse and validate a JSON request body. Throws HttpError on any problem. */
-export async function readJson<T>(ctx: RequestContext, schema: ZodType<T>): Promise<T> {
+export async function readJson<T>(ctx: RequestContext, schema: ZodType<T>, maxBytes: number = MAX_JSON_BODY_BYTES): Promise<T> {
   const type = ctx.req.headers["content-type"] ?? "";
   if (!/^application\/json\b/i.test(type)) {
     throw new HttpError(415, "unsupported_media_type", "Send the request body as application/json.");
   }
-  const text = await readBody(ctx.req, MAX_JSON_BODY_BYTES);
+  const text = await readBody(ctx.req, maxBytes);
   let data: unknown;
   try {
     data = text.length ? JSON.parse(text) : {};

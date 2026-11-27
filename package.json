@@ -33,6 +33,7 @@
     "test:e2e:throttled": "DEVFORGE_E2E_CPU_THROTTLE=8 npm run test:e2e"
   },
   "dependencies": {
+    "js-yaml": "^4.2.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -41,7 +42,6 @@
     "@types/react-dom": "^19.2.0",
     "esbuild": "0.28.2",
     "highlight.js": "11.12.0",
-    "js-yaml": "^4.2.0",
     "markdownlint-cli2": "0.24.2",
     "marked": "18.0.10",
     "playwright": "1.63.0",

@@ -20,6 +20,8 @@ import { SearchPage } from "./pages/Search.tsx";
 import { SimulationPage } from "./pages/Simulation.tsx";
 import { TrackPage } from "./pages/Track.tsx";
 import { TracksPage } from "./pages/Tracks.tsx";
+import { AdminPage } from "./pages/Admin.tsx";
+import { ContentEditorPage } from "./pages/ContentEditor.tsx";
 
 function NotFoundPage() {
   useTitle("Page not found");
@@ -58,6 +60,9 @@ function Routes({ pathname }: { pathname: string }) {
   if ((m = matchPath("/reviews/:type/:id", pathname))) return <ReviewPage key={`${m.type}:${m.id}`} type={m.type ?? ""} id={m.id ?? ""} />;
   if ((m = matchPath("/portfolio/:slug", pathname))) return <PortfolioPage key={m.slug} slug={m.slug ?? ""} />;
   if ((m = matchPath("/certificates/:id", pathname))) return <CertificatePage key={m.id} id={m.id ?? ""} />;
+  // Institutional screens (admin, content editor).
+  if (pathname === "/admin") return <AdminPage />;
+  if (pathname === "/content-editor") return <ContentEditorPage />;
   return <NotFoundPage />;
 }
 

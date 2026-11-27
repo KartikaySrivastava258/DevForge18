@@ -145,6 +145,16 @@ export function Layout({ children }: { children: ReactNode }) {
                 My progress
               </Link>
             ) : null}
+            {user?.role === "faculty" || user?.role === "admin" ? (
+              <Link to="/content-editor" aria-current={section("/content-editor")}>
+                Edit content
+              </Link>
+            ) : null}
+            {user?.role === "admin" ? (
+              <Link to="/admin" aria-current={section("/admin")}>
+                Admin
+              </Link>
+            ) : null}
           </nav>
           {pathname !== "/search" ? <HeaderSearch /> : null}
           <div className="header-actions">

@@ -26,6 +26,23 @@ DATABASE_PATH=/var/lib/devforge/devforge.db npm start
 
 Run it under a process manager (systemd, for example) and put Nginx in front using `deploy/nginx/nginx.conf` as a starting point (change `server app:8080` to `127.0.0.1:8080`).
 
+## Content editor (optional)
+
+Faculty and admins can edit content files in the browser (**Edit content** in the menu); each edit becomes a pull request on GitHub, so review and CI still decide what is published ([ADR 0011](adr/0011-cms-pull-requests.md)). Without the settings below the page says the editor is turned off; the server starts either way.
+
+| Variable | Example | Purpose |
+|---|---|---|
+| `GITHUB_REPOSITORY` | `your-org/devforge18` | Repository that holds `content/` (`owner/name`) |
+| `GITHUB_TOKEN` | — | Fine-grained token for that repository only: **Contents: read and write**, **Pull requests: read and write**. No other permissions. |
+| `GITHUB_API_URL` | `https://api.github.com` (default) | API base URL; set it for GitHub Enterprise Server (`https://ghe.example.edu/api/v3`). Must be `https://`. |
+
+1. On GitHub: *Settings → Developer settings → Fine-grained tokens → Generate new token*. Resource owner: the repository's owner; repository access: only this repository; permissions as above; set an expiry and note it in your calendar.
+2. Protect the default branch (required review and the CI checks) so editor pull requests cannot be merged unreviewed.
+3. Pass the variables to the app container or service (for Compose, an `env_file:` that is not committed), restart, and check the start-up log line `contentEditor: "enabled"`.
+4. Try one edit as a faculty account and confirm the pull request appears. The automated tests use a local fake of the GitHub API, so this first real run is the integration test.
+
+Changes appear on the site only after the pull request is merged and the site is rebuilt and redeployed.
+
 ## Backups and restore
 
 ```bash
