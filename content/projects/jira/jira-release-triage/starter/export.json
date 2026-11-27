@@ -1,0 +1,184 @@
+{
+  "issues": [
+    {
+      "expand": "",
+      "id": "10001",
+      "key": "CAFE-1",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10001",
+      "fields": {
+        "summary": "discount wrong",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10003",
+          "name": "Bug",
+          "subtask": false
+        },
+        "status": {
+          "name": "In Progress",
+          "id": "10002"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Charged wrong amount"
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": {
+          "id": "3",
+          "name": "Medium"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 1,
+        "total": 1,
+        "histories": [
+          {
+            "id": "20010",
+            "created": "2026-02-02T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10002",
+      "key": "CAFE-2",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10002",
+      "fields": {
+        "summary": "Total shows 99.89999999999999",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10003",
+          "name": "Bug",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Steps to reproduce"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Add 3 juices at 33.30"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Expected: 99.90"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Actual: 99.89999999999999"
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": {
+          "id": "3",
+          "name": "Medium"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10003",
+      "key": "CAFE-3",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10003",
+      "fields": {
+        "summary": "Quantity 0 accepted",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10003",
+          "name": "Bug",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "severity-minor",
+          "severity-major"
+        ],
+        "description": null,
+        "fixVersions": [],
+        "priority": null
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    }
+  ],
+  "names": {
+    "summary": "Summary"
+  }
+}

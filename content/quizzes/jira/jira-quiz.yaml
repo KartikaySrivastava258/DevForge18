@@ -1,0 +1,184 @@
+id: jira-quiz
+track: jira
+title: Jira — track quiz
+description: Twelve questions on work items, workflows, boards, flow metrics, reports and linking work to code. Pass to show you can skip this track on a learning path; every wrong answer points to the lesson to revisit.
+pass_mark: 0.75
+owner: content-team
+last_reviewed: 2026-11-27
+content_version: 1
+questions:
+  - id: bug-type
+    type: single
+    level: beginner
+    lesson: jira-work-items-and-workflows
+    prompt: Users cannot reset their password because the email link opens the wrong page. Which work type fits?
+    options:
+      - { id: a, text: "Epic" }
+      - { id: b, text: "Bug" }
+      - { id: c, text: "Story" }
+    answer: b
+    explanation: Atlassian describes a bug as a problem which impairs or prevents the functions of a product. A story describes new value for a user; an epic groups a larger initiative.
+
+  - id: hierarchy
+    type: diagram
+    level: beginner
+    lesson: jira-work-items-and-workflows
+    prompt: Which work type is each numbered box?
+    media: media:jira/quiz-work-hierarchy.svg
+    targets:
+      - { id: "1", text: "Box 1" }
+      - { id: "2", text: "Box 2" }
+      - { id: "3", text: "Box 3" }
+      - { id: "4", text: "Box 4" }
+    labels:
+      - { id: epic, text: "Epic" }
+      - { id: story, text: "Story" }
+      - { id: bug, text: "Bug" }
+      - { id: subtask, text: "Subtask" }
+      - { id: sprint, text: "Sprint" }
+    answers: { "1": epic, "2": story, "3": bug, "4": subtask }
+    explanation: An epic groups stories, tasks and bugs for a big goal; a story is new value from a user's point of view; a bug is something that should work but does not; a subtask is a piece of work needed to complete its parent. A sprint is a time box, not a work type.
+
+  - id: criteria
+    type: single
+    level: beginner
+    lesson: jira-work-items-and-workflows
+    prompt: Which is a checkable acceptance criterion for "As a student, I want to reset my password, so that I can get back into my account"?
+    options:
+      - { id: a, text: "Resetting is easy and pleasant" }
+      - { id: b, text: "A reset link sent by email works once and expires after 30 minutes" }
+      - { id: c, text: "The reset page looks nice" }
+    answer: b
+    explanation: A good criterion can be tested with a clear yes or no. "Easy" and "nice" cannot.
+
+  - id: wip-limit
+    type: single
+    level: beginner
+    lesson: jira-sprints-boards-and-wip
+    prompt: Your In Progress column has a maximum of 3 and holds 5 work items. What does Jira do?
+    options:
+      - { id: a, text: "It refuses to move a sixth item into the column" }
+      - { id: b, text: "It shows the column as over its limit (a visual signal); what to do about it is the team's decision" }
+      - { id: c, text: "It moves the two newest items back to To Do" }
+    answer: b
+    explanation: Column constraints are a visual signal — Jira marks a column whose maximum is exceeded. The team usually responds by finishing work before starting more.
+
+  - id: flow-terms
+    type: matching
+    level: intermediate
+    lesson: jira-kanban-and-flow-metrics
+    prompt: Match each flow metric with its definition.
+    left:
+      - { id: lead, text: "Lead time" }
+      - { id: cycle, text: "Cycle time" }
+      - { id: throughput, text: "Throughput" }
+      - { id: wip, text: "Work in progress" }
+    right:
+      - { id: created-done, text: "From creation of the work item to done" }
+      - { id: started-done, text: "From first moving to an in-progress status to done" }
+      - { id: per-week, text: "Items finished per week" }
+      - { id: in-progress, text: "Items in progress on a given day" }
+      - { id: points, text: "Story points completed per sprint" }
+    pairs: { lead: created-done, cycle: started-done, throughput: per-week, wip: in-progress }
+    explanation: Lead time includes waiting in the backlog; cycle time starts when work starts. Story points per sprint is velocity, which measures estimates rather than flow.
+
+  - id: forecast
+    type: output
+    level: intermediate
+    lesson: jira-kanban-and-flow-metrics
+    prompt: A stakeholder asks when a new item will be done once the team starts it. Based on this output, what is the best answer?
+    command: python3 percentiles.py
+    output: |
+      cycle times, sorted: [3, 5, 5, 7, 8, 8, 8, 8, 11, 11, 15, 17]
+      average: 8.8 days
+      50th percentile: 8 days
+      85th percentile: 15 days
+      95th percentile: 17 days
+    options:
+      - { id: a, text: "In 8.8 days — the average" }
+      - { id: b, text: "85% of our items finish within 15 days of starting, so most likely within about two weeks" }
+      - { id: c, text: "In 3 days — our fastest item" }
+    answer: b
+    explanation: A percentile says how often you were that fast. The average is pulled up by a few slow items and promises a date you miss almost half the time.
+
+  - id: littles-law
+    type: single
+    level: intermediate
+    lesson: jira-kanban-and-flow-metrics
+    prompt: According to Little's Law, how can a team shorten its average cycle time without working any faster?
+    options:
+      - { id: a, text: "Start more items at once" }
+      - { id: b, text: "Lower work in progress — at the same throughput, average cycle time = average WIP ÷ throughput" }
+      - { id: c, text: "Estimate in smaller story points" }
+    answer: b
+    explanation: That is why Kanban boards have WIP limits. (The law holds for a stable system; over a short, changing window the numbers do not balance.)
+
+  - id: sprint-steps
+    type: ordering
+    level: intermediate
+    lesson: jira-sprints-boards-and-wip
+    prompt: Put the steps of planning a sprint in order.
+    items:
+      - { id: prioritise, text: "Order the backlog so the most valuable work is at the top" }
+      - { id: capacity, text: "Work out the team's capacity for the sprint" }
+      - { id: select, text: "Move the top items into the sprint until the capacity is reached" }
+      - { id: goal, text: "Write the sprint goal and start the sprint" }
+    order: [prioritise, capacity, select, goal]
+    explanation: Planning takes items from the top of an ordered backlog until the team's capacity is reached — leaving room for bugs and surprises — and records a sprint goal, which later tells the team what to drop when things go wrong.
+
+  - id: velocity-output
+    type: output
+    level: advanced
+    lesson: jira-reports-and-anti-patterns
+    prompt: What does this output most likely show?
+    command: python3 velocity.py
+    output: |
+      sprint     velocity  items finished  points per item
+      Sprint 1         30              10              3.0
+      Sprint 2         38              10              3.8
+      Sprint 3         44              10              4.4
+      Sprint 4         56              10              5.6
+    options:
+      - { id: a, text: "The team is getting much faster" }
+      - { id: b, text: "The same amount of finished work is being estimated higher — velocity measures estimates, not output (unless the items really grew, which is worth checking)" }
+      - { id: c, text: "The sprints got longer" }
+    answer: b
+    explanation: Ten items finished every sprint while points per item almost doubled. When velocity becomes a target, estimates tend to drift upward; count finished items alongside points.
+
+  - id: report-distortions
+    type: multiple
+    level: advanced
+    lesson: jira-reports-and-anti-patterns
+    prompt: Which habits distort Jira's reports? Select all that apply.
+    options:
+      - { id: a, text: "Moving items straight from To Do to Done at the end of the week" }
+      - { id: b, text: "Closing dozens of items in bulk during a clean-up" }
+      - { id: c, text: "Reopening items without recording why" }
+      - { id: d, text: "Moving each item when work on it really starts and finishes" }
+    answers: [a, b, c]
+    explanation: Skipped statuses, bulk transitions and unexplained reopening all change the times and counts that every report draws. Reports are only as good as how faithfully people move work items.
+
+  - id: item-age
+    type: single
+    level: advanced
+    lesson: jira-reports-and-anti-patterns
+    prompt: An item has been in progress for 20 days, and 85% of past items finished within 15. What should the team do?
+    options:
+      - { id: a, text: "Nothing until it is finished; then add it to the control chart" }
+      - { id: b, text: "Treat it as at risk now: look at why it is stuck and swarm on it or split it" }
+      - { id: c, text: "Re-estimate it with more story points" }
+    answer: b
+    explanation: Work-item age is the one flow metric that is useful before an item is finished — it flags stuck work while there is still time to act.
+
+  - id: link-keys
+    type: multiple
+    level: advanced
+    lesson: jira-linking-work-to-code
+    prompt: You are fixing work item DEV-12. Which of these let Jira link your code to the work item? Select all that apply.
+    options:
+      - { id: a, text: "A branch named DEV-12-reset-link-expiry" }
+      - { id: b, text: "A commit message \"DEV-12 Expire reset links after 30 minutes\"" }
+      - { id: c, text: "A commit message \"dev-12 expire reset links\"" }
+      - { id: d, text: "A pull request titled \"DEV-12 Expire reset links\"" }
+    answers: [a, b, d]
+    explanation: Atlassian's documentation says to put the key in the branch name, commit messages and pull request title, formatted in capitals as Jira shows it — DEV-12, not dev-12.

@@ -51,9 +51,9 @@ labs:
   - { title: "Read a sprint report and identify bottlenecks", level: advanced, mode: read-through, status: planned }
   - { title: "Enforce work item keys and write release notes from them", level: intermediate, mode: local, status: available, lab: jira-enforce-work-item-keys }
 projects:
-  - { title: "Manage a semester software project", level: beginner, status: planned }
-  - { title: "Plan a hackathon product backlog", level: intermediate, status: planned }
-  - { title: "Build a release and bug-triage workflow", level: advanced, status: planned }
+  - { title: "Manage a semester software project", level: beginner, status: available, project: jira-semester-project }
+  - { title: "Plan a hackathon product backlog", level: intermediate, status: available, project: jira-hackathon-backlog }
+  - { title: "Build a release and bug-triage workflow", level: advanced, status: available, project: jira-release-triage }
 resources:
   - title: Jira guides
     url: https://www.atlassian.com/software/jira/guides

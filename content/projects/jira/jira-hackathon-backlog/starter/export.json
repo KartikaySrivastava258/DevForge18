@@ -1,0 +1,224 @@
+{
+  "issues": [
+    {
+      "expand": "",
+      "id": "10001",
+      "key": "HACK-1",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10001",
+      "fields": {
+        "summary": "Volunteer sign-up for the campus food drive",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Volunteers sign up."
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "customfield_10016": 13
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10002",
+      "key": "HACK-2",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10002",
+      "fields": {
+        "summary": "Map of drop-off points",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "mvp"
+        ],
+        "description": null,
+        "fixVersions": [],
+        "priority": null,
+        "customfield_10016": 20
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10003",
+      "key": "HACK-3",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10003",
+      "fields": {
+        "summary": "Leaderboard",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "mvp",
+          "later"
+        ],
+        "description": null,
+        "fixVersions": [],
+        "priority": null,
+        "customfield_10016": null
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10004",
+      "key": "HACK-4",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10004",
+      "fields": {
+        "summary": "Login with Google, GitHub, college SSO and email",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "mvp"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a volunteer, I want to sign in so that my shifts are saved."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Works"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "customfield_10016": 8
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10005",
+      "key": "HACK-5",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10005",
+      "fields": {
+        "summary": "Pick a framework",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10002",
+          "name": "Task",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [],
+        "description": null,
+        "fixVersions": [],
+        "priority": null,
+        "customfield_10016": null
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    }
+  ],
+  "names": {
+    "summary": "Summary",
+    "customfield_10016": "Story point estimate"
+  }
+}

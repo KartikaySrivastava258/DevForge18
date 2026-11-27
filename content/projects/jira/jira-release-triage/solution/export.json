@@ -1,0 +1,647 @@
+{
+  "issues": [
+    {
+      "expand": "",
+      "id": "10001",
+      "key": "CAFE-1",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10001",
+      "fields": {
+        "summary": "Discount code applied twice after a page refresh",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10003",
+          "name": "Bug",
+          "subtask": false
+        },
+        "status": {
+          "name": "Done",
+          "id": "10004"
+        },
+        "labels": [
+          "severity-critical"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Steps to reproduce"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Add a thali (100) to the cart"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Apply STAFF10"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Refresh the page, which applies STAFF10 again"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Expected: the total stays 90.00"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Actual: the total drops to 81.00, and lower with each refresh"
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [
+          {
+            "id": "10100",
+            "name": "1.1.0"
+          }
+        ],
+        "priority": {
+          "id": "3",
+          "name": "High"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 3,
+        "total": 3,
+        "histories": [
+          {
+            "id": "20012",
+            "created": "2026-02-03T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Progress",
+                "toString": "Done"
+              }
+            ]
+          },
+          {
+            "id": "20011",
+            "created": "2026-02-02T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "Triage",
+                "toString": "In Progress"
+              }
+            ]
+          },
+          {
+            "id": "20010",
+            "created": "2026-02-02T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "Triage"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10002",
+      "key": "CAFE-2",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10002",
+      "fields": {
+        "summary": "Total shows 99.89999999999999 for three juices",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10003",
+          "name": "Bug",
+          "subtask": false
+        },
+        "status": {
+          "name": "Done",
+          "id": "10004"
+        },
+        "labels": [
+          "severity-major"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Steps to reproduce"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Add 3 juices at 33.30"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Expected: 99.90"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Actual: 99.89999999999999 on the payment screen"
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [
+          {
+            "id": "10100",
+            "name": "1.1.0"
+          }
+        ],
+        "priority": {
+          "id": "3",
+          "name": "Medium"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 3,
+        "total": 3,
+        "histories": [
+          {
+            "id": "20022",
+            "created": "2026-02-05T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Progress",
+                "toString": "Done"
+              }
+            ]
+          },
+          {
+            "id": "20021",
+            "created": "2026-02-04T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "Triage",
+                "toString": "In Progress"
+              }
+            ]
+          },
+          {
+            "id": "20020",
+            "created": "2026-02-03T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "Triage"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10003",
+      "key": "CAFE-3",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10003",
+      "fields": {
+        "summary": "A quantity of 0 can be ordered",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10003",
+          "name": "Bug",
+          "subtask": false
+        },
+        "status": {
+          "name": "Done",
+          "id": "10004"
+        },
+        "labels": [
+          "severity-minor"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Steps to reproduce"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Set the quantity of chai to 0"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Place the order"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Expected: the order is refused"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Actual: an empty line reaches the kitchen"
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [
+          {
+            "id": "10100",
+            "name": "1.1.0"
+          }
+        ],
+        "priority": {
+          "id": "3",
+          "name": "Low"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 3,
+        "total": 3,
+        "histories": [
+          {
+            "id": "20032",
+            "created": "2026-02-05T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Progress",
+                "toString": "Done"
+              }
+            ]
+          },
+          {
+            "id": "20031",
+            "created": "2026-02-05T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "Triage",
+                "toString": "In Progress"
+              }
+            ]
+          },
+          {
+            "id": "20030",
+            "created": "2026-02-03T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "Triage"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10004",
+      "key": "CAFE-4",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10004",
+      "fields": {
+        "summary": "Menu spells paneer as 'panner'",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10003",
+          "name": "Bug",
+          "subtask": false
+        },
+        "status": {
+          "name": "Triage",
+          "id": "10001"
+        },
+        "labels": [
+          "severity-minor"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Steps to reproduce"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Open the menu"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Expected: Paneer tikka"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Actual: Panner tikka"
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [
+          {
+            "id": "10100",
+            "name": "1.2.0"
+          }
+        ],
+        "priority": {
+          "id": "3",
+          "name": "Low"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 1,
+        "total": 1,
+        "histories": [
+          {
+            "id": "20040",
+            "created": "2026-02-06T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "Triage"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10005",
+      "key": "CAFE-5",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10005",
+      "fields": {
+        "summary": "Menu takes 9 seconds to load on campus Wi-Fi",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10003",
+          "name": "Bug",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "severity-major"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Steps to reproduce"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Connect to campus Wi-Fi in the library"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Open the menu"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Expected: under 2 seconds"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Actual: 9 seconds; the menu images are 2 MB each"
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": {
+          "id": "3",
+          "name": "Medium"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    }
+  ],
+  "names": {
+    "summary": "Summary"
+  }
+}

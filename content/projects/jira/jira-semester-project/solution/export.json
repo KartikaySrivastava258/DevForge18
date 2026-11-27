@@ -1,0 +1,1274 @@
+{
+  "issues": [
+    {
+      "expand": "",
+      "id": "10001",
+      "key": "SEM-1",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10001",
+      "fields": {
+        "summary": "Catalogue search",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10000",
+          "name": "Epic",
+          "subtask": false
+        },
+        "status": {
+          "name": "In Progress",
+          "id": "10002"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Students find books and see whether a copy is available, from a phone or a lab PC."
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 1,
+        "total": 1,
+        "histories": [
+          {
+            "id": "20010",
+            "created": "2026-01-19T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10002",
+      "key": "SEM-2",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10002",
+      "fields": {
+        "summary": "Borrowing and returns",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10000",
+          "name": "Epic",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Library staff record loans and returns in one place instead of a register."
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10003",
+      "key": "SEM-3",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10003",
+      "fields": {
+        "summary": "Accounts and access",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10000",
+          "name": "Epic",
+          "subtask": false
+        },
+        "status": {
+          "name": "Done",
+          "id": "10004"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Students and staff sign in with their college account; staff see more than students."
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 2,
+        "total": 2,
+        "histories": [
+          {
+            "id": "20031",
+            "created": "2026-01-30T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Progress",
+                "toString": "Done"
+              }
+            ]
+          },
+          {
+            "id": "20030",
+            "created": "2026-01-13T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10004",
+      "key": "SEM-4",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10004",
+      "fields": {
+        "summary": "Sign in with the college account",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "Done",
+          "id": "10004"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a student, I want to sign in with my college account so that I do not need another password."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Signing in with a valid college account opens the catalogue"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "A wrong password shows an error and no catalogue data"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Signing out ends the session on that device"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "SEM-3"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 3,
+        "total": 3,
+        "histories": [
+          {
+            "id": "20042",
+            "created": "2026-01-19T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Review",
+                "toString": "Done"
+              }
+            ]
+          },
+          {
+            "id": "20041",
+            "created": "2026-01-16T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Progress",
+                "toString": "In Review"
+              }
+            ]
+          },
+          {
+            "id": "20040",
+            "created": "2026-01-13T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10005",
+      "key": "SEM-5",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10005",
+      "fields": {
+        "summary": "Staff see the loans screen",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "Done",
+          "id": "10004"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a librarian, I want to see the loans screen after signing in so that I can record loans without a second login."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "A staff account sees Loans in the menu"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "A student account does not see Loans and gets 403 from its address"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "SEM-3"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 3,
+        "total": 3,
+        "histories": [
+          {
+            "id": "20052",
+            "created": "2026-01-30T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Review",
+                "toString": "Done"
+              }
+            ]
+          },
+          {
+            "id": "20051",
+            "created": "2026-01-23T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Progress",
+                "toString": "In Review"
+              }
+            ]
+          },
+          {
+            "id": "20050",
+            "created": "2026-01-20T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10006",
+      "key": "SEM-6",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10006",
+      "fields": {
+        "summary": "Search by title or author",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "Done",
+          "id": "10004"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a student, I want to search the catalogue by title or author so that I find a book without walking the shelves."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Searching 'database' lists every book with that word in its title"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Searching an author's surname lists their books"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "No match shows 'No books found' rather than an empty page"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "SEM-1"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 3,
+        "total": 3,
+        "histories": [
+          {
+            "id": "20062",
+            "created": "2026-01-28T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Review",
+                "toString": "Done"
+              }
+            ]
+          },
+          {
+            "id": "20061",
+            "created": "2026-01-26T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Progress",
+                "toString": "In Review"
+              }
+            ]
+          },
+          {
+            "id": "20060",
+            "created": "2026-01-19T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10007",
+      "key": "SEM-7",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10007",
+      "fields": {
+        "summary": "Show copies available",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "In Progress",
+          "id": "10002"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a student, I want to see how many copies are on the shelf so that I do not walk to the library for a book that is out."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Each result shows copies available and copies in total"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "The number updates within a minute of a loan or return"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "SEM-1"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 1,
+        "total": 1,
+        "histories": [
+          {
+            "id": "20070",
+            "created": "2026-01-29T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10008",
+      "key": "SEM-8",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10008",
+      "fields": {
+        "summary": "Search works on a phone",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a student, I want search to work on my phone's browser so that I can check on the way to the library."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Results are readable without zooming on a 360-pixel-wide screen"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "The search box is reachable with the keyboard alone"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "SEM-1"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10009",
+      "key": "SEM-9",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10009",
+      "fields": {
+        "summary": "Record a loan",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "In Progress",
+          "id": "10002"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a librarian, I want to record a loan by scanning a student ID and a book barcode so that the register is no longer on paper."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "A loan is saved with the student, the copy, and a due date 14 days later"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "A copy already on loan cannot be lent again"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "A student with 5 loans cannot borrow a sixth"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "SEM-2"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 1,
+        "total": 1,
+        "histories": [
+          {
+            "id": "20090",
+            "created": "2026-01-30T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10010",
+      "key": "SEM-10",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10010",
+      "fields": {
+        "summary": "Record a return",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a librarian, I want to record a return by scanning the book so that the copy shows as available again."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Scanning a lent copy closes its loan and makes it available"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Scanning a copy that is not on loan shows a warning"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "SEM-2"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10011",
+      "key": "SEM-11",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10011",
+      "fields": {
+        "summary": "Overdue list",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a librarian, I want a list of overdue loans so that I can send reminders on Monday mornings."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "The list shows every loan past its due date, oldest first"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Each row shows the student, the book and the days overdue"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "SEM-2"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10012",
+      "key": "SEM-12",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10012",
+      "fields": {
+        "summary": "Set up CI to run the tests on every pull request",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10002",
+          "name": "Task",
+          "subtask": false
+        },
+        "status": {
+          "name": "Done",
+          "id": "10004"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "GitHub Actions workflow running the unit tests; required check on main."
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "SEM-3"
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 2,
+        "total": 2,
+        "histories": [
+          {
+            "id": "20121",
+            "created": "2026-01-14T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Progress",
+                "toString": "Done"
+              }
+            ]
+          },
+          {
+            "id": "20120",
+            "created": "2026-01-12T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "",
+      "id": "10013",
+      "key": "SEM-13",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10013",
+      "fields": {
+        "summary": "Search for 'C++' returns every book",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10003",
+          "name": "Bug",
+          "subtask": false
+        },
+        "status": {
+          "name": "Done",
+          "id": "10004"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Steps to reproduce"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Open the catalogue"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Search for C++"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Expected: books with C++ in the title"
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Actual: all 2,400 books, because '+' is treated as a wildcard"
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 2,
+        "total": 2,
+        "histories": [
+          {
+            "id": "20131",
+            "created": "2026-01-29T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "In Progress",
+                "toString": "Done"
+              }
+            ]
+          },
+          {
+            "id": "20130",
+            "created": "2026-01-28T10:00:00.000+0000",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "fromString": "To Do",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "names": {
+    "summary": "Summary"
+  }
+}

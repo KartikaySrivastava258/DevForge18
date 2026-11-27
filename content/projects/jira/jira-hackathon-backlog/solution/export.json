@@ -1,0 +1,1000 @@
+{
+  "issues": [
+    {
+      "expand": "",
+      "id": "10001",
+      "key": "HACK-1",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10001",
+      "fields": {
+        "summary": "Volunteer sign-up",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10000",
+          "name": "Epic",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Volunteers find a shift and sign up from their phone in under a minute."
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "customfield_10016": null
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10002",
+      "key": "HACK-2",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10002",
+      "fields": {
+        "summary": "Drop-off points",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10000",
+          "name": "Epic",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Donors find the nearest open drop-off point."
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "customfield_10016": null
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10003",
+      "key": "HACK-3",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10003",
+      "fields": {
+        "summary": "Organiser tools",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10000",
+          "name": "Epic",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Organisers see who is coming and fill gaps."
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "customfield_10016": null
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10004",
+      "key": "HACK-4",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10004",
+      "fields": {
+        "summary": "List open shifts",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "mvp"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a volunteer, I want to see the open shifts for the next 7 days so that I can pick one that fits my timetable."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Shifts are listed by date and time with the number of places left"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Full shifts are shown as full and cannot be chosen"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "HACK-1"
+        },
+        "customfield_10016": 3
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10005",
+      "key": "HACK-5",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10005",
+      "fields": {
+        "summary": "Sign up for a shift with a college email",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "mvp"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a volunteer, I want to sign up for a shift with my college email so that the organisers know who is coming."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Signing up with an @college.example address reserves a place"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Other addresses are refused with a message"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Signing up twice for the same shift is refused"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "HACK-1"
+        },
+        "customfield_10016": 5
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10006",
+      "key": "HACK-6",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10006",
+      "fields": {
+        "summary": "Cancel my sign-up",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "mvp"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a volunteer, I want to cancel a shift I signed up for so that the place goes to someone else."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Cancelling frees the place at once"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Cancelling less than 2 hours before the shift asks for confirmation"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "HACK-1"
+        },
+        "customfield_10016": 2
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10007",
+      "key": "HACK-7",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10007",
+      "fields": {
+        "summary": "Show drop-off points on a list",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "mvp"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a donor, I want a list of drop-off points with opening hours so that I know where to bring food today."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Every point shows its building, room and today's hours"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Points closed today are listed last and marked closed"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "HACK-2"
+        },
+        "customfield_10016": 2
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10008",
+      "key": "HACK-8",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10008",
+      "fields": {
+        "summary": "See sign-ups per shift",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "mvp"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As an organiser, I want to see how many volunteers each shift has so that I can ask for help where a shift is short."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Each shift shows signed-up count and places"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Shifts below half full are highlighted"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "HACK-3"
+        },
+        "customfield_10016": 3
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10009",
+      "key": "HACK-9",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10009",
+      "fields": {
+        "summary": "Reminder e-mail the day before",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "later"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a volunteer, I want a reminder the day before my shift so that I do not forget it."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "An email is sent at 18:00 the day before"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Cancelled sign-ups get no reminder"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "HACK-1"
+        },
+        "customfield_10016": 3
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10010",
+      "key": "HACK-10",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10010",
+      "fields": {
+        "summary": "Show drop-off points on a map",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "later"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As a donor, I want the drop-off points on a campus map so that I can find a building I do not know."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Each point is a pin on the map"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Selecting a pin shows the same details as the list"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "HACK-2"
+        },
+        "customfield_10016": 5
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10011",
+      "key": "HACK-11",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10011",
+      "fields": {
+        "summary": "Export sign-ups to a spreadsheet",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "later"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As an organiser, I want to download the sign-ups as CSV so that I can share them with the warden."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "The CSV has one row per sign-up with name, email and shift"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Only organisers can download it"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "HACK-3"
+        },
+        "customfield_10016": 2
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    },
+    {
+      "expand": "",
+      "id": "10012",
+      "key": "HACK-12",
+      "self": "https://your-domain.atlassian.net/rest/api/3/issue/10012",
+      "fields": {
+        "summary": "Leaderboard of volunteer hours",
+        "created": "2026-01-12T09:00:00.000+0000",
+        "issuetype": {
+          "id": "10001",
+          "name": "Story",
+          "subtask": false
+        },
+        "status": {
+          "name": "To Do",
+          "id": "10000"
+        },
+        "labels": [
+          "later"
+        ],
+        "description": {
+          "type": "doc",
+          "version": 1,
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "As an organiser, I want a leaderboard of volunteer hours so that regular volunteers are thanked."
+                }
+              ]
+            },
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 3
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Acceptance criteria"
+                }
+              ]
+            },
+            {
+              "type": "bulletList",
+              "content": [
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Hours are counted only for shifts that have ended"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "listItem",
+                  "content": [
+                    {
+                      "type": "paragraph",
+                      "content": [
+                        {
+                          "type": "text",
+                          "text": "Volunteers can choose to be left off the leaderboard"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "fixVersions": [],
+        "priority": null,
+        "parent": {
+          "key": "HACK-3"
+        },
+        "customfield_10016": 5
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 0,
+        "total": 0,
+        "histories": []
+      }
+    }
+  ],
+  "names": {
+    "summary": "Summary",
+    "customfield_10016": "Story point estimate"
+  }
+}

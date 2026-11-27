@@ -18,3 +18,29 @@ Jira is a hosted service, so its own screens stay `docs-checked`. Lessons 4–5 
 - In a short, unstable window Little's Law does not balance (WIP ÷ throughput 10.6 days vs measured 7.5): items that start in the window and finish after it are missing from the measured figure. The lesson uses the mismatch to teach the stability condition.
 - A resource `type: paper` is not allowed by the content schema; use `reference`.
 - When the content build rejects a lesson, the lesson tests silently select nothing for it — always run `npm run content:build` before trusting a "pass".
+
+## REST API v3 search, for the mini-projects (checked 2026-11-27)
+
+Source: Atlassian's OpenAPI document for the Jira Cloud platform REST API v3,
+<https://developer.atlassian.com/cloud/jira/platform/swagger-v3.v3.json> (the HTML reference pages render with
+JavaScript and return no text to a plain fetch).
+
+- `GET /rest/api/3/search` is marked `deprecated` with the summary "Currently being removed" (changelog
+  CHANGE-2046). The current endpoint is `GET /rest/api/3/search/jql` ("JQL enhanced search"); its `jql` must be
+  bounded (for example `project = HSP`).
+- Pagination: `nextPageToken` — "The `nextPageToken` field is **not included** in the response for the last
+  page"; the response also has `isLast`. `maxResults` defaults to 50.
+- `fields` is a comma-separated list (default `id` only). `expand` is a comma-delimited string; options include
+  `names` ("Returns the display name of each field") and `changelog`.
+- Response (`SearchAndReconcileResults`): `issues`, `names` ("The ID and name of each field in the search
+  results"), `nextPageToken`, `isLast`, `schema`, `warnings`.
+- Shapes seen in the schema and examples: `fields.issuetype` (IssueTypeDetails: `name`, `subtask`,
+  `hierarchyLevel`, …), `fields.status` (StatusDetails: `name`, `statusCategory` with `key`/`name`),
+  `fields.parent` `{"key": "PROJ-123"}`, `fields.labels` (array of strings), `fields.fixVersions` (array of
+  versions with `id`, `name`), `fields.priority` (`name`), and in v3 `fields.description` as Atlassian Document
+  Format: `{"type": "doc", "version": 1, "content": [{"type": "paragraph", "content": [{"type": "text", …}]}]}`.
+- Not stated in the spec: the values of `statusCategory.key`, and the ids of story-point or sprint fields
+  (custom fields differ per site — look them up through `expand=names`).
+- Authentication for scripts (developer.atlassian.com/cloud/jira/platform/basic-auth-for-rest-apis/, updated
+  2026-11-26): "basic authentication with an Atlassian account email address and API token. Authentication using
+  passwords has been deprecated."
