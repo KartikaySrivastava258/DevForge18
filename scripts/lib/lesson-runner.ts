@@ -253,9 +253,10 @@ export function runLesson(blocks: RunBlock[], options: RunOptions = {}): LessonR
   if (usesNginx(blocks)) {
     cleanup.push(`for f in $(find "${work}" -name nginx.pid 2>/dev/null); do kill "$(cat "$f")" 2>/dev/null || true; done`);
   }
-  // Remove containers a lesson starts with docker run --name, so the next run can reuse the name.
+  // Remove containers a lesson starts with docker run --name, so the next run can reuse the name, together with
+  // their anonymous volumes (images such as postgres declare a VOLUME; without -v each run leaves one behind).
   for (const name of new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bdocker run\b[^\n]*?--name[ =]([a-zA-Z0-9][\w.-]*)/g)].map((m) => m[1] ?? "")))) {
-    if (name) cleanup.push(`docker rm -f ${name} >/dev/null 2>&1 || true`);
+    if (name) cleanup.push(`docker rm -f -v ${name} >/dev/null 2>&1 || true`);
   }
   // Take down Compose projects (docker compose -p name …) with their volumes, then user-defined networks.
   for (const name of new Set(blocks.flatMap((b) => [...b.code.matchAll(/\bdocker compose -p ([a-z0-9][a-z0-9_-]*)/g)].map((m) => m[1] ?? "")))) {

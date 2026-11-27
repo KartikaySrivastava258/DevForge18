@@ -28,7 +28,7 @@ fi
 new_migrations="$(cd "$dir/migrations" && ls ./*.sql 2> /dev/null | sed 's|^\./||' | grep -v '^001_create_orders\.sql$')"
 if [ "$(echo "$new_migrations" | grep -c .)" -ge 2 ]; then pass "$(echo "$new_migrations" | grep -c .) new migrations after 001"; else fail "write the changes as new numbered migrations after 001 (found: ${new_migrations:-none})"; fi
 
-trap 'docker rm -f "$name" > /dev/null 2>&1' EXIT
+trap 'docker rm -f -v "$name" > /dev/null 2>&1' EXIT
 docker run -d --name "$name" -e POSTGRES_PASSWORD=check "$image" > /dev/null || { fail "could not start PostgreSQL in Docker"; finish; }
 for _ in $(seq 1 60); do docker exec "$name" pg_isready -q -h 127.0.0.1 -U postgres && break; sleep 1; done
 q() { docker exec -i -e PGPASSWORD=check "$name" psql -X -q -A -t -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d "$1"; }

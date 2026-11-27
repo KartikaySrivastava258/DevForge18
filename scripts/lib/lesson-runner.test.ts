@@ -148,7 +148,7 @@ describe("docker containers", () => {
         "docker ps -a --format     {{.Names}} {{.Status}}",
         "docker inspect -f devforge-lab: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}} devforge-lab",
         "docker logs --tail 25 devforge-lab",
-        "docker rm -f devforge-lab",
+        "docker rm -f -v devforge-lab", // -v: also its anonymous volumes (images such as postgres declare VOLUME)
       ]);
     } finally {
       rmSync(bin, { recursive: true, force: true });
@@ -167,7 +167,7 @@ describe("docker containers", () => {
         "docker ps -a --format     {{.Names}} {{.Status}}",
         "docker inspect -f c1: {{.State.Status}}, exit code {{.State.ExitCode}}, OOMKilled={{.State.OOMKilled}} c1",
         "docker logs --tail 25 c1",
-        "docker rm -f c1",
+        "docker rm -f -v c1",
         "docker compose -p lab down -v --remove-orphans",
         "docker network rm lab-net",
         "docker volume rm -f lab-data",

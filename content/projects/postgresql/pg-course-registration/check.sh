@@ -20,7 +20,7 @@ for f in schema.sql seed.sql; do
   [ -f "$dir/$f" ] || { fail "$dir/$f is missing"; finish; }
 done
 
-trap 'docker rm -f "$name" > /dev/null 2>&1' EXIT
+trap 'docker rm -f -v "$name" > /dev/null 2>&1' EXIT
 docker run -d --name "$name" -e POSTGRES_PASSWORD=check "$image" > /dev/null || { fail "could not start PostgreSQL in Docker"; finish; }
 # The image's first start runs a temporary server on a Unix socket only; TCP answers once the real one is up.
 for _ in $(seq 1 60); do docker exec "$name" pg_isready -q -h 127.0.0.1 -U postgres && break; sleep 1; done

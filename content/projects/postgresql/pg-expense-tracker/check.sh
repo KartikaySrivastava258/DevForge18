@@ -17,7 +17,7 @@ finish() {
 }
 [ -f "$dir/schema.sql" ] || { fail "$dir/schema.sql is missing"; finish; }
 
-trap 'docker rm -f "$name" > /dev/null 2>&1' EXIT
+trap 'docker rm -f -v "$name" > /dev/null 2>&1' EXIT
 docker run -d --name "$name" -e POSTGRES_PASSWORD=check "$image" > /dev/null || { fail "could not start PostgreSQL in Docker"; finish; }
 for _ in $(seq 1 60); do docker exec "$name" pg_isready -q -h 127.0.0.1 -U postgres && break; sleep 1; done
 q() { docker exec -i -e PGPASSWORD=check "$name" psql -X -q -A -t -v ON_ERROR_STOP=1 -h 127.0.0.1 -U postgres -d "$1"; }
