@@ -1,0 +1,4 @@
+alt: 'For each day, the raw file for ds is written to a staging table, audited with quality checks, and published to the sales table. If a check fails, the audit task raises AirflowFailException, publish becomes upstream_failed, and the bad day stays out of the sales table. A backfill from 1 to 4 January with reprocess behaviour none succeeds on 1, 2 and 4 January and fails on 3 January. After the 3 January file is fixed, a second backfill with reprocess behaviour failed re-runs only 3 January, which then succeeds. Reprocess behaviours: none skips dates that have runs, failed re-runs failed ones, completed re-runs all.'
+caption: 'Only audited data is published; a backfill with reprocess failed repairs just the failed days.'
+credit: DevForge 18 content team
+licence: project-content

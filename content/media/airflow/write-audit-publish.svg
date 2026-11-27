@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320">
+  <!-- Write, audit, publish, from Backfills and data-quality checks. -->
+  <rect class="f-box-faint" x="10" y="40" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong" x="85" y="66" text-anchor="middle">raw file</text>
+  <text class="f-small f-mono" x="85" y="90" text-anchor="middle">for ds</text>
+  <rect class="f-box-accent" x="200" y="40" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong f-mono" x="275" y="66" text-anchor="middle">write</text>
+  <text class="f-small" x="275" y="90" text-anchor="middle">→ staging</text>
+  <rect class="f-box-accent" x="390" y="40" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong f-mono" x="465" y="66" text-anchor="middle">audit</text>
+  <text class="f-small" x="465" y="90" text-anchor="middle">checks</text>
+  <rect class="f-box-ok" x="580" y="40" width="130" height="70" rx="8"/>
+  <text class="f-small f-strong f-mono" x="645" y="66" text-anchor="middle">publish</text>
+  <text class="f-small" x="645" y="90" text-anchor="middle">→ sales</text>
+  <g>
+    <path class="f-arrow" d="M162 75 L190 75"/>
+    <polygon class="f-head" points="198,75 190,79.5 190,70.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M352 75 L380 75"/>
+    <polygon class="f-head" points="388,75 380,79.5 380,70.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M542 75 L570 75"/>
+    <polygon class="f-head" points="578,75 570,79.5 570,70.5"/>
+  </g>
+  <rect class="f-box-danger" x="390" y="130" width="320" height="50" rx="8"/>
+  <text class="f-small" x="550" y="152" text-anchor="middle">check fails → AirflowFailException</text>
+  <text class="f-small" x="550" y="171" text-anchor="middle">publish = upstream_failed: bad day stays out</text>
+  <g>
+    <path class="f-arrow" d="M465 112 L465 120"/>
+    <polygon class="f-head" points="465,128 460.5,120 469.5,120"/>
+  </g>
+  <text class="f-small f-mono" x="360" y="214" text-anchor="middle">backfill 1 → 4 Jan, reprocess none:   1 ✓   2 ✓   3 ✗   4 ✓</text>
+  <text class="f-small f-mono" x="360" y="240" text-anchor="middle">fix the 3 Jan file, backfill again, reprocess failed:   only 3 Jan re-runs → ✓</text>
+  <text class="f-small" x="360" y="272" text-anchor="middle">none: skip dates with runs · failed: re-run failed ones · completed: re-run all</text>
+</svg>
