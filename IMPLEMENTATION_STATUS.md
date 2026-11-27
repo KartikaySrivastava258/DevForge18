@@ -4,10 +4,10 @@ Last updated: 2026-11-27 (UTC) · Milestone: **9 — quizzes and projects**, in 
 
 ## Session handoff
 
-- **Where I stopped:** Milestone 9 in progress. Done and pushed (quiz + 3 projects each): Git, PostgreSQL, Jira, Prometheus + Grafana, OpenTelemetry. Being built in parallel git worktrees by helper agents (merged only after review): Postman + Redis, Nginx + Docker, LangChain + n8n, GitHub Actions + Jenkins. Not started: Kubernetes, Terraform, Kafka, Airflow, MLflow.
-- **Disk:** the machine ran out of space on 2026-11-27 — 462 orphaned Docker volumes (13 GB) from `docker rm -f` without `-v`. Fixed in the lesson runner and the checks; keep at least 5 GB free and run at most four Docker-heavy agents at once.
-- **Running in CI:** see the latest run of the `CI` workflow on `main`; nightly full suite at 01:30 UTC. Docker project checks run in the lesson shards.
-- **How to work fast:** `npm run new:quiz|new:project -- <track> <id>`; `DEVFORGE_DOCKER_TEST=1 node --test scripts/lib/projects.test.ts`; brief for helper agents in the session scratchpad (`M9_TRACK_BRIEF.md`) — copy it into docs if it is needed again.
+- **Where I stopped:** Milestone 9, 14 of 18 tracks done and pushed (quiz + 3 executable projects each): Git, PostgreSQL, Jira, Prometheus + Grafana, OpenTelemetry, Postman, Redis, Nginx, Docker, Kafka, Airflow, LangChain + LlamaIndex, n8n, MLflow. Helper agents in git worktrees are finishing Kubernetes + Terraform and GitHub Actions + Jenkins; their commits are reviewed (allowed files only, quiz outputs and commands checked against the lessons) and cherry-picked onto main.
+- **Next:** merge the last four tracks, run `npm run verify`, close Milestone 9 in REMAINING_WORK §7, then Milestone 10.
+- **Disk:** keep at least 5 GB free; checks remove their containers with `-v` and the images they build.
+- **How to work fast:** `npm run new:quiz|new:project -- <track> <id>`; `DEVFORGE_DOCKER_TEST=1 node --test scripts/lib/projects.test.ts`; Docker project checks run in the CI lesson shards, the others in the verify job.
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -25,8 +25,8 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
 | Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
-| Quizzes | 🟡 Six question types graded on the server (answers never sent before grading), attempts saved, paths show "skipped by quiz"; 5 of 18 track quizzes written |
-| Mini-projects | 🟡 Project pages (brief, stories, criteria, rubric, starter files, progressive hints, faculty-only solution) and executable acceptance checks (fail on the starter, pass on the solution); 15 of 54 written |
+| Quizzes | 🟡 Six question types graded on the server (answers never sent before grading), attempts saved, paths show "skipped by quiz"; 14 of 18 track quizzes written |
+| Mini-projects | 🟡 Project pages (brief, stories, criteria, rubric, starter files, progressive hints, faculty-only solution) and executable acceptance checks (fail on the starter, pass on the solution); 42 of 54 written |
 | Glossary, architecture studio | ⬜ Milestone 10 |
 | Admin / faculty screens, cohorts, CMS | ⬜ API foundation only |
 | CI | ✅ Runs on GitHub: a verify job (typecheck, lint, build, unit/API and browser tests) and executed lessons in three parallel shards, about 17 minutes in all. Docker Compose / production Nginx config still untested |
@@ -425,6 +425,12 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **Quiz output rule enforced:** every "output" question shows output recorded in a lesson or produced by running the command (the PostgreSQL CHECK error was re-run on 2026-11-27); commands are the lessons' own (two invented script names in the Jira quiz were replaced).
 - **Version-age deviation found (decision):** otelcol 0.166.0 and Grafana 13.3.2 were released on 2026-11-24 and pinned in the lessons and CI on 2026-11-25, against the 14-day rule. Not downgraded — that would mean re-recording lessons for versions that pass the 14-day mark on 2026-12-08. New project checks use older pins instead (Collector 0.165.0 image, published 2026-11-07; dashboards are checked with Prometheus, without Grafana).
 
+### Milestone 9 — ten more tracks (2026-11-27)
+
+- **Kafka, Airflow, MLflow** written here; **Postman, Redis, Nginx, Docker, LangChain + LlamaIndex, n8n** by helper agents in separate worktrees, reviewed and merged. Every check runs the real tool (Kafka 4.4.0, Airflow 3.4.0 `dags test`, MLflow 3.18.0, Newman 6.2.3, Redis 7.4, Nginx, Docker/Compose, n8n 2.49.6, langchain-core 1.8.4) and was run against deliberately broken variants.
+- **Fixes found on the way:** the root `data/` ignore rule had silently dropped the Airflow projects' sample data (CI caught it; `!content/projects/**/data/` added); the project runner now passes `DOCKER_CONFIG` through its isolated HOME (Compose v2 as a per-user plugin); CI drops the unused Microsoft apt repository before installing Playwright's system libraries (403 in run 45988691485); Grafana and Jaeger lesson flakes fixed at the root (plugin registration wait; Jaeger's own metrics port).
+- **Quiz rule re-checked:** every output question's output appears verbatim in a lesson, and its command is the lesson's own (four invented script names replaced).
+
 ### Speed-ups and decisions (2026-11-26)
 
 - **Decisions recorded.** Licences: MIT for code (`LICENSE`), CC BY-SA 4.0 for `content/` (`LICENSE-CONTENT`, full legal code from creativecommons.org), Fira Sans OFL notice kept. `~/Downloads/devforge18` deleted after checking that every file's content exists in this repository's history (the only differences were three debugging logs and an older `package.json`). Terraform's plugin cache is enabled in CI with `TF_PLUGIN_CACHE_MAY_BREAK_DEPENDENCY_LOCK_FILE` (HashiCorp documents it for setups that discard lock files, as lesson folders do; without it the cache is never used for fresh folders); learners' commands are unchanged. Python packages are installed inside lesson containers, so no pip cache (it would change commands learners see). Quiz and project scaffolds come with their schemas in milestone 9.
@@ -457,6 +463,7 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-27 | Milestone 9 foundations: quiz/project types, grading, pages, scaffolds, check runner | 180 | 20 | |
 | 2026-11-27 | Git quiz and three Git mini-projects with acceptance checks and replayed histories; Docker OOM root cause | 120 | 10 | |
 | 2026-11-27 | PostgreSQL, Jira, Prometheus + Grafana, OpenTelemetry quizzes and projects; disk-full root cause (orphaned volumes) | 330 | 40 | waiting = usage limit (helper agents in parallel used it up) |
+| 2026-11-27 | Kafka, Airflow, MLflow (own); review and merge of Postman, Redis, Nginx, Docker, LangChain, n8n (agents); CI fixes (ignored sample data, apt repository 403, two lesson flakes) | 300 | 30 | |
 
 ## Current work
 

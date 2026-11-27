@@ -385,7 +385,7 @@ Each milestone ends with CI green and `IMPLEMENTATION_STATUS.md` updated.
 6. ✅ Done (2026-11-26). **Real-world context.** Case-study and alternatives content types; at least two sourced case studies and an alternatives table per track. Status: 36 case studies and 89 alternatives, every quote checked against its source page; see IMPLEMENTATION_STATUS.md.
 7. ✅ Done (2026-11-26). **Labs.** Lab pages, verification scripts, lab progress; at least two labs per track, executed in CI where the tool allows. Status: 36 labs (18 local with check scripts, 17 simulation, 1 read-through); 19 executed in CI; see IMPLEMENTATION_STATUS.md.
 8. ✅ Done (verified in CI on 2026-11-27, full-suite run 45956974167). **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first. Status: every lesson list in section 5 is written and executed (or docs-checked for Jira's own screens): 131 lessons.
-9. **Quizzes and projects.** New question types, per-track quizzes, mini-project pages with rubrics and starter templates. Status (2026-11-27): in progress — content types, grading, pages, faculty-only solutions and executable project checks done; Git quiz and 3 Git projects written; 17 tracks to go.
+9. **Quizzes and projects.** New question types, per-track quizzes, mini-project pages with rubrics and starter templates. Status (2026-11-27): in progress — content types, grading, pages, faculty-only solutions and executable project checks done; 14 of 18 tracks have their quiz and 3 projects; Kubernetes, Terraform, GitHub Actions and Jenkins in progress.
 10. **Capstones A–G and integration lessons.** Including the architecture studio and the full relationship graph.
 11. **Institutional features and hardening.** Section 6.3 and 6.4.
 
