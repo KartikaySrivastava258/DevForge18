@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320">
+  <!-- When progress is saved decides the guarantee, from Delivery guarantees and idempotent producers. -->
+  <text class="f-small f-strong" x="70" y="60" text-anchor="middle">at-most-once</text>
+  <rect class="f-box-faint" x="140" y="30" width="160" height="50" rx="8"/>
+  <text class="f-small" x="220" y="60" text-anchor="middle">commit offset</text>
+  <g>
+    <path class="f-arrow" d="M302 55 L330 55"/>
+    <polygon class="f-head" points="338,55 330,59.5 330,50.5"/>
+  </g>
+  <rect class="f-box-faint" x="340" y="30" width="160" height="50" rx="8"/>
+  <text class="f-small" x="420" y="60" text-anchor="middle">do the work</text>
+  <rect class="f-box-danger" x="530" y="30" width="180" height="50" rx="8"/>
+  <text class="f-small" x="620" y="60" text-anchor="middle">crash → work lost</text>
+  <text class="f-small f-strong" x="70" y="150" text-anchor="middle">at-least-once</text>
+  <rect class="f-box-faint" x="140" y="120" width="160" height="50" rx="8"/>
+  <text class="f-small" x="220" y="150" text-anchor="middle">do the work</text>
+  <g>
+    <path class="f-arrow" d="M302 145 L330 145"/>
+    <polygon class="f-head" points="338,145 330,149.5 330,140.5"/>
+  </g>
+  <rect class="f-box-faint" x="340" y="120" width="160" height="50" rx="8"/>
+  <text class="f-small" x="420" y="150" text-anchor="middle">commit offset</text>
+  <rect class="f-box-faint" x="530" y="120" width="180" height="50" rx="8"/>
+  <text class="f-small" x="620" y="150" text-anchor="middle">crash → work repeated</text>
+  <text class="f-small f-strong" x="70" y="240" text-anchor="middle">exactly-once</text>
+  <rect class="f-box-faint" x="140" y="210" width="160" height="50" rx="8"/>
+  <text class="f-small" x="220" y="240" text-anchor="middle">begin transaction</text>
+  <g>
+    <path class="f-arrow" d="M302 235 L330 235"/>
+    <polygon class="f-head" points="338,235 330,239.5 330,230.5"/>
+  </g>
+  <rect class="f-box-faint" x="340" y="210" width="160" height="50" rx="8"/>
+  <text class="f-small" x="420" y="240" text-anchor="middle">output + offset, commit</text>
+  <rect class="f-box-ok" x="530" y="210" width="180" height="50" rx="8"/>
+  <text class="f-small" x="620" y="240" text-anchor="middle">crash → abort, redo once</text>
+</svg>

@@ -1,0 +1,4 @@
+alt: 'Three rows. At-most-once: commit the offset, then do the work; a crash loses the work. At-least-once: do the work, then commit the offset; a crash repeats the work. Exactly-once within Kafka: begin a transaction, then write the output and the offset and commit together; a crash aborts the transaction and the work is redone once.'
+caption: 'Commit before the work loses it on a crash, after the work repeats it; a transaction does both or neither.'
+credit: DevForge 18 content team
+licence: project-content

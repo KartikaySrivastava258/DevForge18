@@ -17,11 +17,13 @@ import { fileURLToPath } from "node:url";
 import { loadContent } from "./lib/content-loader.ts";
 import { dockerTestingEnabled, extractRunBlocks, lessonNeeds, outputMatches, redisTestingEnabled, usesDocker, runLesson, type RunBlock } from "./lib/lesson-runner.ts";
 import { splitFrontMatter } from "./lib/markdown.ts";
+import { loadRunnables } from "./lib/runnables.ts";
 import { startPracticeServer } from "./lib/practice-server.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const contentRoot = join(root, "content");
 const { bundle } = loadContent(contentRoot);
+const { chainFor } = loadRunnables(contentRoot);
 const args = process.argv.slice(2);
 // Labs are recorded like lessons; a lab needs what its latest prerequisite lesson in its track needs.
 const items = [
@@ -45,15 +47,8 @@ const fileOf = (id: string) => {
 const blocksOf = (id: string): RunBlock[] => extractRunBlocks(splitFrontMatter(readFileSync(fileOf(id), "utf8"))?.body ?? "");
 
 for (const lesson of targets) {
-  const chain: string[] = [];
-  const visit = (id: string) => {
-    const l = bundle.lessons.find((x) => x.id === id);
-    if (!l || chain.includes(id)) return;
-    l.prerequisites.forEach(visit);
-    if (l.verification.method !== "docs-checked") chain.push(id);
-  };
-  lesson.prerequisites.forEach(visit);
-  const setup = chain.flatMap(blocksOf);
+  // The same replay rule as the tests (prerequisites first, none for lessons that start fresh).
+  const setup = chainFor(lesson).flatMap(blocksOf);
   const own = blocksOf(lesson.id);
   const needs = lessonNeeds(lesson.track, lesson.order);
   const api = needs.api ? await startPracticeServer(contentRoot, needs.apiPort) : undefined;
