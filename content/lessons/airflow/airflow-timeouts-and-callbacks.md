@@ -91,7 +91,6 @@ A task that hangs is worse than one that fails: it holds a worker slot, blocks d
 
 ```bash run
 mkdir -p airflow-alerts/dags airflow-alerts/alerts && cd airflow-alerts
-chmod a+w alerts   # the container's airflow user must be able to write here
 cat > dags/nightly_export.py <<'EOF'
 import time
 from datetime import datetime, timedelta
@@ -156,7 +155,7 @@ both DAG files are valid Python
 ```bash run
 IMAGE=apache/airflow:slim-3.4.0-python3.12@sha256:2d3e42b9de0eca948b9a869817068fedcb8a8eac9827b1e6215de3329d59335f
 docker pull -q "$IMAGE" > /dev/null
-docker run -d --name devforge-airflow -p 127.0.0.1:8095:8080 -v "$PWD/dags:/opt/airflow/dags" -v "$PWD/alerts:/opt/airflow/alerts" \
+docker run -d --name devforge-airflow --user "$(id -u):0" -p 127.0.0.1:8095:8080 -v "$PWD/dags:/opt/airflow/dags" -v "$PWD/alerts:/opt/airflow/alerts" \
   -e AIRFLOW__CORE__LOAD_EXAMPLES=False \
   -e AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=False \
   -e AIRFLOW__DAG_PROCESSOR__REFRESH_INTERVAL=5 \
@@ -178,7 +177,7 @@ af "$AF/api/v2/importErrors" | grep -o '"total_entries":[0-9]*'
 "total_entries":0
 ```
 
-The same start-up as in the first Airflow lesson; both DAGs were parsed without import errors.
+The same start-up as in the first Airflow lesson; both DAGs were parsed without import errors. The container runs as your own user ID (`--user "$(id -u):0"`; the image accepts any user ID as long as the group is 0), so the files Airflow writes into the shared folders belong to you and you can edit or delete them.
 
 ### 3. A hanging task and a hopeless one
 

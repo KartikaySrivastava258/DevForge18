@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320">
+  <!-- Where data travels between tasks, from Passing data between tasks. -->
+  <rect class="f-box-accent" x="10" y="40" width="160" height="70" rx="8"/>
+  <text class="f-small f-strong f-mono" x="90" y="68" text-anchor="middle">extract</text>
+  <text class="f-small" x="90" y="92" text-anchor="middle">writes 245 KB</text>
+  <rect class="f-box-faint" x="280" y="20" width="160" height="60" rx="8"/>
+  <text class="f-small f-strong" x="360" y="46" text-anchor="middle">data lake</text>
+  <text class="f-small f-mono" x="360" y="66" text-anchor="middle">orders-&lt;run&gt;.csv</text>
+  <rect class="f-box-ok" x="550" y="40" width="160" height="70" rx="8"/>
+  <text class="f-small f-strong f-mono" x="630" y="68" text-anchor="middle">summarize</text>
+  <text class="f-small" x="630" y="92" text-anchor="middle">reads the file</text>
+  <g>
+    <path class="f-arrow" d="M172 60 L270.0 50.8"/>
+    <polygon class="f-head" points="278,50 270.5,55.2 269.6,46.3"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M442 50 L540.0 59.2"/>
+    <polygon class="f-head" points="548,60 539.6,63.7 540.5,54.8"/>
+  </g>
+  <rect class="f-box-faint" x="250" y="100" width="220" height="44" rx="8"/>
+  <text class="f-small" x="360" y="127" text-anchor="middle">XCom: the path (few bytes)</text>
+  <g>
+    <path class="f-arrow" d="M172 95 L240.4 117.5"/>
+    <polygon class="f-head" points="248,120 239.0,121.8 241.8,113.2"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M472 120 L540.4 97.5"/>
+    <polygon class="f-head" points="548,95 541.8,101.8 539.0,93.2"/>
+  </g>
+  <rect class="f-box-faint" x="10" y="190" width="300" height="90" rx="8"/>
+  <text class="f-small f-strong" x="160" y="214" text-anchor="middle">metadata database</text>
+  <text class="f-small" x="160" y="238" text-anchor="middle">small XComs: counts, IDs, paths</text>
+  <text class="f-small" x="160" y="260" text-anchor="middle">large ones: only a reference</text>
+  <rect class="f-box-faint" x="410" y="190" width="300" height="90" rx="8"/>
+  <text class="f-small f-strong" x="560" y="214" text-anchor="middle">XCom object store</text>
+  <text class="f-small" x="560" y="238" text-anchor="middle">values &gt; threshold (4096 B here)</text>
+  <text class="f-small" x="560" y="260" text-anchor="middle">e.g. a 785 KB list of orders</text>
+  <g>
+    <path class="f-arrow" d="M312 235 L400 235"/>
+    <polygon class="f-head" points="408,235 400,239.5 400,230.5"/>
+  </g>
+  <text class="f-small f-danger" x="360" y="306" text-anchor="middle">retries clear a failed task's XComs: they cannot carry progress</text>
+</svg>

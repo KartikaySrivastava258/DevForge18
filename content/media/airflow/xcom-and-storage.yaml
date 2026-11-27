@@ -1,0 +1,4 @@
+alt: 'The extract task writes 245 KB of orders to a file in the data lake, named after the run, and passes only the file''s path to the summarize task as an XCom of a few bytes; summarize reads the file. Below: small XComs such as counts, IDs and paths live in the metadata database; with the object-storage XCom backend, values above the threshold, 4096 bytes here, such as a 785 KB list of orders, are written to the XCom object store and the database keeps only a reference. Retries clear a failed task''s XComs, so they cannot carry progress.'
+caption: 'Pass references between tasks; keep XComs small; large values belong in storage.'
+credit: DevForge 18 content team
+licence: project-content
