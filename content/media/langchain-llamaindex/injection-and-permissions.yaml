@@ -1,0 +1,4 @@
+alt: 'The knowledge base holds a staff handbook, a vendor FAQ carrying an injected instruction, an HR-only payroll file and an IT page. Retrieval filters documents by the user''s groups, so only documents whose audience is in the user''s groups can reach the prompt. The model may obey injected text, but it cannot leak what is not there. Below, defence in depth adds signals rather than locks: marking retrieved text as untrusted, flagging instruction-like passages, checking answers for data that must never appear, and least-privilege tools.'
+caption: 'Keep restricted data out of the prompt with permission filters; other defences only reduce risk.'
+credit: DevForge 18 content team
+licence: project-content

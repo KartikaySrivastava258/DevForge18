@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330">
+  <!-- Where injected instructions and restricted data meet, from Prompt injection and data permissions. -->
+  <rect class="f-box-faint" x="10" y="30" width="210" height="140" rx="8"/>
+  <text class="f-small f-strong" x="115" y="54" text-anchor="middle">knowledge base</text>
+  <text class="f-small f-mono" x="115" y="80" text-anchor="middle">handbook (staff)</text>
+  <rect class="f-box-danger" x="25" y="92" width="180" height="26" rx="8"/>
+  <text class="f-small" x="115" y="110" text-anchor="middle">vendor FAQ + injection</text>
+  <text class="f-small f-mono" x="115" y="138" text-anchor="middle">payroll (hr only)</text>
+  <text class="f-small f-mono" x="115" y="160" text-anchor="middle">it.md (staff)</text>
+  <rect class="f-box-accent" x="270" y="30" width="190" height="140" rx="8"/>
+  <text class="f-small f-strong" x="365" y="56" text-anchor="middle">retrieval</text>
+  <text class="f-small" x="365" y="84" text-anchor="middle">filter by the</text>
+  <text class="f-small" x="365" y="104" text-anchor="middle">user's groups</text>
+  <text class="f-small f-mono" x="365" y="132" text-anchor="middle">audience ∈ groups</text>
+  <g>
+    <path class="f-arrow" d="M222 100 L260 100"/>
+    <polygon class="f-head" points="268,100 260,104.5 260,95.5"/>
+  </g>
+  <rect class="f-box-faint" x="510" y="30" width="200" height="140" rx="8"/>
+  <text class="f-small f-strong" x="610" y="56" text-anchor="middle">prompt → model</text>
+  <text class="f-small" x="610" y="84" text-anchor="middle">may obey injected</text>
+  <text class="f-small" x="610" y="104" text-anchor="middle">text — cannot leak</text>
+  <text class="f-small" x="610" y="124" text-anchor="middle">what is not there</text>
+  <g>
+    <path class="f-arrow" d="M462 100 L500 100"/>
+    <polygon class="f-head" points="508,100 500,104.5 500,95.5"/>
+  </g>
+  <rect class="f-box-ok" x="10" y="210" width="700" height="100" rx="8"/>
+  <text class="f-small f-strong" x="360" y="234" text-anchor="middle">defence in depth (signals, not locks)</text>
+  <text class="f-small" x="360" y="258" text-anchor="middle">mark retrieved text as untrusted · flag instruction-like passages</text>
+  <text class="f-small" x="360" y="280" text-anchor="middle">check answers for data that must never appear · least-privilege tools</text>
+</svg>
