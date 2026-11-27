@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320">
+  <!-- A RAG pipeline with checked citations, from A RAG pipeline with citations, in depth. -->
+  <rect class="f-box-faint" x="10" y="40" width="130" height="70" rx="8"/>
+  <text class="f-small f-strong" x="75" y="68" text-anchor="middle">question</text>
+  <text class="f-small" x="75" y="90" text-anchor="middle">user</text>
+  <rect class="f-box-accent" x="170" y="40" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong" x="245" y="66" text-anchor="middle">retrieve</text>
+  <text class="f-small f-mono" x="245" y="88" text-anchor="middle">score ≥ 0.5 ?</text>
+  <rect class="f-box-accent" x="350" y="40" width="170" height="70" rx="8"/>
+  <text class="f-small f-strong" x="435" y="66" text-anchor="middle">prompt</text>
+  <text class="f-small f-mono" x="435" y="88" text-anchor="middle">[1] (src#sec) text</text>
+  <rect class="f-box-faint" x="550" y="40" width="160" height="70" rx="8"/>
+  <text class="f-small f-strong" x="630" y="66" text-anchor="middle">model</text>
+  <text class="f-small f-mono" x="630" y="88" text-anchor="middle">answer with [n]</text>
+  <g>
+    <path class="f-arrow" d="M142 75 L160 75"/>
+    <polygon class="f-head" points="168,75 160,79.5 160,70.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M322 75 L340 75"/>
+    <polygon class="f-head" points="348,75 340,79.5 340,70.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M522 75 L540 75"/>
+    <polygon class="f-head" points="548,75 540,79.5 540,70.5"/>
+  </g>
+  <rect class="f-box-danger" x="170" y="150" width="150" height="60" rx="8"/>
+  <text class="f-small" x="245" y="176" text-anchor="middle">nothing relevant</text>
+  <text class="f-small" x="245" y="196" text-anchor="middle">→ "I don't know"</text>
+  <g>
+    <path class="f-arrow" d="M245 112 L245 140"/>
+    <polygon class="f-head" points="245,148 240.5,140 249.5,140"/>
+  </g>
+  <rect class="f-box-accent" x="400" y="150" width="310" height="90" rx="8"/>
+  <text class="f-small f-strong" x="555" y="174" text-anchor="middle">check citations</text>
+  <text class="f-small" x="555" y="196" text-anchor="middle">every sentence cites a source</text>
+  <text class="f-small" x="555" y="216" text-anchor="middle">every [n] was in the prompt</text>
+  <g>
+    <path class="f-arrow" d="M630 112 L630 140"/>
+    <polygon class="f-head" points="630,148 625.5,140 634.5,140"/>
+  </g>
+  <rect class="f-box-ok" x="400" y="260" width="150" height="44" rx="8"/>
+  <text class="f-small" x="475" y="287" text-anchor="middle">answer + sources</text>
+  <rect class="f-box-danger" x="560" y="260" width="150" height="44" rx="8"/>
+  <text class="f-small" x="635" y="287" text-anchor="middle">reject / retry</text>
+  <g>
+    <path class="f-arrow" d="M500 242 L486.2 253.0"/>
+    <polygon class="f-head" points="480,258 483.4,249.5 489.1,256.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M610 242 L623.8 253.0"/>
+    <polygon class="f-head" points="630,258 620.9,256.5 626.6,249.5"/>
+  </g>
+</svg>

@@ -1,0 +1,4 @@
+alt: 'A user''s question goes to retrieval, which keeps only chunks scoring at least 0.5. If nothing is relevant, the pipeline answers I don''t know without calling the model. Otherwise the prompt lists the chunks as numbered sources with their source and section, and the model answers with citations like [n]. A citation check requires every sentence to cite a source and every cited number to have been in the prompt. Passing answers are returned with their sources; failing ones are rejected or retried.'
+caption: 'Retrieve with a threshold, number the sources, and check every citation before showing an answer.'
+credit: DevForge 18 content team
+licence: project-content
