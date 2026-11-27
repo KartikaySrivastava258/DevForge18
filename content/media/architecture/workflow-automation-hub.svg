@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 335">
+  <!-- Reference architecture: workflow automation hub with approvals. -->
+  <rect class="f-box" x="365" y="8" width="110" height="44" rx="8"/>
+  <text class="f-small f-strong" x="420" y="26" text-anchor="middle">approvers</text>
+  <text class="f-small" x="420" y="42" text-anchor="middle">resume link</text>
+  <rect class="f-box" x="10" y="85" width="100" height="65" rx="8"/>
+  <text class="f-small f-strong" x="60" y="113" text-anchor="middle">webhook</text>
+  <text class="f-small" x="60" y="131" text-anchor="middle">or schedule</text>
+  <rect class="f-box-faint" x="130" y="70" width="620" height="95" rx="8"/>
+  <text class="f-small f-strong" x="240" y="62" text-anchor="middle">n8n: one shape for every workflow</text>
+  <rect class="f-box" x="145" y="85" width="90" height="65" rx="8"/>
+  <text class="f-small f-strong" x="190" y="113" text-anchor="middle">validate</text>
+  <text class="f-small" x="190" y="131" text-anchor="middle">400 + reason</text>
+  <rect class="f-box" x="255" y="85" width="95" height="65" rx="8"/>
+  <text class="f-small f-strong" x="302" y="113" text-anchor="middle">deduplicate</text>
+  <text class="f-small" x="302" y="131" text-anchor="middle">409 if seen</text>
+  <rect class="f-box-warn" x="370" y="85" width="100" height="65" rx="8"/>
+  <text class="f-small f-strong" x="420" y="113" text-anchor="middle">approval</text>
+  <text class="f-small" x="420" y="131" text-anchor="middle">wait, timeout</text>
+  <rect class="f-box" x="490" y="85" width="90" height="65" rx="8"/>
+  <text class="f-small f-strong" x="535" y="113" text-anchor="middle">act</text>
+  <text class="f-small" x="535" y="131" text-anchor="middle">call APIs</text>
+  <rect class="f-box" x="600" y="85" width="135" height="65" rx="8"/>
+  <text class="f-small f-strong" x="667" y="113" text-anchor="middle">record</text>
+  <text class="f-small" x="667" y="131" text-anchor="middle">outcome + decision</text>
+  <g>
+    <path class="f-arrow" d="M112 117 L135 117"/>
+    <polygon class="f-head" points="143,117 135,121.5 135,112.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M237 117 L245 117"/>
+    <polygon class="f-head" points="253,117 245,121.5 245,112.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M352 117 L360 117"/>
+    <polygon class="f-head" points="368,117 360,121.5 360,112.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M472 117 L480 117"/>
+    <polygon class="f-head" points="488,117 480,121.5 480,112.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M582 117 L590 117"/>
+    <polygon class="f-head" points="598,117 590,121.5 590,112.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M400 83 L400 62"/>
+    <polygon class="f-head" points="400,54 404.5,62 395.5,62"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M440 54 L440 75"/>
+    <polygon class="f-head" points="440,83 435.5,75 444.5,75"/>
+  </g>
+  <rect class="f-box-ok" x="250" y="215" width="150" height="65" rx="8"/>
+  <text class="f-small f-strong" x="325" y="240" text-anchor="middle">Redis</text>
+  <text class="f-small" x="325" y="258" text-anchor="middle">idempotency keys,</text>
+  <text class="f-small" x="325" y="272" text-anchor="middle">API rate limits</text>
+  <g>
+    <path class="f-arrow" d="M302 152 L309.0 205.1"/>
+    <polygon class="f-head" points="310,213 304.5,205.7 313.4,204.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M525 152 L392.3 209.8"/>
+    <polygon class="f-head" points="385,213 390.5,205.7 394.1,213.9"/>
+  </g>
+  <rect class="f-box-ok" x="600" y="215" width="150" height="65" rx="8"/>
+  <text class="f-small f-strong" x="675" y="240" text-anchor="middle">PostgreSQL</text>
+  <text class="f-small" x="675" y="258" text-anchor="middle">records, audit,</text>
+  <text class="f-small" x="675" y="272" text-anchor="middle">waiting executions</text>
+  <g>
+    <path class="f-arrow" d="M667 152 L674.0 205.1"/>
+    <polygon class="f-head" points="675,213 669.5,205.7 678.4,204.5"/>
+  </g>
+  <rect class="f-box-faint" x="10" y="215" width="200" height="65" rx="8"/>
+  <text class="f-small f-strong" x="110" y="240" text-anchor="middle">Postman + Newman in CI</text>
+  <text class="f-small" x="110" y="258" text-anchor="middle">tests every external</text>
+  <text class="f-small" x="110" y="272" text-anchor="middle">API and webhook</text>
+  <text class="f-small" x="380" y="306" text-anchor="middle">failures go to error outputs, and an error workflow alerts someone;</text>
+  <text class="f-small" x="380" y="323" text-anchor="middle">credentials are encrypted in n8n with a key kept and backed up outside the workflows</text>
+</svg>

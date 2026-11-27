@@ -1,0 +1,4 @@
+alt: 'A client calls the order service, the only writer of orders, which writes the order and an outbox row to PostgreSQL in one transaction. An outbox relay reads the outbox, publishes each event to a Kafka topic keyed by order ID, and marks the rows published afterwards. Three consumer groups - payment, shipping and e-mail - each read the topic, skipping event IDs they have already handled, and send failures to retry and dead-letter topics with a reason. Redis sits beside the order service as an optional cache. Every service, Kafka and PostgreSQL run as containers, with Docker Compose locally.'
+caption: 'The order and its event are committed together; a relay publishes the outbox to Kafka, and each consumer handles repeats.'
+credit: DevForge 18 content team
+licence: project-content

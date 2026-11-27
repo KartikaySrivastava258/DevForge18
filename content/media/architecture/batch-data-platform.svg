@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330">
+  <!-- Reference architecture: batch data platform with write-audit-publish. -->
+  <rect class="f-box-accent" x="10" y="30" width="130" height="60" rx="8"/>
+  <text class="f-small f-strong" x="75" y="56" text-anchor="middle">Kafka</text>
+  <text class="f-small" x="75" y="74" text-anchor="middle">replayable events</text>
+  <rect class="f-box" x="10" y="130" width="130" height="60" rx="8"/>
+  <text class="f-small f-strong" x="75" y="156" text-anchor="middle">daily files</text>
+  <text class="f-small" x="75" y="174" text-anchor="middle">one per day</text>
+  <rect class="f-box" x="170" y="40" width="120" height="60" rx="8"/>
+  <text class="f-small f-strong" x="230" y="66" text-anchor="middle">raw tables</text>
+  <text class="f-small" x="230" y="84" text-anchor="middle">keyed landing</text>
+  <g>
+    <path class="f-arrow" d="M142 62 L160.2 66.2"/>
+    <polygon class="f-head" points="168,68 159.2,70.6 161.2,61.8"/>
+  </g>
+  <rect class="f-box-faint" x="320" y="20" width="425" height="180" rx="8"/>
+  <text class="f-small f-strong" x="532" y="42" text-anchor="middle">Airflow DAG run for one logical date (ds)</text>
+  <rect class="f-box" x="335" y="60" width="120" height="75" rx="8"/>
+  <text class="f-small f-strong" x="395" y="88" text-anchor="middle">write</text>
+  <text class="f-small" x="395" y="106" text-anchor="middle">replace ds</text>
+  <text class="f-small" x="395" y="122" text-anchor="middle">in staging</text>
+  <rect class="f-box-warn" x="475" y="60" width="120" height="75" rx="8"/>
+  <text class="f-small f-strong" x="535" y="88" text-anchor="middle">audit</text>
+  <text class="f-small" x="535" y="106" text-anchor="middle">checks; fail</text>
+  <text class="f-small" x="535" y="122" text-anchor="middle">with a reason</text>
+  <rect class="f-box" x="615" y="60" width="120" height="75" rx="8"/>
+  <text class="f-small f-strong" x="675" y="88" text-anchor="middle">publish</text>
+  <text class="f-small" x="675" y="106" text-anchor="middle">only if audit</text>
+  <text class="f-small" x="675" y="122" text-anchor="middle">passed</text>
+  <g>
+    <path class="f-arrow" d="M292 75 L325.2 83.1"/>
+    <polygon class="f-head" points="333,85 324.2,87.5 326.3,78.7"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M142 160 L325.2 116.8"/>
+    <polygon class="f-head" points="333,115 326.2,121.2 324.2,112.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M457 97 L465 97"/>
+    <polygon class="f-head" points="473,97 465,101.5 465,92.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M597 97 L605 97"/>
+    <polygon class="f-head" points="613,97 605,101.5 605,92.5"/>
+  </g>
+  <text class="f-small f-muted" x="420" y="165" text-anchor="middle">retries, timeouts,</text>
+  <text class="f-small f-muted" x="420" y="181" text-anchor="middle">one transaction per step</text>
+  <rect class="f-box-warn" x="475" y="230" width="120" height="55" rx="8"/>
+  <text class="f-small f-strong" x="535" y="254" text-anchor="middle">quarantine</text>
+  <text class="f-small" x="535" y="272" text-anchor="middle">rows + reason</text>
+  <rect class="f-box-ok" x="615" y="230" width="130" height="55" rx="8"/>
+  <text class="f-small f-strong" x="680" y="254" text-anchor="middle">warehouse</text>
+  <text class="f-small" x="680" y="272" text-anchor="middle">reports read</text>
+  <g>
+    <path class="f-arrow" d="M535 137 L535 220"/>
+    <polygon class="f-head" points="535,228 530.5,220 539.5,220"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M675 137 L675 220"/>
+    <polygon class="f-head" points="675,228 670.5,220 679.5,220"/>
+  </g>
+  <rect class="f-box-ok" x="10" y="230" width="210" height="55" rx="8"/>
+  <text class="f-small f-strong" x="115" y="254" text-anchor="middle">Prometheus + Grafana</text>
+  <text class="f-small" x="115" y="272" text-anchor="middle">failed runs, lateness, lag</text>
+  <text class="f-small" x="380" y="316" text-anchor="middle">raw, staging and warehouse are PostgreSQL schemas; backfills re-run past dates</text>
+</svg>

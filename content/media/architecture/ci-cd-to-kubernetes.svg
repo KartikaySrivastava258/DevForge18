@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330">
+  <!-- Reference architecture: continuous delivery to Kubernetes. -->
+  <rect class="f-box" x="10" y="30" width="130" height="80" rx="8"/>
+  <text class="f-small f-strong" x="75" y="60" text-anchor="middle">Pull request</text>
+  <text class="f-small" x="75" y="80" text-anchor="middle">tests, build,</text>
+  <text class="f-small" x="75" y="96" text-anchor="middle">no push</text>
+  <rect class="f-box-accent" x="180" y="30" width="130" height="80" rx="8"/>
+  <text class="f-small f-strong" x="245" y="60" text-anchor="middle">main</text>
+  <text class="f-small" x="245" y="80" text-anchor="middle">review + green</text>
+  <text class="f-small" x="245" y="96" text-anchor="middle">checks required</text>
+  <g>
+    <path class="f-arrow" d="M142 70 L170 70"/>
+    <polygon class="f-head" points="178,70 170,74.5 170,65.5"/>
+  </g>
+  <rect class="f-box" x="350" y="30" width="140" height="80" rx="8"/>
+  <text class="f-small f-strong" x="420" y="60" text-anchor="middle">Build once</text>
+  <text class="f-small" x="420" y="80" text-anchor="middle">pinned base,</text>
+  <text class="f-small" x="420" y="96" text-anchor="middle">labels, push</text>
+  <g>
+    <path class="f-arrow" d="M312 70 L340 70"/>
+    <polygon class="f-head" points="348,70 340,74.5 340,65.5"/>
+  </g>
+  <rect class="f-box-ok" x="530" y="30" width="140" height="80" rx="8"/>
+  <text class="f-small f-strong" x="600" y="60" text-anchor="middle">Registry</text>
+  <text class="f-small" x="600" y="80" text-anchor="middle">image digest</text>
+  <text class="f-small f-mono" x="600" y="96" text-anchor="middle">sha256:...</text>
+  <g>
+    <path class="f-arrow" d="M492 70 L520 70"/>
+    <polygon class="f-head" points="528,70 520,74.5 520,65.5"/>
+  </g>
+  <rect class="f-box" x="180" y="170" width="150" height="80" rx="8"/>
+  <text class="f-small f-strong" x="255" y="200" text-anchor="middle">Staging</text>
+  <text class="f-small" x="255" y="220" text-anchor="middle">deploy digest,</text>
+  <text class="f-small" x="255" y="236" text-anchor="middle">rollout status</text>
+  <rect class="f-box-warn" x="370" y="170" width="130" height="80" rx="8"/>
+  <text class="f-small f-strong" x="435" y="200" text-anchor="middle">Approval</text>
+  <text class="f-small" x="435" y="220" text-anchor="middle">required</text>
+  <text class="f-small" x="435" y="236" text-anchor="middle">reviewers</text>
+  <rect class="f-box-accent" x="540" y="170" width="150" height="80" rx="8"/>
+  <text class="f-small f-strong" x="615" y="200" text-anchor="middle">Production</text>
+  <text class="f-small" x="615" y="220" text-anchor="middle">same digest,</text>
+  <text class="f-small" x="615" y="236" text-anchor="middle">OIDC credentials</text>
+  <g>
+    <path class="f-arrow" d="M600 112 L600 135 L255 135 L255 160"/>
+    <polygon class="f-head" points="255,168 250.5,160 259.5,160"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M332 210 L360 210"/>
+    <polygon class="f-head" points="368,210 360,214.5 360,205.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M502 210 L530 210"/>
+    <polygon class="f-head" points="538,210 530,214.5 530,205.5"/>
+  </g>
+  <text class="f-small f-muted" x="430" y="129" text-anchor="middle">digest passed on</text>
+  <text class="f-small" x="435" y="272" text-anchor="middle">Kubernetes: probes, rolling update, rollback</text>
+  <rect class="f-box-faint" x="10" y="170" width="130" height="80" rx="8"/>
+  <text class="f-small f-strong" x="75" y="200" text-anchor="middle">Terraform</text>
+  <text class="f-small" x="75" y="220" text-anchor="middle">plan, review,</text>
+  <text class="f-small" x="75" y="236" text-anchor="middle">apply saved plan</text>
+  <text class="f-small f-muted" x="380" y="312" text-anchor="middle">Terraform creates the cluster, database and cloud roles from reviewed plans</text>
+</svg>

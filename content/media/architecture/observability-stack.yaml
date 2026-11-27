@@ -1,0 +1,4 @@
+alt: 'Two services instrumented with the OpenTelemetry SDK pass trace context to each other in a traceparent header and send their spans, metrics and logs over OTLP to one OpenTelemetry Collector, which batches and samples them and runs one pipeline per signal. The Collector exports traces to Jaeger, logs (which carry trace IDs) to a log store, and metrics to Prometheus, which scrapes them and evaluates SLO rules. Prometheus sends burn-rate alerts to Alertmanager, which routes them and pages the on-call person. Grafana dashboards query Jaeger, the log store and Prometheus. All components run as containers, with Docker Compose locally.'
+caption: 'One Collector receives every signal; metrics raise the alert, logs and traces explain it.'
+credit: DevForge 18 content team
+licence: project-content

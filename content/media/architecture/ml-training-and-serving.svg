@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330">
+  <!-- Reference architecture: model training, registry and serving. -->
+  <rect class="f-box-faint" x="10" y="20" width="250" height="110" rx="8"/>
+  <text class="f-small f-strong" x="135" y="40" text-anchor="middle">Airflow training DAG</text>
+  <rect class="f-box" x="25" y="52" width="100" height="65" rx="8"/>
+  <text class="f-small f-strong" x="75" y="78" text-anchor="middle">prepare</text>
+  <text class="f-small" x="75" y="96" text-anchor="middle">seeded split</text>
+  <rect class="f-box" x="145" y="52" width="100" height="65" rx="8"/>
+  <text class="f-small f-strong" x="195" y="78" text-anchor="middle">train</text>
+  <text class="f-small" x="195" y="96" text-anchor="middle">pinned image</text>
+  <g>
+    <path class="f-arrow" d="M127 85 L135 85"/>
+    <polygon class="f-head" points="143,85 135,89.5 135,80.5"/>
+  </g>
+  <rect class="f-box-accent" x="300" y="30" width="150" height="90" rx="8"/>
+  <text class="f-small f-strong" x="375" y="60" text-anchor="middle">MLflow server</text>
+  <text class="f-small" x="375" y="80" text-anchor="middle">runs, metrics,</text>
+  <text class="f-small" x="375" y="96" text-anchor="middle">lineage tags</text>
+  <g>
+    <path class="f-arrow" d="M262 80 L290.1 76.1"/>
+    <polygon class="f-head" points="298,75 290.7,80.6 289.5,71.6"/>
+  </g>
+  <rect class="f-box-ok" x="285" y="170" width="95" height="55" rx="8"/>
+  <text class="f-small f-strong" x="332" y="194" text-anchor="middle">PostgreSQL</text>
+  <text class="f-small" x="332" y="212" text-anchor="middle">runs, registry</text>
+  <rect class="f-box-ok" x="390" y="170" width="80" height="55" rx="8"/>
+  <text class="f-small f-strong" x="430" y="194" text-anchor="middle">artifacts</text>
+  <text class="f-small" x="430" y="212" text-anchor="middle">model files</text>
+  <g>
+    <path class="f-arrow" d="M350 122 L337.5 160.4"/>
+    <polygon class="f-head" points="335,168 333.2,159.0 341.8,161.8"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M410 122 L425.1 160.6"/>
+    <polygon class="f-head" points="428,168 420.9,162.2 429.3,158.9"/>
+  </g>
+  <rect class="f-box" x="500" y="30" width="120" height="90" rx="8"/>
+  <text class="f-small f-strong" x="560" y="60" text-anchor="middle">Registry</text>
+  <text class="f-small" x="560" y="80" text-anchor="middle">versions 1..n</text>
+  <text class="f-small f-mono" x="560" y="96" text-anchor="middle">@champion</text>
+  <g>
+    <path class="f-arrow" d="M452 75 L490 75"/>
+    <polygon class="f-head" points="498,75 490,79.5 490,70.5"/>
+  </g>
+  <rect class="f-box-warn" x="500" y="170" width="120" height="55" rx="8"/>
+  <text class="f-small f-strong" x="560" y="194" text-anchor="middle">gate</text>
+  <text class="f-small" x="560" y="212" text-anchor="middle">beats champion?</text>
+  <g>
+    <path class="f-arrow" d="M560 168 L560 130"/>
+    <polygon class="f-head" points="560,122 564.5,130 555.5,130"/>
+  </g>
+  <text class="f-small f-muted" x="595" y="150" text-anchor="middle">moves alias</text>
+  <rect class="f-box-accent" x="650" y="30" width="100" height="90" rx="8"/>
+  <text class="f-small f-strong" x="700" y="60" text-anchor="middle">Model server</text>
+  <text class="f-small" x="700" y="80" text-anchor="middle">Kubernetes,</text>
+  <text class="f-small" x="700" y="96" text-anchor="middle">loads alias</text>
+  <g>
+    <path class="f-arrow" d="M622 75 L640 75"/>
+    <polygon class="f-head" points="648,75 640,79.5 640,70.5"/>
+  </g>
+  <rect class="f-box-ok" x="650" y="170" width="100" height="55" rx="8"/>
+  <text class="f-small f-strong" x="700" y="194" text-anchor="middle">monitoring</text>
+  <text class="f-small" x="700" y="212" text-anchor="middle">latency, drift</text>
+  <g>
+    <path class="f-arrow" d="M700 122 L700 160"/>
+    <polygon class="f-head" points="700,168 695.5,160 704.5,160"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M700 227 L700 262 L75 262 L75 127"/>
+    <polygon class="f-head" points="75,119 79.5,127 70.5,127"/>
+  </g>
+  <text class="f-small f-muted" x="390" y="282" text-anchor="middle">drift alert: investigate, then retrain through the same pipeline</text>
+  <text class="f-small" x="380" y="318" text-anchor="middle">every run records its Airflow run, data hash, code hash and image</text>
+</svg>

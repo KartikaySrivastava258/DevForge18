@@ -1,0 +1,4 @@
+alt: 'A pull request runs tests and builds the image without pushing it. It reaches main only after review and green required checks. From main, the image is built once from pinned base images, labelled and pushed to a registry, which returns its digest. The digest is passed to a staging deployment that waits for the rollout; a required-reviewer approval follows; production then deploys the same digest using short-lived OIDC credentials. Both environments run on Kubernetes with probes, rolling updates and rollback. Terraform, shown separately, creates the cluster, database and cloud roles through planned, reviewed and saved-plan applies.'
+caption: 'Review and tests before merge, one build, the same digest promoted from staging to production.'
+credit: DevForge 18 content team
+licence: project-content

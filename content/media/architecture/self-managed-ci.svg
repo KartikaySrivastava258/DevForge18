@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 325">
+  <!-- Reference architecture: self-managed CI with Jenkins and build agents. -->
+  <rect class="f-box" x="10" y="40" width="130" height="70" rx="8"/>
+  <text class="f-small f-strong" x="75" y="66" text-anchor="middle">Git repository</text>
+  <text class="f-small" x="75" y="84" text-anchor="middle">code, Jenkinsfile,</text>
+  <text class="f-small" x="75" y="100" text-anchor="middle">scripts</text>
+  <rect class="f-box-accent" x="190" y="25" width="170" height="100" rx="8"/>
+  <text class="f-small f-strong" x="275" y="55" text-anchor="middle">Jenkins controller</text>
+  <text class="f-small" x="275" y="75" text-anchor="middle">0 executors,</text>
+  <text class="f-small" x="275" y="91" text-anchor="middle">schedules the queue,</text>
+  <text class="f-small" x="275" y="107" text-anchor="middle">JCasC from Git</text>
+  <g>
+    <path class="f-arrow" d="M142 75 L180 75"/>
+    <polygon class="f-head" points="188,75 180,79.5 180,70.5"/>
+  </g>
+  <text class="f-small f-muted" x="165" y="66" text-anchor="middle">push</text>
+  <rect class="f-box" x="10" y="170" width="130" height="60" rx="8"/>
+  <text class="f-small f-strong" x="75" y="196" text-anchor="middle">shared library</text>
+  <text class="f-small" x="75" y="214" text-anchor="middle">@Library at a tag</text>
+  <g>
+    <path class="f-arrow" d="M142 190 L194.6 132.9"/>
+    <polygon class="f-head" points="200,127 197.9,135.9 191.3,129.8"/>
+  </g>
+  <rect class="f-box" x="190" y="170" width="170" height="55" rx="8"/>
+  <text class="f-small f-strong" x="275" y="193" text-anchor="middle">controller image</text>
+  <text class="f-small" x="275" y="211" text-anchor="middle">pinned release, plugins</text>
+  <g>
+    <path class="f-arrow" d="M275 168 L275 135"/>
+    <polygon class="f-head" points="275,127 279.5,135 270.5,135"/>
+  </g>
+  <rect class="f-box-ok" x="190" y="245" width="170" height="50" rx="8"/>
+  <text class="f-small f-strong f-mono" x="275" y="266" text-anchor="middle">JENKINS_HOME</text>
+  <text class="f-small" x="275" y="284" text-anchor="middle">volume, backed up</text>
+  <rect class="f-box" x="420" y="20" width="150" height="55" rx="8"/>
+  <text class="f-small f-strong" x="495" y="43" text-anchor="middle">label: linux</text>
+  <text class="f-small" x="495" y="61" text-anchor="middle">container agent</text>
+  <rect class="f-box" x="420" y="90" width="150" height="55" rx="8"/>
+  <text class="f-small f-strong" x="495" y="113" text-anchor="middle">label: docker</text>
+  <text class="f-small" x="495" y="131" text-anchor="middle">builds images</text>
+  <rect class="f-box-accent" x="420" y="160" width="150" height="65" rx="8"/>
+  <text class="f-small f-strong" x="495" y="186" text-anchor="middle">label: k8s</text>
+  <text class="f-small" x="495" y="204" text-anchor="middle">fresh Pod per build</text>
+  <g>
+    <path class="f-arrow" d="M362 50 L410.0 47.4"/>
+    <polygon class="f-head" points="418,47 410.3,51.9 409.8,42.9"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M362 80 L411.3 112.6"/>
+    <polygon class="f-head" points="418,117 408.8,116.3 413.8,108.8"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M362 110 L413.2 178.6"/>
+    <polygon class="f-head" points="418,185 409.6,181.3 416.8,175.9"/>
+  </g>
+  <rect class="f-box-warn" x="420" y="245" width="150" height="50" rx="8"/>
+  <text class="f-small f-strong" x="495" y="266" text-anchor="middle">credentials</text>
+  <text class="f-small" x="495" y="284" text-anchor="middle">bound per stage</text>
+  <g>
+    <path class="f-arrow" d="M495 243 L495 235"/>
+    <polygon class="f-head" points="495,227 499.5,235 490.5,235"/>
+  </g>
+  <rect class="f-box-ok" x="610" y="30" width="140" height="70" rx="8"/>
+  <text class="f-small f-strong" x="680" y="58" text-anchor="middle">results</text>
+  <text class="f-small" x="680" y="76" text-anchor="middle">junit reports,</text>
+  <text class="f-small" x="680" y="92" text-anchor="middle">artifacts</text>
+  <rect class="f-box-ok" x="610" y="150" width="140" height="70" rx="8"/>
+  <text class="f-small f-strong" x="680" y="178" text-anchor="middle">registry</text>
+  <text class="f-small" x="680" y="196" text-anchor="middle">image push,</text>
+  <text class="f-small" x="680" y="212" text-anchor="middle">deploy on main</text>
+  <g>
+    <path class="f-arrow" d="M572 47 L600.5 57.3"/>
+    <polygon class="f-head" points="608,60 598.9,61.5 602.0,53.1"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M572 117 L603.5 163.4"/>
+    <polygon class="f-head" points="608,170 599.8,165.9 607.2,160.9"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M572 192 L600 192"/>
+    <polygon class="f-head" points="608,192 600,196.5 600,187.5"/>
+  </g>
+  <text class="f-small" x="380" y="317" text-anchor="middle">the controller runs no builds; every stage runs on an agent chosen by its label</text>
+</svg>

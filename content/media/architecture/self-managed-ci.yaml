@@ -1,0 +1,4 @@
+alt: 'A push to the Git repository, which holds the code, the Jenkinsfile and its scripts, starts a build on the Jenkins controller. The controller has 0 executors, schedules the queue and is configured as code from Git; it is built from a controller image with a pinned release and pinned plugins, loads a shared library at a tag, and keeps its JENKINS_HOME on a backed-up volume. The controller sends stages to agents chosen by label: a linux container agent, a docker agent that builds images, and a k8s label that starts a fresh Kubernetes Pod per build. Credentials are bound to a stage only when it needs them. Agents publish junit reports and artifacts, and push images to a registry, deploying on main. The controller runs no builds itself.'
+caption: 'The controller schedules; disposable, labelled agents do the work; everything about the server is pinned and in Git.'
+credit: DevForge 18 content team
+licence: project-content

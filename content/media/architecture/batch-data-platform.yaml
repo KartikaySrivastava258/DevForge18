@@ -1,0 +1,4 @@
+alt: 'Kafka keeps a replayable log of events, which are landed into raw tables with keys. Daily files arrive alongside. An Airflow DAG run for one logical date (ds) then runs three steps: write replaces that date in staging from the raw tables and the day''s file; audit checks the staged day and fails with a reason, sending invalid rows to quarantine; publish replaces the day in the warehouse that reports read, only if the audit passed. Steps use retries, timeouts and one transaction each. Prometheus and Grafana watch failed runs, lateness and consumer lag. Raw, staging and warehouse are PostgreSQL schemas, and backfills re-run the same DAG for past dates.'
+caption: 'Every step is keyed by the logical date, and nothing reaches the warehouse without passing its audit.'
+credit: DevForge 18 content team
+licence: project-content

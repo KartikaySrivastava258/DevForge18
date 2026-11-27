@@ -1,0 +1,4 @@
+alt: 'A webhook or a schedule starts an n8n workflow that has the same shape for every process: validate (answer 400 with a reason), deduplicate (answer 409 if already seen), approval (wait for a person, with a timeout), act (call external APIs) and record (store the outcome and the decision). The approval step sends a resume link to approvers and continues on their decision. Deduplication and the calls to external APIs use Redis for idempotency keys and API rate limits. Records, the audit trail and waiting executions are kept in PostgreSQL. Separately, Postman collections run by Newman in CI test every external API and webhook. Failures go to error outputs, and an error workflow alerts someone. Credentials are encrypted in n8n with a key kept and backed up outside the workflows.'
+caption: 'Validate, deduplicate, approve, act, record: one shape for every workflow, with tests at the boundary.'
+credit: DevForge 18 content team
+licence: project-content

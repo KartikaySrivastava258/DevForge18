@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 315">
+  <!-- Reference architecture: team delivery workflow from work item to release. -->
+  <rect class="f-box-accent" x="10" y="35" width="140" height="75" rx="8"/>
+  <text class="f-small f-strong" x="80" y="62" text-anchor="middle">Jira work item</text>
+  <text class="f-small" x="80" y="80" text-anchor="middle">DEV-12, criteria,</text>
+  <text class="f-small" x="80" y="96" text-anchor="middle">WIP-limited board</text>
+  <rect class="f-box" x="190" y="35" width="150" height="75" rx="8"/>
+  <text class="f-small f-strong" x="265" y="62" text-anchor="middle">branch + commits</text>
+  <text class="f-small" x="265" y="80" text-anchor="middle">DEV-12-reset-link,</text>
+  <text class="f-small" x="265" y="96" text-anchor="middle">key in every message</text>
+  <g>
+    <path class="f-arrow" d="M152 72 L180 72"/>
+    <polygon class="f-head" points="188,72 180,76.5 180,67.5"/>
+  </g>
+  <rect class="f-box-accent" x="380" y="35" width="160" height="75" rx="8"/>
+  <text class="f-small f-strong" x="460" y="62" text-anchor="middle">pull request</text>
+  <text class="f-small" x="460" y="80" text-anchor="middle">small, reviewed,</text>
+  <text class="f-small" x="460" y="96" text-anchor="middle">key in the title</text>
+  <g>
+    <path class="f-arrow" d="M342 72 L370 72"/>
+    <polygon class="f-head" points="378,72 370,76.5 370,67.5"/>
+  </g>
+  <rect class="f-box-ok" x="580" y="35" width="170" height="75" rx="8"/>
+  <text class="f-small f-strong" x="665" y="62" text-anchor="middle">protected main</text>
+  <text class="f-small" x="665" y="80" text-anchor="middle">merge only with review</text>
+  <text class="f-small" x="665" y="96" text-anchor="middle">and green checks</text>
+  <g>
+    <path class="f-arrow" d="M542 72 L570 72"/>
+    <polygon class="f-head" points="578,72 570,76.5 570,67.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M460 33 L460 15 L80 15 L80 25"/>
+    <polygon class="f-head" points="80,33 75.5,25 84.5,25"/>
+  </g>
+  <text class="f-small f-muted" x="270" y="29" text-anchor="middle">Jira links branch, commits and pull request by key</text>
+  <rect class="f-box-faint" x="10" y="160" width="140" height="80" rx="8"/>
+  <text class="f-small f-strong" x="80" y="188" text-anchor="middle">flow metrics</text>
+  <text class="f-small" x="80" y="206" text-anchor="middle">cycle time, WIP,</text>
+  <text class="f-small" x="80" y="222" text-anchor="middle">throughput</text>
+  <g>
+    <path class="f-arrow" d="M80 112 L80 150"/>
+    <polygon class="f-head" points="80,158 75.5,150 84.5,150"/>
+  </g>
+  <rect class="f-box" x="190" y="165" width="150" height="70" rx="8"/>
+  <text class="f-small f-strong" x="265" y="192" text-anchor="middle">Postman collection</text>
+  <text class="f-small" x="265" y="210" text-anchor="middle">API tests + docs</text>
+  <rect class="f-box-warn" x="380" y="155" width="160" height="90" rx="8"/>
+  <text class="f-small f-strong" x="460" y="182" text-anchor="middle">CI on the PR</text>
+  <text class="f-small" x="460" y="200" text-anchor="middle">unit tests, Newman</text>
+  <text class="f-small" x="460" y="216" text-anchor="middle">on a fresh API,</text>
+  <text class="f-small" x="460" y="232" text-anchor="middle">key check</text>
+  <g>
+    <path class="f-arrow" d="M342 200 L370 200"/>
+    <polygon class="f-head" points="378,200 370,204.5 370,195.5"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M440 112 L440 145"/>
+    <polygon class="f-head" points="440,153 435.5,145 444.5,145"/>
+  </g>
+  <g>
+    <path class="f-arrow" d="M480 153 L480 120"/>
+    <polygon class="f-head" points="480,112 484.5,120 475.5,120"/>
+  </g>
+  <text class="f-small f-muted" x="515" y="136" text-anchor="middle">status</text>
+  <rect class="f-box" x="580" y="155" width="170" height="90" rx="8"/>
+  <text class="f-small f-strong" x="665" y="182" text-anchor="middle">version tag</text>
+  <text class="f-small" x="665" y="200" text-anchor="middle">release workflow:</text>
+  <text class="f-small" x="665" y="216" text-anchor="middle">tests again, notes</text>
+  <text class="f-small" x="665" y="232" text-anchor="middle">grouped by work item</text>
+  <g>
+    <path class="f-arrow" d="M665 112 L665 145"/>
+    <polygon class="f-head" points="665,153 660.5,145 669.5,145"/>
+  </g>
+  <text class="f-small" x="380" y="290" text-anchor="middle">the key ties board, code and release notes together; the Jira fix version matches the tag</text>
+</svg>

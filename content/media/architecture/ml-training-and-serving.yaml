@@ -1,0 +1,4 @@
+alt: 'An Airflow training DAG runs a prepare task, which makes a seeded split of the run date''s data, and a train task in a pinned image. Training logs runs, metrics and lineage tags to the MLflow server, which keeps runs and the registry in PostgreSQL and model files in an artifact store, and registers each model as a new version in the registry. A gate checks whether the new version beats the champion and, if so, moves the champion alias. A model server on Kubernetes loads the version the alias points to and sends latency and drift data to monitoring. A drift alert leads to investigation and retraining through the same pipeline. Every run records its Airflow run, data hash, code hash and image.'
+caption: 'The champion alias is the only way into production; every version can be traced to its data and code.'
+credit: DevForge 18 content team
+licence: project-content
