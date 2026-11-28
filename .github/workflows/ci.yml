@@ -3,6 +3,8 @@
 # - verify: typecheck, lint, build, unit/API tests and browser tests, on every push and pull request.
 # - compose: builds deploy/Dockerfile, starts deploy/docker-compose.yml (app + Nginx) and smoke-tests it through
 #   Nginx (scripts/compose-smoke.sh), on every push and pull request.
+# - upgrade: databases created by older versions survive the current migrations; backup and restore
+#   (scripts/upgrade-test.sh, docs/deployment.md "Upgrades"), on every push and pull request.
 # - load: k6 load test of the API (load/api.js, thresholds on p95 latency and errors), nightly and on manual runs only.
 # - lessons: executed lessons and local labs, in three parallel shards. On pushes and pull requests only the
 #   lessons a change can affect run (scripts/lib/affected.ts); the nightly run and manual runs execute all of
@@ -109,6 +111,23 @@ jobs:
         env:
           DEVFORGE_HTTP_PORT: "8080"
         run: bash scripts/compose-smoke.sh
+
+  upgrade:
+    name: Upgrade, backup and restore
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the old versions are extracted from history with git archive
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Upgrade from older versions, then backup and restore (builds the current version first)
+        run: npm run test:upgrade
 
   load:
     name: API load test (k6)
