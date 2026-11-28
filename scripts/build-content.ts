@@ -8,11 +8,18 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadContent } from "./lib/content-loader.ts";
+import { githubWarning, REVIEW_MAX_MONTHS } from "./lib/review-age.ts";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const { bundle, errors, warnings } = loadContent(join(repoRoot, "content"));
+const { bundle, errors, warnings, overdueReviews } = loadContent(join(repoRoot, "content"));
 
 for (const warning of warnings) console.warn(`warn  ${warning}`);
+// In GitHub Actions, overdue reviews also become warning annotations on the file, shown in the run summary.
+if (process.env.GITHUB_ACTIONS === "true") {
+  for (const r of overdueReviews) {
+    console.log(githubWarning(`Last reviewed ${r.last_reviewed}, ${r.months} months ago. Check it against current documentation, then update last_reviewed.`, { file: `content/${r.file}`, title: `Content not reviewed for more than ${REVIEW_MAX_MONTHS} months` }));
+  }
+}
 if (errors.length > 0) {
   for (const error of errors) console.error(`error ${error}`);
   console.error(`\nContent validation failed with ${errors.length} error(s).`);

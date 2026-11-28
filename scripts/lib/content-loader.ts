@@ -6,6 +6,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import type { ZodError } from "zod/v4";
+import { overdueReview, reviewAgeWarning, type OverdueReview } from "./review-age.ts";
 import {
   AlternativesFileSchema,
   CapstoneMetaSchema,
@@ -43,6 +44,8 @@ export interface LoadResult {
   bundle: ContentBundle;
   errors: string[];
   warnings: string[];
+  /** Files whose last_reviewed is more than REVIEW_MAX_MONTHS before `now` (UTC); each is also a warning. */
+  overdueReviews: OverdueReview[];
 }
 
 function formatZod(file: string, error: ZodError): string[] {
@@ -86,6 +89,19 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   const errors: string[] = [];
   const warnings: string[] = [];
   const today = now.toISOString().slice(0, 10);
+  const overdueReviews: OverdueReview[] = [];
+  /** A review date may not be in the future (an error) and should not be more than 12 months old (a warning). */
+  const checkReviewed = (rel: string, lastReviewed: string) => {
+    if (lastReviewed > today) {
+      errors.push(`${rel}: last_reviewed is in the future`);
+      return;
+    }
+    const overdue = overdueReview(rel, lastReviewed, now);
+    if (overdue) {
+      overdueReviews.push(overdue);
+      warnings.push(reviewAgeWarning(overdue));
+    }
+  };
 
   // ---- Tracks -------------------------------------------------------------
   const tracks: Track[] = [];
@@ -105,7 +121,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       continue;
     }
     if (parsed.data.slug !== dirName) errors.push(`${rel}: slug "${parsed.data.slug}" must match directory "${dirName}"`);
-    if (parsed.data.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+    checkReviewed(rel, parsed.data.last_reviewed);
     const track: Track = parsed.data;
     const altFile = join(tracksDir, dirName, "alternatives.yaml");
     if (existsSync(altFile)) {
@@ -168,6 +184,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       continue;
     }
     if (`${parsed.data.slug}.yaml` !== fileName) errors.push(`${rel}: slug must match file name`);
+    checkReviewed(rel, parsed.data.last_reviewed);
     const seen = new Set<string>();
     for (const module of parsed.data.modules) {
       if (!trackSlugs.has(module.track)) errors.push(`${rel}: unknown track "${module.track}"`);
@@ -185,6 +202,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   // ---- Simulations ----------------------------------------------------------
   const simulations = loadSimulations(root, trackSlugs, errors);
   const simulationsById = new Map(simulations.map((s) => [s.id, s]));
+  for (const s of simulations) checkReviewed(`simulations/${s.track}/${s.id}.yaml`, s.last_reviewed);
 
   // ---- Lessons ------------------------------------------------------------
   const lessons: CompiledLesson[] = [];
@@ -214,7 +232,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       const meta = parsed.data;
       if (`${meta.id}.md` !== basename(fileName)) errors.push(`${rel}: id must match file name`);
       if (meta.track !== trackDir) errors.push(`${rel}: track "${meta.track}" must match folder "${trackDir}"`);
-      if (meta.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+      checkReviewed(rel, meta.last_reviewed);
       if (split.body.trim().length < 400) errors.push(`${rel}: lesson body is too short to be meaningful`);
       const lessonBlocks = extractRunBlocks(split.body);
       const runBlocks = lessonBlocks.length;
@@ -276,7 +294,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       const meta = parsed.data;
       if (`${meta.id}.md` !== basename(fileName)) errors.push(`${rel}: id must match file name`);
       if (meta.track !== trackDir) errors.push(`${rel}: track "${meta.track}" must match folder "${trackDir}"`);
-      if (meta.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+      checkReviewed(rel, meta.last_reviewed);
       if (lessonIds.has(meta.id)) errors.push(`${rel}: id "${meta.id}" is already a lesson id`);
       for (const prereq of meta.prerequisites) if (!lessonIds.has(prereq)) errors.push(`${rel}: unknown prerequisite lesson "${prereq}"`);
       const blocks = extractRunBlocks(split.body);
@@ -347,7 +365,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       const quiz = parsed.data;
       if (`${quiz.id}.yaml` !== fileName) errors.push(`${rel}: id must match file name`);
       if (quiz.track !== trackDir) errors.push(`${rel}: track "${quiz.track}" must match folder "${trackDir}"`);
-      if (quiz.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+      checkReviewed(rel, quiz.last_reviewed);
       const figures: Record<string, string> = {};
       const quizMedia = mediaResolver(media, usedMedia, simulationsById);
       for (const q of quiz.questions) {
@@ -402,7 +420,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       const meta = parsed.data;
       if (`${meta.id}.md` !== fileName) errors.push(`${rel}: id must match file name`);
       if (meta.track !== trackDir) errors.push(`${rel}: track "${meta.track}" must match folder "${trackDir}"`);
-      if (meta.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+      checkReviewed(rel, meta.last_reviewed);
       for (const prereq of meta.prerequisites) if (!lessonIds.has(prereq)) errors.push(`${rel}: unknown prerequisite lesson "${prereq}"`);
       for (const t of meta.related_tracks) if (!trackSlugs.has(t)) errors.push(`${rel}: unknown related track "${t}"`);
       const starter = readFolder(join(projectDir, trackDir, meta.id, "starter"));
@@ -468,7 +486,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
     }
     const meta = parsed.data;
     if (`${meta.id}.md` !== fileName) errors.push(`${rel}: id must match file name`);
-    if (meta.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+    checkReviewed(rel, meta.last_reviewed);
     for (const t of meta.tracks) if (!trackSlugs.has(t)) errors.push(`${rel}: unknown track "${t}"`);
     const milestoneIds = new Set<string>();
     for (const m of meta.milestones) {
@@ -519,7 +537,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
     }
     const it = parsed.data;
     if (`${it.id}.yaml` !== fileName) errors.push(`${rel}: id must match file name`);
-    if (it.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+    checkReviewed(rel, it.last_reviewed);
     const pair = [it.from, it.to].sort().join(" ");
     if (!relatedPairs.has(pair)) errors.push(`${rel}: ${it.from} and ${it.to} are not related tracks (add the relation to a track.yaml first)`);
     if (seenPairs.has(pair)) errors.push(`${rel}: another integration already covers ${it.from} and ${it.to}`);
@@ -558,7 +576,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
     }
     const meta = parsed.data;
     if (`${meta.id}.md` !== fileName) errors.push(`${rel}: id must match file name`);
-    if (meta.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+    checkReviewed(rel, meta.last_reviewed);
     for (const t of meta.tracks) if (!trackSlugs.has(t)) errors.push(`${rel}: unknown track "${t}"`);
     for (const c of meta.components) if (c.track && !meta.tracks.includes(c.track)) errors.push(`${rel}: component "${c.name}" uses track ${c.track}, which is not in tracks`);
     for (const r of meta.learn_more) if (!reuseExists(r)) errors.push(`${rel}: unknown ${r.kind} "${r.id}"`);
@@ -592,7 +610,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
     }
     const cs = parsed.data;
     if (`${cs.id}.yaml` !== fileName) errors.push(`${rel}: id must match file name`);
-    if (cs.last_reviewed > today) errors.push(`${rel}: last_reviewed is in the future`);
+    checkReviewed(rel, cs.last_reviewed);
     for (const t of cs.tracks) if (!trackSlugs.has(t)) errors.push(`${rel}: unknown track "${t}"`);
     for (const claim of cs.claims) {
       if (claim.checked_on > today) errors.push(`${rel}: a claim's checked_on is in the future`);
@@ -616,6 +634,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
     bundle: { schema_version: 1, generated_at: now.toISOString(), tracks, paths, lessons, simulations, case_studies: caseStudies, labs, quizzes, projects, capstones, integrations, architectures },
     errors,
     warnings,
+    overdueReviews,
   };
 }
 
