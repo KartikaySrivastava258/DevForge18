@@ -56,8 +56,8 @@ verification:
   method: executed
   details: Every command is run by the test suite in CI on a kind cluster (kindest/node v1.36.1, pinned by digest) with kubectl v1.36.1; the output shown was recorded from that run. Facts about probes, requests and limits were checked against the Kubernetes documentation on 2026-11-25.
 owner: content-team
-last_reviewed: 2026-11-25
-content_version: 1
+last_reviewed: 2026-11-28
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -240,15 +240,15 @@ spec:
 EOF
 kubectl apply -f hungry.yaml
 for i in $(seq 1 120); do [ -n "$(kubectl get pod hungry -o jsonpath='{.status.containerStatuses[0].state.terminated.reason}' 2>/dev/null)" ] && break; sleep 1; done
-kubectl get pod hungry -o jsonpath='{.status.containerStatuses[0].state.terminated.reason}{"\n"}'
+kubectl get pod hungry -o jsonpath='reason={.status.containerStatuses[0].state.terminated.reason}, exit code {.status.containerStatuses[0].state.terminated.exitCode}{"\n"}'
 ```
 
 ```text output
 pod/hungry created
-OOMKilled
+reason=…, exit code 137
 ```
 
-`tail /dev/zero` keeps reading a "line" that never ends, so its memory grows until it hits the 64 MiB limit — and the kernel kills it: **OOMKilled**. (`restartPolicy: Never` keeps it from being restarted, so the state stays visible.) A container over its **CPU** limit is slowed down instead, never killed for it.
+`tail /dev/zero` keeps reading a "line" that never ends, so its memory grows until it hits the 64 MiB limit — and the kernel kills it. Exit code 137 means the process was ended by `SIGKILL` (128 + 9). On most runs the reason is **OOMKilled**, which says the kernel's out-of-memory killer sent that signal; treat the reason as a helpful hint, not proof either way. The container runtime sets it only when it notices the out-of-memory event, and in DevForge's own CI runs the reason occasionally came back as `Error` while the exit code was 137 every time. So when a container with a memory limit dies with 137 and nobody deleted or killed it, suspect memory first and confirm with its memory use before it died (`kubectl top pod`, or your monitoring). (`restartPolicy: Never` keeps it from being restarted, so the state stays visible.) A container over its **CPU** limit is slowed down instead, never killed for it.
 
 ### 7. Delete the cluster
 

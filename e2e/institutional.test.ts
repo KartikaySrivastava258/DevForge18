@@ -38,6 +38,9 @@ describe("administration screens", () => {
     const users = page.locator("section", { has: page.getByRole("heading", { name: "Users" }) });
     await page.getByLabel("Role", { exact: true }).selectOption("student");
     await expectText(users.locator("tbody"), /Sam Student/);
+    // The filter is applied by a new request: wait until the admin's row has gone before counting, or a slow
+    // machine counts the unfiltered table (seen in CI run 46139925723).
+    await users.locator("tbody tr", { hasText: "Root Admin" }).waitFor({ state: "detached" });
     assert.equal(await users.locator("tbody tr").count(), 1);
 
     // Role change: nothing happens until confirmed.
