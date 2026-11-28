@@ -9,6 +9,7 @@ import { hashPassword } from "../server/src/auth/password.ts";
 import { insertUser, type Role } from "../server/src/auth/users.ts";
 import { migrate, openDatabase } from "../server/src/db/database.ts";
 import { silentLogger } from "../server/src/observability/logger.ts";
+import type { Limiters } from "../server/src/routes/deps.ts";
 
 const root = join(import.meta.dirname, "..");
 
@@ -21,8 +22,11 @@ export interface Harness {
   close: () => Promise<void>;
 }
 
-/** Runs the real server (built frontend + compiled content, in-memory DB) and a headless Chromium. */
-export async function startHarness(overrides: Partial<AppConfig> = {}): Promise<Harness> {
+/**
+ * Runs the real server (built frontend + compiled content, in-memory DB) and a headless Chromium.
+ * `options.limiters` replaces the production rate limiters, for a test that is deliberately one very busy client.
+ */
+export async function startHarness(overrides: Partial<AppConfig> = {}, options: { limiters?: Limiters } = {}): Promise<Harness> {
   // Bind the port first so the app is created with the exact origin the browser will send.
   let app: App | undefined;
   const server = createServer((req, res) => {
@@ -52,7 +56,7 @@ export async function startHarness(overrides: Partial<AppConfig> = {}): Promise<
   };
   const db = openDatabase(":memory:");
   migrate(db);
-  app = createApp({ config, db, content: ContentStore.fromFile(config.contentPath), logger: silentLogger });
+  app = createApp({ config, db, content: ContentStore.fromFile(config.contentPath), logger: silentLogger, ...(options.limiters ? { limiters: options.limiters } : {}) });
   const browser = await chromium.launch();
 
   return {
