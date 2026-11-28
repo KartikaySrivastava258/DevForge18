@@ -8,7 +8,8 @@
 # - load: k6 load test of the API (load/api.js, thresholds on p95 latency and errors), nightly and on manual runs only.
 # - lessons: executed lessons and local labs, in three parallel shards. On pushes and pull requests only the
 #   lessons a change can affect run (scripts/lib/affected.ts); the nightly run and manual runs execute all of
-#   them. A lesson counts as "executed" only after a CI run that actually ran it.
+#   them. A lesson counts as "executed" only after a CI run that actually ran it. Shard 1 also compares the Nginx
+#   location-matcher model with a real nginx container whenever code changed, and in every full run.
 name: CI
 
 on:
@@ -257,6 +258,14 @@ jobs:
       - name: Install lesson tools
         if: steps.select.outputs.count != '0'
         uses: ./.github/actions/lesson-tools
+      - name: Simulation models against the real tools (Nginx location matcher vs nginx in Docker)
+        # Generated configurations and paths through the pinned nginx image; the model must pick the same block.
+        # Runs once (shard 1) whenever code may have changed (scripts/lib/affected.ts, modelComparisonsAffected);
+        # REQUIRED makes a missing Docker engine fail the step instead of skipping the comparison.
+        if: matrix.shard == 1 && steps.select.outputs.models == 'true'
+        env:
+          DEVFORGE_NGINX_COMPARE_REQUIRED: "1"
+        run: node --disable-warning=ExperimentalWarning --test shared/simulations/nginx/location-matcher.nginx.test.ts
       - name: Executed lessons and labs
         if: steps.select.outputs.count != '0'
         run: node --disable-warning=ExperimentalWarning --test scripts/lib/lesson-runner.test.ts
