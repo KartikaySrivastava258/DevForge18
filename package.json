@@ -34,7 +34,8 @@
     "new:project": "node --disable-warning=ExperimentalWarning scripts/new-content.ts project",
     "test:e2e:throttled": "DEVFORGE_E2E_CPU_THROTTLE=8 npm run test:e2e",
     "test:compose": "bash scripts/compose-smoke.sh",
-    "test:load": "bash scripts/load-test.sh"
+    "test:load": "bash scripts/load-test.sh",
+    "test:upgrade": "bash scripts/upgrade-test.sh"
   },
   "dependencies": {
     "js-yaml": "^4.2.0",

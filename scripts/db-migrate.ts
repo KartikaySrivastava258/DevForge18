@@ -4,11 +4,13 @@ import { loadConfig } from "../server/src/config.ts";
 import { migrate, openDatabase } from "../server/src/db/database.ts";
 
 const config = loadConfig();
-const db = openDatabase(resolve(config.databasePath));
+const path = resolve(config.databasePath);
+const db = openDatabase(path);
 const result = migrate(db);
+// The path is printed because a wrong DATABASE_PATH silently gets a new, empty database.
 console.log(
   result.applied.length
-    ? `Applied ${result.applied.length} migration(s): ${result.applied.join(", ")}`
-    : `Database is up to date (${result.alreadyApplied} migration(s) already applied).`,
+    ? `Applied ${result.applied.length} migration(s) to ${path}: ${result.applied.join(", ")}`
+    : `Database ${path} is up to date (${result.alreadyApplied} migration(s) already applied).`,
 );
 db.close();

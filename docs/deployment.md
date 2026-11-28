@@ -71,20 +71,33 @@ Changes appear on the site only after the pull request is merged and the site is
 
 ## Backups and restore
 
+Run backups with the server's own `DATABASE_PATH` (Option B: `/var/lib/devforge/devforge.db`; the default is `./data/devforge.db`). `db:backup` refuses a path where no database exists.
+
 ```bash
-npm run db:backup                       # ./backups/devforge-<timestamp>.db, integrity-checked
+DATABASE_PATH=/var/lib/devforge/devforge.db npm run db:backup     # ./backups/devforge-<timestamp>.db, integrity-checked
+DATABASE_PATH=/var/lib/devforge/devforge.db npm run db:backup -- /srv/backups/devforge-$(date +%F).db
 ```
 
-`VACUUM INTO` produces a consistent copy while the server runs. Copy backups off the machine. To restore: stop the server, replace the file at `DATABASE_PATH` with the backup, delete any `-wal`/`-shm` files beside it, start the server. **Test a restore at least once per term.**
+`VACUUM INTO` produces a consistent copy while the server runs; the script then opens the copy, runs `PRAGMA integrity_check` and prints `Backup OK: … (integrity ok, N user(s))`. Copy backups off the machine.
+
+To restore:
+
+1. Stop the server.
+2. Replace the file at `DATABASE_PATH` with the backup (`cp backup.db "$DATABASE_PATH"`), and delete any `-wal`/`-shm` files beside it (`rm -f "$DATABASE_PATH-wal" "$DATABASE_PATH-shm"`): they belong to the database you replaced.
+3. Start the server and check `/api/ready`. Everything written after the backup was taken is gone.
+
+**Test a restore at least once per term.** `npm run test:upgrade` (below) runs exactly these steps: a backup while the server runs, a change, stop, restore, start, and checks that every user sees the state at backup time.
 
 ## Upgrades
 
-1. Back up the database.
+1. Back up the database (as above).
 2. Pull the new version, `npm install`, `npm run build`.
-3. Start the server — pending migrations apply automatically at start-up (or run `npm run db:migrate` first).
+3. Start the server — pending migrations apply automatically at start-up and are logged (`migrations applied`). Or run them first with the same `DATABASE_PATH` as the server: `DATABASE_PATH=/var/lib/devforge/devforge.db npm run db:migrate` prints the database it migrated and the migrations it applied.
 4. Check `/api/ready` and the logs.
 
-Migrations are forward-only. To roll back code, restore the pre-upgrade backup as well.
+Existing accounts, passwords, sessions, progress and bookmarks are kept; signed-in users stay signed in. Migrations are forward-only. To roll back code, restore the pre-upgrade backup (as above) and start the old version on it.
+
+`npm run test:upgrade` (`scripts/upgrade-test.sh`, also the CI job *Upgrade, backup and restore*) tests this procedure from two older versions — `eeac236` (Milestone 8, migrations 0001–0004) and `21ad03b` (Phase 0, migration 0001 only). It extracts each with `git archive`, creates an admin and learners with progress, bookmarks, quiz attempts, labs and simulation challenges through the old server's API, takes the old version's backup, stops it, migrates a copy with the current `db:migrate` and checks that every existing row is unchanged, that the same users sign in with the same passwords and see the same data, and that certificates, cohorts, assignments and data export work on it; then backup and restore with the current version, and the rollback. `UPGRADE_FROM=<commit>` picks other old versions; see [testing](testing.md).
 
 ## Monitoring
 
