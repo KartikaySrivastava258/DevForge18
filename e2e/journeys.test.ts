@@ -875,6 +875,30 @@ describe("simulations", () => {
     noProblems(problems);
   });
 
+  it("Redis: with memory full, noeviction refuses writes, allkeys-lru signs users out, volatile-lru keeps every session", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/redis/simulations/redis-cache-load?scenario=shared-instance");
+    const sim = page.locator(".sim");
+    await sim.locator(".cache-sim").waitFor();
+    const summary = sim.locator(".k8s-sim__summary");
+    const runMinute = () => sim.getByRole("button", { name: "Run the rest of the minute" }).click();
+    assert.equal(await sim.getByLabel("maxmemory-policy").inputValue(), "noeviction");
+    await runMinute();
+    await expectText(summary, /Writes refused \(OOM\)\s+40/);
+    await expectText(sim.locator(".sim__log"), /refused: OOM command not allowed when used memory > 'maxmemory'/);
+    await sim.getByRole("button", { name: "Reset" }).click();
+    await sim.getByLabel("maxmemory-policy").selectOption("allkeys-lru");
+    await runMinute();
+    await expectText(summary, /Sessions evicted\s+12/);
+    await sim.getByRole("button", { name: "Reset" }).click();
+    await sim.getByLabel("maxmemory-policy").selectOption("volatile-lru");
+    await runMinute();
+    await expectText(summary, /Sessions evicted\s+0/);
+    await expectText(summary, /Writes refused \(OOM\)\s+0/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
   it("Nginx: a regex beats a plain prefix; ^~ serves the docs statically", async () => {
     const { page, problems } = await h.newPage();
     await page.goto("/tracks/nginx/simulations/nginx-location-matcher");
