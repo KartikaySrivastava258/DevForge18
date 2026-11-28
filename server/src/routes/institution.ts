@@ -181,11 +181,20 @@ export function registerInstitutionRoutes(router: Router, { db, content, config,
   const membership = (cohortId: string, userId: string) =>
     db.prepare("SELECT role FROM cohort_members WHERE cohort_id = ? AND user_id = ?").get(cohortId, userId) as { role: "learner" | "faculty" } | undefined;
   const getCohort = (id: string) => db.prepare("SELECT * FROM cohorts WHERE id = ?").get(id) as unknown as CohortRow | undefined;
+  /**
+   * The user's effective role in a cohort. A faculty membership counts only while the account is still
+   * faculty or admin: a teacher whose role is taken away loses the teacher's view at once.
+   */
+  const cohortRole = (cohortId: string, user: UserRecord): "learner" | "faculty" | undefined => {
+    const role = membership(cohortId, user.id)?.role;
+    if (role === "faculty" && !isStaff(user)) return undefined;
+    return role ?? (user.role === "admin" ? "faculty" : undefined);
+  };
   /** The cohort, if the user teaches it (faculty member) or is an administrator. */
   const taughtCohort = (id: string, user: UserRecord): CohortRow => {
     const cohort = getCohort(id);
     if (!cohort) throw notFound("Cohort");
-    if (user.role !== "admin" && membership(id, user.id)?.role !== "faculty") throw forbidden();
+    if (user.role !== "admin" && cohortRole(id, user) !== "faculty") throw forbidden();
     return cohort;
   };
   /** May this reviewer see and review this learner's work? Admins always; faculty when they teach a cohort the learner is in. */
@@ -233,7 +242,7 @@ export function registerInstitutionRoutes(router: Router, { db, content, config,
          FROM cohorts c JOIN cohort_members m ON m.cohort_id = c.id AND m.user_id = ? ORDER BY c.created_at DESC`,
       ).all(user.id) as { id: string; name: string; description: string; join_code: string; role: "learner" | "faculty"; learners: number; assignments: number }[];
       return ok({
-        cohorts: rows.map((r) => ({ id: r.id, name: r.name, description: r.description, role: r.role, learners: r.learners, assignments: r.assignments, joinCode: r.role === "faculty" ? r.join_code : undefined })),
+        cohorts: rows.map((r) => ({ id: r.id, name: r.name, description: r.description, role: r.role, learners: r.learners, assignments: r.assignments, joinCode: r.role === "faculty" && isStaff(user) ? r.join_code : undefined })),
       });
     },
     { auth: "user" },
@@ -263,7 +272,7 @@ export function registerInstitutionRoutes(router: Router, { db, content, config,
       const user = requireUser(ctx);
       const cohort = getCohort(ctx.params.id ?? "");
       if (!cohort) throw notFound("Cohort");
-      const role = membership(cohort.id, user.id)?.role ?? (user.role === "admin" ? "faculty" : undefined);
+      const role = cohortRole(cohort.id, user);
       if (!role) throw notFound("Cohort");
       const assignments = (db.prepare("SELECT * FROM assignments WHERE cohort_id = ? ORDER BY due_at, created_at").all(cohort.id) as unknown as AssignmentRow[]);
       const base = { id: cohort.id, name: cohort.name, description: cohort.description, role };
@@ -451,7 +460,9 @@ export function registerInstitutionRoutes(router: Router, { db, content, config,
       return { type: "submission" as const, ownerId: s.user_id, kind: s.kind, itemId: s.item_id, updatedAt: s.submitted_at, row: s };
     }
     if (type === "decision") {
-      const d = db.prepare("SELECT * FROM architecture_decisions WHERE id = ? AND status = 'submitted'").get(Number(id) || -1) as unknown as DecisionRow | undefined;
+      // Only the canonical id ("12", not "012" or "0x0c"): reviews are stored under this text, and the learner's
+      // view, export and account deletion find them by CAST(id AS TEXT).
+      const d = (/^[1-9][0-9]{0,15}$/.test(id) ? db.prepare("SELECT * FROM architecture_decisions WHERE id = ? AND status = 'submitted'").get(Number(id)) : undefined) as unknown as DecisionRow | undefined;
       if (!d) throw notFound("Decision record");
       return { type: "decision" as const, ownerId: d.user_id, kind: "architecture", itemId: d.architecture_id, updatedAt: d.updated_at, row: d };
     }
