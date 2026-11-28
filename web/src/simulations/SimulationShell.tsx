@@ -310,8 +310,11 @@ export function SimulationShell({ sim, entry, completed: initiallyCompleted, ini
           ) : null}
 
           <div className="sim__log">
-            <Heading className="sim__side-title">What happened</Heading>
-            <ol reversed>
+            <Heading className="sim__side-title" id={`${titleId}-log`}>
+              What happened
+            </Heading>
+            {/* The log scrolls when long, so it must be reachable with the keyboard (WCAG 2.1.1; axe scrollable-region-focusable). */}
+            <ol reversed tabIndex={0} aria-labelledby={`${titleId}-log`}>
               {log.map((entry) => (
                 <li key={entry.id} data-refused={entry.refused ? "true" : undefined}>
                   <code>{entry.command}</code>

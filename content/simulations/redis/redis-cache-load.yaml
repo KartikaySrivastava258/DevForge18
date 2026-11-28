@@ -6,11 +6,15 @@ learning_objectives:
   - See how cache-aside and the TTL change database load and the hit ratio.
   - Recognise a cache stampede when a hot key expires during a traffic spike.
   - Keep database load under a limit by letting only one request refill an expired key.
+  - Choose a maxmemory-policy for an instance that holds both cache entries and keys that must not be evicted.
 simplifications:
   - Time moves in whole seconds, every request in a second arrives at once, and the database answers within the second.
   - Traffic is fixed — 100 requests a second, 400 from second 20 to 39 — with 60 % asking for one hot key and the rest spread evenly over 40 others.
-  - The cache never runs out of memory, and "single flight" (one request refills, the others wait) is modelled as working perfectly.
-text_alternative: The current second, the hit ratio and the peak database load against the limit; the settings (cache-aside, TTL, single flight); and a chart of database queries per second against requests per second, also available as a list in text mode. Every second is explained in the event log.
+  - The "single flight" fix (one request refills, the others wait) is modelled as working perfectly.
+  - Memory is counted in keys, every key the same size, and the first two scenarios have no memory limit. Expired keys free their memory at once; Redis removes them when they are accessed or by a background cycle.
+  - Eviction follows Redis's rules — memory is checked before each command, noeviction (and volatile-lru when no key has a TTL) refuses writes with an OOM error, volatile-lru evicts only keys with a TTL — but LRU and LFU are exact. Redis approximates both by sampling a few keys (maxmemory-samples, 5 by default), and its LFU counter is a probabilistic counter that decays over time.
+  - Within a second, each key gets one GET (and one SET on a miss); the hot key's requests count as spread over the second, so for LRU it is always recently used.
+text_alternative: The current second, the hit ratio and the peak database load against the limit; the settings (cache-aside, TTL, single flight, memory limit and eviction policy); keys stored, sessions evicted and writes refused when memory is limited; and a chart of database queries per second against requests per second, also available as a list in text mode. Every second is explained in the event log.
 scenarios:
   - id: stampede
     title: The hot key expires in the spike
@@ -20,6 +24,10 @@ scenarios:
     title: No cache yet
     description: Every request reads the database, which copes with 60 queries a second. The cache starts empty when you turn it on.
     params: { cacheOn: false, ttl: 10, singleFlight: false, limit: 60, hotExpiresAt: null }
+  - id: shared-instance
+    title: Cache and sessions in one Redis
+    description: "The same Redis holds the cache and 10 user sessions (no TTL; they are not in the database), and a user signs in every 5 seconds. It has room for 50 keys, with the default maxmemory-policy noeviction. Cache entries live 30 seconds; single flight is on."
+    params: { cacheOn: true, ttl: 30, singleFlight: true, limit: 60, hotExpiresAt: null, maxKeys: 50, policy: noeviction, sessions: 10, sessionEvery: 5 }
 challenges:
   - id: survive-the-spike
     title: Survive the spike
@@ -40,6 +48,15 @@ challenges:
       - { type: setCache, on: true }
       - { type: setSingleFlight, on: true }
       - { type: tick, count: 60 }
+  - id: keep-sessions
+    title: Keep every session
+    goal: Run the whole minute with no session evicted, no write refused, and the database at or under 60 queries a second.
+    scenario: shared-instance
+    check: sessions-safe
+    hint: Run it once with noeviction and read the log. Which policies may evict a key that has no TTL? Which one only evicts cache entries?
+    solution:
+      - { type: setPolicy, policy: volatile-lru }
+      - { type: tick, count: 60 }
 owner: content-team
-last_reviewed: 2026-11-26
-content_version: 1
+last_reviewed: 2026-11-28
+content_version: 2

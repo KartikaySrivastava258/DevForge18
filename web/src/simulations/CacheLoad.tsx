@@ -1,4 +1,4 @@
-import { cacheLoad, DURATION, hitRatio, peak, traffic, type CacheAction, type CacheState } from "../../../shared/simulations/redis/cache-load.ts";
+import { cacheLoad, DURATION, hitRatio, keyCount, peak, POLICIES, POLICY_NOTES, traffic, type CacheAction, type CacheState, type Policy } from "../../../shared/simulations/redis/cache-load.ts";
 import { Field } from "./Field.tsx";
 import type { SimulationEntry, ViewProps } from "./registry.ts";
 
@@ -12,6 +12,10 @@ function command(a: CacheAction): string {
       return `SET … EX ${a.seconds}`;
     case "setSingleFlight":
       return a.on ? "on a miss: SET lock NX, one request refills, others wait" : "on a miss: every request queries the database";
+    case "setPolicy":
+      return `CONFIG SET maxmemory-policy ${a.policy}`;
+    case "setMaxKeys":
+      return a.keys === null ? "CONFIG SET maxmemory 0 (no limit)" : `maxmemory: room for ${a.keys} keys`;
   }
 }
 
@@ -65,6 +69,24 @@ function CacheLoadView({ state, dispatch }: ViewProps<CacheState, CacheAction>) 
             {peak(state)} / s (limit {state.limit})
           </dd>
         </div>
+        {state.maxKeys !== null ? (
+          <>
+            <div>
+              <dt>Keys in memory</dt>
+              <dd>
+                {keyCount(state)} (room for {state.maxKeys})
+              </dd>
+            </div>
+            <div>
+              <dt>Sessions evicted</dt>
+              <dd className={state.sessionsLost ? "rag-sim__bad" : "rag-sim__ok"}>{state.sessionsLost}</dd>
+            </div>
+            <div>
+              <dt>Writes refused (OOM)</dt>
+              <dd className={state.oom ? "rag-sim__bad" : "rag-sim__ok"}>{state.oom}</dd>
+            </div>
+          </>
+        ) : null}
       </dl>
       <div className="prom-sim__query">
         <label className="n8n-sim__rule">
@@ -84,6 +106,29 @@ function CacheLoadView({ state, dispatch }: ViewProps<CacheState, CacheAction>) 
         <label className="n8n-sim__rule">
           <input type="checkbox" checked={state.singleFlight} disabled={started} onChange={(e) => dispatch({ type: "setSingleFlight", on: e.target.checked })} /> Single flight
         </label>
+        <Field label="Memory limit">
+          {(id) => (
+            <select id={id} value={state.maxKeys ?? "none"} disabled={started} onChange={(e) => dispatch({ type: "setMaxKeys", keys: e.target.value === "none" ? null : Number(e.target.value) })}>
+              <option value="none">none (maxmemory 0)</option>
+              {[20, 30, 40, 50, 60, 80].map((n) => (
+                <option key={n} value={n}>
+                  room for {n} keys
+                </option>
+              ))}
+            </select>
+          )}
+        </Field>
+        <Field label="maxmemory-policy">
+          {(id) => (
+            <select id={id} value={state.policy} disabled={started} onChange={(e) => dispatch({ type: "setPolicy", policy: e.target.value as Policy })}>
+              {POLICIES.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          )}
+        </Field>
         <button type="button" className="btn btn--small" disabled={state.t >= DURATION} onClick={() => dispatch({ type: "tick", count: DURATION - state.t })}>
           Run the rest of the minute
         </button>
@@ -92,6 +137,11 @@ function CacheLoadView({ state, dispatch }: ViewProps<CacheState, CacheAction>) 
         <LoadChart state={state} />
         <figcaption className="small muted">Solid: database queries per second. Dashed grey: requests per second. Dashed amber: the database's limit.</figcaption>
       </figure>
+      {state.maxKeys !== null || state.sessions.length ? (
+        <p className="small muted">
+          {state.policy}: {POLICY_NOTES[state.policy]} {state.sessions.length} user session{state.sessions.length === 1 ? "" : "s"} (no TTL) stored now.
+        </p>
+      ) : null}
     </div>
   );
 }

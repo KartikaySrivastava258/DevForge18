@@ -342,7 +342,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("every page has exactly one h1 and every form control has a label", async () => {
     const { page } = await h.newPage();
-    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff", "/tracks/github-actions/simulations/github-actions-workflow-run", "/tracks/redis/simulations/redis-cache-load", "/tracks/nginx/simulations/nginx-location-matcher", "/tracks/postman/simulations/postman-request-builder", "/tracks/jenkins/simulations/jenkins-build-queue"]) {
+    for (const path of ["/", "/tracks", "/tracks/redis", "/paths", "/paths/mlops", "/search?q=cache", "/login", "/register", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/postgresql/simulations/postgresql-isolation-timeline", "/tracks/terraform/simulations/terraform-plan-diff", "/tracks/github-actions/simulations/github-actions-workflow-run", "/tracks/redis/simulations/redis-cache-load", "/tracks/nginx/simulations/nginx-location-matcher", "/tracks/postman/simulations/postman-request-builder", "/tracks/jenkins/simulations/jenkins-build-queue"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       await page.waitForLoadState("networkidle");
@@ -359,7 +359,7 @@ describe("accessibility, theming and responsiveness", () => {
 
   it("mobile: no horizontal overflow, menu toggles, map becomes a list", async () => {
     const { page, problems } = await h.newPage({ mobile: true });
-    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/terraform/simulations/terraform-plan-diff", "/tracks/github-actions/simulations/github-actions-workflow-run", "/tracks/redis/simulations/redis-cache-load", "/tracks/nginx/simulations/nginx-location-matcher", "/tracks/postman/simulations/postman-request-builder", "/tracks/jenkins/simulations/jenkins-build-queue", "/tracks/git-github/labs/git-resolve-a-merge-conflict", "/tracks/kubernetes/labs/kubernetes-self-healing-and-rollouts", "/tracks/kubernetes/labs/kubernetes-debug-broken-deployments", "/paths/devops-platform", "/dashboard"]) {
+    for (const path of ["/", "/tracks", "/tracks/kubernetes", "/tracks/docker/lessons/docker-images-vs-containers", "/tracks/git-github/lessons/git-first-commits", "/tracks/git-github/simulations/git-commit-graph", "/tracks/kubernetes/simulations/kubernetes-reconciliation", "/tracks/prometheus-grafana/simulations/prometheus-scrape-and-rate", "/tracks/opentelemetry/simulations/opentelemetry-trace-waterfall", "/tracks/kafka/simulations/kafka-consumer-groups", "/tracks/airflow/simulations/airflow-scheduler-timeline", "/tracks/mlflow/simulations/mlflow-experiment-explorer", "/tracks/langchain-llamaindex/simulations/langchain-rag-pipeline", "/tracks/n8n/simulations/n8n-workflow-executor", "/tracks/jira/simulations/jira-sprint-board", "/tracks/docker/simulations/docker-layer-cache", "/tracks/postgresql/simulations/postgresql-query-planner", "/tracks/postgresql/simulations/postgresql-isolation-timeline", "/tracks/terraform/simulations/terraform-plan-diff", "/tracks/github-actions/simulations/github-actions-workflow-run", "/tracks/redis/simulations/redis-cache-load", "/tracks/nginx/simulations/nginx-location-matcher", "/tracks/postman/simulations/postman-request-builder", "/tracks/jenkins/simulations/jenkins-build-queue", "/tracks/git-github/labs/git-resolve-a-merge-conflict", "/tracks/kubernetes/labs/kubernetes-self-healing-and-rollouts", "/tracks/kubernetes/labs/kubernetes-debug-broken-deployments", "/paths/devops-platform", "/dashboard"]) {
       await page.goto(path);
       await page.locator("h1").first().waitFor();
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -794,6 +794,45 @@ describe("simulations", () => {
     noProblems(problems);
   });
 
+  it("PostgreSQL: a lost update at READ COMMITTED; REPEATABLE READ refuses it, and a retry keeps both deposits", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/postgresql/simulations/postgresql-isolation-timeline");
+    const sim = page.locator(".sim");
+    await sim.locator(".iso-sim").waitFor();
+    assert.ok(await sim.locator(".tag--sim", { hasText: "Simulation" }).isVisible(), "labelled as a simulation");
+    await sim.getByRole("button", { name: "Keep both deposits" }).click();
+    assert.equal(await sim.getByLabel("Scenario").inputValue(), "deposits");
+    const timeline = sim.locator(".iso-sim__timeline");
+    const runT = (tx: string) => sim.getByRole("button", { name: `Run ${tx}`, exact: true }).click();
+    // T1 reads, T2 reads, T1 writes, T2 writes (and waits for T1's row lock), T1 commits, T2 commits.
+    for (const tx of ["T1", "T2", "T1", "T2"]) await runT(tx);
+    await expectText(timeline, /waiting for the other transaction's row lock/);
+    assert.equal(await sim.getByRole("button", { name: "Run T2", exact: true }).isDisabled(), true, "a waiting transaction cannot run");
+    for (const tx of ["T1", "T2"]) await runT(tx);
+    await expectText(sim.locator(".iso-sim__anomalies"), /Lost update: the committed changes add up to 130, but the balance is 80/);
+
+    // Keyboard only: reset, choose REPEATABLE READ, run the same order; T2 fails and is retried.
+    await sim.getByRole("button", { name: "Reset" }).focus();
+    await page.keyboard.press("Enter");
+    await sim.getByLabel("Isolation level (both transactions)").selectOption("repeatable read");
+    for (const tx of ["T1", "T2", "T1", "T2", "T1"]) {
+      await sim.getByRole("button", { name: `Run ${tx}`, exact: true }).focus();
+      await page.keyboard.press("Enter");
+    }
+    await expectText(timeline, /ERROR: {2}could not serialize access due to concurrent update/);
+    await sim.getByRole("button", { name: "Retry T2" }).click();
+    for (let i = 0; i < 3; i++) await runT("T2");
+    await expectText(sim.locator(".iso-sim__data"), /1\s*ana\s*130/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+
+    await page.screenshot({ path: join(SHOTS, "simulation-postgresql-isolation.png"), fullPage: true });
+    // Text mode tells the same story.
+    await sim.getByRole("button", { name: "Text mode" }).click();
+    await expectText(sim.locator(".sim__text"), /T2: committed \(attempt 2\)/);
+    await expectText(sim.locator(".sim__text"), /Committed accounts: 1\|ana\|130\./);
+    noProblems(problems);
+  });
+
   it("Terraform: a rename plans destroy and create until a moved block makes it a move; drift is reverted by apply", async () => {
     const { page, problems } = await h.newPage();
     await page.goto("/tracks/terraform/simulations/terraform-plan-diff");
@@ -845,6 +884,30 @@ describe("simulations", () => {
     await sim.getByLabel("Single flight").check();
     await sim.getByRole("button", { name: "Run the rest of the minute" }).click();
     await expectText(summary, /9 \/ s/);
+    await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
+    noProblems(problems);
+  });
+
+  it("Redis: with memory full, noeviction refuses writes, allkeys-lru signs users out, volatile-lru keeps every session", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/redis/simulations/redis-cache-load?scenario=shared-instance");
+    const sim = page.locator(".sim");
+    await sim.locator(".cache-sim").waitFor();
+    const summary = sim.locator(".k8s-sim__summary");
+    const runMinute = () => sim.getByRole("button", { name: "Run the rest of the minute" }).click();
+    assert.equal(await sim.getByLabel("maxmemory-policy").inputValue(), "noeviction");
+    await runMinute();
+    await expectText(summary, /Writes refused \(OOM\)\s+40/);
+    await expectText(sim.locator(".sim__log"), /refused: OOM command not allowed when used memory > 'maxmemory'/);
+    await sim.getByRole("button", { name: "Reset" }).click();
+    await sim.getByLabel("maxmemory-policy").selectOption("allkeys-lru");
+    await runMinute();
+    await expectText(summary, /Sessions evicted\s+12/);
+    await sim.getByRole("button", { name: "Reset" }).click();
+    await sim.getByLabel("maxmemory-policy").selectOption("volatile-lru");
+    await runMinute();
+    await expectText(summary, /Sessions evicted\s+0/);
+    await expectText(summary, /Writes refused \(OOM\)\s+0/);
     await sim.locator(".sim__status", { hasText: /^Solved/ }).waitFor();
     noProblems(problems);
   });

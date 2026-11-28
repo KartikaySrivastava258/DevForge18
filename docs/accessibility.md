@@ -9,7 +9,7 @@ DevForge 18 aims for WCAG 2.1 level AA. This page records what is tested automat
 - **Rules:** every axe rule tagged `wcag2a`, `wcag2aa`, `wcag21a` or `wcag21aa`. No rule is disabled and no element is excluded; any future exclusion must be added to `EXCLUSIONS` in the test with its reason, and listed here.
 - **Colour schemes:** every page is audited twice, in the dark scheme (the default) and the light scheme (`prefers-color-scheme: light`); the test also checks that the page really switched (`<html data-theme>`).
 - **When:** after the page's own data has loaded (its heading and a page-specific element are visible, the network is idle, and entrance animations have finished, so contrast is measured on final colours).
-- **Pages (35, so 70 audits):**
+- **Pages (36, so 72 audits):**
 
 | Page | URL |
 |---|---|
@@ -20,6 +20,7 @@ DevForge 18 aims for WCAG 2.1 level AA. This page records what is tested automat
 | Lab (with an embedded simulation) | `/tracks/docker/labs/docker-layer-cache-experiments` |
 | Simulation | `/tracks/kubernetes/simulations/kubernetes-reconciliation` |
 | Request playground, signed in, after a real request (the response panel is audited too) | `/tracks/postman/playground` |
+| Simulation after a dozen steps (long, scrolling event log; timeline with a lock wait and an error) | `/tracks/postgresql/simulations/postgresql-isolation-timeline?scenario=deposits` |
 | Quiz, signed out and signed in (questions shown) | `/tracks/git-github/quiz` |
 | Mini-project | `/tracks/docker/projects/docker-notes-api` |
 | Capstones and one capstone | `/capstones`, `/capstones/capstone-a` |
@@ -55,7 +56,7 @@ First run (2026-11-27, before fixes): 11 of 42 audits failed (the phone-width ca
 
 Found while checking the fixes visually (not an axe rule): a simulation embedded in a lab article kept its two-column layout, because the layout switched on the viewport width, so the Dockerfile editor was squeezed to about 250 px with one character per line. The layout now follows the simulation's own width (a CSS container query); a browser test guards it.
 
-Final run (2026-11-27): **52 of 52 audits pass, 0 violations** (26 pages × 2 schemes). After the Milestone 11 pages were added (cohorts, reviews, portfolio, administration, content editor, each with real data created by the test): **66 of 66 pass, 0 violations**, nothing excluded, as part of `npm run test:e2e` (all browser tests pass).
+Final run (2026-11-27): **52 of 52 audits pass, 0 violations** (26 pages × 2 schemes). After the Milestone 11 pages were added (cohorts, reviews, portfolio, administration, content editor, each with real data created by the test): **66 of 66 pass, 0 violations**, nothing excluded, as part of `npm run test:e2e` (all browser tests pass). 2026-11-28, after adding the certificate page, the request playground and a simulation with a long event log: **72 of 72 pass** (the long-log audit found the event log of every simulation was not keyboard-reachable; fixed in `SimulationShell`).
 
 ### What the automated audit does not cover
 

@@ -185,9 +185,9 @@ OK
 
 ## Try it in the simulation
 
-A minute of traffic with a spike: watch database load when the hot key expires, and keep it under the limit. It is a labelled teaching model with fixed traffic, not a real Redis.
+One Redis holds a cache and user sessions that have no TTL, and its memory fills up during a minute of traffic. Try each `maxmemory-policy`: which one refuses writes, which ones sign users out, and which one only evicts cache entries? The other scenarios show what happens to the database when a hot key expires. It is a labelled teaching model with fixed traffic, not a real Redis — but its eviction rules were compared with a real Redis 7.4 for small command sequences.
 
-```simulation redis-cache-load scenario=stampede
+```simulation redis-cache-load scenario=shared-instance
 ```
 
 ## Common mistakes

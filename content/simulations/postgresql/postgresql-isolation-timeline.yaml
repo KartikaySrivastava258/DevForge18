@@ -1,0 +1,76 @@
+id: postgresql-isolation-timeline
+track: postgresql
+title: Two transactions on a timeline
+concept: When two transactions overlap, the isolation level decides what each one sees and what PostgreSQL refuses. READ COMMITTED lets a transaction see other transactions' commits between its statements; REPEATABLE READ gives it one snapshot and makes it fail rather than overwrite a concurrent update; SERIALIZABLE also cancels a transaction when the overlap could break every one-at-a-time order. Choose the order of the statements and watch which anomaly appears.
+learning_objectives:
+  - Recognise a non-repeatable read, a phantom read, a lost update and write skew on a timeline of two transactions.
+  - Predict what each isolation level does in PostgreSQL, including that READ UNCOMMITTED behaves like READ COMMITTED and that REPEATABLE READ has no phantom reads.
+  - Handle a serialization failure (SQLSTATE 40001) by retrying the whole transaction.
+simplifications:
+  - Each transaction runs a short fixed script; you choose the isolation level and the order of the statements, and one statement runs at a time. In a real server, statements from two sessions can overlap within milliseconds.
+  - The tables are tiny and have no indexes, so every read is a sequential scan. At SERIALIZABLE, PostgreSQL then locks the whole table for conflict detection; with indexes it can track finer locks and cancel fewer transactions.
+  - When a statement fails, the transaction is rolled back at once, as an application would; Retry starts it again from its first statement.
+  - The serializable checks follow PostgreSQL's code for two transactions only. Every order of these three scenarios at all four levels was run against a real PostgreSQL 16.15 server, and the model gives the same results, waits, errors and final tables; other scripts or newer versions may differ.
+text_alternative: The isolation level, the status and next statement of each transaction, a timeline table with one row per statement showing which transaction ran it, the exact SQL and what psql printed (rows, row counts, waiting for a lock, errors), the committed contents of the table, and the anomalies found so far. Switch to text mode to read the same as a list; every statement is also explained in the event log.
+scenarios:
+  - id: reads
+    title: Reading the same rows twice
+    description: "T1 runs the same query twice — SELECT id, balance FROM accounts WHERE balance >= 100 — then commits. T2 adds 50 to account 1, inserts account 3 with 200, and commits. Accounts: 1 (ana, 120) and 2 (ben, 80)."
+    params: { script: reads, level: read committed }
+  - id: deposits
+    title: Two deposits, read-modify-write
+    description: "Account 1 holds 100. T1 reads the balance and writes back what it read plus 50; T2 reads it and writes back what it read minus 20. Both changes should leave 130."
+    params: { script: deposits, level: read committed }
+  - id: oncall
+    title: At least one doctor on call
+    description: "Alice and Bob are both on call. Each transaction counts the doctors on call and, if it sees at least two, takes its own doctor off call. The rule: at least one doctor must stay on call."
+    params: { script: oncall, level: read committed }
+challenges:
+  - id: stable-reads
+    title: Reads that do not change
+    goal: Let T2 commit between T1's two identical SELECTs, yet have T1 read exactly the same rows both times and commit.
+    scenario: reads
+    check: stable-reads
+    hint: At READ COMMITTED, each statement takes a new snapshot. Which level gives the whole transaction one snapshot? Remember PostgreSQL takes it at the first statement, not at BEGIN.
+    solution:
+      - { type: setLevel, level: repeatable read }
+      - { type: run, tx: T1 }
+      - { type: run, tx: T2 }
+      - { type: run, tx: T2 }
+      - { type: run, tx: T2 }
+      - { type: run, tx: T1 }
+      - { type: run, tx: T1 }
+  - id: no-lost-update
+    title: Keep both deposits
+    goal: Let the two transactions overlap — both open at the same time — and still end with both deposits committed and a balance of 130.
+    scenario: deposits
+    check: no-lost-update
+    hint: At READ COMMITTED, whoever writes last overwrites the other's change. A higher level makes PostgreSQL refuse the second write instead — then retry the transaction that failed.
+    solution:
+      - { type: setLevel, level: repeatable read }
+      - { type: run, tx: T1 }
+      - { type: run, tx: T2 }
+      - { type: run, tx: T1 }
+      - { type: run, tx: T2 }
+      - { type: run, tx: T1 }
+      - { type: retry, tx: T2 }
+      - { type: run, tx: T2 }
+      - { type: run, tx: T2 }
+      - { type: run, tx: T2 }
+  - id: rule-holds
+    title: Keep a doctor on call
+    goal: Let both transactions overlap and finish, and still have at least one doctor on call.
+    scenario: oncall
+    check: rule-holds
+    hint: The two transactions update different rows, so REPEATABLE READ sees no conflicting write. Which level also tracks what each transaction read?
+    solution:
+      - { type: setLevel, level: serializable }
+      - { type: run, tx: T1 }
+      - { type: run, tx: T2 }
+      - { type: run, tx: T1 }
+      - { type: run, tx: T2 }
+      - { type: run, tx: T1 }
+      - { type: run, tx: T2 }
+owner: content-team
+last_reviewed: 2026-11-28
+content_version: 1

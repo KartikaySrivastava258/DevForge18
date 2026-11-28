@@ -53,7 +53,7 @@ Screenshots are regenerated from the built app with `node --disable-warning=Expe
 | Accounts, sign-in, progress tracking (a lesson completes only when its self-check is passed), bookmarks, dashboard | Working |
 | For colleges: cohorts with join codes, assignments with due dates, submissions reviewed against rubrics, opt-in public portfolios, certificates anyone can verify, data export and account deletion | Working |
 | Roles (student, faculty, admin), admin screens (roles, disable/enable, audit log), and a content editor for faculty that opens GitHub pull requests | Working (the editor is covered by tests against a fake GitHub API and was tested once against the real GitHub API) |
-| Dark and light themes, keyboard navigation, mobile layout; automated accessibility audit of every page type | Working (68 audits; a manual screen-reader pass is pending) |
+| Dark and light themes, keyboard navigation, mobile layout; automated accessibility audit of every page type | Working (72 audits; a manual screen-reader pass is pending) |
 
 ## The 18 tracks
 

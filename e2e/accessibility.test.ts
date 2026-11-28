@@ -53,6 +53,18 @@ const PAGES: AuditedPage[] = [
   { name: "lab", path: "/tracks/docker/labs/docker-layer-cache-experiments", ready: "h1" },
   { name: "simulation", path: "/tracks/kubernetes/simulations/kubernetes-reconciliation", ready: "h1" },
   { name: "request playground with a response (signed in)", path: "/tracks/postman/playground", ready: "#pg-path", signedIn: true, prepare: sendPlaygroundRequest },
+  // After a dozen statements the event log scrolls, so it must be keyboard-reachable; also audits the timeline table with a wait and an error.
+  {
+    name: "simulation with a long event log",
+    path: "/tracks/postgresql/simulations/postgresql-isolation-timeline?scenario=deposits",
+    ready: ".iso-sim",
+    prepare: async (page) => {
+      await page.getByLabel("Isolation level (both transactions)").selectOption("repeatable read");
+      for (const tx of ["T1", "T2", "T1", "T2", "T1"]) await page.getByRole("button", { name: `Run ${tx}`, exact: true }).click();
+      await page.getByRole("button", { name: "Retry T2" }).click();
+      for (let i = 0; i < 3; i++) await page.getByRole("button", { name: "Run T2", exact: true }).click();
+    },
+  },
   { name: "quiz (signed out)", path: "/tracks/git-github/quiz", ready: "h1" },
   { name: "quiz (signed in)", path: "/tracks/git-github/quiz", ready: "fieldset", signedIn: true },
   { name: "project", path: "/tracks/docker/projects/docker-notes-api", ready: "h1" },

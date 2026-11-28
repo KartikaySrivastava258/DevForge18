@@ -258,14 +258,24 @@ jobs:
       - name: Install lesson tools
         if: steps.select.outputs.count != '0'
         uses: ./.github/actions/lesson-tools
-      - name: Simulation models against the real tools (Nginx location matcher vs nginx in Docker)
-        # Generated configurations and paths through the pinned nginx image; the model must pick the same block.
-        # Runs once (shard 1) whenever code may have changed (scripts/lib/affected.ts, modelComparisonsAffected);
-        # REQUIRED makes a missing Docker engine fail the step instead of skipping the comparison.
+      - name: Simulation models against the real tools (Nginx, PostgreSQL, Redis in Docker)
+        # Nginx: generated configurations and paths through the pinned nginx image; the model must pick the same block.
+        # PostgreSQL: every order of the isolation-timeline scenarios at every level through two real psql sessions.
+        # Redis: eviction-policy command sequences against a dedicated Redis container (not the shared service,
+        # because the test changes maxmemory for the whole instance).
+        # Runs once (shard 1) whenever code may have changed (scripts/lib/affected.ts, modelComparisonsAffected).
+        # A skipped comparison (no Docker engine) fails the step instead of passing silently.
         if: matrix.shard == 1 && steps.select.outputs.models == 'true'
         env:
+          DEVFORGE_DOCKER_TEST: "1"
           DEVFORGE_NGINX_COMPARE_REQUIRED: "1"
-        run: node --disable-warning=ExperimentalWarning --test shared/simulations/nginx/location-matcher.nginx.test.ts
+        run: |
+          set -o pipefail  # a failing comparison must fail the step even through tee
+          node --disable-warning=ExperimentalWarning --test \
+            shared/simulations/nginx/location-matcher.nginx.test.ts \
+            shared/simulations/postgresql/isolation-timeline.test.ts \
+            shared/simulations/redis/cache-load.test.ts | tee model-comparisons.txt
+          grep '^# skipped 0$' model-comparisons.txt > /dev/null || { echo "::error::a model comparison was skipped"; exit 1; }
       - name: Executed lessons and labs
         if: steps.select.outputs.count != '0'
         run: node --disable-warning=ExperimentalWarning --test scripts/lib/lesson-runner.test.ts
