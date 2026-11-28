@@ -275,15 +275,18 @@ All checks passed
 
 ## Clean up
 
-`-v` also removes the named volume — the practice data — and `--rmi local` removes the API image that Compose built.
+`-v` also removes the named volume — the practice data. The image Compose built for the API is named after the project and the service, `devforge-college-api`; remove it too.
 
 ```bash run
-docker compose -p devforge-college down -v --rmi local > down.log 2>&1
-docker volume ls --filter name=devforge-college_dbdata --format '{{.Name}}' | wc -l
+docker compose -p devforge-college down -v > down.log 2>&1
+docker image rm devforge-college-api > /dev/null
+echo "volumes left: $(docker volume ls --filter name=devforge-college_dbdata -q | wc -l)"
+echo "images left:  $(docker image ls -q devforge-college-api | wc -l)"
 ```
 
 ```text output
-0
+volumes left: 0
+images left:  0
 ```
 
 ## Reset
