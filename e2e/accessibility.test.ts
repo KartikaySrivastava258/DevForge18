@@ -39,6 +39,12 @@ const openMenu = async (page: Page) => {
   await page.locator("#primary-nav").waitFor({ state: "visible" });
 };
 
+/** Sends the playground's default request (GET /api/health), so the response panel is audited too. */
+const sendPlaygroundRequest = async (page: Page) => {
+  await page.getByRole("button", { name: "Send", exact: true }).click();
+  await page.locator(".playground__resp-body").waitFor();
+};
+
 const PAGES: AuditedPage[] = [
   { name: "home", path: "/", ready: ".map-node" },
   { name: "tracks catalogue", path: "/tracks", ready: ".track-row" },
@@ -46,6 +52,7 @@ const PAGES: AuditedPage[] = [
   { name: "lesson", path: "/tracks/docker/lessons/docker-images-vs-containers", ready: "article h2" },
   { name: "lab", path: "/tracks/docker/labs/docker-layer-cache-experiments", ready: "h1" },
   { name: "simulation", path: "/tracks/kubernetes/simulations/kubernetes-reconciliation", ready: "h1" },
+  { name: "request playground with a response (signed in)", path: "/tracks/postman/playground", ready: "#pg-path", signedIn: true, prepare: sendPlaygroundRequest },
   { name: "quiz (signed out)", path: "/tracks/git-github/quiz", ready: "h1" },
   { name: "quiz (signed in)", path: "/tracks/git-github/quiz", ready: "fieldset", signedIn: true },
   { name: "project", path: "/tracks/docker/projects/docker-notes-api", ready: "h1" },

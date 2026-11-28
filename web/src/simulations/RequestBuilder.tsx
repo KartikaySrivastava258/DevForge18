@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BODIES, ENDPOINTS, requestBuilder, type Body, type BuilderAction, type BuilderState } from "../../../shared/simulations/postman/request-builder.ts";
+import { Link } from "../lib/router.tsx";
 import { Field } from "./Field.tsx";
 import type { SimulationEntry, ViewProps } from "./registry.ts";
 
@@ -84,6 +85,9 @@ function RequestBuilderView({ state, dispatch }: ViewProps<BuilderState, Builder
           ))}
         </ol>
       ) : null}
+      <p className="small muted">
+        This is a model of the API. To send real requests to this server, as you, open the <Link to="/tracks/postman/playground">request playground</Link>.
+      </p>
     </div>
   );
 }

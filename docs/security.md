@@ -19,6 +19,7 @@
 | Metrics | Information disclosure | `/metrics` served only to private addresses; blocked by Nginx |
 | Availability | Abuse, large payloads | Per-IP API limit; 64 KB JSON limit; server timeouts; Nginx `limit_req` and `client_max_body_size` |
 | Host | Learner code execution | None — see ADR 0005 |
+| Request playground (Postman track, `/tracks/postman/playground`) | A learner sending, with their own session, a request that hurts them (deleting the account, exposing their data), or the page being used against another host | It can do nothing the learner could not do with curl and their own cookie; the limits protect learners from accidents. An allowlist (`shared/simulations/postman/playground.ts`, with the reasoning) of public catalogue reads, the learner's own `/api/me` reads, a lesson self-check, bookmarking and two unrouted methods (405); administration, the content editor, cohorts, reviews, account deletion, export, sign-in/registration/sign-out and staff-only reads are refused before sending. Path segments are identifier characters only (no `..`, `//` or `%`); same origin only (and CSP `connect-src 'self'`, unchanged). The CSRF header is added but removable, so the server's own `403 csrf_failed` is shown; the server's checks are unchanged. At most 20 requests a minute from the page, plus the server's per-user and per-address limits. `server/test/postman-playground.test.ts` fails if any route outside the list becomes reachable, or a role-restricted one is listed |
 
 ## Operational checklist
 

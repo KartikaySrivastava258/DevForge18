@@ -7,7 +7,7 @@ learning_objectives:
   - Explain the difference between 400, 401, 403 and 404.
   - Chain requests — sign in, act, read back — using the session cookie.
 simplifications:
-  - It is a model of a small part of DevForge's own API — the same status codes and error codes — not live requests; the lessons send the real ones.
+  - It is a model of a small part of DevForge's own API — the same status codes and error codes — not live requests; the lessons and the request playground (/tracks/postman/playground) send real ones.
   - Bodies are chosen from four examples instead of typed, and there is one test account.
   - Only the listed endpoints exist; everything else about the real API (rate limits, validation details) is left out.
 text_alternative: Whether you hold a session cookie and your bookmarks; the request you build (endpoint, body, CSRF header, cookie); and for each response its status, body and an explanation. Every request is explained in the event log. Switch to text mode to read it as a list.

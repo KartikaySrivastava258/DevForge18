@@ -40,6 +40,11 @@ export class Router {
   patch(p: string, h: Handler, o?: RouteOptions): void { this.add("PATCH", p, h, o); }
   delete(p: string, h: Handler, o?: RouteOptions): void { this.add("DELETE", p, h, o); }
 
+  /** Every registered route in registration order, without handlers (for tests that review the route table). */
+  list(): { method: string; pattern: string; options: RouteOptions }[] {
+    return this.routes.map(({ method, pattern, options }) => ({ method, pattern, options }));
+  }
+
   /** Returns the match, "method_not_allowed" if only the path matched, or undefined. */
   match(method: string, path: string): RouteMatch | "method_not_allowed" | undefined {
     const parts = path.split("/").filter(Boolean);
