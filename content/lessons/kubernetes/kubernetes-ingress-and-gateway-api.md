@@ -2,7 +2,7 @@
 id: kubernetes-ingress-and-gateway-api
 title: How traffic enters a cluster — LoadBalancer, Ingress and the Gateway API
 track: kubernetes
-order: 8
+order: 6
 level: intermediate
 estimated_minutes: 45
 prerequisites: [kubernetes-deployments-and-self-healing]

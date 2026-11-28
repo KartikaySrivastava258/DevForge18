@@ -2,7 +2,7 @@
 id: kubernetes-persistent-volumes-and-statefulsets
 title: Persistent volumes and StatefulSets
 track: kubernetes
-order: 6
+order: 7
 level: advanced
 estimated_minutes: 45
 prerequisites: [kubernetes-deployments-and-self-healing]

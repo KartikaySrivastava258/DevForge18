@@ -195,7 +195,7 @@ removed
 
 ## Common mistakes
 
-- **Treating a replica as a backup.** Mistakes replicate in moments; keep backups and test restores (previous lesson).
+- **Treating a replica as a backup.** Mistakes replicate in moments; keep backups and test restores (see *Backups, restores and migrations*).
 - **Reading your own write from a replica.** A user saves a change and immediately reads from a replica that has not replayed it yet. Read from the primary when freshness matters.
 - **Unbounded connection pools in every instance.** Ten instances × 50 connections already exceeds the default limit; size pools from the server's limit down, or add a pooler.
 - **Using transaction pooling with session features.** `SET`, advisory locks and session-level prepared statements can leak between clients; check the pooler's documentation for your driver.
