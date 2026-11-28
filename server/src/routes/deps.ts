@@ -12,8 +12,10 @@ export interface Limiters {
   loginByIp: RateLimiter;
   /** Failed logins per account — the main brute-force defence. */
   loginFailuresByEmail: RateLimiter;
-  /** Coarse abuse guard for all API requests per IP. */
+  /** API requests per client IP (API_RATE_LIMIT_PER_IP_PER_MINUTE): sized for a whole classroom behind one address. */
   api: RateLimiter;
+  /** API requests per signed-in user (API_RATE_LIMIT_PER_USER_PER_MINUTE): the main abuse guard. */
+  apiByUser: RateLimiter;
 }
 
 export interface AppDeps {

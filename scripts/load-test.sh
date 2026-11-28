@@ -3,7 +3,7 @@
 # waits until it is ready, runs load/api.js with k6, then stops the server and removes the database.
 #
 #   npm run build && npm run test:load             # needs k6 on PATH (pinned version: see docs/load-testing.md)
-#   K6=/path/to/k6 LOAD_PORT=8090 npm run test:load
+#   K6=/path/to/k6 LOAD_PORT=18090 npm run test:load
 #
 # Extra arguments are passed to k6, e.g. `npm run test:load -- --summary-export build/load-summary.json`.
 # The server trusts X-Forwarded-For (TRUST_PROXY=true) so that each virtual user can stand for a different
@@ -11,7 +11,7 @@
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-PORT=${LOAD_PORT:-8090}
+PORT=${LOAD_PORT:-18090}
 K6=${K6:-k6}
 BASE="http://127.0.0.1:${PORT}"
 command -v "$K6" > /dev/null || { echo "k6 not found (set K6=/path/to/k6); see docs/load-testing.md" >&2; exit 1; }

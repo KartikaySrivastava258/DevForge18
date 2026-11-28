@@ -1,5 +1,5 @@
 /**
- * Checks every external resource URL in /content. Needs internet access, so
+ * Checks every external URL in /content (resources, sources, and links in lesson and other bodies). Needs internet access, so
  * it runs on a schedule in CI (see .github/workflows/link-check.yml) or by hand:
  *
  *   npm run content:check-links
@@ -12,19 +12,13 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadContent } from "./lib/content-loader.ts";
+import { externalLinks } from "./lib/external-links.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const { bundle } = loadContent(join(root, "content"));
-const urls = new Map<string, string[]>();
-const add = (url: string, where: string) => urls.set(url, [...(urls.get(url) ?? []), where]);
-for (const t of bundle.tracks) for (const r of t.resources) add(r.url, `track ${t.slug}`);
-for (const l of bundle.lessons) for (const r of l.resources) add(r.url, `lesson ${l.id}`);
-for (const c of bundle.case_studies ?? []) for (const cl of c.claims) add(cl.source_url, `case study ${c.id}`);
-for (const t of bundle.tracks)
-  for (const a of t.alternatives ?? []) {
-    if (a.url) add(a.url, `alternative ${a.name} (${t.slug})`);
-    if (a.licence_source) add(a.licence_source, `licence of ${a.name} (${t.slug})`);
-  }
+// Listed resources, case-study sources, alternatives, and every link in rendered lesson, lab, project,
+// capstone and architecture bodies (scripts/lib/external-links.ts).
+const urls = new Map<string, string[]>(externalLinks(bundle).map((l) => [l.url, l.usedBy]));
 
 async function check(url: string): Promise<{ status: number | string; finalUrl: string }> {
   for (const method of ["HEAD", "GET"]) {

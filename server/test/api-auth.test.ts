@@ -172,6 +172,7 @@ describe("brute-force protection", () => {
       loginByIp: new FixedWindowLimiter(100, 60_000),
       loginFailuresByEmail: new FixedWindowLimiter(3, 60_000),
       api: new FixedWindowLimiter(1000, 60_000),
+      apiByUser: new FixedWindowLimiter(1000, 60_000),
     });
     try {
       await limited.createUser("target@example.edu", STRONG_PASSWORD);
@@ -196,6 +197,7 @@ describe("brute-force protection", () => {
       loginByIp: new FixedWindowLimiter(100, 60_000),
       loginFailuresByEmail: new FixedWindowLimiter(10, 60_000),
       api: new FixedWindowLimiter(1000, 60_000),
+      apiByUser: new FixedWindowLimiter(1000, 60_000),
     });
     try {
       const c = new Client(limited.url);

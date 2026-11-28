@@ -88,10 +88,17 @@ describe("configuration", () => {
     assert.strictEqual(loadConfig({ TRUST_PROXY: "false" }).trustProxy, false);
     assert.strictEqual(loadConfig({ TRUST_PROXY: "true" }).trustProxy, true);
     assert.equal(loadConfig({ NODE_ENV: "production" }).cookieSecure, true);
+    assert.deepEqual(c.apiRateLimits, { perIpPerMinute: 6000, perUserPerMinute: 600 });
+    assert.deepEqual(
+      loadConfig({ API_RATE_LIMIT_PER_IP_PER_MINUTE: "12000", API_RATE_LIMIT_PER_USER_PER_MINUTE: "300" }).apiRateLimits,
+      { perIpPerMinute: 12000, perUserPerMinute: 300 },
+    );
   });
   it("rejects invalid or unsafe values", () => {
     assert.throws(() => loadConfig({ PORT: "abc" }), /PORT/);
     assert.throws(() => loadConfig({ PASSWORD_HASH_LOG_N: "10" }), /PASSWORD_HASH_LOG_N/);
+    assert.throws(() => loadConfig({ API_RATE_LIMIT_PER_IP_PER_MINUTE: "0" }), /API_RATE_LIMIT_PER_IP_PER_MINUTE/);
+    assert.throws(() => loadConfig({ API_RATE_LIMIT_PER_USER_PER_MINUTE: "lots" }), /API_RATE_LIMIT_PER_USER_PER_MINUTE/);
     assert.throws(
       () => loadConfig({ NODE_ENV: "production", PUBLIC_ORIGIN: "https://devforge.example.edu", COOKIE_SECURE: "false" }),
       /COOKIE_SECURE/,

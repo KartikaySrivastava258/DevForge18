@@ -35,7 +35,7 @@ try {
     content,
     logger,
     ...(tracer ? { tracer } : {}),
-    ...(rateLimitStore ? { rateLimitStore, limiters: sharedLimiters(rateLimitStore) } : {}),
+    ...(rateLimitStore ? { rateLimitStore, limiters: sharedLimiters(rateLimitStore, config.apiRateLimits) } : {}),
   });
   const server = createHttpServer(app);
 

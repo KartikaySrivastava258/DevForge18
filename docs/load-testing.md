@@ -14,11 +14,11 @@ Three groups of virtual users (VUs) run at the same time:
 
 Accounts are registered in k6's `setup()`, before the measured load.
 
-**Client addresses.** The server runs with `TRUST_PROXY=true` and every VU sends its own `X-Forwarded-For`, standing for a different student behind the production Nginx proxy. Without this, all requests would come from `127.0.0.1` and the per-address limits (1,200 API requests a minute, 200 sign-ins per 15 minutes) would be measured instead of the server. See [Limits that apply before the server's capacity](#limits-that-apply-before-the-servers-capacity).
+**Client addresses.** The server runs with `TRUST_PROXY=true` and every VU sends its own `X-Forwarded-For`, standing for a different student behind the production Nginx proxy. Without this, all requests would come from `127.0.0.1` and the per-address limits (6,000 API requests a minute, 200 sign-ins per 15 minutes) would be measured instead of the server. `SHARED_ADDRESS=10.0.0.1` does the opposite on purpose: every request comes from one address, as for a classroom behind NAT (run 7 below). See [Limits that apply before the server's capacity](#limits-that-apply-before-the-servers-capacity).
 
 **Thresholds** (a breach fails the run): error rate below 1 %, checks above 99 %, p95 latency below 100 ms for `browse`, below 200 ms for `learners`, and below 2 s for sign-in. They were set from the measurements below (default load: browse p95 7–13 ms, learners p95 6–12 ms, sign-in p95 0.8–1.05 s), with headroom because CI runners are slower and noisier than the machine below: 8–17× for reads, 2× for sign-in (scrypt is CPU-bound and scales with the CPU).
 
-Settings: `BROWSE_VUS` (default 50), `LEARNER_VUS` (20), `SIGNIN_RATE` (sign-ins per second, 2), `DURATION` (steady phase, `2m`), passed as `npm run test:load -- -e BROWSE_VUS=200`. `LOAD_PORT` (default 8090) and `K6` (path to the binary) are read by the runner script.
+Settings: `BROWSE_VUS` (default 50), `LEARNER_VUS` (20), `SIGNIN_RATE` (sign-ins per second, 2), `DURATION` (steady phase, `2m`), `SHARED_ADDRESS` (unset), passed as `npm run test:load -- -e BROWSE_VUS=200`; a scenario set to 0 is left out. `LOAD_PORT` (default 18090) and `K6` (path to the binary) are read by the runner script.
 
 ## Installing k6
 
@@ -43,6 +43,10 @@ tar -xzf k6-v2.4.0-linux-amd64.tar.gz && K6=$PWD/k6-v2.4.0-linux-amd64/k6 npm ru
 | 3 | 200 / 100 / 4, 1 min | 4.8 | 48,871 (336/s) | 0 % | **272 ms** | **255 ms** | 763 ms / 1.26 s | 3.5 s | 663 MiB / 379 s |
 | 4 | 200 / 100 / 1, 1 min | 1.2 | 55,647 (412/s) | 0 % | 65 ms | 97 ms | 581 ms / 776 ms | 1.0 s | 568 MiB / 203 s |
 | 5 | 50 / 20 / 2, 2 min (default, final thresholds, via `npm run test:load`) | 1.4 | 25,754 (155/s) | 0 % | 7.2 ms | 5.5 ms | 411 ms / 808 ms | 894 ms | 461 MiB / 179 s |
+| 6 | 50 / 20 / 2, 2 min (default), **2026-11-28, new limits** (6,000 per address, 600 per user) | 0.9 | 25,558 (160/s) | 0 % | 6.4 ms | 3.8 ms | 384 ms / 566 ms | 752 ms | 496 MiB / 143 s |
+| 7 | 0 / **60** / 0, 2 min, **all from one address** (`SHARED_ADDRESS=10.0.0.1`), 2026-11-28, new limits | 1.3 | 5,005 (28.5/s, about 1,700 a minute from the one address) | 0 % (no 429) | — | 2.3 ms | 378 ms / 410 ms (the 60 sign-ins) | 445 ms | 463 MiB / 53 s |
+
+Run 7 is the classroom case: 60 signed-in students behind one NAT address, each reading lessons, submitting self-checks and opening the dashboard. Under the old limit of 1,200 API requests a minute per address this load (about 1,700 a minute) would have been refused in part; with the new defaults nothing was refused. The automated test `server/test/rate-limits.test.ts` covers the abusive-user case.
 
 Every check passed in every run (lesson grading saved progress, every sign-in set a session cookie). Run 3 crossed the browse threshold in force at the time (p95 < 250 ms) and would also fail today's; no run had a failed request.
 
@@ -55,14 +59,14 @@ Every check passed in every run (lesson grading saved progress, every sign-in se
 
 ### Limits that apply before the server's capacity
 
-These come from the configuration, not from the measurements above, and matter for a campus where many students share one public address (NAT):
+These come from the configuration, not from the measurements above, and matter for a campus where many students share one public address (NAT). Since 2026-11-28:
 
-- The app allows **1,200 API requests a minute per client address** and **200 sign-ins per 15 minutes per address**; Nginx allows 30 requests a second per address (burst 60). By the script's design a `browse` user makes 6 API requests and then pauses 1–3 s (roughly 120–360 a minute) and a `learner` makes 3 requests in 3–7 s (roughly 25–60 a minute), so a room of students behind one address would reach the app limit at a few dozen active students, earlier for heavy browsing. Students would see "Too many requests" (429), not a slow site.
-- Before institution-wide use, find out whether students reach the server from distinct addresses; if not, raise the per-address limits (in `server/src/app.ts` and `deploy/nginx/nginx.conf`) or key them on the account for signed-in requests, and repeat this test without per-VU addresses.
+- The app allows **6,000 API requests a minute per client address** (`API_RATE_LIMIT_PER_IP_PER_MINUTE`) and **600 a minute per signed-in user** (`API_RATE_LIMIT_PER_USER_PER_MINUTE`), checked first, so one abusive user is refused without using up the address's budget. Sign-ins stay at 200 per 15 minutes per address. Nginx allows 100 requests a second per address (burst 200).
+- By the script's design a `browse` user makes 6 API requests and then pauses 1–3 s (roughly 120–360 a minute: a crawler more than a student) and a `learner` makes 3 requests in 3–7 s (roughly 25–60 a minute; run 7 measured 28 a minute per student). Sizing guidance (students behind one address × 100) and how to raise the limits: [deployment.md, "Rate limits"](deployment.md#rate-limits).
 
 ### Not covered
 
 - Through Nginx (compression, `limit_req`) — the Compose smoke test covers Nginx's behaviour, not its throughput.
-- More than one instance (rate limits are per process; ADR 0004), PostgreSQL, long soak runs, memory growth over days.
+- More than one instance (v1.0 runs one instance; ADR 0002), PostgreSQL, long soak runs, memory growth over days.
 - Write-heavy paths other than lesson checks (quizzes, simulations, labs, bookmarks) and admin pages.
 - A CI runner's numbers: the nightly job has not run yet; read the first run's summary (artifact `load-summary`) and adjust the thresholds if they prove too tight for the runner.

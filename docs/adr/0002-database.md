@@ -1,6 +1,6 @@
 # ADR 0002 — SQLite now, with a path to PostgreSQL
 
-- **Status:** Accepted for Phases 0–5 (2026-11-24). **Awaiting project-owner confirmation.**
+- **Status:** Accepted (2026-11-24). **Confirmed by the project owner for v1.0 on 2026-11-28:** SQLite, one app instance; no PostgreSQL adapter in v1.0.
 
 ## Context
 
@@ -34,6 +34,13 @@ Zero-install setup; trivial online backup (`VACUUM INTO`) with integrity check; 
 
 A future Node release could change the experimental API — mitigated by pinning Node 22 LTS and full test coverage of the data layer.
 
+## Owner decision for v1.0 (2026-11-28)
+
+- v1.0 ships with SQLite and runs as **a single app instance** (one Node.js process per database file). This is a deployment requirement, documented in [docs/deployment.md](../deployment.md#database-one-app-instance).
+- The PostgreSQL adapter is **not** built for v1.0.
+- **What changes the decision:** needing more than one app server (for capacity or availability). That is the trigger to build the PostgreSQL adapter described above; until then, scale the one instance up (CPU, memory), not out. The load test (docs/load-testing.md) shows one process starting to queue at around 300 concurrent active users on an 8-core laptop.
+- `REDIS_URL` (ADR 0010) shares rate limits between instances, but sessions and progress are still in the SQLite file, so it does not by itself make several instances possible.
+
 ## Revisit when
 
-More than one app instance is needed; write latency appears in metrics; the institution requires a managed PostgreSQL service; or analytics queries become long enough to block the event loop.
+More than one app instance is needed (the owner's trigger above); write latency appears in metrics; the institution requires a managed PostgreSQL service; or analytics queries become long enough to block the event loop.

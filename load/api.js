@@ -7,20 +7,24 @@
 //   signin   — a steady stream of sign-ins (scrypt password verification is the most expensive request)
 //
 // Every virtual user sends its own X-Forwarded-For address (the server runs with TRUST_PROXY=true), standing for a
-// different student behind the production Nginx proxy. Without it every request would come from 127.0.0.1 and the
-// per-address limits (1,200 API requests a minute, 200 sign-ins per 15 minutes) would be measured instead of the server.
+// different student behind the production Nginx proxy, so that the server's capacity is measured rather than the
+// per-address limits (6,000 API requests a minute and 200 sign-ins per 15 minutes by default).
+//
+// SHARED_ADDRESS=10.0.0.1 instead sends every request of the scenarios from that one address: a classroom behind
+// one NAT address, which the per-address limits must let through (docs/deployment.md, "Rate limits").
 //
 // Environment: BASE_URL, BROWSE_VUS (default 50), LEARNER_VUS (20), SIGNIN_RATE (sign-ins per second, 2),
-// DURATION (steady phase, default "2m").
+// DURATION (steady phase, default "2m"), SHARED_ADDRESS (unset). A scenario set to 0 is left out.
 import http from "k6/http";
 import { check, fail, sleep } from "k6";
 import { SharedArray } from "k6/data";
 
-const BASE = __ENV.BASE_URL || "http://127.0.0.1:8090";
+const BASE = __ENV.BASE_URL || "http://127.0.0.1:18090";
 const BROWSE_VUS = Number(__ENV.BROWSE_VUS || 50);
 const LEARNER_VUS = Number(__ENV.LEARNER_VUS || 20);
 const SIGNIN_RATE = Number(__ENV.SIGNIN_RATE || 2);
 const DURATION = __ENV.DURATION || "2m";
+const SHARED_ADDRESS = __ENV.SHARED_ADDRESS || "";
 const PASSWORD = "load-test password 2026";
 
 const TRACKS = ["docker", "kubernetes", "git-github", "postgresql", "redis", "nginx", "kafka", "terraform"];
@@ -35,40 +39,42 @@ const QUERIES = ["docker", "kubernets", "cache", "pipeline", "sql index", "obser
 
 export const options = {
   noCookiesReset: true, // a signed-in learner keeps its session cookie across iterations, like a browser
-  scenarios: {
-    browse: {
-      executor: "ramping-vus",
-      exec: "browse",
-      startVUs: 0,
-      stages: [
-        { duration: "20s", target: BROWSE_VUS },
-        { duration: DURATION, target: BROWSE_VUS },
-        { duration: "10s", target: 0 },
-      ],
-      gracefulRampDown: "5s",
-    },
-    learners: {
-      executor: "ramping-vus",
-      exec: "learn",
-      startVUs: 0,
-      stages: [
-        { duration: "20s", target: LEARNER_VUS },
-        { duration: DURATION, target: LEARNER_VUS },
-        { duration: "10s", target: 0 },
-      ],
-      gracefulRampDown: "5s",
-    },
-    signin: {
-      executor: "constant-arrival-rate",
-      exec: "signIn",
-      rate: SIGNIN_RATE,
-      timeUnit: "1s",
-      startTime: "20s",
-      duration: DURATION,
-      preAllocatedVUs: 10,
-      maxVUs: 50,
-    },
-  },
+  scenarios: Object.fromEntries(
+    Object.entries({
+      browse: BROWSE_VUS > 0 && {
+        executor: "ramping-vus",
+        exec: "browse",
+        startVUs: 0,
+        stages: [
+          { duration: "20s", target: BROWSE_VUS },
+          { duration: DURATION, target: BROWSE_VUS },
+          { duration: "10s", target: 0 },
+        ],
+        gracefulRampDown: "5s",
+      },
+      learners: LEARNER_VUS > 0 && {
+        executor: "ramping-vus",
+        exec: "learn",
+        startVUs: 0,
+        stages: [
+          { duration: "20s", target: LEARNER_VUS },
+          { duration: DURATION, target: LEARNER_VUS },
+          { duration: "10s", target: 0 },
+        ],
+        gracefulRampDown: "5s",
+      },
+      signin: SIGNIN_RATE > 0 && {
+        executor: "constant-arrival-rate",
+        exec: "signIn",
+        rate: SIGNIN_RATE,
+        timeUnit: "1s",
+        startTime: "20s",
+        duration: DURATION,
+        preAllocatedVUs: 10,
+        maxVUs: 50,
+      },
+    }).filter(([, scenario]) => scenario),
+  ),
   // Limits from the measured runs in docs/load-testing.md (default load, 2026-11-27: browse p95 12.8 ms, learners
   // p95 11.6 ms, sign-in p95 1.05 s, 0 errors), with headroom for slower CI runners: 8-17x for reads, 2x for
   // sign-in (scrypt is CPU-bound, so it scales with the CPU, not with the noise). A breach fails the run.
@@ -82,9 +88,9 @@ export const options = {
   summaryTrendStats: ["avg", "med", "p(90)", "p(95)", "p(99)", "max"],
 };
 
-/** A distinct private address per virtual user (and per sign-in), as seen through the trusted proxy. */
+/** A distinct private address per virtual user (and per sign-in), as seen through the trusted proxy; or SHARED_ADDRESS. */
 function addressFor(n) {
-  return `10.${(n >> 16) & 255}.${(n >> 8) & 255}.${n & 255}`;
+  return SHARED_ADDRESS || `10.${(n >> 16) & 255}.${(n >> 8) & 255}.${n & 255}`;
 }
 
 function headers(ip, extra = {}) {

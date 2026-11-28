@@ -1,14 +1,14 @@
 # Implementation status
 
-Last updated: 2026-11-27 (UTC) · Milestones **9, 10 and 11 done** — green in CI run 46065905790 (push) · Next: the release checklist (waiting for the owner to resend it)
+Last updated: 2026-11-28 (UTC) · Milestones 9–11 done · **Now: the v1.0 release checklist** (owner's message of 2026-11-28)
 
 ## Session handoff
 
-- **Where I stopped:** Milestones 9–11 are complete and green in CI (run 46065905790: verify, three lesson shards, four project-check shards, Compose/Nginx smoke test). A manual full run (46069455702: every lesson and check) passed the k6 load test on CI for the first time and found two timing-sensitive tests, both fixed at the root: the Docker lesson rounded a 3 s stop timeout to the nearest second (3.5 s on a busy runner printed "4 s"; now rounded down), and the k8s three-tier check sent its first end-to-end request without allowing Service routing to settle (now up to 30 s, and the failure shows wget's real error). The next full run, 46072785720 (every lesson, every project check, Compose smoke test and k6), was green.
-- **Next:** the release checklist. The owner's order of work ends with "the release checklist from my previous message", but that message is not in the repository or any saved session transcript; it has been requested instead of invented.
-- **Watch for:** the k6 thresholds were set from runs on a laptop and have not yet run on a CI runner; adjust them from the first nightly result if needed (docs/load-testing.md).
+- **Where I am:** working through the owner's v1.0 release checklist (11 items, in order) after the owner's decisions on the open items. Done so far: decision 1 (SQLite, one app instance, ADR 0002 updated, docs/deployment.md "Database: one app instance") and decision 2 (configurable per-address API limit, default 6,000 a minute; new per-user limit, default 600, checked first; Nginx edge limit raised to match; `server/test/rate-limits.test.ts`; load test rerun, runs 6 and 7 in docs/load-testing.md). Release tooling: `npm run content:audit` (counts per track, unexecuted lessons, unverified or broken links), the link checker now also covers links in lesson/lab/project bodies.
+- **Waiting on the owner:** the content-editor live test (owner creates a scratch repository and a fine-grained token in `~/.config/devforge18/cms-test.env`; then `node --env-file=… scripts/cms-live-test.ts`, which never prints the token) and the Orca screen-reader results.
+- **Constraints from the owner (2026-11-28):** ports 8080 and 8090 are in use on this machine (the load test now defaults to 18090); never touch `/tmp/df-a11y`; never export `GITHUB_TOKEN` into the shell (load it only into the test process); use a throwaway database for the live test; after the test remind the owner to delete the token, the env file and the scratch repository.
 - **Disk:** keep at least 5 GB free; checks remove their containers with `-v` and the images they build.
-- **How to work fast:** `npm run new:quiz|new:project -- <track> <id>`; `DEVFORGE_DOCKER_TEST=1 DEVFORGE_CHANGED_FILES=<file> node --test scripts/lib/projects.test.ts` (or `lesson-runner.test.ts`); Docker project checks run in the CI "Mini-project checks" job (four shards), the others in the verify job; `npm run test:compose`, `npm run test:load`.
+- **How to work fast:** `npm run new:quiz|new:project -- <track> <id>`; `DEVFORGE_DOCKER_TEST=1 DEVFORGE_CHANGED_FILES=<file> node --test scripts/lib/projects.test.ts` (or `lesson-runner.test.ts`); Docker project checks run in the CI "Mini-project checks" job (four shards), the others in the verify job; `npm run test:compose`, `npm run test:load` (k6 v2.4.0, checksum in docs/load-testing.md).
 
 This file is the handover record required by the blueprint (Part XI §15). Update it after every substantial milestone. Claims here are limited to what was actually run and observed; anything not run is marked **untested**.
 
@@ -550,7 +550,7 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 | Issue | Impact | Plan |
 |---|---|---|
 | No `package-lock.json` (generated offline environment) | Dependency versions not locked transitively | Commit lockfile after first `npm install` online |
-| Rate limits per address | A class behind one NAT address can hit the 1,200 API requests/min limit before the server is busy (docs/load-testing.md) | Raise the limit or key it differently for campus networks before institution-wide use; with `REDIS_URL` limits are shared across instances (ADR 0010) |
+| Rate limits per address | Resolved 2026-11-28: 6,000 API requests a minute per address (configurable) plus 600 per signed-in user; a 60-student class from one address measured at about 1,700 a minute with nothing refused (docs/load-testing.md run 7) | Above about 60 students behind one address, raise `API_RATE_LIMIT_PER_IP_PER_MINUTE` and Nginx's rate (docs/deployment.md, "Rate limits") |
 | `node:sqlite` is marked experimental in Node 22 | API could change in a future Node release | Pinned to Node 22 LTS; covered by tests; ADR 0002 |
 | `node:sqlite` is synchronous | Long queries would block the event loop | All queries are indexed point lookups; revisit if analytics queries are added |
 | Content editor never used against the real GitHub API | Unknown real-world errors | Open one pull request on a scratch repository first (ADR 0011) |
@@ -565,9 +565,9 @@ Optional isolated lab execution (never on the main server); OpenTelemetry tracin
 See `docs/adr/`. In short:
 
 1. **ADR 0001** — Minimal, verifiable stack: React + esbuild frontend, `node:http` server, Node 22 native TypeScript, zod as the only runtime dependency.
-2. **ADR 0002** — SQLite (`node:sqlite`) for Phases 0–5; data access isolated so PostgreSQL can be added. **Open question for the project owner:** confirm SQLite is acceptable for the target deployment, or request PostgreSQL earlier.
+2. **ADR 0002** — SQLite (`node:sqlite`); data access isolated so PostgreSQL can be added. **Owner's decision (2026-11-28):** SQLite and one app instance for v1.0; no PostgreSQL adapter now; needing more than one app server is the condition that changes this.
 3. **ADR 0003** — Content as version-controlled files, validated and compiled at build time.
-4. **ADR 0004** — Server-side sessions with hashed tokens, scrypt, custom-header + Origin CSRF defence, classroom-aware rate limits.
+4. **ADR 0004** — Server-side sessions with hashed tokens, scrypt, custom-header + Origin CSRF defence, classroom-aware rate limits. **Owner's decision (2026-11-28):** per-address API limit configurable, default 6,000 a minute; per-user limit 600 a minute as the main abuse guard, checked first so refused requests do not use up the address's budget (my design choice, so one user cannot block a classroom); Nginx edge limit raised from 30 to 100 r/s (burst 60 → 200) so it does not refuse before the app; the load-test port moved from 8090 to 18090 (8090 is in use on the owner's machine).
 5. **ADR 0005** — Simulations are always labelled; learner code never runs on the main server.
 6. **ADR 0006** — Design direction: dark-first navy, single accent, self-hosted Fira Sans, system map as the signature element.
 

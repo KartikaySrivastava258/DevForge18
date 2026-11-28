@@ -5,7 +5,7 @@
 import { randomUUID } from "node:crypto";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { getSessionUser, purgeExpiredSessions } from "./auth/sessions.ts";
-import type { AppConfig } from "./config.ts";
+import { DEFAULT_API_RATE_LIMITS, type ApiRateLimits, type AppConfig } from "./config.ts";
 import type { ContentStore } from "./content/store.ts";
 import type { Db } from "./db/database.ts";
 import type { JsonResult, RequestContext } from "./http/context.ts";
@@ -34,29 +34,37 @@ import { registerCmsRoutes } from "./routes/cms.ts";
 const MUTATING = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 const MINUTE = 60_000;
 
-/** Limit and window of each limiter (ADR 0004). */
-const LIMITS: Record<keyof Limiters, { limit: number; windowMs: number }> = {
-  register: { limit: 60, windowMs: 60 * MINUTE },
-  loginByIp: { limit: 200, windowMs: 15 * MINUTE },
-  loginFailuresByEmail: { limit: 10, windowMs: 15 * MINUTE },
-  api: { limit: 1200, windowMs: MINUTE },
+/** Limit and window of each limiter (ADR 0004). The two API limits are configurable (docs/deployment.md). */
+function limitsFor(api: ApiRateLimits): Record<keyof Limiters, { limit: number; windowMs: number }> {
+  return {
+    register: { limit: 60, windowMs: 60 * MINUTE },
+    loginByIp: { limit: 200, windowMs: 15 * MINUTE },
+    loginFailuresByEmail: { limit: 10, windowMs: 15 * MINUTE },
+    api: { limit: api.perIpPerMinute, windowMs: MINUTE },
+    apiByUser: { limit: api.perUserPerMinute, windowMs: MINUTE },
+  };
+}
+
+const mapLimits = (api: ApiRateLimits, make: (name: keyof Limiters, limit: number, windowMs: number) => RateLimiter): Limiters => {
+  const limits = limitsFor(api);
+  const build = (name: keyof Limiters) => make(name, limits[name].limit, limits[name].windowMs);
+  return {
+    register: build("register"),
+    loginByIp: build("loginByIp"),
+    loginFailuresByEmail: build("loginFailuresByEmail"),
+    api: build("api"),
+    apiByUser: build("apiByUser"),
+  };
 };
 
-const mapLimits = (make: (name: keyof Limiters, limit: number, windowMs: number) => RateLimiter): Limiters => ({
-  register: make("register", LIMITS.register.limit, LIMITS.register.windowMs),
-  loginByIp: make("loginByIp", LIMITS.loginByIp.limit, LIMITS.loginByIp.windowMs),
-  loginFailuresByEmail: make("loginFailuresByEmail", LIMITS.loginFailuresByEmail.limit, LIMITS.loginFailuresByEmail.windowMs),
-  api: make("api", LIMITS.api.limit, LIMITS.api.windowMs),
-});
-
 /** Per-process limiters in memory (one instance, or REDIS_URL not set). */
-export function defaultLimiters(): Limiters {
-  return mapLimits((_name, limit, windowMs) => new FixedWindowLimiter(limit, windowMs));
+export function defaultLimiters(api: ApiRateLimits = DEFAULT_API_RATE_LIMITS): Limiters {
+  return mapLimits(api, (_name, limit, windowMs) => new FixedWindowLimiter(limit, windowMs));
 }
 
 /** The same limits, counted in Redis and shared by every instance (ADR 0010). */
-export function sharedLimiters(store: RedisRateLimitStore): Limiters {
-  return mapLimits((name, limit, windowMs) => new RedisFixedWindowLimiter(name, limit, windowMs, store));
+export function sharedLimiters(store: RedisRateLimitStore, api: ApiRateLimits = DEFAULT_API_RATE_LIMITS): Limiters {
+  return mapLimits(api, (name, limit, windowMs) => new RedisFixedWindowLimiter(name, limit, windowMs, store));
 }
 
 /** Loopback and private-network addresses (used to restrict /metrics). */
@@ -73,6 +81,14 @@ function requestScheme(req: IncomingMessage, trustProxy: boolean): "http" | "htt
   const forwarded = req.headers["x-forwarded-proto"];
   if (trustProxy && typeof forwarded === "string") return forwarded.split(",")[0]?.trim() === "https" ? "https" : "http";
   return (req.socket as { encrypted?: boolean }).encrypted ? "https" : "http";
+}
+
+function tooMany(decision: { allowed: boolean; retryAfterSeconds: number }): void {
+  if (!decision.allowed) {
+    throw new HttpError(429, "rate_limited", "Too many requests. Slow down and try again shortly.", {
+      retryAfterSeconds: decision.retryAfterSeconds,
+    });
+  }
 }
 
 export interface App {
@@ -97,7 +113,7 @@ export function createApp(input: {
   const { tracer, rateLimitStore } = input;
   if (tracer) metrics.addCollector(() => tracer.metricLines());
   if (rateLimitStore) metrics.addCollector(() => rateLimitStore.metricLines());
-  const deps: AppDeps = { ...input, metrics, limiters: input.limiters ?? defaultLimiters() };
+  const deps: AppDeps = { ...input, metrics, limiters: input.limiters ?? defaultLimiters(input.config.apiRateLimits) };
   const { config, db, logger } = deps;
   const cookieName = sessionCookieName(config.cookieSecure);
 
@@ -222,12 +238,12 @@ export function createApp(input: {
 
     let result: JsonResult;
     try {
-      const apiLimit = await deps.limiters.api.hit(`api:${ip}`);
-      if (!apiLimit.allowed) {
-        throw new HttpError(429, "rate_limited", "Too many requests. Slow down and try again shortly.", {
-          retryAfterSeconds: apiLimit.retryAfterSeconds,
-        });
-      }
+      // A signed-in user is limited on their own account first, and only requests that pass count against the
+      // address: one user hammering the API is refused alone and cannot use up the budget of a classroom that
+      // shares the address (docs/deployment.md, "Rate limits").
+      if (token) ctx.user = getSessionUser(db, token);
+      if (ctx.user) tooMany(await deps.limiters.apiByUser.hit(`user:${ctx.user.id}`));
+      tooMany(await deps.limiters.api.hit(`api:${ip}`));
       const match = router.match(method, url.pathname);
       if (match === undefined) throw new HttpError(404, "not_found", "No API endpoint at this path.");
       if (match === "method_not_allowed") throw new HttpError(405, "method_not_allowed", `${method} is not supported here.`);
@@ -239,7 +255,6 @@ export function createApp(input: {
         const problem = csrfProblem(req, config.publicOrigin);
         if (problem) throw new HttpError(403, "csrf_failed", "Request blocked by cross-site request protection.");
       }
-      if (token) ctx.user = getSessionUser(db, token);
 
       const auth = match.route.options.auth;
       if (auth && !ctx.user) throw unauthorized();

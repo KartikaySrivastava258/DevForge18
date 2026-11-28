@@ -11,6 +11,9 @@ services:
       PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://localhost:8080}
       TRUST_PROXY: "true"          # the client IP comes from Nginx's X-Forwarded-For
       COOKIE_SECURE: ${COOKIE_SECURE:-false}   # set to true when Nginx terminates HTTPS
+      # API rate limits (docs/deployment.md, "Rate limits"); keep Nginx's limit_req rate >= the per-address value / 60.
+      API_RATE_LIMIT_PER_IP_PER_MINUTE: ${API_RATE_LIMIT_PER_IP_PER_MINUTE:-6000}
+      API_RATE_LIMIT_PER_USER_PER_MINUTE: ${API_RATE_LIMIT_PER_USER_PER_MINUTE:-600}
     volumes:
       - devforge-data:/data
     expose:

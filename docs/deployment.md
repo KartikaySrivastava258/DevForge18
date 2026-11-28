@@ -29,6 +29,29 @@ DATABASE_PATH=/var/lib/devforge/devforge.db npm start
 
 Run it under a process manager (systemd, for example) and put Nginx in front using `deploy/nginx/nginx.conf` as a starting point (change `server app:8080` to `127.0.0.1:8080`).
 
+## Database: one app instance
+
+DevForge v1.0 stores everything (accounts, sessions, progress, cohorts, submissions) in one SQLite file and must run as **one app process** for that file ([ADR 0002](adr/0002-database.md), confirmed by the project owner for v1.0). Do not start a second container or process against the same `DATABASE_PATH` or a copy of it, and do not put the database on a network file system (NFS, SMB): SQLite's locking is not reliable there. Scale the one instance up (more CPU and memory) instead of out; the load test ([load-testing.md](load-testing.md)) gives the numbers. Needing more than one app server is the condition that would bring in the PostgreSQL adapter described in ADR 0002.
+
+## Rate limits
+
+Many campuses put a whole classroom or hostel behind one public address (NAT), so every student arrives from the same IP. The limits are designed for that:
+
+| Limit | Setting | Default | What it protects |
+|---|---|---|---|
+| API requests per signed-in user | `API_RATE_LIMIT_PER_USER_PER_MINUTE` | 600 a minute | The main abuse guard. Checked first; a request it refuses does **not** count against the address, so one user hammering the API is refused alone and the rest of the class is unaffected. Keyed on the account, so several tabs or browsers share it. |
+| API requests per client address | `API_RATE_LIMIT_PER_IP_PER_MINUTE` | 6,000 a minute | Anonymous traffic and the total from one address. |
+| Sign-ins per address | fixed | 200 per 15 minutes | Password guessing across accounts |
+| Failed sign-ins per account | fixed | 10 per 15 minutes | Password guessing on one account |
+| Registrations per address | fixed | 60 an hour | Mass account creation |
+| Nginx `limit_req` on `/api/` (`deploy/nginx/nginx.conf`) | edit the file | 100 a second per address, burst 200 | A coarse edge limit in front of the app |
+
+**Sizing the per-address limit:** about **(the most students who share one public address) × 100**. 6,000 covers 60 students. A student reading lessons sends far fewer than 100 API requests a minute; the factor leaves room for page changes, searches and simulations at the same moment (the start of a class). For a hostel or a whole department behind one address, raise it, for example `API_RATE_LIMIT_PER_IP_PER_MINUTE=30000` for 300 students, and raise Nginx's `rate=` to at least that value ÷ 60 (here `500r/s`) so the edge does not refuse first. Leave the per-user limit at 600 unless a legitimate use needs more.
+
+How to tell the limits are too low: students see "Too many requests. Slow down and try again shortly." and the access log shows status 429; `devforge_http_requests_total{status="429"}` in `/metrics` rises during classes. Tested in `server/test/rate-limits.test.ts` (60 signed-in students behind one address are never refused; one user sending more than the whole address's limit is refused after 600 while the 60 students are unaffected) and in the load test's shared-address run ([load-testing.md](load-testing.md)).
+
+`TRUST_PROXY=true` is required behind Nginx (Compose sets it), otherwise every request appears to come from Nginx's own address.
+
 ## Content editor (optional)
 
 Faculty and admins can edit content files in the browser (**Edit content** in the menu); each edit becomes a pull request on GitHub, so review and CI still decide what is published ([ADR 0011](adr/0011-cms-pull-requests.md)). Without the settings below the page says the editor is turned off; the server starts either way.
@@ -80,4 +103,4 @@ Set `OTEL_EXPORTER_OTLP_ENDPOINT` (for example `http://otel-collector:4318`) and
 
 ## Several instances: shared rate limits
 
-Rate limits are counted in each process by default. When more than one DevForge instance serves the same site, set `REDIS_URL=redis://redis:6379/0` (Redis 7.x on the private network; `rediss://` for TLS, `redis://user:password@host:6379/0` with ACLs) so all instances share one limit ([ADR 0010](adr/0010-shared-rate-limits-redis.md)). If Redis becomes unreachable, each instance falls back to its own counters and logs `rate-limit store unavailable`; alert on `devforge_rate_limit_store_up == 0`. Sessions are still stored in SQLite, so several instances also need a shared database before this is useful in production.
+Not supported in v1.0, which runs one app instance (see [Database: one app instance](#database-one-app-instance)); this is groundwork for a later PostgreSQL version. Rate limits are counted in each process by default. When more than one DevForge instance serves the same site, set `REDIS_URL=redis://redis:6379/0` (Redis 7.x on the private network; `rediss://` for TLS, `redis://user:password@host:6379/0` with ACLs) so all instances share one limit ([ADR 0010](adr/0010-shared-rate-limits-redis.md)). If Redis becomes unreachable, each instance falls back to its own counters and logs `rate-limit store unavailable`; alert on `devforge_rate_limit_store_up == 0`. Sessions are still stored in SQLite, so several instances also need a shared database before this is useful in production.

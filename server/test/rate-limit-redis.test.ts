@@ -386,6 +386,7 @@ describe(`shared rate limits against a real Redis${typeof redis === "string" ? "
       loginByIp: new RedisFixedWindowLimiter("loginByIp", 100, 60_000, store),
       loginFailuresByEmail: new RedisFixedWindowLimiter("loginFailuresByEmail", 3, 60_000, store),
       api: new RedisFixedWindowLimiter("api", 1000, 60_000, store),
+      apiByUser: new RedisFixedWindowLimiter("apiByUser", 1000, 60_000, store),
     });
     const storeA = newStore();
     const storeB = newStore();

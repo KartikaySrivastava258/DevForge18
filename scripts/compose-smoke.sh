@@ -165,10 +165,10 @@ compose up -d --wait --wait-timeout 120 > /dev/null
 code=$(fetch me2 -b "$jar" "$BASE/api/auth/me")
 check "the session survives an app restart" test "$code" = 200 -a "$(jq -r .user.email "$TMP/me2.b" 2> /dev/null)" = "$email"
 
-echo "== Edge rate limit (Nginx limit_req: 30 r/s per address, burst 60)"
-seq 200 | xargs -P 25 -I{} curl -s -o /dev/null -w '%{http_code}\n' "$BASE/api/health" > "$TMP/burst.txt"
+echo "== Edge rate limit (Nginx limit_req: 100 r/s per address, burst 200)"
+seq 1500 | xargs -P 50 -I{} curl -s -o /dev/null -w '%{http_code}\n' "$BASE/api/health" > "$TMP/burst.txt"
 limited=$(grep -c '^429$' "$TMP/burst.txt" || true)
-check "a burst of 200 requests is partly refused with 429 ($limited refused)" test "$limited" -gt 0
+check "a burst of 1,500 requests is partly refused with 429 ($limited refused)" test "$limited" -gt 0
 check "no 5xx during the burst" test "$(grep -c '^5' "$TMP/burst.txt" || true)" = 0
 
 echo

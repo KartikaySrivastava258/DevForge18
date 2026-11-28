@@ -10,6 +10,7 @@
   "scripts": {
     "content:build": "node --disable-warning=ExperimentalWarning scripts/build-content.ts",
     "content:check-links": "node --disable-warning=ExperimentalWarning scripts/check-links.ts",
+    "content:audit": "node --disable-warning=ExperimentalWarning scripts/content-audit.ts",
     "web:build": "node scripts/build-web.ts",
     "build": "npm run content:build && npm run web:build",
     "start": "node --disable-warning=ExperimentalWarning server/src/main.ts",

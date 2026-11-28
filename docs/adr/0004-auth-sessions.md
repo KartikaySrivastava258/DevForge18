@@ -17,7 +17,7 @@ JWTs in local storage (rejected: exposed to XSS, hard to revoke); a hosted ident
 
 ## Consequences
 
-Sessions can be revoked instantly. Rate-limit counters live in memory: per process and reset on restart (documented limitation). **Amended 2026-11-27 by [ADR 0010](0010-shared-rate-limits-redis.md):** with `REDIS_URL` set, the counters are shared by all instances in Redis, and fall back to the per-process counters while Redis is unreachable.
+Sessions can be revoked instantly. Rate-limit counters live in memory: per process and reset on restart (documented limitation). **Amended 2026-11-27 by [ADR 0010](0010-shared-rate-limits-redis.md):** with `REDIS_URL` set, the counters are shared by all instances in Redis, and fall back to the per-process counters while Redis is unreachable. **Amended 2026-11-28 (project owner's decision for shared networks):** the API limit per address is configurable (`API_RATE_LIMIT_PER_IP_PER_MINUTE`, default 6,000 a minute, up from a fixed 1,200) and a per-signed-in-user limit (`API_RATE_LIMIT_PER_USER_PER_MINUTE`, default 600) is checked first as the main abuse guard; requests it refuses do not count against the address. Sign-in and registration limits are unchanged. See docs/deployment.md, "Rate limits".
 
 ## Revisit when
 

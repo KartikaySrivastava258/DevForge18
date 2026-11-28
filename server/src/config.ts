@@ -27,6 +27,9 @@ const EnvSchema = z.object({
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
   CONTENT_PATH: z.string().min(1).default("./build/content.json"),
   WEB_ROOT: z.string().min(1).default("./build/web"),
+  // API rate limits (docs/deployment.md, "Rate limits"): per client address, and per signed-in user.
+  API_RATE_LIMIT_PER_IP_PER_MINUTE: z.coerce.number().int().min(1).max(10_000_000).default(6000),
+  API_RATE_LIMIT_PER_USER_PER_MINUTE: z.coerce.number().int().min(1).max(10_000_000).default(600),
   // Shared rate-limit counters for several instances (ADR 0010); unset = per-process counters in memory.
   REDIS_URL: z
     .string()
@@ -50,11 +53,23 @@ export interface AppConfig {
   webRoot: string;
   /** Content editor (CMS that opens pull requests). Absent means "not configured". */
   cms?: CmsSettings;
+  /** API request limits per minute; undefined = DEFAULT_API_RATE_LIMITS. */
+  apiRateLimits?: ApiRateLimits;
   /** OpenTelemetry tracing (ADR 0009); undefined = off. */
   tracing?: TracingConfig;
   /** redis:// or rediss:// URL for shared rate limits (ADR 0010); undefined = in-memory limits. */
   redisUrl?: string;
 }
+
+/** API requests allowed per minute (docs/deployment.md, "Rate limits"). */
+export interface ApiRateLimits {
+  /** Per client address: every request, signed in or not. Size it as students behind one address × 100. */
+  perIpPerMinute: number;
+  /** Per signed-in user: the main abuse guard. Requests refused by it do not count against the address. */
+  perUserPerMinute: number;
+}
+
+export const DEFAULT_API_RATE_LIMITS: ApiRateLimits = { perIpPerMinute: 6000, perUserPerMinute: 600 };
 
 // ---- Content editor (ADR 0011) ------------------------------------------------
 // Optional: a missing or invalid value disables the editor with a reason shown
@@ -133,6 +148,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     logLevel: e.LOG_LEVEL,
     contentPath: e.CONTENT_PATH,
     webRoot: e.WEB_ROOT,
+    apiRateLimits: { perIpPerMinute: e.API_RATE_LIMIT_PER_IP_PER_MINUTE, perUserPerMinute: e.API_RATE_LIMIT_PER_USER_PER_MINUTE },
     cms: cmsSettings(env),
     ...(tracing ? { tracing } : {}),
     ...(e.REDIS_URL ? { redisUrl: e.REDIS_URL } : {}),
