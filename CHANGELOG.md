@@ -37,6 +37,5 @@ The first release: all 18 tracks complete, with college features. Evidence for e
 ### Known limitations
 
 - One app instance per database (SQLite); needing more than one app server is the trigger for the PostgreSQL adapter ([ADR 0002](docs/adr/0002-database.md)).
-- The content editor has been tested against a local fake of the GitHub API only.
 - The manual screen-reader pass has not been done yet.
 - See [README, "Known limitations"](README.md#known-limitations).

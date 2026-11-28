@@ -65,7 +65,7 @@ Faculty and admins can edit content files in the browser (**Edit content** in th
 1. On GitHub: *Settings → Developer settings → Fine-grained tokens → Generate new token*. Resource owner: the repository's owner; repository access: only this repository; permissions as above; set an expiry and note it in your calendar.
 2. Protect the default branch (required review and the CI checks) so editor pull requests cannot be merged unreviewed.
 3. Pass the variables to the app container or service (for Compose, an `env_file:` that is not committed), restart, and check the start-up log line `contentEditor: "enabled"`.
-4. Try one edit as a faculty account and confirm the pull request appears. The automated tests use a local fake of the GitHub API, so this first real run is the integration test.
+4. Try one edit as a faculty account and confirm the pull request appears, or run the scripted check against a scratch repository: put `GITHUB_REPOSITORY` and `GITHUB_TOKEN` in a file outside the repository (mode 600) and run `node --disable-warning=ExperimentalWarning --env-file=<that file> scripts/cms-live-test.ts` (in-memory database, never prints the token). It passed against the real GitHub API on 2026-11-28; the automated tests use a local fake.
 
 Changes appear on the site only after the pull request is merged and the site is rebuilt and redeployed.
 

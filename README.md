@@ -52,7 +52,7 @@ Screenshots are regenerated from the built app with `node --disable-warning=Expe
 | Who uses each tool and why: two sourced case studies per track, every claim with a verbatim quote, its source and the date checked; alternatives with when to choose them and their licences | Working (36 case studies, 89 alternatives) |
 | Accounts, sign-in, progress tracking (a lesson completes only when its self-check is passed), bookmarks, dashboard | Working |
 | For colleges: cohorts with join codes, assignments with due dates, submissions reviewed against rubrics, opt-in public portfolios, certificates anyone can verify, data export and account deletion | Working |
-| Roles (student, faculty, admin), admin screens (roles, disable/enable, audit log), and a content editor for faculty that opens GitHub pull requests | Working (the editor has been tested against a fake GitHub API only; see [Known limitations](#known-limitations)) |
+| Roles (student, faculty, admin), admin screens (roles, disable/enable, audit log), and a content editor for faculty that opens GitHub pull requests | Working (the editor is covered by tests against a fake GitHub API and was tested once against the real GitHub API) |
 | Dark and light themes, keyboard navigation, mobile layout; automated accessibility audit of every page type | Working (68 audits; a manual screen-reader pass is pending) |
 
 ## The 18 tracks
@@ -247,7 +247,7 @@ Found a vulnerability? Please report it privately to the maintainers rather than
 
 - **One app instance.** v1.0 stores everything in one SQLite file and must run as a single app process ([ADR 0002](docs/adr/0002-database.md), [deployment guide](docs/deployment.md#database-one-app-instance)). Scale it up, not out; one process handled about 300 concurrent active users in the load test before latency rose.
 - **Shared networks.** API requests are limited to 6,000 a minute per address and 600 per signed-in user by default, which fits about 60 students behind one NAT address; raise the per-address limit for larger groups ([sizing guidance](docs/deployment.md#rate-limits)).
-- **Content editor:** tested against a local fake of the GitHub API only ([ADR 0011](docs/adr/0011-cms-pull-requests.md)); try one pull request on a scratch repository before real use.
+- **Content editor:** tested against the real GitHub API on 2026-11-28 (`scripts/cms-live-test.ts`: a faculty edit on a scratch repository became pull request #1 with exactly one changed file; the token appeared in no log line or API response). The automated tests use a fake GitHub API; rerun the live test after changing `server/src/cms/` ([ADR 0011](docs/adr/0011-cms-pull-requests.md)).
 - **Screen readers:** the automated accessibility audit covers every page type, but the manual screen-reader pass ([checklist](docs/accessibility.md#manual-screen-reader-pass-to-do-owner)) is still pending.
 - **External links** are checked weekly by the *Link check* workflow; four sites refuse automated checks and were confirmed by hand (`content/link-check-exceptions.yaml`, re-check every 90 days).
 - Jira lessons cannot run commands against the hosted service; they are checked against Atlassian's documentation and taught with a labelled simulation.

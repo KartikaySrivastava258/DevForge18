@@ -25,7 +25,7 @@ Snapshot for v1.0 (2026-11-28). The original 2026-11-25 snapshot is in the git h
 | Platform: accounts, roles, sessions, progress, bookmarks, search, system map, lesson reader, dark/light themes, mobile layout | ✅ Complete and tested |
 | Security: scrypt passwords, hashed session tokens, CSRF protection, strict CSP (unchanged since the first commit), per-account and per-user limits, audit log, endpoint authorization review | ✅ Complete and tested |
 | 18 tracks, 8 learning paths, 133 lessons (131 executed in CI, 2 Jira lessons docs-checked), 18 simulations, 37 labs, 18 quizzes, 54 mini-projects, 7 capstones, 17 integrations, 10 architectures, 36 case studies, 89 alternatives | ✅ Complete and tested |
-| Cohorts, assignments, rubric reviews, portfolios, certificates, data export and deletion, admin screens, content editor | ✅ Complete and tested (the editor against a fake GitHub only until the owner's live test) |
+| Cohorts, assignments, rubric reviews, portfolios, certificates, data export and deletion, admin screens, content editor | ✅ Complete and tested (the editor also against the real GitHub API, 2026-11-28) |
 | Deployment, tracing, shared rate limits, Compose/Nginx smoke test, accessibility audit, load test, upgrade and backup tests | ✅ Complete and tested |
 | Items still being built for v1.0, and items moved to after v1.0 with the owner's approval | See section 10 |
 
@@ -460,4 +460,4 @@ For facts: every new external claim has a source URL and a `checked_on` date; ru
 ### Waiting on the owner
 
 - The manual screen-reader pass (Orca with Firefox; docs/accessibility.md).
-- The content editor's live test on a scratch GitHub repository (`scripts/cms-live-test.ts`; docs/deployment.md).
+- ~~The content editor's live test~~ ✅ passed on 2026-11-28 (pull request #1 on the owner's scratch repository).
