@@ -116,8 +116,21 @@ export const AlternativeSchema = z
   })
   .strict();
 export type Alternative = z.infer<typeof AlternativeSchema>;
+/**
+ * Tools used together with the track's tool rather than instead of it — for a RAG framework, the vector store.
+ * Choosing one is a separate decision, so it is a separate list with its own heading (and its own limit of six),
+ * not more entries in the list of alternatives.
+ */
+export const ComplementsSchema = z
+  .object({
+    title: z.string().min(5).max(80),
+    intro: z.string().min(30).max(400),
+    items: z.array(AlternativeSchema).min(2).max(6),
+  })
+  .strict();
+export type Complements = z.infer<typeof ComplementsSchema>;
 export const AlternativesFileSchema = z
-  .object({ checked_on: isoDate, alternatives: z.array(AlternativeSchema).min(2).max(6) })
+  .object({ checked_on: isoDate, alternatives: z.array(AlternativeSchema).min(2).max(6), complements: ComplementsSchema.optional() })
   .strict();
 
 export const TrackSchema = z
@@ -153,7 +166,7 @@ export const TrackSchema = z
   })
   .strict();
 /** A track as served: track.yaml plus its alternatives.yaml (when present). */
-export type Track = z.infer<typeof TrackSchema> & { alternatives?: Alternative[]; alternatives_checked_on?: string };
+export type Track = z.infer<typeof TrackSchema> & { alternatives?: Alternative[]; alternatives_checked_on?: string; complements?: Complements };
 
 export const PathSchema = z
   .object({

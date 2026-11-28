@@ -137,6 +137,22 @@ describe("validation catches authoring mistakes", () => {
     assert.ok(errors.some((e) => e.includes('"Valkey" is listed twice')), errors.join("\n"));
   });
 
+  it("keeps complementary tools (vector stores) in their own list, without names repeated across the lists", () => {
+    const { bundle } = loadContent(contentRoot);
+    const rag = bundle.tracks.find((t) => t.slug === "langchain-llamaindex");
+    assert.deepEqual(rag?.complements?.items.map((a) => a.name), ["pgvector", "Qdrant", "Weaviate", "Chroma"]);
+    assert.ok(!rag?.alternatives?.some((a) => /vector/.test(a.category)), "vector stores are not alternatives to the framework");
+    const dir = copyContent();
+    const file = join(dir, "tracks", "langchain-llamaindex", "alternatives.yaml");
+    const original = readFileSync(file, "utf8");
+    writeFileSync(file, original.replace("- name: Chroma", "- name: Haystack"));
+    let { errors } = loadContent(dir);
+    assert.ok(errors.some((e) => e.includes('"Haystack" is listed twice')), errors.join("\n"));
+    writeFileSync(file, original.replace("licence_source: https://github.com/chroma-core/chroma/blob/main/LICENSE", "licence_source: http://github.com/chroma-core/chroma/blob/main/LICENSE"));
+    ({ errors } = loadContent(dir));
+    assert.ok(errors.some((e) => e.includes("langchain-llamaindex/alternatives.yaml") && e.includes("https")), errors.join("\n"));
+  });
+
   it("detects prerequisite cycles", () => {
     const dir = copyContent();
     const file = join(dir, "tracks", "docker", "track.yaml");

@@ -116,12 +116,13 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       else if (alt) {
         if (alt.data.checked_on > today) errors.push(`${altRel}: checked_on is in the future`);
         const names = new Set<string>();
-        for (const a of alt.data.alternatives) {
+        for (const a of [...alt.data.alternatives, ...(alt.data.complements?.items ?? [])]) {
           if (names.has(a.name)) errors.push(`${altRel}: "${a.name}" is listed twice`);
           names.add(a.name);
         }
         track.alternatives = alt.data.alternatives;
         track.alternatives_checked_on = alt.data.checked_on;
+        if (alt.data.complements) track.complements = alt.data.complements;
       }
     }
     tracks.push(track);
