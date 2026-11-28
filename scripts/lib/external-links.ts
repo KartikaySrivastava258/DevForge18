@@ -64,8 +64,8 @@ export function externalLinks(bundle: ContentBundle): ExternalLink[] {
     }
   };
   for (const t of bundle.tracks) {
-    walk({ ...t, alternatives: undefined }, `track ${t.slug}`);
-    for (const a of t.alternatives ?? []) {
+    walk({ ...t, alternatives: undefined, complements: undefined }, `track ${t.slug}`);
+    for (const a of [...(t.alternatives ?? []), ...(t.complements?.items ?? [])]) {
       // alternatives.yaml has one checked_on date for the file.
       if (a.url) add(a.url, `alternative ${a.name} (${t.slug})`, t.alternatives_checked_on ? "verified" : "unverified");
       if (a.licence_source) add(a.licence_source, `licence of ${a.name} (${t.slug})`, t.alternatives_checked_on ? "verified" : "unverified");

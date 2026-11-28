@@ -2,7 +2,7 @@
 id: docker-health-logs-and-limits
 title: Health checks, logs, limits and stopping cleanly
 track: docker
-order: 5
+order: 6
 level: intermediate
 estimated_minutes: 40
 prerequisites: [docker-networks-and-compose]

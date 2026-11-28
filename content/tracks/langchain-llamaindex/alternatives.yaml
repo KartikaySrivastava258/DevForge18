@@ -1,5 +1,5 @@
 # Licences as stated by each project where it was read; "not stated" means it was not checked.
-checked_on: '2026-11-26'
+checked_on: '2026-11-28'
 alternatives:
 - name: Haystack
   category: LLM framework
@@ -33,13 +33,54 @@ alternatives:
     debugging.
   avoid_when: You need many ready-made connectors, retrievers or agent patterns, or must switch between providers
     often.
-- name: pgvector
-  category: vector store
-  url: https://github.com/pgvector/pgvector
-  licence: Permissive, PostgreSQL-style notice (not named in the repository)
-  licence_source: https://github.com/pgvector/pgvector/blob/master/LICENSE
-  choose_when: You already run PostgreSQL and want vectors next to your relational data, with transactions and SQL
-    filters.
-  avoid_when: You need a dedicated vector service with features or scaling behaviour beyond what your PostgreSQL
-    setup provides.
-  note: GitHub does not recognise the licence by name; read the LICENSE file before relying on it.
+# Vector stores are used together with LangChain or LlamaIndex, not instead of them: a separate choice, so a separate list.
+complements:
+  title: Where to store the vectors
+  intro: >-
+    The lessons in this track keep vectors in memory. A real application keeps them in a vector store, which
+    LangChain or LlamaIndex then queries — a choice made separately from the framework. Each entry was read on the
+    project's own site or repository.
+  items:
+  - name: pgvector
+    category: vector store
+    url: https://github.com/pgvector/pgvector
+    licence: Permissive, PostgreSQL-style notice (not named in the repository)
+    licence_source: https://github.com/pgvector/pgvector/blob/master/LICENSE
+    choose_when: You already run PostgreSQL and want vectors next to your relational data, with transactions and SQL
+      filters.
+    avoid_when: You need a dedicated vector service with features or scaling behaviour beyond what your PostgreSQL
+      setup provides.
+    note: GitHub does not recognise the licence by name; read the LICENSE file before relying on it.
+  - name: Qdrant
+    category: vector database
+    url: https://qdrant.tech/
+    licence: Apache-2.0
+    licence_source: https://github.com/qdrant/qdrant/blob/master/LICENSE
+    choose_when: You want a dedicated vector database written in Rust and run as a server, with filtering on payload
+      fields during the search itself and dense and sparse vectors for hybrid (semantic plus lexical) retrieval —
+      self-hosted as open source or as a managed cloud.
+    avoid_when: Your vectors sit next to relational data you already keep in PostgreSQL and pgvector is enough, or a
+      prototype is simpler with an in-process store than with another server to run.
+    note: The README's quick start (docker run -p 6333:6333 qdrant/qdrant) starts a deployment without
+      authentication; configure security before exposing it.
+  - name: Weaviate
+    category: vector database
+    url: https://weaviate.io/
+    licence: BSD-3-Clause outside the repository's "wl" directory; code in "wl" only under a separate enterprise licence
+    licence_source: https://github.com/weaviate/weaviate/blob/main/LICENSE
+    choose_when: You want an open-source vector database that stores data objects together with their embeddings and
+      combines semantic and keyword search, run with Docker for development, on Kubernetes for production, or in
+      Weaviate Cloud.
+    avoid_when: You would rely on features in the enterprise-licensed part without a commercial agreement, or a small
+      project is simpler with pgvector or an in-process store.
+    note: The LICENSE file says enterprise features are enabled via a licence key and the BSD licence does not grant
+      the right to use them; GitHub shows the repository's licence as "Other". Read it before relying on a feature.
+  - name: Chroma
+    category: vector database
+    url: https://www.trychroma.com/
+    licence: Apache-2.0
+    licence_source: https://github.com/chroma-core/chroma/blob/main/LICENSE
+    choose_when: You start in Python and want no server at first — the Python client can run Chroma in memory or save
+      it to a local folder (PersistentClient) — and later move the same SDK to a self-hosted server or Chroma Cloud.
+    avoid_when: Your application is written in JavaScript/TypeScript or Rust and you wanted the in-process mode (those
+      clients connect to a running Chroma server), or you already run PostgreSQL and pgvector is enough.

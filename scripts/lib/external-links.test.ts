@@ -12,6 +12,7 @@ describe("externalLinks", () => {
           resources: [{ url: "https://docs.docker.com/", verification: { status: "verified", checked_on: "2026-11-01" } }],
           alternatives: [{ name: "Podman", url: "https://podman.io/" }],
           alternatives_checked_on: "2026-11-01",
+          complements: { title: "Where to run it", intro: "x", items: [{ name: "Lima", url: "https://lima-vm.io/", licence_source: "https://github.com/lima-vm/lima/blob/master/LICENSE" }] },
         },
       ],
       paths: [{ slug: "p1", modules: [] }],
@@ -36,6 +37,8 @@ describe("externalLinks", () => {
     assert.equal(by.get("https://docs.docker.com/")?.declared, "unverified", "the weakest declaration wins");
     assert.deepEqual(by.get("https://docs.docker.com/")?.usedBy, ["track docker", "lesson l1"]);
     assert.equal(by.get("https://podman.io/")?.declared, "verified");
+    assert.deepEqual(by.get("https://lima-vm.io/")?.usedBy, ["alternative Lima (docker)"], "complementary tools are checked like alternatives");
+    assert.equal(by.get("https://github.com/lima-vm/lima/blob/master/LICENSE")?.declared, "verified");
     assert.deepEqual(by.get("https://git-scm.com/docs/git-reflog")?.usedBy, ["lesson l1", "lab lab1"]);
     assert.equal(by.get("https://git-scm.com/docs/git-reflog")?.declared, undefined, "links in prose declare nothing");
     assert.equal(by.has("http://localhost:8080/"), false, "local addresses are commands, not references");

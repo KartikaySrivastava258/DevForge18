@@ -6,8 +6,9 @@
  *
  * Prints, for each of the 18 tracks, the number of lessons by level, simulations, labs, quizzes (and questions),
  * mini-projects, case studies and alternatives; then every lesson whose commands are not executed by the test
- * suite, with its reason; then every external link that is unverified or broken, either as declared in the content
- * or as found by the link checker (scripts/check-links.ts, run by the Link check workflow).
+ * suite, with its reason; then everything whose last_reviewed is more than 12 months old; then every external link
+ * that is unverified or broken, either as declared in the content or as found by the link checker
+ * (scripts/check-links.ts, run by the Link check workflow).
  *
  * Exit code 1 when the link report lists a broken link, so a release cannot go out with one unnoticed.
  */
@@ -17,12 +18,13 @@ import { fileURLToPath } from "node:url";
 import { LEVELS } from "../shared/content-schema.ts";
 import { loadContent } from "./lib/content-loader.ts";
 import { externalLinks } from "./lib/external-links.ts";
+import { overdueReviewSection } from "./lib/review-age.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const linksArg = process.argv.indexOf("--links");
 const reportPath = linksArg > 0 ? resolve(process.argv[linksArg + 1] ?? "") : undefined;
 
-const { bundle, errors } = loadContent(join(root, "content"));
+const { bundle, errors, overdueReviews } = loadContent(join(root, "content"));
 if (errors.length) {
   console.error(`Content has ${errors.length} validation error(s); run npm run content:build first.`);
   process.exit(2);
@@ -76,7 +78,10 @@ console.log(`\n## Lessons not "executed" (${notExecuted.length} of ${bundle.less
 for (const l of notExecuted) console.log(`- ${l.track}/${l.id} [${l.verification.method}]: ${l.verification.details}`);
 if (!notExecuted.length) console.log("- none");
 
-// ---- 3. External links ---------------------------------------------------------------------------------
+// ---- 3. Content due for review (last_reviewed more than 12 months before today, UTC) ---------------------
+console.log(`\n${overdueReviewSection(overdueReviews).join("\n")}`);
+
+// ---- 4. External links ---------------------------------------------------------------------------------
 const links = externalLinks(bundle);
 const declared = links.filter((l) => l.declared && l.declared !== "verified");
 console.log(`\n## External links: ${links.length} unique URLs`);

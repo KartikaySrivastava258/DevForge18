@@ -2,7 +2,7 @@
 id: docker-image-and-container-security
 title: Image and container security
 track: docker
-order: 6
+order: 7
 level: advanced
 estimated_minutes: 45
 prerequisites: [docker-health-logs-and-limits]

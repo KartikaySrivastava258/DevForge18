@@ -2,7 +2,7 @@
 id: docker-networks-and-compose
 title: Networks and Docker Compose
 track: docker
-order: 4
+order: 5
 level: intermediate
 estimated_minutes: 40
 prerequisites: [docker-dockerfile-layers-and-cache]

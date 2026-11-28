@@ -2,7 +2,7 @@
 id: docker-build-cache-and-supply-chain
 title: Build cache and the software supply chain
 track: docker
-order: 7
+order: 8
 level: advanced
 estimated_minutes: 45
 prerequisites: [docker-image-and-container-security]

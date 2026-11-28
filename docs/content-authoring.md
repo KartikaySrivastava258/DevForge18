@@ -24,6 +24,7 @@ Every resource has `verification: { status: unverified | verified | broken, chec
 4. Commit, then `npm run ci:record -- <id>` records the lesson in CI (all services and tools, fast downloads) and applies the result to your working tree; review it with `git diff` and commit. Recording locally (`npm run lessons:record`) still works when the tools are installed.
 5. A lesson that fails intermittently: `npm run lessons:stress -- <id>` runs it repeatedly with every CPU core busy. When a lesson stops early, the report includes the state and last log lines of its containers.
 6. Dates are UTC (as in CI): `last_reviewed` and `checked_on` cannot be later than today in UTC.
+7. Content ages: anything whose `last_reviewed` is more than 12 months before today (UTC) makes `npm run content:build` print a warning (a warning annotation on the file in GitHub Actions) and is listed under "Reviewed more than 12 months ago" by `npm run content:audit`. Check it against current documentation, re-record executed lessons, then update `last_reviewed` (and `content_version` if the content changed).
 
 - `npm run new:quiz -- <track> <id>` and `npm run new:project -- <track> <id> [level]` scaffold a track quiz (all six question types are documented in `content/quizzes/git-github/git-github-quiz.yaml`) and a mini-project with `starter/` and `solution/` folders.
 - **Mini-project checks.** A project can ship `content/projects/<track>/<id>/check.sh`, which takes the learner's
