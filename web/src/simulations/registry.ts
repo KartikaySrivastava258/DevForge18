@@ -31,6 +31,7 @@ export const SIMULATIONS: Record<string, () => Promise<{ default: SimulationEntr
   "jira-sprint-board": () => import("./SprintBoard.tsx"),
   "docker-layer-cache": () => import("./LayerCache.tsx"),
   "postgresql-query-planner": () => import("./QueryPlanner.tsx"),
+  "postgresql-isolation-timeline": () => import("./IsolationTimeline.tsx"),
   "terraform-plan-diff": () => import("./PlanDiff.tsx"),
   "github-actions-workflow-run": () => import("./WorkflowRun.tsx"),
   "redis-cache-load": () => import("./CacheLoad.tsx"),

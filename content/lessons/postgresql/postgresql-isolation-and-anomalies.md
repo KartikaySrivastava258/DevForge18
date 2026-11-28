@@ -225,6 +225,13 @@ dropdb concurrency_lab && echo "dropped"
 dropped
 ```
 
+## Try it in the simulation
+
+Put the two doctors' transactions on a timeline yourself: choose the isolation level, run T1 and T2 in any order, and watch the result of every statement, the waits for row locks and the serialization failures. The other scenarios show a non-repeatable read, a phantom read and the lost update from step 2. It is a labelled teaching model, not a database — but every order of its scenarios was checked against a real PostgreSQL 16 server.
+
+```simulation postgresql-isolation-timeline scenario=oncall
+```
+
 ## Common mistakes
 
 - **Read-modify-write in application code.** Compute in SQL (`seats = seats - 1`) or lock first (`FOR UPDATE`).

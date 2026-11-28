@@ -29,7 +29,8 @@ import { sprintBoard } from "./jira/sprint-board.ts";
 import { layerCache } from "./docker/layer-cache.ts";
 import { LayerActionSchema, LayerScenarioSchema } from "./docker/schema.ts";
 import { queryPlanner } from "./postgresql/query-planner.ts";
-import { PlannerActionSchema, PlannerScenarioSchema } from "./postgresql/schema.ts";
+import { isolationTimeline } from "./postgresql/isolation-timeline.ts";
+import { IsoActionSchema, IsoScenarioSchema, PlannerActionSchema, PlannerScenarioSchema } from "./postgresql/schema.ts";
 import { planDiff } from "./terraform/plan-diff.ts";
 import { PlanActionSchema, PlanScenarioSchema } from "./terraform/schema.ts";
 import { workflowRun } from "./github-actions/workflow-run.ts";
@@ -61,6 +62,7 @@ export const MODELS: Readonly<Record<string, AnyModel>> = {
   [sprintBoard.id]: { ...sprintBoard, scenarioSchema: SprintScenarioSchema, actionSchema: SprintActionSchema },
   [layerCache.id]: { ...layerCache, scenarioSchema: LayerScenarioSchema, actionSchema: LayerActionSchema },
   [queryPlanner.id]: { ...queryPlanner, scenarioSchema: PlannerScenarioSchema, actionSchema: PlannerActionSchema },
+  [isolationTimeline.id]: { ...isolationTimeline, scenarioSchema: IsoScenarioSchema, actionSchema: IsoActionSchema },
   [planDiff.id]: { ...planDiff, scenarioSchema: PlanScenarioSchema, actionSchema: PlanActionSchema },
   [workflowRun.id]: { ...workflowRun, scenarioSchema: WorkflowRunScenarioSchema, actionSchema: WorkflowRunActionSchema },
   [cacheLoad.id]: { ...cacheLoad, scenarioSchema: CacheScenarioSchema, actionSchema: CacheActionSchema },

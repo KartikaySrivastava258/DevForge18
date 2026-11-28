@@ -9,7 +9,7 @@ DevForge 18 aims for WCAG 2.1 level AA. This page records what is tested automat
 - **Rules:** every axe rule tagged `wcag2a`, `wcag2aa`, `wcag21a` or `wcag21aa`. No rule is disabled and no element is excluded; any future exclusion must be added to `EXCLUSIONS` in the test with its reason, and listed here.
 - **Colour schemes:** every page is audited twice, in the dark scheme (the default) and the light scheme (`prefers-color-scheme: light`); the test also checks that the page really switched (`<html data-theme>`).
 - **When:** after the page's own data has loaded (its heading and a page-specific element are visible, the network is idle, and entrance animations have finished, so contrast is measured on final colours).
-- **Pages (34, so 68 audits):**
+- **Pages (35, so 70 audits):**
 
 | Page | URL |
 |---|---|
@@ -19,6 +19,7 @@ DevForge 18 aims for WCAG 2.1 level AA. This page records what is tested automat
 | Lesson | `/tracks/docker/lessons/docker-images-vs-containers` |
 | Lab (with an embedded simulation) | `/tracks/docker/labs/docker-layer-cache-experiments` |
 | Simulation | `/tracks/kubernetes/simulations/kubernetes-reconciliation` |
+| Simulation after a dozen steps (long, scrolling event log; timeline with a lock wait and an error) | `/tracks/postgresql/simulations/postgresql-isolation-timeline?scenario=deposits` |
 | Quiz, signed out and signed in (questions shown) | `/tracks/git-github/quiz` |
 | Mini-project | `/tracks/docker/projects/docker-notes-api` |
 | Capstones and one capstone | `/capstones`, `/capstones/capstone-a` |
