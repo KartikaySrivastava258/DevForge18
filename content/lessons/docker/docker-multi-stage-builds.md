@@ -92,7 +92,7 @@ Where the analogy breaks: the workshop does not disappear. Docker keeps the buil
 
 ## What problem it solves
 
-A compiled language needs a compiler, libraries and the source code to build a program, but the running program needs none of them. In a single-stage Dockerfile, everything used during the build ends up in the image: hundreds of megabytes that every server and every CI job must download and store, and many extra programs an attacker could use if they break in. Deleting the tools in a later `RUN` does not help, because earlier layers stay in the image.
+A compiled language needs a compiler, libraries and the source code to build a program, but the running program usually needs only the result. In a single-stage Dockerfile, everything used during the build ends up in the image: hundreds of megabytes that every server and every CI job must download and store, and many extra programs an attacker could use if they break in. Deleting the tools in a later `RUN` does not help, because earlier layers stay in the image.
 
 A multi-stage build keeps building and shipping in one Dockerfile and one `docker build` command, and the image contains only what the last stage puts in it.
 
@@ -110,7 +110,7 @@ A multi-stage build keeps building and shipping in one Dockerfile and one `docke
 
 ## Try it yourself
 
-> **Local lab** — needs Docker. It downloads the Go image (`golang:1.27.3-alpine3.24`, about 80 MB compressed) and the distroless static image (about 2 MB) on the first build. Every command is run automatically in DevForge's tests, and the last step removes the images it builds.
+> **Local lab** — needs Docker. It downloads the Go image (`golang:1.27.3-alpine3.24`, about 75 MB to download and 250 MB on disk) and the distroless static image (under 3 MB) on the first build. Every command is run automatically in DevForge's tests, and the last step removes the images it builds.
 
 ### 1. A small Go program and a single-stage image
 
@@ -200,7 +200,7 @@ hello-go:small …MB
 ```
 
 - The final stage starts `FROM` a distroless image and receives exactly one file from the build stage.
-- When this lesson was recorded (x86-64, Docker 29), the single-stage image was 287 MB and the multi-stage image 4.72 MB — about 60 times smaller, for the same program. Your sizes depend on your computer's architecture and on how Docker stores images, so the lesson shows them as `…`; the gap is always large. Check it with exact byte counts:
+- When this lesson was recorded (x86-64, Docker Engine 29.1.3), the single-stage image was 287 MB and the multi-stage image 4.72 MB — about 60 times smaller, for the same program. Your sizes depend on your computer's architecture and on how Docker stores images, so the lesson shows them as `…`; expect a similar gap. Check it with exact byte counts:
 
 ```bash run
 size() { docker image inspect -f '{{.Size}}' "$1"; }
