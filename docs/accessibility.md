@@ -9,7 +9,7 @@ DevForge 18 aims for WCAG 2.1 level AA. This page records what is tested automat
 - **Rules:** every axe rule tagged `wcag2a`, `wcag2aa`, `wcag21a` or `wcag21aa`. No rule is disabled and no element is excluded; any future exclusion must be added to `EXCLUSIONS` in the test with its reason, and listed here.
 - **Colour schemes:** every page is audited twice, in the dark scheme (the default) and the light scheme (`prefers-color-scheme: light`); the test also checks that the page really switched (`<html data-theme>`).
 - **When:** after the page's own data has loaded (its heading and a page-specific element are visible, the network is idle, and entrance animations have finished, so contrast is measured on final colours).
-- **Pages (33, so 66 audits):**
+- **Pages (34, so 68 audits):**
 
 | Page | URL |
 |---|---|
@@ -37,8 +37,7 @@ DevForge 18 aims for WCAG 2.1 level AA. This page records what is tested automat
 | Public portfolio | `/portfolio/:slug` |
 | Administration (admin) | `/admin` |
 | Content editor (faculty) | `/content-editor` |
-
-Not audited automatically yet: the certificate verification page (`/certificates/:id`) — creating one needs a learner who passed a quiz and verified labs through the real flows; its content is covered by API tests and it uses the same notice, heading and list components as the audited pages. Include it in the manual pass.
+| Certificate verification (signed out; the certificate is issued by the real API after the quiz and lab evidence is seeded, as in the API tests) | `/certificates/:id` |
 
 ### Results
 
@@ -65,7 +64,15 @@ Automated tools find only part of the WCAG failures: they cannot judge whether a
 
 **Not done yet.** This audit was automated only; nobody has used DevForge with a screen reader. Do it before institution-wide use, record the date, the screen reader and browser versions, and any problems found (as issues), here.
 
-Suggested setups: NVDA with Firefox or Chrome on Windows; VoiceOver with Safari on macOS and on iOS; TalkBack with Chrome on Android. Test in both colour schemes and at 200 % and 400 % zoom.
+Suggested setups: Orca with Firefox on Linux (the owner's setup; steps below); NVDA with Firefox or Chrome on Windows; VoiceOver with Safari on macOS and on iOS; TalkBack with Chrome on Android. Test in both colour schemes and at 200 % and 400 % zoom.
+
+### Orca on Linux, quick start
+
+1. Orca is installed on most GNOME-based desktops (`orca --version`; otherwise `sudo apt install orca`). Run `orca -s` once and choose the **Laptop** keyboard layout: the Orca key is then **Caps Lock** (Desktop layout: **Insert**).
+2. Start it with `orca &` (GNOME: Super+Alt+S toggles it); stop it with `pkill orca`.
+3. Start DevForge (`npm run build && npm start`, or on another port with `PORT` and `PUBLIC_ORIGIN`) and open it in Firefox.
+4. Keys (from the Orca help, checked 2026-11-28): Orca+H learn mode (Esc leaves); Tab/Shift+Tab controls; H/Shift+H headings, 1–6 a heading level, Alt+Shift+H list of headings; M landmarks (Alt+Shift+M list); K links (Alt+Shift+K list); F form fields; B buttons; T tables; Orca+A switches browse mode and focus mode; Say All is Orca+; (Laptop) or KP Plus (Desktop). The help pages do not list a key to stop speech; Ctrl usually stops it.
+5. For each item below write ✅ or ❌ with one line on what was announced, and record the Orca and Firefox versions and the date here.
 
 ### Checklist
 
@@ -92,6 +99,8 @@ Pages
 - [ ] Search: results count and results are announced after typing.
 - [ ] Sign-in and registration: every field is labelled; errors are announced and linked to their field; the password rules are read before submitting.
 - [ ] Dashboard: progress figures are announced as text, not only as bars.
+- [ ] Cohorts and reviews: the join-code field is labelled; the cohort's learner table has headers; each rubric criterion is a group whose options are announced with their level.
+- [ ] Certificate page: the holder, track, issue date and status (valid or revoked) are read in order; the criteria list makes sense without the visual layout.
 
 ## Keeping it accessible
 

@@ -66,6 +66,7 @@ const PAGES: AuditedPage[] = [
   { name: "review queue", path: "/reviews", ready: "table", signedIn: "faculty", setup: async (page) => (await teacherWithSubmission(page), "/reviews") },
   { name: "review form with the rubric", path: "/reviews", ready: "fieldset.rubric-row", signedIn: "faculty", setup: (page) => teacherWithSubmission(page).then((r) => `/reviews/submission/${r.submissionId}`) },
   { name: "public portfolio", path: "/", ready: "h1", setup: publicPortfolio },
+  { name: "certificate verification", path: "/", ready: "h1", setup: issuedCertificate },
   { name: "administration", path: "/admin", ready: "table", signedIn: "admin" },
   { name: "content editor", path: "/content-editor", ready: "h1", signedIn: "faculty" },
   { name: "home at phone width, menu open", path: "/", ready: ".map-list", mobile: true, prepare: openMenu },
@@ -136,6 +137,32 @@ async function publicPortfolio(): Promise<string> {
   await s.post("/api/me/portfolio", { isPublic: true, slug, headline: "Learning DevOps" }, "PUT");
   await s.dispose();
   return `/portfolio/${slug}`;
+}
+
+/**
+ * A student earns the Kubernetes certificate; the audit visits its public verification page signed out.
+ * Passing the quiz and verifying both labs through the browser would take minutes, so that evidence is seeded in
+ * the database exactly as server/test/api-institution.test.ts does; the certificate itself is issued by the real API.
+ */
+async function issuedCertificate(): Promise<string> {
+  accounts += 1;
+  const ctx = await playwrightRequest.newContext({ baseURL: h.url, extraHTTPHeaders: { "X-DevForge-CSRF": "1", Origin: h.url } });
+  const reg = await ctx.post("/api/auth/register", { data: { email: `axe-certified-${accounts}@example.com`, displayName: "Certified Learner", password: "correct horse battery staple 42" } });
+  assert.equal(reg.status(), 201);
+  const userId = ((await reg.json()) as { user: { id: string } }).user.id;
+  const status = (await (await ctx.get("/api/me/certificates")).json()) as { tracks: { track: string; labs: { id: string }[] }[] };
+  const k8s = status.tracks.find((t) => t.track === "kubernetes");
+  assert.ok(k8s, "the Kubernetes track offers a certificate");
+  const now = new Date().toISOString();
+  h.db.prepare("INSERT INTO quiz_attempts (user_id, quiz_id, track_slug, score, passed, attempted_at) VALUES (?, 'kubernetes-quiz', 'kubernetes', 0.9, 1, ?)").run(userId, now);
+  for (const lab of k8s.labs) {
+    h.db.prepare("INSERT INTO lab_progress (user_id, lab_id, track_slug, evidence, completed_at) VALUES (?, ?, 'kubernetes', 'verified', ?)").run(userId, lab.id, now);
+  }
+  const issued = await ctx.post("/api/me/certificates/kubernetes");
+  assert.equal(issued.status(), 201, await issued.text());
+  const id = ((await issued.json()) as { certificate: { id: string } }).certificate.id;
+  await ctx.dispose();
+  return `/certificates/${id}`;
 }
 
 /** Waits for the page's own content, not just the app shell: the route's heading and, when given, its data. */

@@ -4,13 +4,19 @@
 
 DevForge 18 is an interactive developer engineering academy. It teaches 18 industry technology tracks — from Git and Docker to Kafka, OpenTelemetry and MLflow — the way they are actually used: as parts of one system. Every track starts with a plain-language explanation, shows where the tool sits in an architecture and how it connects to the others, and leads into lessons with graded self-checks, labs and projects.
 
-> **Project status: Phase 1 in progress.** The platform, all 18 track curricula and 8 learning paths are in place, and 80 lessons are published across all 18 tracks — beginner lessons in every track, and intermediate and advanced lessons for the Path 1 tracks (Learning Paths 1 and 2 — Git, PostgreSQL, Postman, Redis, Nginx, Docker, GitHub Actions, Jenkins, Terraform, Kubernetes, Prometheus + Grafana, OpenTelemetry — plus Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n and Jira). Every command in every published lesson is run by the test suite against the real tool, and CI confirms the output matches; the two Jira lessons about the hosted Jira service are checked against Atlassian's documentation instead, and say so. Every track has two labs; projects and further intermediate and advanced lessons are still being written, and the app labels everything that is planned rather than available. See [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) for exactly what works today.
+> **Project status: v1.0.** All 18 tracks are complete: 133 lessons (beginner to advanced), 18 simulations, 37 labs, 18 quizzes, 54 mini-projects, 7 capstones, 17 integrations between tracks and 10 reference architectures, plus cohorts, reviews, portfolios and certificates for colleges. Every command in 131 of the 133 lessons is run by the test suite against the real tool and CI confirms the output; the two lessons about the hosted Jira service are checked against Atlassian's documentation instead, and say so. Simulations are labelled as simulations. See [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) for the evidence and [`CHANGELOG.md`](CHANGELOG.md) for the release notes.
 
 ![DevForge 18 home page with the interactive system map](docs/screenshots/home-dark.jpg)
 
 | Track page | Lesson reader | Mobile |
 |---|---|---|
 | ![Docker track page](docs/screenshots/track-page.jpg) | ![Lesson with objectives](docs/screenshots/lesson.jpg) | ![Mobile home](docs/screenshots/mobile.jpg) |
+
+| Simulation (labelled as one) | Architecture studio |
+|---|---|
+| ![Kubernetes reconciliation loop simulation](docs/screenshots/simulation.jpg) | ![Reference architectures](docs/screenshots/architecture.jpg) |
+
+Screenshots are regenerated from the built app with `node --disable-warning=ExperimentalWarning scripts/readme-screenshots.ts` (last run 2026-11-28).
 
 ## Contents
 
@@ -33,18 +39,21 @@ DevForge 18 is an interactive developer engineering academy. It teaches 18 indus
 | Feature | Status |
 |---|---|
 | Browse all 18 tracks: explanation, problem solved, what it is *not*, architecture position, curriculum by level, labs, projects, official resources | Working |
-| Interactive system map showing how the tracks connect, with an explanation behind every connection | Working |
+| Interactive system map showing how the tracks connect, with an explanation behind every connection; a relationship graph and 17 integration pages (how two tools work together, with practice items) | Working |
 | 8 learning paths with ordered modules, prerequisites, alternate routes and time estimates | Working |
 | Search across tracks, curriculum topics, lessons and paths, with typo tolerance and abbreviations (`k8s`, `pg`, `otel`) | Working |
-| Lesson reader with objectives, table of contents, copyable code blocks, expected output and a server-graded self-check | Working (80 lessons; their commands are run by the test suite and in CI) |
-| Figures in every lesson, and step-through diagrams (Previous/Next, arrow keys, Play) for processes in every track with lessons; both themes, reduced motion respected | Working (81 figures, 22 of them step-throughs) |
-| Interactive simulations with challenges, verified by the server and saved to progress: Git commit graph, Kubernetes reconciliation loop, Prometheus scrape and rate, OpenTelemetry trace waterfall, Kafka consumer groups, Airflow scheduler timeline, MLflow experiment explorer, a RAG pipeline, an n8n workflow executor, a Jira sprint board, Docker's layer cache, PostgreSQL's query planner, Terraform's plan diff, a GitHub Actions run visualiser, a Redis cache under load, Nginx's location matcher, a Postman-style request builder, a Jenkins build queue | Working (all 18 tracks) |
-| Accounts, sign-in, progress tracking (a lesson completes only when its self-check is passed), bookmarks, dashboard | Working |
-| Roles (student, faculty, admin), admin user management with an audit log, faculty aggregate statistics | API working; admin/faculty screens not built yet |
-| Dark and light themes, keyboard navigation, mobile layout | Working |
+| Lesson reader with objectives, table of contents, copyable code blocks, expected output and a server-graded self-check | Working (133 lessons: 54 beginner, 42 intermediate, 37 advanced; 131 executed in CI, 2 Jira lessons checked against documentation) |
+| Figures in every lesson, and step-through diagrams (Previous/Next, arrow keys, Play); both themes, reduced motion respected | Working (134 figures in 133 lessons, 22 lessons with step-throughs) |
+| Interactive simulations with challenges, verified by the server and saved to progress, one per track, each labelled as a simulation and saying what it simplifies | Working (18) |
+| Labs: local labs with a check script, simulation labs with server-verified challenges, and a read-through lab graded on the server; progress records whether completion was checked or self-reported | Working (37) |
+| Quizzes: one per track mixing all levels, six question types, graded on the server (answers never sent before grading), attempts saved | Working (18 quizzes, 230 questions) |
+| Mini-projects with user stories, acceptance criteria, rubric, starter files, progressive hints and a faculty-only solution; an acceptance check that fails on the starter and passes on the solution, run in CI | Working (54, three per track) |
+| Capstones and the architecture studio: 7 capstones (A–G) and 10 reference architectures where learners write decision records | Working |
 | Who uses each tool and why: two sourced case studies per track, every claim with a verbatim quote, its source and the date checked; alternatives with when to choose them and their licences | Working (36 case studies, 89 alternatives) |
-| Labs: two per track — local labs with a check script, simulation labs with server-verified challenges, and a read-through lab graded on the server; progress records whether completion was checked or self-reported | Working (36 labs) |
-| Capstone projects, quizzes, architecture studio, cohorts | Planned (see roadmap) |
+| Accounts, sign-in, progress tracking (a lesson completes only when its self-check is passed), bookmarks, dashboard | Working |
+| For colleges: cohorts with join codes, assignments with due dates, submissions reviewed against rubrics, opt-in public portfolios, certificates anyone can verify, data export and account deletion | Working |
+| Roles (student, faculty, admin), admin screens (roles, disable/enable, audit log), and a content editor for faculty that opens GitHub pull requests | Working (the editor has been tested against a fake GitHub API only; see [Known limitations](#known-limitations)) |
+| Dark and light themes, keyboard navigation, mobile layout; automated accessibility audit of every page type | Working (68 audits; a manual screen-reader pass is pending) |
 
 ## The 18 tracks
 
@@ -234,10 +243,12 @@ Found a vulnerability? Please report it privately to the maintainers rather than
 
 ## Known limitations
 
-- 133 lessons are published (131 executed in CI, 2 docs-checked Jira lessons), 37 labs, a simulation and a quiz in every track, 54 mini-projects with executable acceptance checks, capstones A–G, 17 integrations and 10 reference architectures.
-- External resource links were all checked and reviewed on 2026-11-25. The weekly *Link check* workflow reports reachability; a person re-confirms each page before its date is updated.
-- Admin screens (users, roles, disabling accounts, audit log), faculty screens (cohorts, assignments, reviews against rubrics) and the content editor exist. The content editor has been tested only against a local fake of the GitHub API (see [ADR 0011](docs/adr/0011-cms-pull-requests.md)); try one pull request on a scratch repository first.
-- Rate limits are kept in memory, so they apply per server process, unless `REDIS_URL` points to a shared Redis. See [ADR 0004](docs/adr/0004-auth-sessions.md) and [ADR 0010](docs/adr/0010-shared-rate-limits-redis.md).
+- **One app instance.** v1.0 stores everything in one SQLite file and must run as a single app process ([ADR 0002](docs/adr/0002-database.md), [deployment guide](docs/deployment.md#database-one-app-instance)). Scale it up, not out; one process handled about 300 concurrent active users in the load test before latency rose.
+- **Shared networks.** API requests are limited to 6,000 a minute per address and 600 per signed-in user by default, which fits about 60 students behind one NAT address; raise the per-address limit for larger groups ([sizing guidance](docs/deployment.md#rate-limits)).
+- **Content editor:** tested against a local fake of the GitHub API only ([ADR 0011](docs/adr/0011-cms-pull-requests.md)); try one pull request on a scratch repository before real use.
+- **Screen readers:** the automated accessibility audit covers every page type, but the manual screen-reader pass ([checklist](docs/accessibility.md#manual-screen-reader-pass-to-do-owner)) is still pending.
+- **External links** are checked weekly by the *Link check* workflow; four sites refuse automated checks and were confirmed by hand (`content/link-check-exceptions.yaml`, re-check every 90 days).
+- Jira lessons cannot run commands against the hosted service; they are checked against Atlassian's documentation and taught with a labelled simulation.
 - The full list, with workarounds, is in [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md#known-issues-and-limitations).
 
 ## Licence

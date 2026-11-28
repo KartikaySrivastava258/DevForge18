@@ -7,9 +7,8 @@ import type { AppConfig } from "../server/src/config.ts";
 import { ContentStore } from "../server/src/content/store.ts";
 import { hashPassword } from "../server/src/auth/password.ts";
 import { insertUser, type Role } from "../server/src/auth/users.ts";
-import { migrate, openDatabase } from "../server/src/db/database.ts";
+import { migrate, openDatabase, type Db } from "../server/src/db/database.ts";
 import { silentLogger } from "../server/src/observability/logger.ts";
-import type { Limiters } from "../server/src/routes/deps.ts";
 
 const root = join(import.meta.dirname, "..");
 
@@ -19,14 +18,13 @@ export interface Harness {
   newPage: (opts?: { mobile?: boolean; colorScheme?: "light" | "dark" }) => Promise<{ page: Page; context: BrowserContext; problems: string[] }>;
   /** Create an account directly in the database — the only way to get a faculty or admin account, as in production. */
   createUser: (user: { email: string; name: string; password: string; role: Role }) => Promise<void>;
+  /** The in-memory database, for seeding state that only long real flows produce (as the API tests do). */
+  db: Db;
   close: () => Promise<void>;
 }
 
-/**
- * Runs the real server (built frontend + compiled content, in-memory DB) and a headless Chromium.
- * `options.limiters` replaces the production rate limiters, for a test that is deliberately one very busy client.
- */
-export async function startHarness(overrides: Partial<AppConfig> = {}, options: { limiters?: Limiters } = {}): Promise<Harness> {
+/** Runs the real server (built frontend + compiled content, in-memory DB) and a headless Chromium. */
+export async function startHarness(overrides: Partial<AppConfig> = {}): Promise<Harness> {
   // Bind the port first so the app is created with the exact origin the browser will send.
   let app: App | undefined;
   const server = createServer((req, res) => {
@@ -56,7 +54,7 @@ export async function startHarness(overrides: Partial<AppConfig> = {}, options: 
   };
   const db = openDatabase(":memory:");
   migrate(db);
-  app = createApp({ config, db, content: ContentStore.fromFile(config.contentPath), logger: silentLogger, ...(options.limiters ? { limiters: options.limiters } : {}) });
+  app = createApp({ config, db, content: ContentStore.fromFile(config.contentPath), logger: silentLogger });
   const browser = await chromium.launch();
 
   return {
@@ -89,6 +87,7 @@ export async function startHarness(overrides: Partial<AppConfig> = {}, options: 
       });
       return { page, context, problems };
     },
+    db,
     createUser: async ({ email, name, password, role }) => {
       insertUser(db, { email, displayName: name, passwordHash: await hashPassword(password, config.passwordHashLogN), role });
     },

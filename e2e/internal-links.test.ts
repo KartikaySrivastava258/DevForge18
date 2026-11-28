@@ -22,8 +22,6 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { after, before, describe, it } from "node:test";
 import type { APIRequestContext, BrowserContext, Page } from "playwright";
-import { defaultLimiters } from "../server/src/app.ts";
-import { FixedWindowLimiter } from "../server/src/http/rate-limit.ts";
 import { startHarness, type Harness } from "./harness.ts";
 
 const PASSWORD = "copper meadow signal 7";
@@ -56,10 +54,11 @@ interface Target {
 
 let h: Harness;
 before(async () => {
-  // The crawler is one client loading ~400 pages (several API calls each) in well under a minute, far past the
-  // per-IP API guard (1200 a minute, ADR 0004), which would turn pages into "Too many requests" error states.
-  // Only that guard is raised; rate limiting has its own tests.
-  h = await startHarness({}, { limiters: { ...defaultLimiters(), api: new FixedWindowLimiter(1_000_000, 60_000) } });
+  // The crawler is one signed-in client loading ~400 pages (several API calls each) in well under a minute, far
+  // past the API limits per user (600 a minute) and per address (6,000), which would turn pages into "Too many
+  // requests" error states. Only those two limits are raised; sign-in limits keep their production values, and
+  // rate limiting has its own tests (server/test/rate-limits.test.ts).
+  h = await startHarness({ apiRateLimits: { perIpPerMinute: 1_000_000, perUserPerMinute: 1_000_000 } });
 });
 after(() => h.close());
 
