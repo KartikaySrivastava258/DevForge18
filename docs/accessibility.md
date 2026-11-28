@@ -9,7 +9,7 @@ DevForge 18 aims for WCAG 2.1 level AA. This page records what is tested automat
 - **Rules:** every axe rule tagged `wcag2a`, `wcag2aa`, `wcag21a` or `wcag21aa`. No rule is disabled and no element is excluded; any future exclusion must be added to `EXCLUSIONS` in the test with its reason, and listed here.
 - **Colour schemes:** every page is audited twice, in the dark scheme (the default) and the light scheme (`prefers-color-scheme: light`); the test also checks that the page really switched (`<html data-theme>`).
 - **When:** after the page's own data has loaded (its heading and a page-specific element are visible, the network is idle, and entrance animations have finished, so contrast is measured on final colours).
-- **Pages (38, so 76 audits):**
+- **Pages (40, so 80 audits):**
 
 | Page | URL |
 |---|---|
@@ -40,7 +40,7 @@ DevForge 18 aims for WCAG 2.1 level AA. This page records what is tested automat
 | Public portfolio | `/portfolio/:slug` |
 | Administration (admin) | `/admin` |
 | Content editor (faculty) | `/content-editor` |
-| Certificate verification (signed out; the certificate is issued by the real API after the quiz and lab evidence is seeded, as in the API tests) | `/certificates/:id` |
+| Certificate verification (signed out; the certificate is issued by the real API after the quiz and lab evidence is seeded, as in the API tests), also revoked (by an admin through the real API) and for an unknown id | `/certificates/:id` |
 
 ### Results
 
@@ -57,15 +57,43 @@ First run (2026-11-27, before fixes): 11 of 42 audits failed (the phone-width ca
 
 Found while checking the fixes visually (not an axe rule): a simulation embedded in a lab article kept its two-column layout, because the layout switched on the viewport width, so the Dockerfile editor was squeezed to about 250 px with one character per line. The layout now follows the simulation's own width (a CSS container query); a browser test guards it.
 
-Final run (2026-11-27): **52 of 52 audits pass, 0 violations** (26 pages × 2 schemes). After the Milestone 11 pages were added (cohorts, reviews, portfolio, administration, content editor, each with real data created by the test): **66 of 66 pass, 0 violations**, nothing excluded, as part of `npm run test:e2e` (all browser tests pass). 2026-11-28, after adding the certificate page, the request playground and a simulation with a long event log: **76 of 76 pass** (with the two track-page states too; the long-log audit found the event log of every simulation was not keyboard-reachable; fixed in `SimulationShell`).
+Final run (2026-11-27): **52 of 52 audits pass, 0 violations** (26 pages × 2 schemes). After the Milestone 11 pages were added (cohorts, reviews, portfolio, administration, content editor, each with real data created by the test): **66 of 66 pass, 0 violations**, nothing excluded, as part of `npm run test:e2e` (all browser tests pass). 2026-11-28, after adding the certificate page, the request playground and a simulation with a long event log: **76 of 76 pass** (with the two track-page states too; the long-log audit found the event log of every simulation was not keyboard-reachable; fixed in `SimulationShell`). Later that day, with the revoked-certificate and unknown-certificate states: **80 of 80 pass**.
 
 ### What the automated audit does not cover
 
 Automated tools find only part of the WCAG failures: they cannot judge whether alternative text is meaningful, whether the reading and focus order make sense, whether announcements are timely, or whether a screen-reader user can actually complete a task. Interactive states are covered only where noted (menus open); the audit does not, for example, submit a quiz or fail a sign-in before auditing. Those states rely on the existing browser tests and the manual checklist below.
 
-## Manual screen-reader pass (to do: owner)
+## Manual screen-reader pass
 
-**Not done yet.** This audit was automated only; nobody has used DevForge with a screen reader. Do it before institution-wide use, record the date, the screen reader and browser versions, and any problems found (as issues), here.
+**Done 2026-11-28 by the project owner: 19 of 20 items pass, 0 failures; item 20 (certificate page) pending.** Orca 46.1 (Laptop layout) with Mozilla Firefox 161.0 on Linux, on a separate clone with its own database. Results, as the owner recorded them:
+
+| # | Item | Result |
+|---|---|---|
+| 1–8 | Global: page title announced, "Skip to content", landmarks list, headings list (one main heading), visible focus, theme and menu buttons named, nothing by colour only, 400 % zoom | ✅ all work |
+| 9 | Home: map nodes read as "Track N: name" | ✅ |
+| 10 | Tracks: filters named, result count announced | ✅ |
+| 11 | Lesson: Copy button, pictures, step diagrams, self-check | ✅ |
+| 12 | Lab and simulation: buttons named, results can be heard | ✅ |
+| 13 | Quiz: questions and options read, score announced | ✅ |
+| 14 | Project and capstone: table headers, hints announced | ✅ |
+| 15 | Graph and architecture: links named, text table exists | ✅ |
+| 16 | Search: number of results announced | ✅ |
+| 17 | Sign-in and registration: fields named, errors announced | ✅ |
+| 18 | Dashboard: progress read as text | ✅ |
+| 19 | Cohorts and reviews (admin account): fields named, table headers | ✅ |
+| 20 | Certificate page | Not reached: no certificate had been earned in the test copy. `npm run demo:certificate -- --port 8091` now starts the real app on an in-memory database with a valid, a revoked and a not-yet-issued certificate (`scripts/certificate-demo.ts`); the automated audit covers all three certificate states (valid, revoked, unknown id) |
+
+No problems were found, so nothing needed fixing.
+
+### Orca's internal errors (an Orca bug, not a DevForge problem)
+
+During the pass Orca printed 11 identical tracebacks; speech continued. The innermost error is `UnboundLocalError: cannot access local variable 'children'` in `_generateNumberOfChildren` (`orca/scripts/web/speech_generator.py`, line 488 in the installed 46.1). The `NameError`s before it (`newAncestors`, `numberOfChildren`) are Orca's normal lazy evaluation of its formatting strings, not errors in themselves.
+
+- **Cause, from Orca's own source.** The function announces how many items a list, list box, description list or ARIA feed has. When the first child exposes no `setsize`, it computes the count from `children`, but assigns `children` only if the object is a description list (`isDescriptionList(obj)`) or the role is list or list box. When Orca's resolved role is "description list" or "feed" but that test does not hold for the object, `children` is never assigned and the line `setsize = len(children)` raises. Whatever page triggers it, the defect is that missing branch in Orca. The same code is on Orca's `gnome-46` branch. On `main`, the function (now `_generate_number_of_children`) is rewritten so that an unknown size returns nothing instead of raising. Both branches were read through the GitLab API on 2026-11-28. A search of Orca's issue tracker for `_generateNumberOfChildren` found no report.
+- **DevForge's markup.** DevForge uses no `role="feed"`, no `role="list"` and no `aria-setsize`, so the elements that reach this code are its native `<ul>`, `<ol>` and `<dl>` lists. The automated audit runs axe's `list`, `listitem`, `definition-list` and `dlitem` rules (WCAG 1.3.1, tag `wcag2a`) on all 40 pages in both schemes with no violation, so those lists are well formed: list items only inside lists, and `<dl>` holding only `<dt>`/`<dd>` groups. The log does not name the element, and without Orca's debug log the 11 occurrences cannot be tied to a specific list.
+- **Decision.** The markup is valid, so it is not changed to work around Orca. Orca users lose nothing but the item count of an affected list. Updating to an Orca release that contains the rewritten function should remove the errors. To tie an error to an element, run `orca --debug` and search the debug file for `_generateNumberOfChildren`.
+
+### How to repeat the pass
 
 Suggested setups: Orca with Firefox on Linux (the owner's setup; steps below); NVDA with Firefox or Chrome on Windows; VoiceOver with Safari on macOS and on iOS; TalkBack with Chrome on Android. Test in both colour schemes and at 200 % and 400 % zoom.
 
