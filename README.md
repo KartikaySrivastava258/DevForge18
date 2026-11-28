@@ -87,8 +87,10 @@ git clone <your-repository-url> devforge18
 cd devforge18
 npm install
 npm run build      # validates all content, then bundles the frontend
-npm start          # http://localhost:8080
+npm start          # then open http://localhost:8080
 ```
+
+If another program already uses port 8080, `npm start` stops with a message saying so; start it on a free port instead, with the same port in `PUBLIC_ORIGIN`: `PORT=3010 PUBLIC_ORIGIN=http://localhost:3010 npm start`.
 
 The SQLite database is created automatically at `./data/devforge.db` on first start.
 
@@ -98,7 +100,7 @@ The SQLite database is created automatically at `./data/devforge.db` on first st
 npm run user:create -- --email you@college.edu --name "Your Name" --role admin
 ```
 
-You will be prompted for a password (at least 10 characters). Students create their own accounts on the website; self-registration always creates a *student* account.
+You will be prompted for a password: at least 10 characters, not a common password, not containing the part of your e-mail address before the `@`, and not too repetitive. Students create their own accounts on the website; self-registration always creates a *student* account.
 
 **During development**, rebuild the frontend after editing files in `web/`, or use:
 
@@ -113,7 +115,7 @@ WEB_DEV=1 npm run web:build   # readable bundle with source maps
 |---|---|
 | `SyntaxError` mentioning a type annotation, or `ERR_UNKNOWN_FILE_EXTENSION ".ts"` | Node is older than 22.18, so it cannot run TypeScript directly. Upgrade Node. |
 | `Content bundle not found at ./build/content.json` | Run `npm run build` before `npm start`. |
-| `EADDRINUSE` | Port 8080 is taken. Run with `PORT=8090 PUBLIC_ORIGIN=http://localhost:8090 npm start`. |
+| "Port 8080 is already in use by another program" (`EADDRINUSE`) | Run on a free port, with the same port in `PUBLIC_ORIGIN`: `PORT=3010 PUBLIC_ORIGIN=http://localhost:3010 npm start`. |
 | Every sign-in fails with "Request blocked by cross-site request protection" | `PUBLIC_ORIGIN` does not match the address in your browser bar (for example `localhost` vs `127.0.0.1`). Make them identical. |
 | `ExperimentalWarning: SQLite` | Harmless; `node:sqlite` is still flagged experimental. The npm scripts hide it. |
 

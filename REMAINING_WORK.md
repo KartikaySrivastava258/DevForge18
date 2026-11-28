@@ -18,21 +18,16 @@ Read [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) for the precise, dat
 
 ## 1. Where the project stands
 
-Snapshot at the time of writing (2026-11-25):
+Snapshot for v1.0 (2026-11-28). The original 2026-11-25 snapshot is in the git history.
 
 | Area | State |
 |---|---|
-| Platform: accounts, roles, sessions, progress, bookmarks, search, system map, lesson reader, dark/light themes, mobile layout | Complete and tested |
-| Security: scrypt passwords, hashed session tokens, CSRF protection, strict CSP, per-account brute-force limits, build-time HTML escaping, audit log | Complete and tested |
-| 18 tracks with explanation, curriculum outline, planned labs and projects, official resources | Present (outline level) |
-| 8 learning paths | Complete |
-| Lessons | 21 across 10 tracks, beginner level only. All 21 executed and confirmed in CI (the last 5 — Jenkins 1, Terraform 1–2, Kubernetes 1–2 — in CI run 45643638519, 2026-11-25) |
-| Executable-lesson system (commands run against real tools, output compared) | Complete: Git, PostgreSQL, Redis, Nginx, Docker, Jenkins, Terraform, Kubernetes, HTTP via a live DevForge API |
-| Checkers: workflow files, Jenkinsfiles, content schema, Markdown safety | Complete |
-| CI on GitHub | Green (run #2); installs pinned, checksum-verified tools |
-| Labs, simulations, quizzes beyond self-checks, projects, capstones, case studies, alternatives, glossary, videos, diagrams beyond ASCII, admin/faculty screens | **Not built** |
-
-On every track page today, **Lessons** works for the 10 tracks that have lessons; **Labs** and **Projects** only list planned items; **Official resources** lists links, of which only a few have been verified.
+| Platform: accounts, roles, sessions, progress, bookmarks, search, system map, lesson reader, dark/light themes, mobile layout | ✅ Complete and tested |
+| Security: scrypt passwords, hashed session tokens, CSRF protection, strict CSP (unchanged since the first commit), per-account and per-user limits, audit log, endpoint authorization review | ✅ Complete and tested |
+| 18 tracks, 8 learning paths, 133 lessons (131 executed in CI, 2 Jira lessons docs-checked), 18 simulations, 37 labs, 18 quizzes, 54 mini-projects, 7 capstones, 17 integrations, 10 architectures, 36 case studies, 89 alternatives | ✅ Complete and tested |
+| Cohorts, assignments, rubric reviews, portfolios, certificates, data export and deletion, admin screens, content editor | ✅ Complete and tested (the editor against a fake GitHub only until the owner's live test) |
+| Deployment, tracing, shared rate limits, Compose/Nginx smoke test, accessibility audit, load test, upgrade and backup tests | ✅ Complete and tested |
+| Items still being built for v1.0, and items moved to after v1.0 with the owner's approval | See section 10 |
 
 ## 2. Non-negotiable quality rules
 
@@ -51,22 +46,22 @@ These rules are why the existing work can be trusted. Every new feature must fol
 
 | Blueprint feature | Current state | Priority |
 |---|---|---|
-| Comprehensive beginner → advanced lessons for all 18 tracks | 21 beginner lessons on 10 tracks | P1 |
-| Pictures, diagrams and animations that explain each concept | ✅ SVG figures in every lesson and a step-through per track with lessons (2026-11-25); moving-element animations still to come | P1 |
-| Interactive simulations for every track | Framework done (2026-11-25); Git and Kubernetes simulations with server-verified challenges; 16 tracks to go | P1 |
-| Hands-on labs with verification | Lesson "Try it yourself" sections only; lab pages do not exist | P1 |
-| Quizzes (more question types, per-track assessments) | Per-lesson multiple-choice self-checks | P2 |
-| Real-world usage and case studies with sources | Only "Where this fits in a real system" sections | P1 |
-| Alternatives and trade-offs for each tool | Brief mentions in some lessons | P1 |
-| Mini-projects per track and capstones A–G | Listed as planned | P2 |
-| Integration lessons between tools, full relationship graph | `related` links with a reason; system map | P2 |
-| Architecture studio, reference architectures | None | P3 |
-| Installation guides per OS | Inside some lessons | P1 (one setup lesson per track) |
-| Verified videos | None | P3 |
-| Glossary and command explorer | None | P2 |
-| Admin and faculty screens, cohorts, assignments | API foundation only | P3 |
-| Portfolio and certificates | None | P3 |
-| Verified external links | ✅ All 55 unique links reachable and reviewed (2026-11-25); 10 moved or mislabelled links corrected | Re-run monthly |
+| Comprehensive beginner → advanced lessons for all 18 tracks | ✅ 133 lessons, every track beginner to advanced | P1 |
+| Pictures, diagrams and animations that explain each concept | ✅ SVG figures in every lesson, step-throughs in 22 lessons. Moving-element animations: **after v1.0** (owner, 2026-11-28) | P1 |
+| Interactive simulations for every track | ✅ 18 simulations with server-verified challenges | P1 |
+| Hands-on labs with verification | ✅ 37 labs; the 47 planned entries on track pages are being linked to the lessons or projects that already cover them, or built (section 10) | P1 |
+| Quizzes (more question types, per-track assessments) | ✅ 18 track quizzes, six question types | P2 |
+| Real-world usage and case studies with sources | ✅ 36 sourced case studies on track pages. Notes inside lessons and per-track origin facts: **after v1.0** (owner, 2026-11-28) | P1 |
+| Alternatives and trade-offs for each tool | ✅ 89 alternatives with licences on track pages | P1 |
+| Mini-projects per track and capstones A–G | ✅ 54 projects with acceptance checks; capstones A–G | P2 |
+| Integration lessons between tools, full relationship graph | ✅ 17 integrations and the graph page | P2 |
+| Architecture studio, reference architectures | ✅ 10 architectures with decision records | P3 |
+| Installation guides per OS | Inside the first lessons of most tracks. A setup lesson per track: **after v1.0** (owner, 2026-11-28) | P1 (one setup lesson per track) |
+| Verified videos | **After v1.0** (owner, 2026-11-28); a person must watch each one | P3 |
+| Glossary and command explorer | **After v1.0** (owner, 2026-11-28) | P2 |
+| Admin and faculty screens, cohorts, assignments | ✅ Done (Milestone 11) | P3 |
+| Portfolio and certificates | ✅ Done (Milestone 11) | P3 |
+| Verified external links | ✅ 549 links, including links in lesson bodies, checked weekly; 0 broken on 2026-11-28 (run 46139125854), 4 sites that refuse automated checks confirmed by hand | Weekly workflow |
 
 ## 4. Architecture for the missing features
 
@@ -98,7 +93,7 @@ Use three levels, from simplest to richest:
 
 1. **Static diagrams as SVG.** Author diagrams as SVG files in `content/media/` (hand-drawn in a vector editor or generated by code). Reference them in lesson Markdown as `![alt text](media:git/three-areas.svg "caption")`; the Markdown renderer resolves `media:` paths and renders a `<figure>` with `<figcaption>`. **Changed during implementation ([ADR 0007](docs/adr/0007-inline-svg-figures.md)):** SVGs are validated against a strict allowlist and *inlined*, not copied and shown with `<img>`, because an `<img>` SVG cannot follow the app's theme toggle or be stepped through. Hashed files with `<img>` remain the plan for photographs and screenshots. Use the design tokens' colours via `currentColor` and CSS classes so diagrams work in dark and light themes. Keep text in SVGs as real text (searchable, translatable, accessible).
 2. **Step-through diagrams.** A `StepDiagram` React component shows one SVG with numbered states; **Next / Previous** buttons and arrow keys move between steps; each step highlights elements (by `data-step` attributes) and shows a caption. Lessons embed them with a fenced block, for example ```` ```diagram steps=git-commit-flow ````, which the renderer turns into a placeholder element that the lesson page hydrates. Every step's caption is also the text alternative.
-3. **Animations.** Use CSS transitions and the Web Animations API on SVG elements (moving packets, Pods being replaced, messages flowing through Kafka partitions). Rules: animations are **user-started** (Play button), can be paused, and are replaced by the step-through mode when `prefers-reduced-motion` is set. Never autoplay looping animations.
+3. **Animations** — **after v1.0** (owner, 2026-11-28; step-throughs with a user-started Play cover processes today). Use CSS transitions and the Web Animations API on SVG elements (moving packets, Pods being replaced, messages flowing through Kafka partitions). Rules: animations are **user-started** (Play button), can be paused, and are replaced by the step-through mode when `prefers-reduced-motion` is set. Never autoplay looping animations.
 
 Mermaid is convenient for flowcharts but heavy and runtime-rendered; if used, render it **at build time** to SVG (for example with `@mermaid-js/mermaid-cli` in the build step) so no Mermaid JavaScript ships to the browser and the CSP stays strict.
 
@@ -161,15 +156,19 @@ Extend the self-check engine (server-side grading already exists) with new quest
 
 ### 4.8 Videos
 
+**After v1.0** (owner, 2026-11-28).
+
 Only add a video after a person has watched it in full and recorded title, creator, duration, captions availability and URL in content. Embed with `youtube-nocookie.com` and add a narrowly scoped `frame-src` to the CSP in `server/src/http/security.ts`, with a test that the CSP still forbids everything else. Always provide a text summary next to the video.
 
 ## 5. Plan for each of the 18 tracks
 
 Each track below lists the lessons still to write (existing ones are marked ✅), the simulation to build, the labs, real-world context, alternatives, and how its commands are verified. Lesson counts aim at roughly **3 beginner, 3 intermediate and 2 advanced** per track. Every lesson follows the structure in `docs/content-authoring.md` and adds, wherever it helps understanding: a picture (4.2), a step-through or animation, a "Who uses this and why" note (4.6), and an "Alternatives" note.
 
-**About the real-world notes below:** the *origin* facts are widely documented and safe to start from, but must still be cited from a primary source in the lesson. *Usage by specific companies* must be found and cited from primary sources before being written; the "where to look" hints are starting points, not claims.
+**About the real-world notes below** (the origin facts moved to after v1.0 by the owner, 2026-11-28; company usage is covered by two sourced case studies per track): the *origin* facts are widely documented and safe to start from, but must still be cited from a primary source in the lesson. *Usage by specific companies* must be found and cited from primary sources before being written; the "where to look" hints are starting points, not claims.
 
 ### 5.1 Git and GitHub
+
+*v1.0 check (2026-11-28): every lesson is written — branches and merging (`git-branches-and-merging`, the conflict itself in lab `git-resolve-a-merge-conflict`), undoing work (`git-undoing-work-safely`), pull requests (`git-pull-requests-and-review`), rebasing (`git-rebasing-and-history`), protected branches, signing and secrets (`git-protected-branches-signing-secrets`); the commit-graph simulation exists and is tested against real Git.*
 
 - **Lessons:** ✅ What Git is and setup · ✅ First commits · ✅ Remotes, push and pull · Branches and merging (with a real merge conflict, executed) · Undoing work safely (`restore`, `reset`, `revert`, reflog) · Pull requests and code review on GitHub · Rebasing and history editing (advanced) · Protected branches, signed commits and secret scanning (advanced).
 - **Simulation — commit graph explorer:** the model is a DAG of commits with branch pointers and `HEAD`; actions are commit, branch, switch, merge (fast-forward or three-way), rebase and reset. The view draws the graph and animates pointer moves. **Challenges:** "merge `feature` without a merge commit", "undo the last commit on a shared branch safely (revert, not reset)". **Invariants:** every commit except the root has parents; branch names point at existing commits.
@@ -180,6 +179,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.2 Docker
 
+*v1.0 check (2026-11-28): written — `docker-networks-and-compose`, `docker-health-logs-and-limits`, `docker-image-and-container-security`, `docker-build-cache-and-supply-chain`; the multi-stage lesson is being written for v1.0 (section 10).*
+
 - **Lessons:** ✅ Images vs containers · ✅ Volumes and bind mounts · ✅ Writing a Dockerfile (layers, cache, `.dockerignore`) · Multi-stage builds and small images · Networks and Docker Compose · Health checks, logs and resource limits · Image security: non-root users, scanning, pinning digests (advanced) · Build cache and supply-chain (SBOM, provenance) basics (advanced).
 - ✅ **Simulation — layer cake and cache:** model a Dockerfile as ordered instructions; editing a line invalidates the cache from that point; show which layers rebuild and the final image size. **Challenge:** reorder instructions so a source change does not reinstall dependencies.
 - **Labs:** containerise a small API (executed); Compose an API with PostgreSQL (executed in CI); shrink an oversized image (executed, compare `docker image ls` sizes).
@@ -189,6 +190,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.3 Kubernetes
 
+*v1.0 check (2026-11-28): the reconciliation simulation exists (`kubernetes-reconciliation`, drain, maxSurge/maxUnavailable, a property-tested invariant).*
+
 - **Lessons:** ✅ Deployments and self-healing · ✅ Services, rolling updates and rollback · ✅ ConfigMaps and Secrets · ✅ Probes, requests and limits · ✅ Namespaces, labels and selectors in depth · ✅ Ingress/Gateway and how traffic enters a cluster · ✅ Persistent volumes (advanced) · ✅ RBAC and network policies (advanced).
 - **Simulation — the reconciliation loop:** model nodes, a Deployment, ReplicaSets and Pods with states (Pending, Running, Ready, Failed); actions: kill a Pod, drain a node, scale, update image (good or broken), change maxSurge/maxUnavailable. Animate the controller "noticing" and acting. **Challenges:** "keep at least 4 Pods available during an update", "recover from a broken image". **Invariants:** available Pods never drop below `replicas − maxUnavailable` during a rolling update.
 - **Labs:** deploy a three-tier app on kind (executed in CI); break a Deployment and debug with `kubectl describe` and events (executed); add probes and observe behaviour (executed).
@@ -197,6 +200,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 - **Verification:** executed in CI with kind (pinned node image digest).
 
 ### 5.4 PostgreSQL
+
+*v1.0 check (2026-11-28): every lesson is written — `postgresql-transactions-and-acid`, `postgresql-isolation-and-anomalies`, `postgresql-roles-privileges-injection`, `postgresql-backups-restores-migrations`, `postgresql-replication-and-pooling`; the second (isolation) simulation is being built for v1.0 (section 10).*
 
 - **Lessons:** ✅ Tables, rows and constraints · ✅ Relationships, joins and grouping · ✅ Indexes and `EXPLAIN ANALYZE` · Transactions and ACID · Isolation levels and concurrency anomalies (advanced) · Roles, privileges and SQL injection prevention · Backups, restores and migrations · Replication and connection pooling (advanced).
 - ✅ **Simulation — query planner and index:** a table of N rows; toggle an index; the model shows sequential scan versus index scan with rows touched and estimated cost; animate the B-tree descent. Second simulation: two concurrent transactions on a timeline at different isolation levels, showing which anomalies appear. **Challenge:** choose an index that makes a given query touch fewer than 1% of rows.
@@ -243,6 +248,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.9 Redis
 
+*v1.0 check (2026-11-28): every lesson is written — `redis-pubsub-and-streams`, `redis-transactions-and-lua`, `redis-persistence-and-replication`, `redis-cache-stampede-and-failures`; the eviction-policy toggle is being built for v1.0 (section 10).*
+
 - **Lessons:** ✅ Keys, values and data structures · ✅ Caching and rate limiting · ✅ Eviction policies and memory · Pub/Sub versus Streams · Transactions and Lua scripts · Persistence (RDB/AOF) and replication (advanced) · Cache stampede and other failure modes (advanced).
 - ✅ **Simulation — cache under load:** requests arrive over time; toggle cache-aside, TTL length and eviction policy; show hit ratio, database load and what happens when a hot key expires (stampede). **Challenge:** keep database load under a limit during a traffic spike.
 - **Labs:** LRU eviction with a small `maxmemory` (executed in CI); a stream consumer group (executed).
@@ -279,6 +286,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.13 Postman
 
+*v1.0 check (2026-11-28): every lesson is written — `postman-authentication-flows`, `postman-mock-servers-and-docs`, `postman-collections-in-ci`, `postman-contract-testing`; the live playground is being built for v1.0 (section 10).*
+
 - **Lessons:** ✅ HTTP requests and responses · ✅ Sessions, chained requests and API tests · ✅ Environments and variables in depth (collections and Newman) · Authentication flows (API keys, bearer tokens, OAuth concepts) · Mock servers and API documentation · Running collections in CI with the Postman CLI or Newman (advanced) · Contract testing concepts (advanced).
 - ✅ **Simulation — request builder against DevForge:** this one can be *real*: a built-in request playground that sends requests to the learner's own DevForge API (same origin, CSRF header handled) and shows status, headers and body, plus a "what went wrong" explainer for 4xx codes. Label it as a playground, rate-limit it, and allow only DevForge's own endpoints.
 - **Labs:** export a collection and run it with Newman in CI (executed, pinned Newman version, against the practice server).
@@ -287,6 +296,8 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 - **Verification:** HTTP steps executed against the practice server; Postman UI `docs-checked`.
 
 ### 5.14 Nginx
+
+*v1.0 check (2026-11-28): every lesson is written — `nginx-caching-and-compression`, `nginx-tls-termination`, `nginx-access-control` (`limit_req` in lab `nginx-safe-headers-and-rate-limiting`), `nginx-upstream-failures`; the generated-configuration test against real Nginx is being built for v1.0 (section 10).*
 
 - **Lessons:** ✅ Configuration and static files · ✅ Reverse proxy, 502 errors and load balancing · ✅ Location matching rules in depth · Caching and compression · TLS termination with a local certificate · Rate limiting and access control · Upstream health and failure handling (advanced).
 - ✅ **Simulation — location matcher:** type a request path; the model applies Nginx's location-matching order (exact `=`, longest prefix, `^~`, regular expressions in order) and highlights the winning block with the reason. **Challenge:** write locations so `/api/v1/` goes to the API but `/api/docs` is served statically. Unit-test the model against real Nginx in CI by generating configurations and comparing which block answers.
@@ -349,6 +360,7 @@ Add browser tests that walk every section of at least one complete track and ass
 
 ### 6.2 Learning experience improvements
 
+- **After v1.0 (owner, 2026-11-28): glossary tooltips, notes, recommendations, cheat sheets and translations below.**
 - **Glossary tooltips:** terms in lessons link to glossary entries (accessible popovers, keyboard-operable).
 - **Notes per lesson:** the blueprint's notes feature (table `notes`, private to the learner).
 - **Recommendations:** "next best lesson" from the learner's progress and chosen learning path.
@@ -358,20 +370,20 @@ Add browser tests that walk every section of at least one complete track and ass
 
 ### 6.3 Institutional features (blueprint Phase 5)
 
-- Admin screens for users, roles and the audit log (the API exists: `/api/admin/*`).
-- Faculty screens for aggregated progress (`/api/faculty/overview` exists), cohorts, assignments with due dates, and project review against rubrics.
-- Portfolio: opt-in public page showing completed projects and capstones.
-- Certificates: issued only for assessment thresholds (quizzes plus verified labs), with a verification URL.
-- Content editing for faculty without Git: a CMS that **opens pull requests** to the repository, so review and validation still apply (ADR 0003).
+- ✅ Admin screens for users, roles and the audit log (the API exists: `/api/admin/*`).
+- ✅ Faculty screens for aggregated progress (`/api/faculty/overview` exists), cohorts, assignments with due dates, and project review against rubrics.
+- ✅ Portfolio: opt-in public page showing completed projects and capstones.
+- ✅ Certificates: issued only for assessment thresholds (quizzes plus verified labs), with a verification URL.
+- ✅ Content editing for faculty without Git: a CMS that **opens pull requests** to the repository, so review and validation still apply (ADR 0003).
 
 ### 6.4 Engineering items (blueprint Phase 6)
 
-- OpenTelemetry tracing for DevForge itself (doubles as the OpenTelemetry track's lab).
-- Shared rate limits in Redis when running more than one instance (ADR 0004).
-- PostgreSQL adapter if the deployment requires it (ADR 0002).
-- Test `deploy/docker-compose.yml` and the production Nginx configuration in CI (build the image, start Compose, run a smoke test through Nginx).
-- Accessibility audit with `@axe-core/playwright` in the browser tests, and a manual screen-reader pass.
-- Load test of the API (for example with k6) before institution-wide use.
+- ✅ OpenTelemetry tracing for DevForge itself (doubles as the OpenTelemetry track's lab).
+- ✅ Shared rate limits in Redis when running more than one instance (ADR 0004, ADR 0010); classroom-sized limits per address and per user (2026-11-28).
+- PostgreSQL adapter if the deployment requires it (ADR 0002). **Not for v1.0, by owner decision (2026-11-28):** SQLite with one app instance; needing more than one app server is the trigger.
+- ✅ Test `deploy/docker-compose.yml` and the production Nginx configuration in CI (build the image, start Compose, run a smoke test through Nginx).
+- ✅ Accessibility audit with `@axe-core/playwright` in the browser tests (34 pages, 68 audits). The manual screen-reader pass is the owner's (Orca with Firefox; checklist in docs/accessibility.md).
+- ✅ Load test of the API (for example with k6) before institution-wide use (docs/load-testing.md; nightly in CI).
 
 ## 7. Milestones and order of work
 
@@ -381,13 +393,13 @@ Each milestone ends with CI green and `IMPLEMENTATION_STATUS.md` updated.
 2. ✅ Done (verified in CI on 2026-11-25, run 45650635699). **Visual learning system.** Media pipeline (`media:` paths, figures, captions, dark/light SVGs), `StepDiagram`, animation guidelines; convert the ASCII diagrams in the existing 21 lessons into SVG figures, and add a step-through to at least one lesson per track. *Done when:* every existing lesson has at least one real figure, and browser tests cover a step-through with keyboard and reduced motion.
 3. ✅ Done (verified in CI on 2026-11-25, run 45655582859). **Simulation framework plus two exemplars.** `SimulationShell`, the model/view split, challenges and progress; build the Git commit-graph and the Kubernetes reconciliation simulations first. *Done when:* both have unit-tested models with invariants, browser tests, and are embedded in their lessons.
 4. ✅ Done (verified in CI on 2026-11-25, run 45675259630). **Complete Path 2.** Prometheus + Grafana and OpenTelemetry beginner lessons (executed in CI) and their simulations.
-5. **Remaining tracks, beginner level.** Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira: lessons, setup guide, one simulation each. *Done when:* all 18 tracks have at least three beginner lessons and one simulation. Status (2026-11-26): done — every track has at least three beginner lessons and a simulation.
+5. ✅ Done (2026-11-26). **Remaining tracks, beginner level.** Kafka, Airflow, MLflow, LangChain + LlamaIndex, n8n, Jira: lessons, setup guide (the per-track setup lesson moved to after v1.0 by the owner, 2026-11-28), one simulation each. *Done when:* all 18 tracks have at least three beginner lessons and one simulation. Status (2026-11-26): done — every track has at least three beginner lessons and a simulation.
 6. ✅ Done (2026-11-26). **Real-world context.** Case-study and alternatives content types; at least two sourced case studies and an alternatives table per track. Status: 36 case studies and 89 alternatives, every quote checked against its source page; see IMPLEMENTATION_STATUS.md.
-7. ✅ Done (2026-11-26). **Labs.** Lab pages, verification scripts, lab progress; at least two labs per track, executed in CI where the tool allows. Status: 36 labs (18 local with check scripts, 17 simulation, 1 read-through); 19 executed in CI; see IMPLEMENTATION_STATUS.md.
+7. ✅ Done (2026-11-26). **Labs.** Lab pages, verification scripts, lab progress; at least two labs per track, executed in CI where the tool allows. Status: 36 labs at the time (now 37: 19 local with check scripts, 17 simulation, 1 read-through); see IMPLEMENTATION_STATUS.md.
 8. ✅ Done (verified in CI on 2026-11-27, full-suite run 45956974167). **Intermediate and advanced lessons.** Following section 5, track by track, Path 1 first. Status: every lesson list in section 5 is written and executed (or docs-checked for Jira's own screens): 131 lessons.
 9. ✅ Done (verified in CI on 2026-11-27, run 46065905790). **Quizzes and projects.** New question types, per-track quizzes, mini-project pages with rubrics and starter templates. Status: all 18 tracks have a quiz and three mini-projects with executable acceptance checks (54); Docker-based checks run in their own CI job.
 10. ✅ Done (verified in CI on 2026-11-27, run 46065905790). **Capstones A–G and integration lessons.** Including the architecture studio and the full relationship graph. Status: 7 capstones, 17 integrations (two with new executed lessons), 10 reference architectures with learner decision records, graph page with filters; see IMPLEMENTATION_STATUS.md.
-11. ✅ Done (verified in CI on 2026-11-27, run 46065905790). **Institutional features and hardening.** Section 6.3 and 6.4. Status: admin and faculty screens, cohorts, assignments, rubric reviews, portfolio, certificates, privacy controls, PR-opening content editor; OpenTelemetry tracing, shared Redis rate limits, Compose/Nginx smoke test, axe audit, k6 load test. Not done: the manual screen-reader pass (owner), and the PostgreSQL adapter, which ADR 0002 makes conditional on the deployment needing it.
+11. ✅ Done (verified in CI on 2026-11-27, run 46065905790). **Institutional features and hardening.** Section 6.3 and 6.4. Status: admin and faculty screens, cohorts, assignments, rubric reviews, portfolio, certificates, privacy controls, PR-opening content editor; OpenTelemetry tracing, shared Redis rate limits, Compose/Nginx smoke test, axe audit, k6 load test. Not done: the manual screen-reader pass (owner), and the PostgreSQL adapter, which the owner decided on 2026-11-28 not to build for v1.0 (ADR 0002).
 
 ## 8. How to verify every change
 
@@ -416,10 +428,36 @@ For facts: every new external claim has a source URL and a `checked_on` date; ru
 |---|---|
 | ~~Five lessons pending their first CI run (Jenkins 1, Terraform 1–2, Kubernetes 1–2)~~ | ✅ Done: all five matched on their first CI run (45643638519, 2026-11-25) and are `executed` |
 | ~~Assumed download names in CI (kind `.sha256sum` asset, Jenkins image tag `2.580.2-lts-jdk21`)~~ | ✅ Both exist: the kind checksum verified and the Jenkins image was pulled in CI run 45643638519 |
-| No licence chosen | Owner decision before the repository is public (for example MIT for code, CC BY-SA 4.0 for content) |
-| katex override for the docs linter | Only on the owner's machine if applied; add `overrides.katex` to `package.json` here if `npm audit` was clean with it |
+| ~~No licence chosen~~ | ✅ `LICENSE` (MIT, code) and `LICENSE-CONTENT` (CC BY-SA 4.0, content) |
+| ~~katex override for the docs linter~~ | ✅ `overrides.katex` is in `package.json`; `npm audit` reports 0 vulnerabilities (2026-11-28) |
 | ~~Docker Compose and production Nginx untested~~ | ✅ Tested in CI by `npm run test:compose` (run 46065905790) |
-| CI duration grows with real Jenkins and Kubernetes runs | Move slow lesson tests to a separate job triggered on content changes and nightly, if needed |
-| Docker Hub anonymous pull limits | Add a Docker Hub login step with a read-only token if pulls fail |
-| Tool versions change monthly | Review pinned versions monthly from official release pages; update lessons with `lessons:record`; bump `content_version` and `last_reviewed` |
+| ~~CI duration grows with real Jenkins and Kubernetes runs~~ | ✅ Lessons in three shards, project checks in four; pushes run only affected tests; a nightly run covers everything |
+| Docker Hub anonymous pull limits | Add a Docker Hub login step with a read-only token if pulls fail (no failures so far; conditional, nothing to do for v1.0) |
+| Tool versions change monthly | A recurring process, not a v1.0 deliverable: review pinned versions monthly from official release pages; update lessons with `lessons:record`; bump `content_version` and `last_reviewed` |
 | Content ages | Add a CI warning for lessons whose `last_reviewed` is older than 12 months |
+
+## 10. v1.0 scope decisions (project owner, 2026-11-28)
+
+### Built for v1.0 (in progress on 2026-11-28; ticked here when done and green in CI)
+
+- The 47 labs that track pages list as "Planned": link each to the existing executed lesson or CI-checked project that already does its job (shown as what it is), and build real labs for the rest.
+- PostgreSQL's second simulation (two transactions on a timeline at different isolation levels, §5.4).
+- The Redis simulation's eviction-policy toggle (§5.9).
+- The Postman live playground sending real requests to DevForge's own API (§5.13).
+- The Nginx location model tested against generated configurations on real Nginx in CI (§5.14).
+- A Docker lesson on multi-stage builds and small images (§5.2).
+- Qdrant, Weaviate and Chroma as LangChain vector-store alternatives (§5.8).
+- Track pages: lessons grouped by level with completion ticks; tracks marked complete (§6.1).
+- A CI warning for content whose `last_reviewed` is older than 12 months (§9).
+
+### After v1.0 (approved by the owner on 2026-11-28)
+
+- Learning-experience features: glossary with tooltips and the command explorer (§3, §4.1, §6.2), notes per lesson, path-aware "next lesson" recommendations, printable cheat sheets, translations.
+- Media and content: moving-element animations (§4.2 level 3), a setup lesson per OS per track (§3), verified videos (§4.8), photographs and screenshots of real tools (§4.2), per-track origin facts from primary sources (§5 "Real world" lines), and "Who uses this" / "Alternatives" notes inside lessons (they are on every track page today).
+- Mermaid at build time (§4.2) is conditional ("if used") and not used.
+- The PostgreSQL adapter: not for v1.0 (ADR 0002); the trigger is needing more than one app server.
+
+### Waiting on the owner
+
+- The manual screen-reader pass (Orca with Firefox; docs/accessibility.md).
+- The content editor's live test on a scratch GitHub repository (`scripts/cms-live-test.ts`; docs/deployment.md).

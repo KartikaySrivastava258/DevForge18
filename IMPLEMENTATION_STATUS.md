@@ -4,7 +4,7 @@ Last updated: 2026-11-28 (UTC) · Milestones 9–11 done · **Now: the v1.0 rele
 
 ## Session handoff
 
-- **Where I am:** working through the owner's v1.0 release checklist (11 items, in order) after the owner's decisions on the open items. Done so far: decision 1 (SQLite, one app instance, ADR 0002 updated, docs/deployment.md "Database: one app instance") and decision 2 (configurable per-address API limit, default 6,000 a minute; new per-user limit, default 600, checked first; Nginx edge limit raised to match; `server/test/rate-limits.test.ts`; load test rerun, runs 6 and 7 in docs/load-testing.md). Release tooling: `npm run content:audit` (counts per track, unexecuted lessons, unverified or broken links), the link checker now also covers links in lesson/lab/project bodies.
+- **Where I am:** release checklist table below ("v1.0 release checklist"). Owner's scope decisions of 2026-11-28 are in REMAINING_WORK.md section 10: four helper agents are building the v1.0 items (planned labs, PostgreSQL/Redis simulations, Postman playground + Nginx generated-config test, Docker multi-stage lesson + vector-store alternatives + review-age warning). Earlier today: working through the owner's v1.0 release checklist (11 items, in order) after the owner's decisions on the open items. Done so far: decision 1 (SQLite, one app instance, ADR 0002 updated, docs/deployment.md "Database: one app instance") and decision 2 (configurable per-address API limit, default 6,000 a minute; new per-user limit, default 600, checked first; Nginx edge limit raised to match; `server/test/rate-limits.test.ts`; load test rerun, runs 6 and 7 in docs/load-testing.md). Release tooling: `npm run content:audit` (counts per track, unexecuted lessons, unverified or broken links), the link checker now also covers links in lesson/lab/project bodies.
 - **Waiting on the owner:** the content-editor live test (owner creates a scratch repository and a fine-grained token in `~/.config/devforge18/cms-test.env`; then `node --env-file=… scripts/cms-live-test.ts`, which never prints the token) and the Orca screen-reader results.
 - **Constraints from the owner (2026-11-28):** ports 8080 and 8090 are in use on this machine (the load test now defaults to 18090); never touch `/tmp/df-a11y`; never export `GITHUB_TOKEN` into the shell (load it only into the test process); use a throwaway database for the live test; after the test remind the owner to delete the token, the env file and the scratch repository.
 - **Disk:** keep at least 5 GB free; checks remove their containers with `-v` and the images they build.
@@ -23,9 +23,9 @@ This file is the handover record required by the blueprint (Part XI §15). Updat
 | Accounts, sessions, roles, progress, bookmarks | ✅ Done, tested |
 | Frontend: home + system map, catalogue, track, lesson, paths, search, auth, dashboard | ✅ Done, tested in a browser |
 | Figures and step-through diagrams | ✅ 132 figures (every lesson has at least one), 22 of them step-throughs — at least one in every track; tested |
-| Simulations | 🟡 Framework done and tested; all 18 tracks have one, with server-verified challenges |
+| Simulations | ✅ All 18 tracks have one, with server-verified challenges, tested; v1.0 adds PostgreSQL's isolation simulation and Redis eviction policies (in progress) |
 | Case studies and alternatives | ✅ 36 sourced case studies (2 per track, 108 claims, each with a verbatim quote, its source and the date checked) and 89 alternatives with licences; tested |
-| Labs | ✅ 36 labs, 2 per track: 18 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
+| Labs | ✅ 37 labs: 19 local (each with a check script that must also fail in an empty folder), 17 simulation (server-verified challenges), 1 read-through (server-graded); 19 have their commands executed by the tests; lab progress records self-reported or verified completion |
 | Quizzes | ✅ Six question types graded on the server (answers never sent before grading), attempts saved, paths show "skipped by quiz"; all 18 track quizzes written |
 | Mini-projects | 🟡 Project pages (brief, stories, criteria, rubric, starter files, progressive hints, faculty-only solution) and executable acceptance checks (fail on the starter, pass on the solution); all 54 written, Docker-based checks in their own four-shard CI job |
 | Capstones, integrations, architecture studio, relationship graph | ✅ 7 capstones (A–G), 17 integrations between related tracks, 10 reference architectures with learner decision records; API and browser tests |
@@ -468,7 +468,7 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 - **Platform engineering** (helper agent, merged): OpenTelemetry tracing for DevForge itself (ADR 0009: a small built-in OTLP/HTTP JSON exporter instead of 14 official packages; no bodies, headers, query strings or e-mail addresses in spans), shared rate limits in Redis (ADR 0010: minimal RESP client, atomic Lua counter, hashed keys, fail-open to the per-process limiter), and a new OpenTelemetry lab that traces DevForge's own requests through a Collector to Jaeger.
 - **Deployment, accessibility, load** (helper agent, merged): Compose + Nginx smoke test in CI (it found and fixed: image built without the lockfile, Nginx answering 503 instead of 429, Nginx not read-only, Nginx 1.27 end-of-life → 1.30.6 pinned by digest); axe-core audit — 11 of the first 42 audits failed (contrast, link names, keyboard-scrollable code, missing h1), all fixed in the UI with no rule disabled; extended here to the Milestone 11 pages with real data: 33 pages × 2 schemes, 66 of 66 pass; k6 load test (about 155 req/s, 0 errors, read p95 7–13 ms on a laptop).
 - **CI failures found and fixed at the root** (runs 46038301566 → 46065905790): grep -q at the end of a pipeline under pipefail (98 places in 27 check scripts; now rejected by the build); the Kafka check's consumer-group timing (warm the coordinator first) — which then exposed **a real bug in the reference solution** (state not reloaded after a rebalance; fixed with on_assign, plus a hint); Airflow lessons clearing a run before the scheduler had closed it (the clear could be undone); an implicit image pull in the new lab's output; failure reports now show a kind cluster's pods and events, and the k8s three-tier check names its own client Pod's state.
-- **Not done:** the manual screen-reader pass (checklist in docs/accessibility.md); the certificate page is not in the automated audit (needs a learner who met the threshold); PostgreSQL adapter — ADR 0002 makes it conditional on the deployment requiring it, and the owner's answer to ADR 0002's open question is still pending.
+- **Not done:** the manual screen-reader pass (checklist in docs/accessibility.md); PostgreSQL adapter — not for v1.0, by the owner's decision of 2026-11-28 (ADR 0002). The certificate page was added to the automated audit on 2026-11-28.
 
 ### Speed-ups and decisions (2026-11-26)
 
@@ -509,10 +509,35 @@ CI run 45767962549 failed on the Redis memory lesson: the lesson claimed the key
 | 2026-11-27 | Milestone 11 part 1: cohorts, assignments, reviews, portfolio, certificates, privacy controls | 150 | 15 | |
 | 2026-11-27 | Milestone 11 part 2: review and merge of three helper agents; accessibility audit extended | 60 | 20 | |
 | 2026-11-27 | CI root causes: grep -q/pipefail, Kafka coordinator and rebalance bug, Airflow clear race, implicit pull, kind diagnostics | 120 | 90 | waiting = CI runs (about 25 min each) |
+| 2026-11-28 | Owner decisions 1–2: ADR 0002, per-user and per-address rate limits, Nginx edge limit, classroom tests, two load-test runs | 75 | 10 | waiting = load tests (they share the machine, so nothing heavy ran beside them) |
+| 2026-11-28 | Release items 2, 3, 4, 6, 7, 8: content audit and link fixes, crawler, authorization review, page weight, upgrade/backup test, fresh clone (three in parallel by helper agents, reviewed and merged) | 90 | 15 | two real authorization bugs and a backup-script bug found and fixed |
+| 2026-11-28 | REMAINING_WORK reconciliation (helper audit), owner's scope decisions, docs, screenshots, changelog | 45 | 5 | |
 
 ## Current work
 
-The release checklist (waiting for the owner to resend it).
+The v1.0 release checklist (owner's message of 2026-11-28); see "v1.0 release checklist" below.
+
+## v1.0 release checklist
+
+Evidence for each item of the owner's checklist. Items in progress say so.
+
+| # | Item | State | Evidence |
+|---|---|---|---|
+| D1 | SQLite, one instance | ✅ | ADR 0002 (owner decision recorded, trigger: more than one app server); docs/deployment.md "Database: one app instance" |
+| D2 | Rate limits for shared networks | ✅ | `API_RATE_LIMIT_PER_IP_PER_MINUTE` (default 6,000) and `API_RATE_LIMIT_PER_USER_PER_MINUTE` (default 600, checked first); `server/test/rate-limits.test.ts`: 60 students behind one address never refused, one abusive user refused after 600 while the class is unaffected, the old 1,200 limit refused the same class; load test runs 6 (default mix, 25,558 requests, 0 errors) and 7 (60 students from one address, 5,005 requests, 0 refused) in docs/load-testing.md; sizing guidance in docs/deployment.md "Rate limits"; Nginx edge limit raised to 100 r/s so it does not refuse first |
+| D3 | Content editor live test | ⏳ Owner | Steps sent 2026-11-28; `scripts/cms-live-test.ts` ready (env file loaded only into the test process, in-memory database, prints the PR URL, never the token, checks the token appears in no log or response). Docs say "tested against a fake only" until then |
+| D4 | Screen-reader pass | ⏳ Owner | Orca steps sent 2026-11-28 and added to docs/accessibility.md |
+| 1 | Tests | 🔄 | `npm run verify` passed locally on 2026-11-28 (5 min 38 s: 575 unit/API tests pass, 159 Docker-gated skipped and run in CI; 126 browser tests). Full CI run: to be recorded after the v1.0 build items are merged |
+| 2 | Content audit | ✅ (counts will change with the new labs and lesson) | `npm run content:audit -- --links build/link-report.json`: 18 tracks, no zero in any column; 2 lessons not executed (the Jira lessons, docs-checked, reasons printed); link check run 46139125854: 549 links (now including links in lesson, lab and project bodies), 0 broken, 4 refused automated checks and were confirmed by hand (`content/link-check-exceptions.yaml`), 14 canonical redirects. Before that, run 46138801506 found 6 moved pages (URLs updated) |
+| 3 | No dead links | ✅ | `e2e/internal-links.test.ts`: student 352 pages / 353 internal targets / 2,850 fragments, faculty 47 / 48 / 10, admin 12 / 12 / 3 — 0 dead; proven to catch six kinds of planted dead link |
+| 4 | Security | ✅ | `npm audit`: 0 vulnerabilities (2026-11-28); CSP identical to the first commit (21ad03b), no other CSP source; authorization review of 60 endpoints in docs/security.md, 20 new tests (`server/test/api-authz-review.test.ts`), two bugs fixed (a demoted teacher kept the teacher's view of cohorts; decision reviews stored under a non-canonical id) |
+| 5 | Accessibility | 🔄 | Automated: 34 pages × 2 schemes = 68 audits, 0 violations (the certificate page added). Screen-reader results: waiting on the owner |
+| 6 | Performance | ✅ | Initial JS (`npm run measure:page-weight`, empty cache): home, track and lesson pages each load 359.1 KB of JavaScript as served (104.1 KB gzip -6, as Nginx sends it) and 55.5 KB CSS (10.5 KB gzip) — one app bundle plus two small shared chunks; simulations load on demand. Load test with the new limits: runs 6 and 7 above |
+| 7 | Deployment and data safety | ✅ (CI job new) | Compose/Nginx smoke test green in CI (push run 46138796538, with the new edge-limit check); `npm run test:upgrade`: 191/191 checks locally — databases created through the API of `eeac236` and `21ad03b` keep every row through the current migrations, users sign in and see identical progress, bookmarks, quizzes, labs; backup while running and restore return exactly the backup's state; bug fixed: `db:backup` no longer creates an empty database at a wrong path |
+| 8 | Fresh clone | ✅ | Cloned from GitHub into an empty folder (commit e3f7a5c), Node v22.23.2: `npm install` 4 s, 0 vulnerabilities; `npm run build` 3 s; `npm start` stopped with a clear message because port 8080 is taken on this machine (the README's troubleshooting row covers it) and ran with `PORT`/`PUBLIC_ORIGIN`; `user:create` admin, sign-in, admin API, student registration and `npm run dev` worked. README fixed: port note in the quick start and the full password rules |
+| 9 | Documentation | 🔄 | README (status, features with counts, limitations, new screenshots), CHANGELOG.md 1.0.0, LICENSE/LICENSE-CONTENT present, docs/deployment.md (database and rate limits), REMAINING_WORK.md reconciled with the owner's decisions (section 10). Final counts after the v1.0 build items |
+| 10 | Release | ⏳ | After items 1–9, the owner's screen-reader results and the content-editor test |
+| 11 | Final report | ⏳ | |
 
 ## Pending work (ordered)
 
@@ -570,6 +595,7 @@ See `docs/adr/`. In short:
 4. **ADR 0004** — Server-side sessions with hashed tokens, scrypt, custom-header + Origin CSRF defence, classroom-aware rate limits. **Owner's decision (2026-11-28):** per-address API limit configurable, default 6,000 a minute; per-user limit 600 a minute as the main abuse guard, checked first so refused requests do not use up the address's budget (my design choice, so one user cannot block a classroom); Nginx edge limit raised from 30 to 100 r/s (burst 60 → 200) so it does not refuse before the app; the load-test port moved from 8090 to 18090 (8090 is in use on the owner's machine).
 5. **ADR 0005** — Simulations are always labelled; learner code never runs on the main server.
 6. **ADR 0006** — Design direction: dark-first navy, single accent, self-hosted Fira Sans, system map as the signature element.
+7. **v1.0 scope (owner, 2026-11-28):** planned labs linked to the lessons/projects that cover them or built; four partly-done simulation/test items and four small items built for v1.0; learning-experience features (glossary, notes, recommendations, cheat sheets, translations) and media/content items (animations, setup lessons, videos, photos, origin facts, in-lesson notes) after v1.0. Details: REMAINING_WORK.md section 10.
 
 ## Commands already tested
 
