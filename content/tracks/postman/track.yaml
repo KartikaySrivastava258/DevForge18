@@ -50,10 +50,10 @@ topics:
   - { level: advanced, title: "Mock servers and API documentation" }
   - { level: advanced, title: "Contract-testing concepts and CI integration" }
 labs:
-  - { title: "Test a public or local REST API", level: beginner, mode: local, status: planned }
-  - { title: "Build a collection with environment variables", level: beginner, mode: local, status: planned }
+  - { title: "Test a public or local REST API", level: beginner, status: covered, project: postman-college-api-tests }
+  - { title: "Build a collection with environment variables", level: beginner, status: covered, lesson: postman-collections-environments-newman }
   - { title: "Write assertions for status and response body", level: intermediate, mode: local, status: available, lab: postman-assertions-for-status-and-body }
-  - { title: "Run a collection in a CI pipeline", level: advanced, mode: local, status: planned }
+  - { title: "Run a collection in a CI pipeline", level: advanced, status: covered, project: postman-regression-suite }
   - { title: "Read status codes and chain requests with a session", level: intermediate, mode: simulation, status: available, lab: postman-status-codes-and-sessions }
 projects:
   - { title: "API test suite for a college service", level: beginner, status: available, project: postman-college-api-tests }
@@ -76,7 +76,7 @@ resources:
     official: true
     why: Starting point for sending requests, collections, variables and tests.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

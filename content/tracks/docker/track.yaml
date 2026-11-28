@@ -52,9 +52,9 @@ topics:
   - { level: intermediate, title: "Container logs, resource limits and debugging" }
   - { level: advanced, title: "Image size, non-root users, image scanning and supply-chain basics" }
 labs:
-  - { title: "Containerise a simple API", level: beginner, mode: local, status: planned }
-  - { title: "Persist database data using volumes", level: beginner, mode: local, status: planned }
-  - { title: "Connect an API and PostgreSQL with Compose", level: intermediate, mode: local, status: planned }
+  - { title: "Containerise a simple API", level: beginner, mode: local, status: available, lab: docker-containerise-a-simple-api }
+  - { title: "Persist database data using volumes", level: beginner, mode: local, status: available, lab: docker-persist-database-data-with-volumes }
+  - { title: "Connect an API and PostgreSQL with Compose", level: intermediate, mode: local, status: available, lab: docker-compose-api-and-postgresql }
   - { title: "Optimise a slow, oversized image", level: advanced, mode: local, status: available, lab: docker-optimise-an-oversized-image }
   - { title: "Reorder a Dockerfile for the build cache", level: intermediate, mode: simulation, status: available, lab: docker-layer-cache-experiments }
 projects:
@@ -86,7 +86,7 @@ resources:
     official: true
     why: Official guide to defining multi-container applications with Compose files.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

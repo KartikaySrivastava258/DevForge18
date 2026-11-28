@@ -55,9 +55,9 @@ topics:
   - { level: advanced, title: "Latency, token cost, caching and rate limits" }
   - { level: advanced, title: "Privacy, prompt injection and data permissions" }
 labs:
-  - { title: "Build a simple question-answering app", level: beginner, mode: local, status: planned }
-  - { title: "Index a set of course PDFs", level: intermediate, mode: local, status: planned }
-  - { title: "Add citations to retrieved passages", level: intermediate, mode: local, status: planned }
+  - { title: "Build a simple question-answering app", level: beginner, status: covered, project: langchain-handbook-assistant }
+  - { title: "Index a set of course PDFs", level: intermediate, mode: local, status: available, lab: llamaindex-index-course-pdfs }
+  - { title: "Add citations to retrieved passages", level: intermediate, status: covered, lesson: langchain-rag-with-citations }
   - { title: "Evaluate answers against a small test set", level: advanced, mode: local, status: available, lab: langchain-evaluate-against-a-test-set }
   - { title: "Tune chunk size and k for retrieval", level: intermediate, mode: simulation, status: available, lab: langchain-chunk-size-and-retrieval }
 projects:
@@ -97,7 +97,7 @@ resources:
     official: true
     why: Runnable notebooks demonstrating retrieval, agents and evaluation patterns.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 2

@@ -9,6 +9,8 @@
  * docs/accessibility.md covers the rest.
  */
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { after, before, describe, it } from "node:test";
 import { AxeBuilder } from "@axe-core/playwright";
 import { request as playwrightRequest, type Page } from "playwright";
@@ -43,6 +45,8 @@ const PAGES: AuditedPage[] = [
   { name: "home", path: "/", ready: ".map-node" },
   { name: "tracks catalogue", path: "/tracks", ready: ".track-row" },
   { name: "track", path: "/tracks/docker", ready: "h1" },
+  { name: "track with a completed lesson (signed in)", path: "/tracks/git-github", ready: "#lessons .tag--done", signedIn: true, setup: completeFirstGitLesson },
+  { name: "track at phone width", path: "/tracks/git-github", ready: "#practice", mobile: true },
   { name: "lesson", path: "/tracks/docker/lessons/docker-images-vs-containers", ready: "article h2" },
   { name: "lab", path: "/tracks/docker/labs/docker-layer-cache-experiments", ready: "h1" },
   { name: "simulation", path: "/tracks/kubernetes/simulations/kubernetes-reconciliation", ready: "h1" },
@@ -128,6 +132,18 @@ async function teacherWithSubmission(page: Page): Promise<{ cohortId: string; su
   const sub = (await s.post("/api/me/submissions/project/docker-notes-api", { repositoryUrl: "https://git.example.edu/learner/notes-api", notes: "Ready for review." }, "PUT")) as { submission: { id: string } };
   await s.dispose();
   return { cohortId: id, submissionId: sub.submission.id };
+}
+
+/** The signed-in learner passes the first Git lesson's self-check, so the track page shows a completion tick. */
+async function completeFirstGitLesson(page: Page): Promise<string> {
+  const bundle = JSON.parse(readFileSync(join(import.meta.dirname, "..", "build", "content.json"), "utf8")) as { lessons: { id: string; self_check: { id: string; answer: string }[] }[] };
+  const lesson = bundle.lessons.find((l) => l.id === "git-what-and-why");
+  assert.ok(lesson, "the first Git lesson exists");
+  const answers = Object.fromEntries(lesson.self_check.map((q) => [q.id, q.answer]));
+  const res = await page.context().request.post(`/api/lessons/${lesson.id}/check`, { headers: { "X-DevForge-CSRF": "1", Origin: h.url }, data: { answers } });
+  assert.equal(res.status(), 200, await res.text());
+  assert.equal(((await res.json()) as { saved: boolean; passed: boolean }).passed, true);
+  return "/tracks/git-github";
 }
 
 /** A student publishes a portfolio; the audit visits it signed out. */

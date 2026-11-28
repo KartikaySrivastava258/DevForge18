@@ -50,8 +50,8 @@ topics:
   - { level: advanced, title: "AI workflow risks, prompt injection and tool permissions" }
   - { level: advanced, title: "When to use n8n vs custom code vs Airflow" }
 labs:
-  - { title: "Build a webhook-to-email workflow", level: beginner, mode: local, status: planned }
-  - { title: "Connect a form to PostgreSQL", level: intermediate, mode: local, status: planned }
+  - { title: "Build a webhook-to-email workflow", level: beginner, status: covered, project: n8n-event-registration }
+  - { title: "Connect a form to PostgreSQL", level: intermediate, mode: local, status: available, lab: n8n-connect-a-form-to-postgresql }
   - { title: "Add branching and error handling", level: intermediate, mode: simulation, status: available, lab: n8n-branching-and-error-handling }
   - { title: "Require human approval before a consequential action", level: advanced, mode: local, status: available, lab: n8n-human-approval }
 projects:
@@ -75,7 +75,7 @@ resources:
     official: true
     why: Official text-based courses that build workflows step by step.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 2

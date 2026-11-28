@@ -51,7 +51,7 @@ topics:
   - { level: advanced, title: "Backup, upgrades, access control and maintenance" }
 labs:
   - { title: "Create a basic pipeline", level: beginner, mode: local, status: planned }
-  - { title: "Build and test an application", level: intermediate, mode: local, status: planned }
+  - { title: "Build and test an application", level: beginner, status: covered, project: jenkins-backend-ci }
   - { title: "Trigger a job from a repository event", level: intermediate, mode: local, status: planned }
   - { title: "Store credentials safely", level: advanced, mode: local, status: available, lab: jenkins-store-credentials-safely }
   - { title: "Size agents and executors for a build queue", level: intermediate, mode: simulation, status: available, lab: jenkins-labels-and-executors }
@@ -76,7 +76,7 @@ resources:
     official: true
     why: Official guided tour from installing Jenkins to running a first Pipeline.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

@@ -310,6 +310,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
   const linkedLabs = new Set<string>();
   for (const track of tracks) {
     for (const item of track.labs) {
+      if (item.status === "covered") continue; // checked after the projects, below
       if (!item.lab) {
         if (item.status === "available") errors.push(`track ${track.slug}: lab "${item.title}" is marked available but names no lab page`);
         continue;
@@ -324,7 +325,7 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       linkedLabs.add(item.lab);
     }
     for (const item of track.projects) if (item.lab) errors.push(`track ${track.slug}: projects cannot name a lab`);
-    for (const item of track.labs) if (item.project) errors.push(`track ${track.slug}: labs cannot name a project`);
+    for (const item of track.labs) if (item.project && item.status !== "covered") errors.push(`track ${track.slug}: labs cannot name a project`);
   }
   for (const lab of labs) if (!linkedLabs.has(lab.id)) errors.push(`lab ${lab.id}: not listed in its track's labs`);
 
@@ -438,6 +439,41 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
     }
   }
   for (const project of projects) if (!linkedProjects.has(project.id)) errors.push(`project ${project.id}: not listed in its track's projects`);
+
+  // A planned lab whose task an executed lesson or a checked mini-project already does links there instead.
+  for (const track of tracks) {
+    const titles = new Set<string>();
+    for (const item of track.labs) {
+      const where = `track ${track.slug}: lab "${item.title}"`;
+      if (titles.has(item.title)) errors.push(`${where} is listed twice`);
+      titles.add(item.title);
+      if (item.status !== "covered") {
+        if (item.lesson || item.in_track || item.why) errors.push(`${where} names a lesson, in_track or why, which only covered labs have`);
+        continue;
+      }
+      if (item.lab || item.mode) errors.push(`${where} is covered by a lesson or project, so it names no lab page and no mode`);
+      if (!item.lesson === !item.project) {
+        errors.push(`${where} is covered, so it names exactly one lesson or project`);
+        continue;
+      }
+      const owner = item.in_track ?? track.slug;
+      if (item.in_track === track.slug) errors.push(`${where}: in_track is only for a lesson or project in another track`);
+      if (item.in_track && !trackSlugs.has(item.in_track)) errors.push(`${where}: unknown track "${item.in_track}"`);
+      if (item.in_track && !item.why) errors.push(`${where} is covered from another track, so it must say why`);
+      const kind = item.lesson ? "lesson" : "project";
+      const target = item.lesson ? lessons.find((l) => l.id === item.lesson) : projectsById.get(item.project ?? "");
+      if (!target) {
+        errors.push(`${where} is covered by unknown ${kind} "${item.lesson ?? item.project}"`);
+        continue;
+      }
+      if (target.track !== owner) errors.push(`${where} is covered by ${kind} "${target.id}" from track ${target.track}${item.in_track ? "" : " (set in_track and why to link across tracks)"}`);
+      if (target.level !== item.level) errors.push(`${where}: level must be the ${kind}'s level (${target.level})`);
+      if ("verification" in target && target.verification.method !== "executed") errors.push(`${where}: lesson "${target.id}" is not executed by the tests, so it cannot stand in for a lab`);
+      if ("check_script" in target && !target.check_script) errors.push(`${where}: project "${target.id}" has no acceptance check, so it cannot stand in for a lab`);
+    }
+    for (const item of track.projects)
+      if (item.status === "covered" || item.lesson || item.in_track || item.why) errors.push(`track ${track.slug}: project "${item.title}" cannot be covered by another item (only labs can)`);
+  }
 
   // ---- Capstones A–G: content/capstones/<id>.md ----------------------------------
   const capstones: CompiledCapstone[] = [];

@@ -90,11 +90,23 @@ const PlannedWorkSchema = z
     level: z.enum(LEVELS),
     /** read-through | local (learner's own machine) | simulation (browser, clearly labelled). */
     mode: z.enum(["read-through", "local", "simulation"]).optional(),
-    status: z.enum(["planned", "available"]),
+    /**
+     * planned: not written yet (shown as "Planned", no link). available: the page named by `lab` or `project`
+     * exists. covered (labs only): no separate lab, because an executed lesson (`lesson`) or a mini-project with
+     * an acceptance check (`project`) already makes the learner do this task; the track page links to it and
+     * says what it is. A covered entry has no `mode` (it is not a lab) and its level is the lesson's or project's.
+     */
+    status: z.enum(["planned", "available", "covered"]),
     /** Labs only: the id of the published lab page (content/labs/<track>/<id>.md). */
     lab: slug.optional(),
-    /** Projects only: the id of the published project page (content/projects/<track>/<id>.md). */
+    /** The published project page (content/projects/<track>/<id>.md); on a lab entry, only with status covered. */
     project: slug.optional(),
+    /** Covered labs only: the executed lesson that does this lab's task (content/lessons/<track>/<id>.md). */
+    lesson: slug.optional(),
+    /** Covered labs only, when the lesson or project belongs to another track: that track's slug. */
+    in_track: slug.optional(),
+    /** Covered labs only: why the lesson or project covers the task; required when it is in another track. */
+    why: z.string().min(20).optional(),
   })
   .strict();
 

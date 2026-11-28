@@ -49,9 +49,9 @@ topics:
   - { level: advanced, title: "Upstream health and failure handling" }
   - { level: advanced, title: "Secure configuration and least exposure" }
 labs:
-  - { title: "Serve a static site", level: beginner, mode: local, status: planned }
-  - { title: "Reverse proxy to a local API", level: beginner, mode: local, status: planned }
-  - { title: "Load balance two backend instances", level: intermediate, mode: local, status: planned }
+  - { title: "Serve a static site", level: beginner, status: covered, lesson: nginx-serving-static-files }
+  - { title: "Reverse proxy to a local API", level: beginner, status: covered, lesson: nginx-reverse-proxy-and-load-balancing }
+  - { title: "Load balance two backend instances", level: intermediate, status: covered, project: nginx-load-balancing-demo }
   - { title: "Configure safe headers and rate limiting", level: advanced, mode: local, status: available, lab: nginx-safe-headers-and-rate-limiting }
   - { title: "Route requests with location matching", level: intermediate, mode: simulation, status: available, lab: nginx-location-matching-order }
 projects:
@@ -75,7 +75,7 @@ resources:
     official: true
     why: Directive-level reference for every core and bundled Nginx module.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

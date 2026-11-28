@@ -48,10 +48,10 @@ topics:
   - { level: advanced, title: "Persistence, replication and high-availability concepts" }
   - { level: advanced, title: "Security, authentication and network exposure" }
 labs:
-  - { title: "Cache database query results", level: beginner, mode: local, status: planned }
-  - { title: "Add TTL and observe expiration", level: beginner, mode: simulation, status: planned }
+  - { title: "Cache database query results", level: beginner, status: covered, project: redis-catalogue-cache }
+  - { title: "Add TTL and observe expiration", level: beginner, status: covered, lesson: redis-data-structures }
   - { title: "Implement a rate limiter", level: intermediate, mode: local, status: available, lab: redis-sliding-window-rate-limiter }
-  - { title: "Simulate stale cache and invalidation", level: advanced, mode: simulation, status: planned }
+  - { title: "Simulate stale cache and invalidation", level: advanced, status: covered, lesson: redis-cache-aside-with-postgresql }
   - { title: "Keep a cache stampede off the database", level: intermediate, mode: simulation, status: available, lab: redis-cache-under-load }
 projects:
   - { title: "Product catalogue cache", level: beginner, status: available, project: redis-catalogue-cache }
@@ -74,7 +74,7 @@ resources:
     official: true
     why: Free official courses on Redis data structures and application patterns.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

@@ -4,8 +4,9 @@ import { ErrorState, Loading } from "../components/States.tsx";
 import { LevelTag, ModeTag } from "../components/Tags.tsx";
 import { TrackIcon } from "../components/TrackIcon.tsx";
 import { formatDate, hours, levelLabel, statusLabel } from "../lib/format.ts";
+import { useAuth } from "../lib/auth.tsx";
 import { Link } from "../lib/router.tsx";
-import type { Level, Resource, TrackResponse } from "../lib/types.ts";
+import type { Level, ProgressResponse, Resource, TrackResponse } from "../lib/types.ts";
 import { useApi, useTitle } from "../lib/useApi.ts";
 import { useScrollSpy } from "../lib/useScrollSpy.ts";
 
@@ -57,9 +58,14 @@ export function TrackPage({ slug }: { slug: string }) {
     Boolean(data),
   );
 
+  // Completion ticks for a signed-in learner, from the same progress endpoint as the dashboard.
+  const { user } = useAuth();
+  const progress = useApi<ProgressResponse>(user ? "/api/me/progress" : null);
+  const completed = new Set((progress.data?.lessons ?? []).filter((p) => p.status === "completed").map((p) => p.lessonId));
+
   if (error) return <div className="page"><ErrorState error={error} onRetry={reload} /></div>;
   if (loading || !data) return <div className="page"><Loading label="Loading track" /></div>;
-  const { track, summary, lessons, simulations, caseStudies, labs, quiz, projects, prerequisites, related, paths } = data;
+  const { track, summary, lessons, simulations, caseStudies, labs, coveredLabs = [], quiz, projects, prerequisites, related, paths } = data;
 
   return (
     <div className="page">
@@ -217,20 +223,42 @@ export function TrackPage({ slug }: { slug: string }) {
           <section id="lessons" className="section" aria-labelledby="lessons-h">
             <h2 id="lessons-h">Lessons</h2>
             {lessons.length ? (
-              <ol className="lesson-list">
-                {lessons.map((l, i) => (
-                  <li key={l.id}>
-                    <Link to={`/tracks/${track.slug}/lessons/${l.id}`}>
-                      <span className="lesson-list__n">{i + 1}</span>
-                      <span>{l.title}</span>
-                      <span className="tags">
-                        <LevelTag level={l.level} />
-                        <span className="tag">{l.estimatedMinutes} min</span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ol>
+              <>
+                {user ? (
+                  <p className="muted small" role="status">
+                    {progress.data
+                      ? `You have completed ${lessons.filter((l) => completed.has(l.id)).length} of ${lessons.length} lessons in this track.`
+                      : progress.error
+                        ? "Your progress could not be loaded; the lessons are listed without it."
+                        : "Loading your progress…"}
+                  </p>
+                ) : null}
+                {LEVELS.map((lvl) => {
+                  const group = lessons.map((l, i) => ({ l, n: i + 1 })).filter(({ l }) => l.level === lvl);
+                  if (!group.length) return null;
+                  return (
+                    <div key={lvl} className="lesson-group">
+                      <h3 className="lesson-group__h">
+                        {levelLabel(lvl)} <span className="faint small">({group.length})</span>
+                      </h3>
+                      <ol className="lesson-list">
+                        {group.map(({ l, n }) => (
+                          <li key={l.id}>
+                            <Link to={`/tracks/${track.slug}/lessons/${l.id}`}>
+                              <span className="lesson-list__n">{n}</span>
+                              <span>{l.title}</span>
+                              <span className="tags">
+                                {completed.has(l.id) ? <span className="tag tag--done">Completed</span> : null}
+                                <span className="tag">{l.estimatedMinutes} min</span>
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  );
+                })}
+              </>
             ) : (
               <p className="muted">No lessons are published for this track yet. The curriculum above shows what they will cover.</p>
             )}
@@ -269,17 +297,43 @@ export function TrackPage({ slug }: { slug: string }) {
               Local labs run on your own machine. Browser simulations are interactive models of the concept, clearly labelled, and do
               not run real infrastructure.
             </p>
+            {coveredLabs.length ? (
+              <p className="muted">
+                Where a lesson or a project already has you do a task, it is listed here and links there instead of to a separate lab.
+              </p>
+            ) : null}
             <ul className="plan-list">
-              {track.labs.map((l) => (
-                <li key={l.title}>
-                  {l.lab && labs.some((x) => x.id === l.lab) ? <Link to={`/tracks/${track.slug}/labs/${l.lab}`}>{l.title}</Link> : <span>{l.title}</span>}
-                  <span className="tags">
-                    <LevelTag level={l.level} />
-                    <ModeTag mode={l.mode} />
-                    {l.status === "planned" ? <span className="tag">Planned</span> : null}
-                  </span>
-                </li>
-              ))}
+              {track.labs.map((l) => {
+                const covered = l.status === "covered" ? coveredLabs.find((c) => c.lab === l.title) : undefined;
+                if (covered) {
+                  const to = `/tracks/${covered.track}/${covered.kind === "lesson" ? "lessons" : "projects"}/${covered.id}`;
+                  return (
+                    <li key={l.title}>
+                      <span>
+                        <span>{l.title}</span>
+                        <span className="muted small sim-card__concept">
+                          Practised in the {covered.kind} <Link to={to}>{covered.title}</Link>
+                          {covered.track !== track.slug ? ` (${covered.track} track)` : ""}
+                        </span>
+                      </span>
+                      <span className="tags">
+                        <LevelTag level={covered.level} />
+                        <span className="tag">{covered.kind === "lesson" ? "Lesson" : "Project"}</span>
+                      </span>
+                    </li>
+                  );
+                }
+                return (
+                  <li key={l.title}>
+                    {l.lab && labs.some((x) => x.id === l.lab) ? <Link to={`/tracks/${track.slug}/labs/${l.lab}`}>{l.title}</Link> : <span>{l.title}</span>}
+                    <span className="tags">
+                      <LevelTag level={l.level} />
+                      <ModeTag mode={l.mode} />
+                      {l.status !== "available" ? <span className="tag">Planned</span> : null}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </section>
 

@@ -45,10 +45,10 @@ topics:
   - { level: advanced, title: "Reports, dashboards and cycle time" }
   - { level: advanced, title: "Agile ceremonies and common anti-patterns" }
 labs:
-  - { title: "Create a student project backlog", level: beginner, mode: simulation, status: planned }
+  - { title: "Create a student project backlog", level: beginner, mode: local, status: available, lab: jira-plan-a-student-project-backlog }
   - { title: "Plan and run a sprint", level: intermediate, mode: simulation, status: available, lab: jira-plan-and-run-a-sprint }
-  - { title: "Move a bug through a workflow", level: intermediate, mode: simulation, status: planned }
-  - { title: "Read a sprint report and identify bottlenecks", level: advanced, mode: read-through, status: planned }
+  - { title: "Move a bug through a workflow", level: intermediate, mode: local, status: available, lab: jira-move-a-bug-through-a-workflow }
+  - { title: "Read a sprint report and identify bottlenecks", level: advanced, mode: read-through, status: available, lab: jira-read-a-sprint-report }
   - { title: "Enforce work item keys and write release notes from them", level: intermediate, mode: local, status: available, lab: jira-enforce-work-item-keys }
 projects:
   - { title: "Manage a semester software project", level: beginner, status: available, project: jira-semester-project }
@@ -71,7 +71,7 @@ resources:
     official: true
     why: Detailed, current documentation for configuring and administering Jira Cloud.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 2
