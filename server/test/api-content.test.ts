@@ -68,6 +68,18 @@ describe("content API", () => {
     assert.ok(res.json.track.alternatives.some((a: { name: string }) => a.name === "Podman"));
   });
 
+  it("resolves labs covered by a lesson or a project to that item's title, track and level", async () => {
+    const res = await client.get("/api/tracks/git-github");
+    assert.equal(res.status, 200);
+    assert.deepEqual(
+      res.json.coveredLabs.find((c: { lab: string }) => c.lab === "Create a repository and make a sequence of commits"),
+      { lab: "Create a repository and make a sequence of commits", kind: "lesson", id: "git-first-commits", track: "git-github", title: "Your first repository and commits", level: "beginner" },
+    );
+    assert.ok(res.json.coveredLabs.some((c: { kind: string; id: string }) => c.kind === "project" && c.id === "git-team-task-tracker"));
+    const covered = res.json.track.labs.filter((l: { status: string }) => l.status === "covered").length;
+    assert.equal(res.json.coveredLabs.length, covered);
+  });
+
   it("returns 404 for unknown tracks and rejects path-like parameters", async () => {
     assert.equal((await client.get("/api/tracks/cobol")).status, 404);
     assert.equal((await client.get("/api/tracks/..%2F..%2Fetc")).status, 404);

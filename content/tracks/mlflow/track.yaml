@@ -51,9 +51,9 @@ topics:
   - { level: advanced, title: "Model monitoring and drift concepts" }
   - { level: advanced, title: "Security and governance" }
 labs:
-  - { title: "Track a simple model experiment", level: beginner, mode: local, status: planned }
-  - { title: "Compare two runs", level: beginner, mode: local, status: planned }
-  - { title: "Log a model and load it back", level: intermediate, mode: local, status: planned }
+  - { title: "Track a simple model experiment", level: beginner, status: covered, lesson: mlflow-tracking-runs }
+  - { title: "Compare two runs", level: beginner, status: covered, lesson: mlflow-comparing-runs }
+  - { title: "Log a model and load it back", level: beginner, status: covered, lesson: mlflow-models-and-registry }
   - { title: "Register and promote a model using the current MLflow workflow", level: advanced, mode: local, status: available, lab: mlflow-gated-promotion }
   - { title: "Choose a champion within a latency budget", level: intermediate, mode: simulation, status: available, lab: mlflow-choose-and-promote-a-champion }
 projects:
@@ -77,7 +77,7 @@ resources:
     official: true
     why: Official getting-started material for tracking and model management in traditional ML.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 2

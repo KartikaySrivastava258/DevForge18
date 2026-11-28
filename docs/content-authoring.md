@@ -36,6 +36,22 @@ Every resource has `verification: { status: unverified | verified | broken, chec
   the learner's commits from the starter and end with a `diff -r` against the solution files. See the three
   `git-github` projects. A starter must never include `prepare.sh`.
 
+## Labs listed on the track page
+
+Each entry under `labs:` in `track.yaml` has one of three statuses:
+
+- `available` with `lab: <id>` — the lab page `content/labs/<track>/<id>.md` exists; `level` and `mode` must match it.
+- `covered` with `lesson: <id>` or `project: <id>` — no separate lab, because an **executed** lesson (its run
+  blocks do the lab's task) or a mini-project **with `check.sh`** already makes the learner do it. The track
+  page links there and says "Practised in the lesson …" or "Practised in the project …". A covered entry has no
+  `mode` (it is not a lab), and its `level` is the lesson's or project's. Read the lesson or project before
+  mapping — a similar title is not coverage. To point at another track's item, add `in_track: <slug>` and a
+  `why:` sentence. Example:
+  `- { title: "Expose it with a Service", level: beginner, status: covered, lesson: kubernetes-services-and-rollouts }`
+- `planned` — not written yet; shown as "Planned" with no link.
+
+The build checks all of this (`scripts/lib/content-loader.ts`, tests in `content-loader.test.ts`).
+
 ## Executable lessons
 
 When the tool can run in CI (Git today; more tools as CI services are added), make the lesson **executable**:

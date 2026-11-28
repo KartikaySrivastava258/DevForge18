@@ -151,6 +151,8 @@
 .lesson-list a { display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; padding: var(--space-3) var(--space-2); border-bottom: 1px solid var(--line); text-decoration: none; color: var(--text); }
 .lesson-list a:hover { background: var(--panel); }
 .lesson-list__n { color: var(--faint); font-variant-numeric: tabular-nums; }
+.lesson-group + .lesson-group { margin-top: var(--space-5); }
+.lesson-group__h { font-size: var(--step-0); margin: 0 0 var(--space-2); }
 
 /* Figures and step-through diagrams (ADR 0007). Figures are inline SVG whose
    colours come only from these classes, so they follow the theme. */

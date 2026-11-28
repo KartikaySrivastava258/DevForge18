@@ -2,7 +2,7 @@
 id: postgresql-isolation-and-anomalies
 title: Isolation levels and concurrency anomalies
 track: postgresql
-order: 5
+order: 7
 level: advanced
 estimated_minutes: 40
 prerequisites: [postgresql-transactions-and-acid]

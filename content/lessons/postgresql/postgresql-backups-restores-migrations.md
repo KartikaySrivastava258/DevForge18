@@ -2,7 +2,7 @@
 id: postgresql-backups-restores-migrations
 title: Backups, restores and migrations
 track: postgresql
-order: 7
+order: 6
 level: intermediate
 estimated_minutes: 35
 prerequisites: [postgresql-transactions-and-acid]

@@ -54,11 +54,23 @@ export interface TrackResponse {
   simulations: SimulationSummary[];
   caseStudies: CaseStudy[];
   labs: LabSummary[];
+  /** Planned labs whose task an executed lesson or a checked mini-project already does. */
+  coveredLabs: CoveredLab[];
   quiz: QuizSummary | null;
   projects: ProjectSummary[];
   prerequisites: TrackSummary[];
   related: { why: string; track: TrackSummary }[];
   paths: { slug: string; title: string; number: number }[];
+}
+
+export interface CoveredLab {
+  /** The planned lab's title in track.yaml. */
+  lab: string;
+  kind: "lesson" | "project";
+  id: string;
+  track: string;
+  title: string;
+  level: Level;
 }
 
 export interface PathsResponse {

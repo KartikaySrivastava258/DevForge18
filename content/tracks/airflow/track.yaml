@@ -50,9 +50,9 @@ topics:
   - { level: advanced, title: "Testing and deployment" }
   - { level: advanced, title: "Monitoring and operational hygiene" }
 labs:
-  - { title: "Create a three-task DAG", level: beginner, mode: local, status: planned }
-  - { title: "Add retries and failure alerts", level: intermediate, mode: local, status: planned }
-  - { title: "Build a small ETL workflow", level: intermediate, mode: local, status: planned }
+  - { title: "Create a three-task DAG", level: beginner, status: covered, lesson: airflow-dags-and-tasks }
+  - { title: "Add retries and failure alerts", level: intermediate, status: covered, lesson: airflow-timeouts-and-callbacks }
+  - { title: "Build a small ETL workflow", level: beginner, status: covered, project: airflow-attendance-pipeline }
   - { title: "Backfill a date range safely", level: advanced, mode: local, status: available, lab: airflow-backfill-safely }
   - { title: "Predict scheduler runs, retries and backfills", level: intermediate, mode: simulation, status: available, lab: airflow-scheduler-experiments }
 projects:
@@ -84,7 +84,7 @@ resources:
     official: true
     why: Organisations' own descriptions of how they use Airflow, useful context for case studies.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 2

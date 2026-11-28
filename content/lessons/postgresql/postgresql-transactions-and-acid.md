@@ -245,7 +245,7 @@ SHOW synchronous_commit;
 - **Forgetting BEGIN.** Each statement then commits on its own, and a failure halfway leaves half the work done.
 - **Long-running transactions.** They hold locks and keep old row versions alive; keep transactions short and do slow work (network calls, user input) outside them.
 - **Ignoring the aborted state.** After an error inside a transaction, every further statement fails until `ROLLBACK`; application code must roll back and usually retry.
-- **Checking first, writing later, outside one transaction.** "Is a seat free?" then "take it" in two separate transactions lets two people take the last seat. Do both in one transaction, and see the next lesson for how isolation affects it.
+- **Checking first, writing later, outside one transaction.** "Is a seat free?" then "take it" in two separate transactions lets two people take the last seat. Do both in one transaction, and see the lesson on isolation levels for how isolation affects it.
 
 ## Where this fits in a real system
 

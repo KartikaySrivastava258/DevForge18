@@ -53,8 +53,8 @@ topics:
   - { level: advanced, title: "Backups, restores, migrations and connection pooling" }
   - { level: advanced, title: "Replication and scaling concepts" }
 labs:
-  - { title: "Design a college database", level: beginner, mode: local, status: planned }
-  - { title: "Write joins and aggregation queries", level: beginner, mode: local, status: planned }
+  - { title: "Design a college database", level: beginner, status: covered, project: pg-course-registration }
+  - { title: "Write joins and aggregation queries", level: beginner, status: covered, lesson: postgresql-relationships-and-joins }
   - { title: "Compare query plans before and after indexing", level: intermediate, mode: simulation, status: available, lab: postgresql-query-plans-and-indexes }
   - { title: "Demonstrate transaction rollback and isolation", level: advanced, mode: local, status: available, lab: postgresql-transactions-and-isolation }
 projects:
@@ -86,7 +86,7 @@ resources:
     official: false
     why: Free, browser-based SQL practice against a sample schema, from simple queries to aggregates.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

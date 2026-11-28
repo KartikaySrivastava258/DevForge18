@@ -2,7 +2,7 @@
 id: kubernetes-rbac-and-network-policies
 title: RBAC and network policies
 track: kubernetes
-order: 7
+order: 8
 level: advanced
 estimated_minutes: 45
 prerequisites: [kubernetes-deployments-and-self-healing]

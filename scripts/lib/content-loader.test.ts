@@ -279,3 +279,83 @@ describe("mini-project check scripts", () => {
     assert.ok(errors.some((e) => e.startsWith("projects/jenkins/jenkins-container-pipeline/check.sh pipes into grep -q")), errors.join("\n"));
   });
 });
+
+describe("labs covered by a lesson or a project", () => {
+  const gitTrack = (dir: string) => join(dir, "tracks", "git-github", "track.yaml");
+  const COVERED = '  - { title: "Create a repository and make a sequence of commits", level: beginner, status: covered, lesson: git-first-commits }';
+  const title = "Create a repository and make a sequence of commits";
+  const replaceCovered = (dir: string, entry: string) => {
+    const file = gitTrack(dir);
+    const text = readFileSync(file, "utf8");
+    assert.ok(text.includes(COVERED), "the fixture entry exists in the real track.yaml");
+    writeFileSync(file, text.replace(COVERED, entry));
+  };
+  const errorsWith = (entry: string) => {
+    const dir = copyContent();
+    replaceCovered(dir, entry);
+    return loadContent(dir).errors;
+  };
+
+  it("in the real content, name an executed lesson or a checked project at the same level", () => {
+    const { bundle, errors } = loadContent(contentRoot);
+    assert.deepEqual(errors, []);
+    const covered = bundle.tracks.flatMap((t) => t.labs.filter((l) => l.status === "covered").map((l) => ({ ...l, track: t.slug })));
+    assert.ok(covered.length > 0);
+    for (const l of covered) {
+      const lesson = l.lesson ? bundle.lessons.find((x) => x.id === l.lesson) : undefined;
+      const project = l.project ? bundle.projects.find((x) => x.id === l.project) : undefined;
+      assert.ok(lesson ? lesson.verification.method === "executed" : project?.check_script, `${l.track}: ${l.title}`);
+      assert.equal((lesson ?? project)?.level, l.level, `${l.track}: ${l.title}`);
+    }
+  });
+  it("leave no lab planned in the real content (v1.0 decision, 2026-11-28)", () => {
+    const planned = loadContent(contentRoot).bundle.tracks.flatMap((t) => t.labs.filter((l) => l.status === "planned").map((l) => `${t.slug}: ${l.title}`));
+    assert.deepEqual(planned, []);
+  });
+  it("reject an unknown lesson or project", () => {
+    assert.ok(errorsWith(COVERED.replace("git-first-commits", "git-no-such-lesson")).some((e) => e.includes(`"${title}" is covered by unknown lesson "git-no-such-lesson"`)));
+    assert.ok(errorsWith(COVERED.replace("lesson: git-first-commits", "project: git-no-such-project")).some((e) => e.includes('is covered by unknown project "git-no-such-project"')));
+  });
+  it("reject a lesson from another track unless in_track and why say so", () => {
+    const cross = COVERED.replace("git-first-commits", "docker-images-vs-containers");
+    assert.ok(errorsWith(cross).some((e) => e.includes('is covered by lesson "docker-images-vs-containers" from track docker (set in_track and why')));
+    assert.ok(errorsWith(cross.replace(" }", ", in_track: docker }")).some((e) => e.includes("is covered from another track, so it must say why")));
+    assert.deepEqual(errorsWith(cross.replace(" }", ', in_track: docker, why: "Only a fixture: a justified link to a lesson in another track." }')), []);
+    assert.ok(
+      errorsWith(COVERED.replace(" }", ', in_track: git-github, why: "Same track, so in_track is not needed here." }')).some((e) => e.includes("in_track is only for a lesson or project in another track")),
+    );
+  });
+  it("reject a level that differs from the lesson's", () => {
+    assert.ok(errorsWith(COVERED.replace("level: beginner", "level: advanced")).some((e) => e.includes("level must be the lesson's level (beginner)")));
+  });
+  it("reject a lesson that the tests do not execute", () => {
+    assert.ok(readFileSync(join(contentRoot, "lessons", "jira", "jira-work-items-and-workflows.md"), "utf8").includes("method: docs-checked"));
+    const entry = COVERED.replace("git-first-commits", "jira-work-items-and-workflows").replace(" }", ', in_track: jira, why: "Only a fixture: this lesson is checked against documentation." }');
+    assert.ok(errorsWith(entry).some((e) => e.includes('lesson "jira-work-items-and-workflows" is not executed by the tests, so it cannot stand in for a lab')));
+  });
+  it("reject a project without an acceptance check", () => {
+    const dir = copyContent();
+    replaceCovered(dir, COVERED.replace("lesson: git-first-commits", "project: git-portfolio-repository"));
+    assert.deepEqual(loadContent(dir).errors, [], "a project with check.sh can cover a lab");
+    rmSync(join(dir, "projects", "git-github", "git-portfolio-repository", "check.sh"));
+    const file = join(dir, "projects", "git-github", "git-portfolio-repository.md");
+    writeFileSync(file, readFileSync(file, "utf8").replace(/^check_needs:.*\n/m, ""));
+    assert.ok(loadContent(dir).errors.some((e) => e.includes('project "git-portfolio-repository" has no acceptance check')));
+  });
+  it("reject a covered entry with a mode, a lab page, both a lesson and a project, or neither", () => {
+    assert.ok(errorsWith(COVERED.replace("status: covered", "mode: local, status: covered")).some((e) => e.includes("so it names no lab page and no mode")));
+    assert.ok(errorsWith(COVERED.replace(" }", ", lab: git-resolve-a-merge-conflict }")).some((e) => e.includes("so it names no lab page and no mode")));
+    assert.ok(errorsWith(COVERED.replace(" }", ", project: git-portfolio-repository }")).some((e) => e.includes("so it names exactly one lesson or project")));
+    assert.ok(errorsWith(COVERED.replace(", lesson: git-first-commits", "")).some((e) => e.includes("so it names exactly one lesson or project")));
+  });
+  it("reject lesson, in_track or why on planned or available entries, and covered projects", () => {
+    assert.ok(errorsWith(COVERED.replace("status: covered", "mode: local, status: planned")).some((e) => e.includes("names a lesson, in_track or why, which only covered labs have")));
+    const dir = copyContent();
+    const file = gitTrack(dir);
+    writeFileSync(file, readFileSync(file, "utf8").replace("status: available, project: git-portfolio-repository }", "status: covered, lesson: git-first-commits }"));
+    assert.ok(loadContent(dir).errors.some((e) => e.includes('project "Personal developer portfolio repository" cannot be covered by another item')));
+  });
+  it("reject the same lab title twice in a track", () => {
+    assert.ok(errorsWith(`${COVERED}\n${COVERED}`).some((e) => e.includes(`lab "${title}" is listed twice`)));
+  });
+});

@@ -53,9 +53,9 @@ topics:
   - { level: advanced, title: "Rebasing and choosing a branching strategy" }
   - { level: advanced, title: "Protected branches, GitHub Actions integration and secret handling" }
 labs:
-  - { title: "Create a repository and make a sequence of commits", level: beginner, mode: local, status: planned }
+  - { title: "Create a repository and make a sequence of commits", level: beginner, status: covered, lesson: git-first-commits }
   - { title: "Resolve a merge conflict", level: intermediate, mode: local, status: available, lab: git-resolve-a-merge-conflict }
-  - { title: "Create a pull request and review checklist", level: intermediate, mode: local, status: planned }
+  - { title: "Create a pull request and review checklist", level: intermediate, status: covered, project: git-team-task-tracker }
   - { title: "Diagnose an accidental commit and recover safely", level: advanced, mode: local, status: available, lab: git-recover-with-reflog }
 projects:
   - { title: "Personal developer portfolio repository", level: beginner, status: available, project: git-portfolio-repository }
@@ -94,7 +94,7 @@ resources:
     official: true
     why: Official documentation for pull requests, issues, permissions and repository settings.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

@@ -71,9 +71,19 @@ describe("discovery (anonymous visitor)", () => {
       assert.ok(await page.getByRole("heading", { level: 2, name }).isVisible(), name);
     }
     // The count comes from the API, so the test survives new lessons.
-    const { lessons } = (await (await fetch(`${h.url}/api/tracks/docker`)).json()) as { lessons: unknown[] };
+    const { lessons } = (await (await fetch(`${h.url}/api/tracks/docker`)).json()) as { lessons: { level: string }[] };
     assert.ok(lessons.length >= 2);
-    await expectText(page.locator(".notice--warn"), new RegExp(`${lessons.length} lessons are published`));
+    // Every planned lesson is written, so the track is complete and no "still being written" notice appears.
+    assert.equal(await page.locator(".facts dd", { hasText: "Complete" }).count(), 1);
+    assert.equal(await page.locator(".notice--warn").count(), 0);
+    // Lessons are grouped by level, each heading with its count, and keep their running numbers.
+    for (const level of ["beginner", "intermediate", "advanced"]) {
+      const n = lessons.filter((l) => l.level === level).length;
+      const name = `${level[0]!.toUpperCase()}${level.slice(1)} (${n})`;
+      assert.ok(await page.locator("#lessons").getByRole("heading", { level: 3, name }).isVisible(), name);
+    }
+    assert.equal(await page.locator("#lessons .lesson-list li").count(), lessons.length);
+    assert.equal(await page.locator("#lessons .lesson-list__n").last().innerText(), String(lessons.length));
     assert.equal(await page.locator(".resource").count(), 3);
     // Every Docker resource was reviewed after the link check (2026-11-25), so each shows its check date.
     assert.equal(await page.getByText(/^Link checked /).count(), 3);
@@ -125,8 +135,16 @@ describe("discovery (anonymous visitor)", () => {
     const { lessons: gitLessons } = (await (await fetch(`${h.url}/api/tracks/git-github`)).json()) as { lessons: unknown[] };
     assert.ok(gitLessons.length >= 3);
     assert.equal(await page.locator(".lesson-list li").count(), gitLessons.length);
-    await expectText(page.locator(".notice--warn"), new RegExp(`${gitLessons.length} lessons are published`));
-    await page.getByRole("link", { name: "Your first repository and commits" }).click();
+    // Planned labs that a lesson or project already practises link there, labelled as what they are.
+    const lab = page.locator("#practice li", { hasText: "Create a repository and make a sequence of commits" });
+    await expectText(lab, /Practised in the lesson Your first repository and commits/);
+    assert.equal(await lab.getByRole("link").getAttribute("href"), "/tracks/git-github/lessons/git-first-commits");
+    assert.ok(await lab.getByText("Lesson", { exact: true }).isVisible());
+    const prLab = page.locator("#practice li", { hasText: "Create a pull request and review checklist" });
+    await expectText(prLab, /Practised in the project Team task tracker/);
+    assert.equal(await prLab.getByRole("link").getAttribute("href"), "/tracks/git-github/projects/git-team-task-tracker");
+    assert.equal(await page.locator("#practice").getByText("Planned", { exact: true }).count(), 0);
+    await page.locator("#lessons").getByRole("link", { name: "Your first repository and commits" }).click();
     await page.getByRole("heading", { level: 1, name: "Your first repository and commits" }).waitFor();
     await expectText(page.locator(".verified--executed"), /Tested commands\./);
     assert.ok((await page.locator(".code-block--output").count()) >= 8);
@@ -231,6 +249,13 @@ describe("learning journey (registered student)", () => {
     assert.equal(await page.locator(".stat b").first().innerText(), "1");
     await expectText(page.locator("#saved-h + ul"), /Images vs Containers/);
     await page.screenshot({ path: join(SHOTS, "dashboard.png"), fullPage: true });
+
+    // The track page ticks the completed lesson, and only that one
+    await page.goto("/tracks/docker");
+    const { lessons: dockerLessons } = (await (await fetch(`${h.url}/api/tracks/docker`)).json()) as { lessons: unknown[] };
+    await expectText(page.locator("#lessons [role=status]"), new RegExp(`You have completed 1 of ${dockerLessons.length} lessons`));
+    assert.ok(await page.locator("#lessons li", { hasText: "Images vs Containers" }).getByText("Completed", { exact: true }).isVisible());
+    assert.equal(await page.locator("#lessons").getByText("Completed", { exact: true }).count(), 1);
 
     // Sign out
     await page.getByRole("button", { name: "Sign out" }).click();

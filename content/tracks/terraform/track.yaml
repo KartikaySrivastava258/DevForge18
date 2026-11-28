@@ -48,8 +48,8 @@ topics:
   - { level: advanced, title: "Reusable modules, testing and policy checks" }
   - { level: advanced, title: "Cost and blast-radius awareness" }
 labs:
-  - { title: "Build a local or low-cost provider example", level: beginner, mode: local, status: planned }
-  - { title: "Create reusable variables and outputs", level: intermediate, mode: local, status: planned }
+  - { title: "Build a local or low-cost provider example", level: beginner, status: covered, lesson: terraform-first-configuration }
+  - { title: "Create reusable variables and outputs", level: intermediate, status: covered, project: tf-reusable-module }
   - { title: "Inspect a plan before applying", level: intermediate, mode: simulation, status: available, lab: terraform-plan-before-apply }
   - { title: "Detect configuration drift", level: advanced, mode: local, status: available, lab: terraform-detect-drift }
 projects:
@@ -73,7 +73,7 @@ resources:
     official: true
     why: Reference for the Terraform language, CLI commands and state management.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-24
 content_version: 1

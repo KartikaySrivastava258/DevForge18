@@ -49,9 +49,9 @@ topics:
   - { level: advanced, title: "SLI, SLO and error budget basics" }
   - { level: advanced, title: "Dashboard design and alert fatigue" }
 labs:
-  - { title: "Monitor a sample application", level: beginner, mode: local, status: planned }
-  - { title: "Query request rate and error rate", level: intermediate, mode: local, status: planned }
-  - { title: "Build a Grafana dashboard", level: intermediate, mode: local, status: planned }
+  - { title: "Monitor a sample application", level: beginner, status: covered, project: prom-health-dashboard }
+  - { title: "Query request rate and error rate", level: beginner, status: covered, project: prom-health-dashboard }
+  - { title: "Build a Grafana dashboard", level: intermediate, status: covered, lesson: grafana-dashboards-and-variables }
   - { title: "Trigger and investigate an alert", level: advanced, mode: local, status: available, lab: prometheus-trigger-an-alert }
   - { title: "Query request rates and latency percentiles", level: intermediate, mode: simulation, status: available, lab: prometheus-rate-and-percentile-queries }
 projects:
@@ -83,7 +83,7 @@ resources:
     official: true
     why: Official docs for data sources, dashboards, panels, variables and Grafana alerting.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 2

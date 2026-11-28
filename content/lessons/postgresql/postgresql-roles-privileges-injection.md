@@ -2,7 +2,7 @@
 id: postgresql-roles-privileges-injection
 title: Roles, privileges and SQL injection prevention
 track: postgresql
-order: 6
+order: 5
 level: intermediate
 estimated_minutes: 35
 prerequisites: [postgresql-transactions-and-acid]

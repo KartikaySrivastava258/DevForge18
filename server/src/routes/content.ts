@@ -27,6 +27,12 @@ export function registerContentRoutes(router: Router, { content }: AppDeps): voi
       simulations: content.simulationsFor(track.slug).map((s) => content.simulationSummary(s)),
       caseStudies: content.caseStudiesFor(track.slug),
       labs: content.labsFor(track.slug).map((l) => content.labSummary(l)),
+      // Planned labs whose task an executed lesson or a checked mini-project already does (status: covered).
+      coveredLabs: track.labs.flatMap((l) => {
+        if (l.status !== "covered") return [];
+        const item = l.lesson ? content.getLesson(l.lesson) : l.project ? content.getProject(l.project) : undefined;
+        return item ? [{ lab: l.title, kind: l.lesson ? "lesson" : "project", id: item.id, track: item.track, title: item.title, level: item.level }] : [];
+      }),
       quiz: (() => { const q = content.getQuiz(track.slug); return q ? content.quizSummary(q) : null; })(),
       projects: content.projectsFor(track.slug).map((p) => content.projectSummary(p)),
       prerequisites: track.prerequisites.map(summary).filter(Boolean),

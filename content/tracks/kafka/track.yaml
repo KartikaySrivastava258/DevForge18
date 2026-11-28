@@ -51,9 +51,8 @@ topics:
   - { level: advanced, title: "Event-driven architecture and the outbox pattern" }
   - { level: advanced, title: "Security, monitoring and operational trade-offs" }
 labs:
-  - { title: "Publish and consume events", level: beginner, mode: local, status: planned }
+  - { title: "Publish and consume events", level: beginner, status: covered, lesson: kafka-topics-and-partitions }
   - { title: "Observe partitions and consumer groups", level: intermediate, mode: simulation, status: available, lab: kafka-partitions-and-consumer-groups }
-  - { title: "Simulate a consumer failure", level: intermediate, mode: simulation, status: planned }
   - { title: "Implement retry and dead-letter handling", level: advanced, mode: local, status: available, lab: kafka-retry-and-dead-letter }
 projects:
   - { title: "Order event pipeline", level: beginner, status: available, project: kafka-order-pipeline }
@@ -84,7 +83,7 @@ resources:
     official: false
     why: Free courses and patterns from a company founded by Kafka's original creators; some material covers Confluent-specific products.
     verification: { status: verified, checked_on: 2026-11-25 }
-content_status: in-progress
+content_status: complete
 owner: content-team
 last_reviewed: 2026-11-25
 content_version: 2
