@@ -86,3 +86,17 @@ export function externalLinks(bundle: ContentBundle): ExternalLink[] {
   for (const [kind, items] of groups) for (const item of items) walk(item, `${kind} ${"id" in item ? item.id : item.slug}`);
   return [...links.values()].sort((a, b) => a.url.localeCompare(b.url));
 }
+
+/** Hand-verified links (content/link-check-exceptions.yaml) that are still fresh: checked less than 90 days before `now`. */
+export function handVerified(data: unknown, now: Date, maxAgeDays = 90): Map<string, { checked_on: string; how: string }> {
+  const fresh = new Map<string, { checked_on: string; how: string }>();
+  if (!Array.isArray(data)) throw new Error("link-check-exceptions.yaml must be a list");
+  for (const entry of data as { url?: unknown; checked_on?: unknown; how?: unknown }[]) {
+    if (typeof entry?.url !== "string" || typeof entry.checked_on !== "string" || typeof entry.how !== "string" || entry.how.length < 20) {
+      throw new Error(`link-check-exceptions.yaml: every entry needs url, checked_on (YYYY-MM-DD) and how (a sentence): ${JSON.stringify(entry)}`);
+    }
+    const age = (now.getTime() - Date.parse(`${entry.checked_on}T00:00:00Z`)) / 86_400_000;
+    if (Number.isFinite(age) && age >= 0 && age < maxAgeDays) fresh.set(entry.url, { checked_on: entry.checked_on, how: entry.how });
+  }
+  return fresh;
+}

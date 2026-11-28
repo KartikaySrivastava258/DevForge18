@@ -20,13 +20,13 @@ resources:
     why: -d/--iteration-data, --reporters, the JUnit reporter's export option, and exit codes.
     verification: { status: verified, checked_on: 2026-11-26 }
   - title: Postman Docs — Run a collection using data from a file
-    url: https://learning.postman.com/docs/collections/running-collections/working-with-data-files/
+    url: https://learning.postman.com/docs/tests-and-scripts/running-collections/test-data/working-with-data-files/
     publisher: Postman
     type: documentation
     level: intermediate
     official: true
     why: CSV and JSON data files, and reading each row's values in scripts.
-    verification: { status: verified, checked_on: 2026-11-26 }
+    verification: { status: verified, checked_on: 2026-11-28 }
 self_check:
   - id: iteration-data
     prompt: A CSV data file has a header row and three data rows. How many times does Newman run the collection?

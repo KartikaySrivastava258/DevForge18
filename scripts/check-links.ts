@@ -8,11 +8,12 @@
  * updates `verification` in the YAML, so "verified" always means a human
  * also confirmed the page is the right, current resource.
  */
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadContent } from "./lib/content-loader.ts";
-import { externalLinks } from "./lib/external-links.ts";
+import { externalLinks, handVerified } from "./lib/external-links.ts";
+import { parseYaml } from "./lib/yaml.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const { bundle } = loadContent(join(root, "content"));
@@ -33,22 +34,33 @@ async function check(url: string): Promise<{ status: number | string; finalUrl: 
   return { status: "unknown", finalUrl: url };
 }
 
-const results: { url: string; status: number | string; finalUrl: string; usedBy: string[] }[] = [];
+const exceptionsFile = join(root, "content", "link-check-exceptions.yaml");
+const exceptions = existsSync(exceptionsFile) ? handVerified(parseYaml(readFileSync(exceptionsFile, "utf8"), exceptionsFile), new Date()) : new Map();
+
+const results: { url: string; status: number | string; finalUrl: string; usedBy: string[]; verifiedByHand?: { checked_on: string; how: string } }[] = [];
 const queue = [...urls.entries()];
 await Promise.all(
   Array.from({ length: 6 }, async () => {
     for (let item = queue.shift(); item; item = queue.shift()) {
       const [url, usedBy] = item;
-      results.push({ url, usedBy, ...(await check(url)) });
+      const result = await check(url);
+      // A site that refuses automated clients (403/406) but was confirmed by hand recently is not reported broken.
+      const manual = exceptions.get(url);
+      const refused = result.status === 403 || result.status === 406;
+      results.push({ url, usedBy, ...result, ...(refused && manual ? { verifiedByHand: manual } : {}) });
     }
   }),
 );
 results.sort((a, b) => a.url.localeCompare(b.url));
-const broken = results.filter((r) => typeof r.status !== "number" || r.status >= 400);
+const broken = results.filter((r) => (typeof r.status !== "number" || r.status >= 400) && !r.verifiedByHand);
 const redirected = results.filter((r) => typeof r.status === "number" && r.status < 400 && r.finalUrl.replace(/\/$/, "") !== r.url.replace(/\/$/, ""));
-for (const r of results) console.log(`${String(r.status).padEnd(6)} ${r.url}${r.finalUrl !== r.url ? `  → ${r.finalUrl}` : ""}`);
+for (const r of results) {
+  const note = r.verifiedByHand ? `  (refuses automated clients; verified by hand ${r.verifiedByHand.checked_on})` : "";
+  console.log(`${String(r.status).padEnd(6)} ${r.url}${r.finalUrl !== r.url ? `  → ${r.finalUrl}` : ""}${note}`);
+}
 // The scheduled workflow runs without a build step, so build/ may not exist yet.
 mkdirSync(join(root, "build"), { recursive: true });
 writeFileSync(join(root, "build", "link-report.json"), JSON.stringify({ checkedAt: new Date().toISOString(), results }, null, 2));
-console.log(`\n${results.length} links checked: ${broken.length} broken, ${redirected.length} redirected. Report: build/link-report.json`);
+const byHand = results.filter((r) => r.verifiedByHand).length;
+console.log(`\n${results.length} links checked: ${broken.length} broken, ${byHand} refused automated checks but verified by hand, ${redirected.length} redirected. Report: build/link-report.json`);
 process.exit(broken.length > 0 ? 1 : 0);

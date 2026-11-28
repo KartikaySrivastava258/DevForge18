@@ -13,14 +13,14 @@ learning_objectives:
   - Check every citation in an answer against the sources that were actually given to the model, and reject answers that cite nothing or cite sources that do not exist.
   - Return answers with their sources so a user can verify them.
 resources:
-  - title: Build a Retrieval Augmented Generation (RAG) app (LangChain documentation)
-    url: https://docs.langchain.com/oss/python/langchain/rag
+  - title: Retrieval (LangChain documentation)
+    url: https://docs.langchain.com/oss/python/langchain/retrieval
     publisher: LangChain
     type: tutorial
     level: intermediate
     official: true
-    why: The indexing (load, split, store) and retrieval-and-generation steps of a RAG application in LangChain.
-    verification: { status: verified, checked_on: 2026-11-27 }
+    why: Knowledge bases, the retrieval pipeline and the RAG patterns LangChain describes (2-step, agentic and hybrid RAG).
+    verification: { status: verified, checked_on: 2026-11-28 }
   - title: InMemoryVectorStore (langchain-core API reference)
     url: https://reference.langchain.com/python/langchain-core/vectorstores/in_memory/InMemoryVectorStore
     publisher: LangChain

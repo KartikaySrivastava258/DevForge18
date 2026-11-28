@@ -1,0 +1,16 @@
+# Links the automated checker cannot confirm because the site refuses automated clients (HTTP 403/406), each
+# confirmed another way on the date given. scripts/check-links.ts reports them as "verified by hand" instead of
+# broken while checked_on is less than 90 days old; after that they count as broken again until someone
+# re-checks them and updates the date. Never add a link here without opening it yourself.
+- url: https://academy.langchain.com/
+  checked_on: 2026-11-28
+  how: Fetched with a browser-like tool, HTTP 200, heading "LangChain Academy" (free courses on building agents).
+- url: https://doi.org/10.1287/opre.9.3.383
+  checked_on: 2026-11-28
+  how: The DOI redirects (302) to pubsonline.informs.org, which refuses automated clients; the Crossref API record for this DOI gives John D. C. Little, "A Proof for the Queuing Formula L = λW", Operations Research 9(3), 383–387, 1961.
+- url: https://www.mysql.com/
+  checked_on: 2026-11-28
+  how: Fetched with a browser-like tool, HTTP 200, the MySQL home page.
+- url: https://www.uber.com/en-US/blog/how-uber-serves-over-40-million-reads-per-second-using-an-integrated-cache/
+  checked_on: 2026-11-28
+  how: Fetched with a browser-like tool, HTTP 200, "How Uber Serves Over 40 Million Reads Per Second from Online Storage Using an Integrated Cache", published 2024-02-15.

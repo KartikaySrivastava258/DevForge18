@@ -14,29 +14,29 @@ learning_objectives:
   - Plan the rest of a secure deployment — TLS, authentication, the database, backups, updates and task-runner isolation.
 resources:
   - title: Set a custom encryption key (n8n documentation)
-    url: https://docs.n8n.io/hosting/configuration/configuration-examples/encryption-key/
+    url: https://docs.n8n.io/deploy/host-n8n/configure-n8n/basic-configuration/configuration-examples/set-a-custom-encryption-key
     publisher: n8n
     type: documentation
     level: intermediate
     official: true
     why: n8n creates a random key on first launch, saves it in the ~/.n8n folder and uses it to encrypt credentials before saving them; set N8N_ENCRYPTION_KEY yourself (and on every worker in queue mode).
-    verification: { status: verified, checked_on: 2026-11-27 }
-  - title: Security audit (n8n documentation)
-    url: https://docs.n8n.io/hosting/securing/security-audit/
+    verification: { status: verified, checked_on: 2026-11-28 }
+  - title: Run security audits (n8n documentation)
+    url: https://docs.n8n.io/deploy/host-n8n/configure-n8n/security/run-security-audits
     publisher: n8n
     type: documentation
     level: intermediate
     official: true
     why: n8n audit from the CLI, the public API or the n8n node; the risk reports it generates (credentials, database, nodes, filesystem, instance).
-    verification: { status: verified, checked_on: 2026-11-27 }
-  - title: Block access to nodes (n8n documentation)
-    url: https://docs.n8n.io/hosting/securing/blocking-nodes/
+    verification: { status: verified, checked_on: 2026-11-28 }
+  - title: Block specific nodes (n8n documentation)
+    url: https://docs.n8n.io/deploy/host-n8n/configure-n8n/security/block-specific-nodes
     publisher: n8n
     type: documentation
     level: intermediate
     official: true
     why: NODES_EXCLUDE stops n8n loading a node at all; some nodes, like Execute Command, are blocked by default.
-    verification: { status: verified, checked_on: 2026-11-27 }
+    verification: { status: verified, checked_on: 2026-11-28 }
 self_check:
   - id: key
     prompt: You move n8n to a new server, copy the database, but let n8n generate a new encryption key. What breaks?

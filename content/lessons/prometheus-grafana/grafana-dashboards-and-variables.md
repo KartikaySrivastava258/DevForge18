@@ -13,13 +13,13 @@ learning_objectives:
   - Link to a dashboard with variable values in the URL.
 resources:
   - title: Variables (Grafana documentation)
-    url: https://grafana.com/docs/grafana/latest/dashboards/variables/
+    url: https://grafana.com/docs/grafana/latest/visualizations/dashboards/variables/
     publisher: Grafana Labs
     type: documentation
     level: intermediate
     official: true
     why: Query variables, and that variable values are synced to the URL as var-<name>=value.
-    verification: { status: verified, checked_on: 2026-11-26 }
+    verification: { status: verified, checked_on: 2026-11-28 }
   - title: Provisioning Grafana
     url: https://grafana.com/docs/grafana/latest/administration/provisioning/
     publisher: Grafana Labs

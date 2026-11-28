@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { ContentBundle } from "../../shared/content-schema.ts";
-import { externalLinks } from "./external-links.ts";
+import { externalLinks, handVerified } from "./external-links.ts";
 
 describe("externalLinks", () => {
   it("collects listed resources with their declared status, sources, alternatives and links in bodies", () => {
@@ -42,5 +42,17 @@ describe("externalLinks", () => {
     assert.equal(by.has("https://example.org/x"), false, "reserved example domains are left out");
     assert.equal(by.get("https://blog.example.edu.in/a")?.declared, "verified", "a case-study claim's checked_on counts as verified");
     assert.ok(by.has("https://kafka.apache.org/x?a=1&b=2"), "HTML entities in an href are decoded");
+  });
+});
+
+describe("handVerified", () => {
+  const entry = { url: "https://www.mysql.com/", checked_on: "2026-11-28", how: "Opened in a browser: the MySQL home page." };
+  it("keeps entries checked less than 90 days ago", () => {
+    assert.equal(handVerified([entry], new Date("2026-12-01T00:00:00Z")).has(entry.url), true);
+    assert.equal(handVerified([entry], new Date("2027-03-01T00:00:00Z")).has(entry.url), false, "stale after 90 days");
+  });
+  it("rejects entries without a date or an explanation", () => {
+    assert.throws(() => handVerified([{ url: entry.url, checked_on: "2026-11-28" }], new Date()), /how/);
+    assert.throws(() => handVerified({ url: entry.url }, new Date()), /must be a list/);
   });
 });

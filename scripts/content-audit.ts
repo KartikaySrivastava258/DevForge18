@@ -90,18 +90,25 @@ if (reportPath) {
     console.error(`\nLink report not found: ${reportPath}`);
     process.exit(2);
   }
-  const report = JSON.parse(readFileSync(reportPath, "utf8")) as { checkedAt: string; results: { url: string; status: number | string; finalUrl: string }[] };
+  const report = JSON.parse(readFileSync(reportPath, "utf8")) as {
+    checkedAt: string;
+    results: { url: string; status: number | string; finalUrl: string; verifiedByHand?: { checked_on: string; how: string } }[];
+  };
   const byUrl = new Map(report.results.map((r) => [r.url, r]));
   const broken = links.filter((l) => {
     const r = byUrl.get(l.url);
-    return r && (typeof r.status !== "number" || r.status >= 400);
+    return r && (typeof r.status !== "number" || r.status >= 400) && !r.verifiedByHand;
   });
+  const byHand = links.filter((l) => byUrl.get(l.url)?.verifiedByHand);
   const unchecked = links.filter((l) => !byUrl.has(l.url));
   brokenCount = broken.length;
   console.log(`\nLink checker (${report.checkedAt}): ${report.results.length} checked`);
   console.log(`\nBroken according to the link checker (${broken.length}):\n`);
   for (const l of broken) console.log(`- ${byUrl.get(l.url)?.status} ${l.url} (${l.usedBy.join("; ")})`);
   if (!broken.length) console.log("- none");
+  console.log(`\nRefused automated checks, verified by hand (${byHand.length}; content/link-check-exceptions.yaml):\n`);
+  for (const l of byHand) console.log(`- ${byUrl.get(l.url)?.status} ${l.url}, ${byUrl.get(l.url)?.verifiedByHand?.checked_on}: ${byUrl.get(l.url)?.verifiedByHand?.how}`);
+  if (!byHand.length) console.log("- none");
   console.log(`\nNot covered by that report (${unchecked.length}):\n`);
   for (const l of unchecked) console.log(`- ${l.url} (${l.usedBy.join("; ")})`);
   if (!unchecked.length) console.log("- none");
