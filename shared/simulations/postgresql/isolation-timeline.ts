@@ -592,7 +592,8 @@ export function nextStatement(s: IsoState, tx: TxName): string | null {
   const t = s.tx[tx];
   const stmt = stmtsOf(s, tx)[t.pc];
   if (!stmt) return null;
-  const text = sql(stmt, currentAttempt(s, tx)?.reads);
+  const condition = stmt.kind === "update" && stmt.onlyIf ? ` -- only if the count it read is at least ${stmt.onlyIf.atLeast}` : "";
+  const text = sql(stmt, currentAttempt(s, tx)?.reads) + condition;
   return t.attempt === null ? `${beginSql(s.level)} ${text}` : text;
 }
 export const finished = (s: IsoState, tx: TxName) => ["committed", "failed"].includes(txStatus(s, tx));
