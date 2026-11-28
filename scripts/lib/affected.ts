@@ -50,3 +50,13 @@ export function scopeFromEnv(value: string | undefined): ChangeScope {
   if (value === undefined || value.trim() === "all") return "all";
   return changeScope(value.split("\n"));
 }
+
+/**
+ * Simulation models compared with the real tool in Docker (shared/simulations/nginx/location-matcher.nginx.test.ts)
+ * run in the lessons job, shard 1. They depend on code only — the model, the test, the image pinned in
+ * deploy/docker-compose.yml, Node and the workflow — never on content, so they run exactly when a change selects
+ * everything: any file that is neither content nor on the irrelevant list, and every nightly or manual run.
+ */
+export function modelComparisonsAffected(scope: ChangeScope): boolean {
+  return scope === "all";
+}

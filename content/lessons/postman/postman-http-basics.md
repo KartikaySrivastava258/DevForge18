@@ -98,6 +98,8 @@ Frontends, mobile apps, scripts and other services all talk to backends over HTT
 
 > **Local lab** — the API you will practise on is DevForge itself. In a terminal, go to your DevForge folder and run `npm start`; leave it running. Open a second terminal for the commands below. On Windows, use Git Bash (curl is included). Every curl command here is run automatically in DevForge's tests against a real DevForge server.
 
+> **Playground** — no terminal at hand? The [request playground](/tracks/postman/playground) sends real requests from your browser to the DevForge server you are reading this on, as you, and explains every 4xx answer. It allows only a short list of safe endpoints (no sign-in requests), so use curl or Postman for the sign-in steps below.
+
 Store the address in a variable so you do not have to type it every time — Postman calls this an *environment variable*, and you will meet it there later:
 
 ```bash

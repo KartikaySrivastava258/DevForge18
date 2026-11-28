@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { byId, label, locationMatcher, match, PALETTE, PATH, type MatcherAction, type MatcherState } from "../../../shared/simulations/nginx/location-matcher.ts";
+import { byId, label, locationMatcher, match, outcome, PALETTE, PATH, type MatcherAction, type MatcherState } from "../../../shared/simulations/nginx/location-matcher.ts";
 import { Field } from "./Field.tsx";
 import type { SimulationEntry, ViewProps } from "./registry.ts";
 
@@ -85,7 +85,7 @@ function LocationMatcherView({ state, dispatch }: ViewProps<MatcherState, Matche
             <ul className="ngx-sim__log">
               {state.requests.slice(-6).map((r, i) => (
                 <li key={i}>
-                  <code>{r.path}</code> → {r.location ? `${label(byId(r.location)!)} (${byId(r.location)!.target})` : "404"}
+                  <code>{r.path}</code> → {outcome(r)}
                 </li>
               ))}
             </ul>

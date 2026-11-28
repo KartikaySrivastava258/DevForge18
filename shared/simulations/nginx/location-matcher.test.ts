@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { replay, violations } from "../types.ts";
-import { locationMatcher as model, match, type MatcherAction } from "./location-matcher.ts";
+import { locationMatcher as model, match, normalizeUri, type MatcherAction } from "./location-matcher.ts";
 import { MatcherActionSchema, MatcherScenarioSchema } from "./schema.ts";
 
 // The lesson's configuration, in file order (A to G).
@@ -22,6 +22,32 @@ describe("location matcher: agrees with real Nginx 1.24", () => {
   it("prefix order in the file does not matter", () => {
     assert.equal(match(["api-v1", "api", "root"], "/api/v1/x").location, "api-v1");
     assert.equal(match(["root", "api", "api-v1"], "/api/v1/x").location, "api-v1");
+  });
+});
+
+describe("location matcher: normalises the path as Nginx does", () => {
+  // The paths come from a probe of a real nginx 1.30.6 (the image deploy/docker-compose.yml pins) made while
+  // writing location-matcher.nginx.test.ts, which compares thousands of generated paths whenever Docker is
+  // available. Before normalisation was modelled, /api//docs/x went to "location /api/" in the model but to
+  // "location ^~ /api/docs/" in Nginx, and /x/../../y was a 404 in the model but 400 Bad Request in Nginx.
+  const NGINX = ["exact-root", "api", "api-docs-stop", "html", "images-ci"];
+  it("merges slashes and resolves . and .. before matching", () => {
+    assert.equal(normalizeUri("/api//docs/x"), "/api/docs/x");
+    assert.equal(normalizeUri("/api/./docs/x"), "/api/docs/x");
+    assert.equal(normalizeUri("/api/x/../docs/y"), "/api/docs/y");
+    assert.equal(normalizeUri("/a/."), "/a/");
+    assert.equal(normalizeUri("/a/.."), "/");
+    assert.equal(normalizeUri("/api/docs/.."), "/api/");
+    assert.equal(match(NGINX, "/api//docs/x").location, "api-docs-stop");
+    assert.equal(match(NGINX, "/api/x/../docs/y").location, "api-docs-stop");
+    assert.equal(match(NGINX, "/api/docs/..").location, "api");
+    assert.equal(match(NGINX, "/a/..").location, "exact-root");
+  });
+  it("answers 400 for a path that climbs above the root", () => {
+    assert.equal(normalizeUri("/x/../../y"), null);
+    const r = model.step(model.init({ locations: NGINX }).state, { type: "request", path: "/x/../../y" });
+    assert.deepEqual(r.state.requests.at(-1), { path: "/x/../../y", location: null, badRequest: true });
+    assert.match(r.events[0] ?? "", /400 Bad Request/);
   });
 });
 

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { changeScope, isAffected, scopeFromEnv } from "./affected.ts";
+import { changeScope, isAffected, modelComparisonsAffected, scopeFromEnv } from "./affected.ts";
 import { loadRunnables, shardFilter } from "./runnables.ts";
 
 describe("change scope", () => {
@@ -23,6 +23,14 @@ describe("change scope", () => {
   it("selects API-dependent lessons whenever content changes", () => {
     assert.ok(isAffected(changeScope(["content/tracks/git-github.yaml"]), ["content/lessons/postman/p.md"], true));
     assert.ok(!isAffected(changeScope(["content/tracks/git-github.yaml"]), ["content/lessons/git-github/g.md"], false));
+  });
+  it("runs the model-versus-real-Nginx comparison when the model, its test or the pinned image change, never for content alone", () => {
+    for (const f of ["shared/simulations/nginx/location-matcher.ts", "shared/simulations/nginx/location-matcher.nginx.test.ts", "deploy/docker-compose.yml", ".github/workflows/ci.yml"]) {
+      assert.ok(modelComparisonsAffected(changeScope([f])), f);
+    }
+    assert.ok(modelComparisonsAffected(scopeFromEnv("all")), "nightly and manual runs");
+    assert.ok(!modelComparisonsAffected(changeScope(["content/simulations/nginx/nginx-location-matcher.yaml", "content/lessons/nginx/nginx-location-matching.md"])));
+    assert.ok(!modelComparisonsAffected(changeScope(["web/src/simulations/LocationMatcher.tsx", "docs/testing.md"])));
   });
   it("treats an unset or 'all' variable as everything, and an empty one as nothing", () => {
     assert.equal(scopeFromEnv(undefined), "all");

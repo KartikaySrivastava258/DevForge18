@@ -12,10 +12,12 @@
  * password is 401; malformed JSON is 400; personal endpoints without a
  * session are 401; an unknown track is 404.
  *
- * Deviation from REMAINING_WORK.md §5.13, which suggests a live
- * playground: challenges are verified by replaying actions on the server,
- * which needs a deterministic model, so this is a model of the API rather
- * than real requests. The lessons send the real requests.
+ * Challenges are verified by replaying actions on the server, which needs
+ * a deterministic model, so this is a model of the API rather than real
+ * requests. The live playground REMAINING_WORK.md §5.13 asks for is
+ * separate: playground.ts and the page at /tracks/postman/playground send
+ * real requests to the learner's own DevForge server. The lessons send
+ * real requests too.
  *
  * Simplified (shown to learners): one test account; bodies are chosen
  * from a few examples instead of typed; only the endpoints listed exist.
