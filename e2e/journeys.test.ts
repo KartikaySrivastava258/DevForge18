@@ -104,6 +104,19 @@ describe("discovery (anonymous visitor)", () => {
     noProblems(problems);
   });
 
+  it("a track can list complementary tools separately from its alternatives (LangChain's vector stores)", async () => {
+    const { page, problems } = await h.newPage();
+    await page.goto("/tracks/langchain-llamaindex");
+    const vectors = page.getByRole("heading", { level: 3, name: "Where to store the vectors" });
+    await vectors.waitFor();
+    for (const name of ["pgvector", "Qdrant", "Weaviate", "Chroma"]) {
+      assert.ok(await page.getByRole("heading", { level: 4, name }).isVisible(), `${name} is listed as a level-4 card under the vector-store heading`);
+    }
+    const qdrant = page.locator(".alternative", { has: page.getByRole("heading", { level: 4, name: "Qdrant" }) });
+    assert.equal(await qdrant.getByRole("link", { name: "Apache-2.0" }).getAttribute("href"), "https://github.com/qdrant/qdrant/blob/master/LICENSE");
+    noProblems(problems);
+  });
+
   it("Git lessons show tested-command notes, labelled expected output, and chain with next/previous links", async () => {
     const { page, problems } = await h.newPage();
     await page.goto("/tracks/git-github");

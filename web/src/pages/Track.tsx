@@ -5,7 +5,7 @@ import { LevelTag, ModeTag } from "../components/Tags.tsx";
 import { TrackIcon } from "../components/TrackIcon.tsx";
 import { formatDate, hours, levelLabel, statusLabel } from "../lib/format.ts";
 import { Link } from "../lib/router.tsx";
-import type { Level, Resource, TrackResponse } from "../lib/types.ts";
+import type { Alternative, Level, Resource, TrackResponse } from "../lib/types.ts";
 import { useApi, useTitle } from "../lib/useApi.ts";
 import { useScrollSpy } from "../lib/useScrollSpy.ts";
 
@@ -367,39 +367,14 @@ export function TrackPage({ slug }: { slug: string }) {
                   No tool is best everywhere, only a better fit for a context. Licences are as stated by each project where we read them
                   {track.alternatives_checked_on ? ` (checked ${formatDate(track.alternatives_checked_on)})` : ""}; check them for your own use.
                 </p>
-                <ul className="alternatives">
-                  {track.alternatives.map((a) => (
-                    <li key={a.name} className="alternative">
-                      <h3 className="alternative__name">
-                        {a.url ? (
-                          <a href={a.url} rel="noopener noreferrer" target="_blank">
-                            {a.name}
-                          </a>
-                        ) : (
-                          a.name
-                        )}{" "}
-                        <span className="tag">{a.category}</span>
-                      </h3>
-                      <dl className="alternative__facts">
-                        <dt>Choose it when</dt>
-                        <dd>{a.choose_when}</dd>
-                        <dt>Look elsewhere when</dt>
-                        <dd>{a.avoid_when}</dd>
-                        <dt>Licence</dt>
-                        <dd>
-                          {a.licence_source ? (
-                            <a href={a.licence_source} rel="noopener noreferrer" target="_blank">
-                              {a.licence}
-                            </a>
-                          ) : (
-                            a.licence
-                          )}
-                          {a.note ? <span className="muted"> — {a.note}</span> : null}
-                        </dd>
-                      </dl>
-                    </li>
-                  ))}
-                </ul>
+                <AlternativeList items={track.alternatives} />
+                {track.complements ? (
+                  <>
+                    <h3 className="h-small">{track.complements.title}</h3>
+                    <p className="muted">{track.complements.intro}</p>
+                    <AlternativeList items={track.complements.items} headingLevel={4} />
+                  </>
+                ) : null}
               </>
             ) : (
               <p className="muted">The comparison with alternatives is still being written.</p>
@@ -424,5 +399,45 @@ export function TrackPage({ slug }: { slug: string }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/** One card per alternative (or complementary tool): when to choose it, when to look elsewhere, its licence. */
+function AlternativeList({ items, headingLevel = 3 }: { items: Alternative[]; headingLevel?: 3 | 4 }) {
+  const Heading = headingLevel === 4 ? "h4" : "h3";
+  return (
+    <ul className="alternatives">
+      {items.map((a) => (
+        <li key={a.name} className="alternative">
+          <Heading className="alternative__name">
+            {a.url ? (
+              <a href={a.url} rel="noopener noreferrer" target="_blank">
+                {a.name}
+              </a>
+            ) : (
+              a.name
+            )}{" "}
+            <span className="tag">{a.category}</span>
+          </Heading>
+          <dl className="alternative__facts">
+            <dt>Choose it when</dt>
+            <dd>{a.choose_when}</dd>
+            <dt>Look elsewhere when</dt>
+            <dd>{a.avoid_when}</dd>
+            <dt>Licence</dt>
+            <dd>
+              {a.licence_source ? (
+                <a href={a.licence_source} rel="noopener noreferrer" target="_blank">
+                  {a.licence}
+                </a>
+              ) : (
+                a.licence
+              )}
+              {a.note ? <span className="muted"> — {a.note}</span> : null}
+            </dd>
+          </dl>
+        </li>
+      ))}
+    </ul>
   );
 }

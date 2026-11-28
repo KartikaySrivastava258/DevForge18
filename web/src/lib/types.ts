@@ -1,7 +1,7 @@
 /** API response shapes (mirrors server/src/routes). */
-import type { CaseStudy, LearningPath, Resource, Track } from "../../../shared/content-schema.ts";
+import type { Alternative, CaseStudy, LearningPath, Resource, Track } from "../../../shared/content-schema.ts";
 
-export type { CaseStudy, LearningPath, Resource, Track };
+export type { Alternative, CaseStudy, LearningPath, Resource, Track };
 export type Level = "beginner" | "intermediate" | "advanced";
 export type Role = "student" | "faculty" | "admin";
 
