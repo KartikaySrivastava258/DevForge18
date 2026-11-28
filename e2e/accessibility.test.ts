@@ -34,6 +34,8 @@ interface AuditedPage {
   mobile?: boolean;
   /** Puts the page in the state to audit, after it has loaded (for example, opens the menu). */
   prepare?: (page: Page) => Promise<void>;
+  /** Failed requests this page is meant to make (an API 404 for an id that does not exist); every other problem still fails the audit. */
+  expectedProblems?: RegExp[];
 }
 
 const openMenu = async (page: Page) => {
@@ -89,7 +91,14 @@ const PAGES: AuditedPage[] = [
   { name: "review queue", path: "/reviews", ready: "table", signedIn: "faculty", setup: async (page) => (await teacherWithSubmission(page), "/reviews") },
   { name: "review form with the rubric", path: "/reviews", ready: "fieldset.rubric-row", signedIn: "faculty", setup: (page) => teacherWithSubmission(page).then((r) => `/reviews/submission/${r.submissionId}`) },
   { name: "public portfolio", path: "/", ready: "h1", setup: publicPortfolio },
-  { name: "certificate verification", path: "/", ready: "h1", setup: issuedCertificate },
+  { name: "certificate verification", path: "/", ready: "h1", setup: () => issuedCertificate() },
+  { name: "revoked certificate", path: "/", ready: ".notice--danger", setup: () => issuedCertificate({ revoke: true }) },
+  {
+    name: "unknown certificate",
+    path: "/certificates/0000000000000000",
+    ready: "h1",
+    expectedProblems: [/^HTTP 404 .*\/api\/certificates\/0000000000000000$/, /^console error: Failed to load resource: .* 404 \(Not Found\)$/],
+  },
   { name: "administration", path: "/admin", ready: "table", signedIn: "admin" },
   { name: "content editor", path: "/content-editor", ready: "h1", signedIn: "faculty" },
   { name: "home at phone width, menu open", path: "/", ready: ".map-list", mobile: true, prepare: openMenu },
@@ -179,7 +188,7 @@ async function publicPortfolio(): Promise<string> {
  * Passing the quiz and verifying both labs through the browser would take minutes, so that evidence is seeded in
  * the database exactly as server/test/api-institution.test.ts does; the certificate itself is issued by the real API.
  */
-async function issuedCertificate(): Promise<string> {
+async function issuedCertificate(opts: { revoke?: boolean } = {}): Promise<string> {
   accounts += 1;
   const ctx = await playwrightRequest.newContext({ baseURL: h.url, extraHTTPHeaders: { "X-DevForge-CSRF": "1", Origin: h.url } });
   const reg = await ctx.post("/api/auth/register", { data: { email: `axe-certified-${accounts}@example.com`, displayName: "Certified Learner", password: "correct horse battery staple 42" } });
@@ -197,6 +206,14 @@ async function issuedCertificate(): Promise<string> {
   assert.equal(issued.status(), 201, await issued.text());
   const id = ((await issued.json()) as { certificate: { id: string } }).certificate.id;
   await ctx.dispose();
+  if (opts.revoke) {
+    const email = `axe-revoker-${accounts}@example.com`;
+    await h.createUser({ email, name: "Axe Revoker", password: "correct horse battery staple 42", role: "admin" });
+    const admin = await playwrightRequest.newContext({ baseURL: h.url, extraHTTPHeaders: { "X-DevForge-CSRF": "1", Origin: h.url } });
+    assert.equal((await admin.post("/api/auth/login", { data: { email, password: "correct horse battery staple 42" } })).status(), 200);
+    assert.equal((await admin.post(`/api/certificates/${id}/revoke`)).status(), 204);
+    await admin.dispose();
+  }
   return `/certificates/${id}`;
 }
 
@@ -239,7 +256,8 @@ for (const scheme of ["dark", "light"] as const) {
           const results = await builder.analyze();
           assert.ok(results.passes.length > 0, "axe ran its checks");
           assert.equal(results.violations.length, 0, `axe violations on ${path} (${scheme}):\n${describeViolations(results.violations)}`);
-          assert.deepEqual(problems, [], `browser problems:\n${problems.join("\n")}`);
+          const unexpected = problems.filter((p) => !target.expectedProblems?.some((re) => re.test(p)));
+          assert.deepEqual(unexpected, [], `browser problems:\n${unexpected.join("\n")}`);
         } finally {
           await context.close();
         }

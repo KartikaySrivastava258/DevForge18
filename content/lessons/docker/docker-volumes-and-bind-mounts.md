@@ -49,8 +49,8 @@ verification:
   method: executed
   details: Every command is run by the test suite on a disposable Docker engine, after the previous lesson, and its output is compared with this lesson. Confirmed in CI (GitHub-hosted Ubuntu 24.04 runner, Docker API 1.48) on 2026-11-25.
 owner: content-team
-last_reviewed: 2026-11-25
-content_version: 2
+last_reviewed: 2026-11-28
+content_version: 3
 ---
 
 ## The idea in one sentence
@@ -146,6 +146,7 @@ Create a page on your computer and serve it with nginx, read-only:
 ```bash run
 mkdir -p site
 echo "<h1>Edited on my laptop</h1>" > site/index.html
+docker pull -q nginx:1.27-alpine > /dev/null  # pull first, so docker run prints no download progress
 docker run -d --name devsite -p 8083:80 -v "$PWD/site":/usr/share/nginx/html:ro nginx:1.27-alpine
 sleep 1
 ```

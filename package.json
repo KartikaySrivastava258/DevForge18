@@ -18,6 +18,7 @@
     "dev": "npm run build && node --disable-warning=ExperimentalWarning --watch-path=server/src server/src/main.ts",
     "db:migrate": "node --disable-warning=ExperimentalWarning scripts/db-migrate.ts",
     "user:create": "node --disable-warning=ExperimentalWarning scripts/create-user.ts",
+    "demo:certificate": "node --disable-warning=ExperimentalWarning scripts/certificate-demo.ts",
     "typecheck": "tsc -p tsconfig.json",
     "typecheck:web": "tsc -p tsconfig.web.json",
     "test": "node --disable-warning=ExperimentalWarning --test \"server/test/**/*.test.ts\" \"shared/**/*.test.ts\" \"scripts/**/*.test.ts\"",

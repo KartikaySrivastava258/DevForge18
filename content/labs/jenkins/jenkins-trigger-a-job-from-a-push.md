@@ -77,7 +77,9 @@ mv srv/app.git/hooks/post-update.sample srv/app.git/hooks/post-update   # keeps 
 git -C srv/app.git update-server-info
 git -C app remote add origin "$PWD/srv/app.git"
 docker network create devforge-trigger-net > /dev/null
-docker run -d --name devforge-trigger-git --network devforge-trigger-net -v "$PWD/srv:/srv:ro" busybox:1.37 httpd -f -p 80 -h /srv > /dev/null
+GIT_SERVER_IMAGE=busybox:1.37@sha256:a7dbc319b1438115a207e11930dc4bb3e643dcb3ec0bdd694bb36cd8fad289ec
+docker pull -q "$GIT_SERVER_IMAGE" > /dev/null
+docker run -d --name devforge-trigger-git --network devforge-trigger-net -v "$PWD/srv:/srv:ro" "$GIT_SERVER_IMAGE" httpd -f -p 80 -h /srv > /dev/null
 echo "serving app.git"
 ```
 

@@ -72,8 +72,8 @@ verification:
   method: executed
   details: The replication and connection steps are run by the test suite with two postgres:16 containers (on a disposable Docker engine), after the previous lessons, and their output is compared with this lesson. Connection pooling with PgBouncer was checked against PgBouncer's documentation (2026-11-26) but is not executed.
 owner: content-team
-last_reviewed: 2026-11-26
-content_version: 1
+last_reviewed: 2026-11-28
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -109,6 +109,7 @@ One database server is a single point of failure, and busy applications want mor
 
 ```bash run
 docker network create devforge-pg-repl > /dev/null
+docker pull -q postgres:16 > /dev/null  # pull first, so docker run prints no download progress
 docker run -d --name devforge-pg-primary --network devforge-pg-repl -e POSTGRES_PASSWORD=lesson-only postgres:16 > /dev/null
 for i in $(seq 1 60); do docker exec devforge-pg-primary pg_isready -U postgres -q && break; sleep 1; done
 sleep 2

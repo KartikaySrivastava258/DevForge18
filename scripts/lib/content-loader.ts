@@ -32,7 +32,7 @@ import {
   type LearningPath,
   type Track,
 } from "../../shared/content-schema.ts";
-import { extractRunBlocks, pipesIntoQuietGrep } from "./lesson-runner.ts";
+import { extractRunBlocks, pipesIntoQuietGrep, unpulledDockerRunImages } from "./lesson-runner.ts";
 import { loadMedia, mediaResolver } from "./media.ts";
 import { loadSimulations } from "./simulations.ts";
 import { parseYaml } from "./yaml.ts";
@@ -237,6 +237,8 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       const lessonBlocks = extractRunBlocks(split.body);
       const runBlocks = lessonBlocks.length;
       if (lessonBlocks.some((b) => pipesIntoQuietGrep(b.code))) errors.push(`${rel}: a run block pipes into grep -q, which races with set -o pipefail; use \`| grep … > /dev/null\``);
+      const unpulled = unpulledDockerRunImages(lessonBlocks);
+      if (unpulled.length) errors.push(`${rel}: docker run starts ${unpulled.join(", ")} without pulling it first; add \`docker pull -q IMAGE > /dev/null\` before it, or the download progress breaks the expected output on a machine without the image (a fresh CI runner)`);
       if (meta.verification.method === "executed" && runBlocks === 0) errors.push(`${rel}: verification "executed" requires at least one \`\`\`bash run block`);
       if (meta.verification.method === "docs-checked" && runBlocks > 0) errors.push(`${rel}: has run blocks, so verification.method must be "executed" or "pending"`);
       if (meta.verification.method === "pending" && runBlocks === 0) errors.push(`${rel}: verification "pending" requires run blocks`);
@@ -300,6 +302,8 @@ export function loadContent(root: string, now: Date = new Date()): LoadResult {
       const blocks = extractRunBlocks(split.body);
       const checks = blocks.filter((b) => b.check).length;
       if (blocks.some((b) => pipesIntoQuietGrep(b.code))) errors.push(`${rel}: a run block pipes into grep -q, which races with set -o pipefail; use \`| grep … > /dev/null\``);
+      const unpulled = unpulledDockerRunImages(blocks);
+      if (unpulled.length) errors.push(`${rel}: docker run starts ${unpulled.join(", ")} without pulling it first; add \`docker pull -q IMAGE > /dev/null\` before it, or the download progress breaks the expected output on a machine without the image (a fresh CI runner)`);
       if (meta.mode === "local") {
         if (meta.verification.method === "docs-checked") errors.push(`${rel}: a local lab's steps must be executed by the tests (verification "executed" or "pending")`);
         if (blocks.length === 0) errors.push(`${rel}: a local lab needs \`\`\`bash run steps`);

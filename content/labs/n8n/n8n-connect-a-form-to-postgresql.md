@@ -72,10 +72,12 @@ CREATE TABLE registrations (
 );
 EOF
 docker network create devforge-form-net > /dev/null
+PG_IMAGE=postgres:16.15-alpine3.23@sha256:8dc5ce2495b2aeafbf033e4be590764f611248e9eb8495b5202170a6afcb64a4
+docker pull -q "$PG_IMAGE" > /dev/null
 docker run -d --name devforge-form-db --network devforge-form-net \
   -e POSTGRES_PASSWORD=devforge-lab -e POSTGRES_DB=college \
   -v "$PWD/initdb":/docker-entrypoint-initdb.d:ro \
-  postgres:16.15-alpine3.23@sha256:8dc5ce2495b2aeafbf033e4be590764f611248e9eb8495b5202170a6afcb64a4 > /dev/null
+  "$PG_IMAGE" > /dev/null
 for i in $(seq 1 60); do docker exec devforge-form-db pg_isready -q -h 127.0.0.1 -U postgres -d college && break; sleep 0.5; done
 sql() { docker exec devforge-form-db psql -X -q -U postgres -d college -c "$1"; }
 sql "\d registrations" | grep -E "^ (id|name|email|track) "
@@ -94,6 +96,7 @@ sql "\d registrations" | grep -E "^ (id|name|email|track) "
 
 ```bash run
 IMAGE=n8nio/n8n:2.49.6@sha256:a1a9955a4a9e5dd9fa65a62f59e0751351b45b9e5cd2c17e6e330a8d0026cad8
+docker pull -q "$IMAGE" > /dev/null
 docker run -d --name devforge-n8n-form --network devforge-form-net -p 127.0.0.1:5679:5678 \
   -e N8N_DIAGNOSTICS_ENABLED=false -e WEBHOOK_URL=http://127.0.0.1:5679/ "$IMAGE" > /dev/null
 N8N=http://127.0.0.1:5679

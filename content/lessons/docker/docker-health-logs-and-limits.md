@@ -89,8 +89,8 @@ verification:
   method: executed
   details: Every command is run by the test suite on a disposable Docker engine, after the previous lessons, and its output is compared with this lesson. First run locally with node:22-alpine and alpine:3.20 on 2026-11-26. Health status, restart policies, log rotation options and docker stop's SIGTERM-then-SIGKILL sequence were checked against the Docker documentation on 2026-11-26.
 owner: content-team
-last_reviewed: 2026-11-27
-content_version: 2
+last_reviewed: 2026-11-28
+content_version: 3
 ---
 
 ## The idea in one sentence
@@ -139,6 +139,7 @@ server.listen(8080, () => console.log("listening on 8080"));
 // docker stop sends SIGTERM: stop accepting connections, finish open ones, then exit.
 process.on("SIGTERM", () => { console.log("SIGTERM received: closing"); server.close(() => process.exit(0)); });
 EOF
+docker pull -q node:22-alpine > /dev/null  # pull first, so docker run prints no download progress
 docker run -d --name devforge-web -p 127.0.0.1:8097:8080 -v "$PWD/app.js":/app.js:ro \
   --memory 64m --log-driver json-file --log-opt max-size=1m --log-opt max-file=3 \
   --health-cmd 'wget -q -O /dev/null http://127.0.0.1:8080/health || exit 1' \
@@ -245,6 +246,7 @@ On most runs this prints `OOMKilled=true, exit code 137`. The program kept alloc
 ### 6. Restarting after a crash
 
 ```bash run
+docker pull -q alpine:3.20 > /dev/null  # pull first, so docker run prints no download progress
 docker run -d --name devforge-flaky --restart on-failure:3 alpine:3.20 sh -c 'echo "starting"; exit 1' > /dev/null
 for i in $(seq 1 40); do [ "$(docker inspect -f '{{.State.Status}} {{.RestartCount}}' devforge-flaky)" = "exited 3" ] && break; sleep 0.5; done
 docker inspect -f '{{.State.Status}}, restarted {{.RestartCount}} times, exit code {{.State.ExitCode}}' devforge-flaky

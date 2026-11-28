@@ -65,6 +65,7 @@ As in the earlier lessons, the **embedding is a teaching stand-in**: one number 
 ```bash run
 mkdir pdf-lab && cd pdf-lab
 IMAGE=python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4b
+docker pull -q "$IMAGE" > /dev/null
 docker run -d --name devforge-llm-pdf -w /lab "$IMAGE" sleep infinity > /dev/null
 docker exec devforge-llm-pdf pip install -q --root-user-action=ignore --disable-pip-version-check \
   llama-index-core==0.14.26 pypdf==7.0.1 fpdf2==2.9.0

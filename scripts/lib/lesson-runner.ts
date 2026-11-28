@@ -184,6 +184,125 @@ export function pipesIntoQuietGrep(code: string): boolean {
   return /\|\s*grep\s+-[A-Za-z]*q/.test(code);
 }
 
+/** docker run options that take a value as the next word (`--name x`); `--name=x` needs no lookahead. */
+const DOCKER_RUN_VALUE_OPTIONS = new Set([
+  "--name", "--network", "--net", "-v", "--volume", "-e", "--env", "--env-file", "-p", "--publish", "-w", "--workdir", "-u", "--user",
+  "-h", "--hostname", "--entrypoint", "-m", "--memory", "--memory-swap", "--cpus", "--mount", "-l", "--label", "--add-host", "--tmpfs",
+  "--platform", "--pull", "--restart", "--health-cmd", "--health-interval", "--health-timeout", "--health-retries", "--health-start-period",
+  "--network-alias", "--ulimit", "--shm-size", "--cap-add", "--cap-drop", "--security-opt", "--log-driver", "--log-opt", "--stop-signal",
+  "--stop-timeout", "--pids-limit", "--ip", "--dns", "--group-add", "--device", "--read-only-tmpfs", "--expose", "--cidfile", "--init-path",
+]);
+
+function shellWords(line: string): string[] {
+  return line.match(/(?:"[^"]*"|'[^']*'|[^\s"']+)+/g) ?? [];
+}
+
+/** A line without its trailing `# comment` (a `#` that starts a word outside quotes). */
+function withoutComment(line: string): string {
+  let quote = "";
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (quote) {
+      if (c === quote) quote = "";
+    } else if (c === '"' || c === "'") quote = c;
+    else if (c === "#" && (i === 0 || /\s/.test(line[i - 1] as string))) return line.slice(0, i);
+  }
+  return line;
+}
+
+/** The quote character open at position `end` of `line`, or "" outside quotes. */
+function quoteBefore(line: string, end: number): string {
+  let quote = "";
+  for (let i = 0; i < end; i++) {
+    const c = line[i] as string;
+    if (quote) {
+      if (c === quote) quote = "";
+    } else if (c === '"' || c === "'") quote = c;
+  }
+  return quote;
+}
+
+/** The first simple command of `text`: up to an unquoted `&&`, `||`, `|` or `;` (or `)`, inside "$(…)"). */
+function firstCommand(text: string, inSubstitution: boolean): string {
+  let quote = "";
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i] as string;
+    if (quote) {
+      if (c === quote) quote = "";
+    } else if (c === '"' || c === "'") quote = c;
+    else if (c === "|" || c === ";" || (c === "&" && text[i + 1] === "&") || (inSubstitution && c === ")")) return text.slice(0, i);
+  }
+  return text;
+}
+
+/**
+ * Images that a document's bash blocks start with `docker run` without pulling them quietly first.
+ *
+ * On a machine without the image, `docker run` prints "Unable to find image … Pulling from …" on stderr, and the
+ * lesson runner compares stderr too, so the block fails on a fresh CI runner yet passes wherever the image is
+ * cached, including in CI when an earlier lesson in the same shard happened to pull it. The image counts as
+ * available when the document pulls it (`docker pull -q IMAGE > /dev/null`, also in a `for` loop), builds or tags
+ * it (also through a shell function that wraps `docker build`), or builds `FROM` it; or when that `docker run`
+ * redirects its stderr. Variables assigned in the document (`IMAGE=…`) are resolved.
+ */
+export function unpulledDockerRunImages(blocks: RunBlock[]): string[] {
+  const code = blocks.filter((b) => b.kind === "bash").map((b) => b.code).join("\n").replace(/\\\n/g, " ");
+  const lines = code.split("\n").map(withoutComment);
+  const vars = new Map<string, string>();
+  for (const line of lines) {
+    for (const m of line.matchAll(/(?:^|[\s;(])([A-Za-z_][A-Za-z0-9_]*)=("?)([^\s"';)]+)\2/g)) if (!(m[3] as string).startsWith("$")) vars.set(m[1] as string, m[3] as string);
+  }
+  const resolve = (word: string): string => {
+    const bare = word.replace(/^["']|["']$/g, "");
+    const v = /^\$\{?([A-Za-z_][A-Za-z0-9_]*)\}?$/.exec(bare);
+    return v ? (vars.get(v[1] as string) ?? bare) : bare;
+  };
+  const builds = /\bdocker\s+(?:image\s+|buildx\s+)?build\b/.test(code);
+  const buildFunctions = [...code.matchAll(/([A-Za-z_][A-Za-z0-9_]*)\s*\(\)\s*\{[^}]*\bdocker\s+(?:buildx\s+)?build\b/g)].map((m) => m[1] as string);
+  const available = new Set<string>();
+  for (const line of lines) {
+    for (const m of line.matchAll(/docker\s+(?:image\s+)?pull\s+(?:-\S+\s+)*(\S+)/g)) available.add(resolve(m[1] as string));
+    for (const m of line.matchAll(/\bfor\s+([A-Za-z_]\w*)\s+in\s+([^;]+);\s*do\b(.*)/g)) {
+      if (new RegExp(`docker\\s+(?:image\\s+)?pull\\b[^;]*\\$\\{?${m[1]}\\b`).test(m[3] as string)) for (const w of shellWords(m[2] as string)) available.add(resolve(w));
+    }
+    if (builds) {
+      for (const m of line.matchAll(/(?:^|\s)(?:-t|--tag)[\s=](\S+)/g)) available.add(resolve(m[1] as string));
+      for (const m of line.matchAll(/^\s*FROM\s+(?:--platform=\S+\s+)?(\S+)/gi)) available.add(resolve(m[1] as string));
+    }
+    for (const m of line.matchAll(/docker\s+(?:image\s+)?tag\s+\S+\s+(\S+)/g)) available.add(resolve(m[1] as string));
+    const call = /^\s*([A-Za-z_]\w*)\s+(.*)$/.exec(line);
+    if (call && buildFunctions.includes(call[1] as string)) for (const w of shellWords(call[2] as string)) available.add(resolve(w));
+  }
+  const missing: string[] = [];
+  for (const line of lines) {
+    const at = line.search(/\bdocker\s+run\b/);
+    if (at < 0) continue;
+    const quoteAt = quoteBefore(line, at);
+    if (quoteAt === "'" || (quoteAt === '"' && !line.slice(0, at).endsWith("$("))) continue; // text, such as echo 'docker run x'
+    const command = firstCommand(line.slice(at), line.slice(0, at).endsWith("$("));
+    const quiet = /\s(?:2>&1|2>\s*\S+|&>\s*\S+)/.test(command) || /--pull[= ]never\b/.test(command);
+    const words = shellWords(command).slice(2);
+    let image: string | undefined;
+    for (let i = 0; i < words.length; i++) {
+      const w = words[i] as string;
+      if (/^"?\$(?:@|\{[A-Za-z_]\w*\[@\]\})"?$/.test(w)) continue; // "$@", "${opts[@]}": options from elsewhere
+      if (w.startsWith("-")) {
+        if (DOCKER_RUN_VALUE_OPTIONS.has(w)) i++;
+        continue;
+      }
+      image = w;
+      break;
+    }
+    if (!image || /\$\(/.test(image)) continue; // $(docker build -q .) names an image the document just built
+    const resolved = resolve(image);
+    if (resolved.startsWith("$")) continue; // set at run time (a digest, a function argument): cannot be checked here
+    if (quiet) available.add(resolved); // its download progress went elsewhere; later runs find it pulled
+    if (available.has(resolved)) continue;
+    if (!missing.includes(resolved)) missing.push(resolved);
+  }
+  return missing;
+}
+
 /**
  * Lessons that touch the host's Redis: redis blocks, or bash blocks calling redis-cli as a command.
  * redis-cli run inside a container (docker run/exec …) or quoted in a file (a Compose health check)

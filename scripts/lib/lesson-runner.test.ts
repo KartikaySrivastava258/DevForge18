@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { chmodSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, lessonNeeds, toolsUsed, usesDocker, outputMatches, pipesIntoQuietGrep, redisTestingEnabled, runLesson, usesHostPostgres, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
+import { dockerTestingEnabled, extractRunBlocks, hasCommand, hasPostgres, lessonNeeds, toolsUsed, usesDocker, outputMatches, pipesIntoQuietGrep, redisTestingEnabled, runLesson, unpulledDockerRunImages, usesHostPostgres, usesNginx, usesPostgres, usesRedis } from "./lesson-runner.ts";
 import { splitFrontMatter } from "./markdown.ts";
 import { startPracticeServer } from "./practice-server.ts";
 import { scopeFromEnv } from "./affected.ts";
@@ -239,6 +239,29 @@ describe("pipes into grep -q", () => {
       runLesson(extractRunBlocks(`\`\`\`bash run\nfound=no\nif seq 1 200000 | ${grep}; then found=yes; fi\necho "$found"\n\`\`\`\n\n\`\`\`text output\nyes\n\`\`\``));
     assert.equal(loop("grep -q '^1$'").results[0]?.ok, false);
     assert.equal(loop("grep '^1$' > /dev/null").results[0]?.ok, true);
+  });
+});
+
+describe("docker run without a quiet pull", () => {
+  const check = (code: string) => unpulledDockerRunImages(extractRunBlocks("```bash run\n" + code + "\n```"));
+  const PG = "postgres:16.15-alpine3.23@sha256:8dc5ce2495b2aeafbf033e4be590764f611248e9eb8495b5202170a6afcb64a4";
+  it("is flagged: a fresh CI runner prints the download progress, which the expected output does not show", () => {
+    // The n8n form lab before the fix: passed where the image was cached, failed on a fresh runner (CI run 46161813498).
+    assert.deepEqual(check(`docker run -d --name devforge-form-db --network devforge-form-net \\\n  -e POSTGRES_DB=college \\\n  -v "$PWD/initdb":/docker-entrypoint-initdb.d:ro \\\n  ${PG} > /dev/null`), [PG]);
+    assert.deepEqual(check('IMAGE=n8nio/n8n:2.49.6\ndocker run -d --name n8n -p 127.0.0.1:5679:5678 -e A=b "$IMAGE" > /dev/null'), ["n8nio/n8n:2.49.6"]);
+    assert.deepEqual(check("docker run -d --name web --health-cmd 'wget -q -O /dev/null http://x/ || exit 1' --health-retries 2 node:22-alpine node /app.js > /dev/null"), ["node:22-alpine"]);
+  });
+  it("is not flagged when the document pulls, builds or tags the image, or the run's stderr is redirected", () => {
+    assert.deepEqual(check(`IMAGE=${PG}\ndocker pull -q "$IMAGE" > /dev/null\ndocker run -d --name db "$IMAGE" > /dev/null`), []);
+    assert.deepEqual(check(`for image in "$A" "$B"; do docker pull -q "$image" > /dev/null; done\nA=x:1\nB=y:2\ndocker run --rm "$A"; docker run --rm "$B"`), []);
+    assert.deepEqual(check("docker build -q -t app:1 . > build.log 2>&1\ndocker run --rm app:1"), []);
+    assert.deepEqual(check('build() { docker build -q -t "$1" . > build.log 2>&1; }\nbuild cake:v1\ndocker run --rm cake:v1'), []);
+    assert.deepEqual(check("cat > Dockerfile <<'EOF'\nFROM alpine:3.20\nEOF\ndocker build -q -t a:1 .\ndocker run --rm alpine:3.20 true"), []);
+    assert.deepEqual(check("docker run --rm node:22 true > out.log 2>&1\ndocker run --rm node:22 node -v"), [], "the first run's progress went to a file, so the second finds the image");
+    assert.deepEqual(check('[ "$(docker run --rm app:1)" = "ready" ] && echo ok\ndocker build -t app:1 .'), []);
+    assert.deepEqual(check('digest=$(docker build -q .)\ndocker run --rm "$digest" true'), [], "an image named at run time cannot be checked");
+    assert.deepEqual(check('start() { docker run -d --name "$1" "$@" "$PG_IMAGE" > /dev/null; }\nPG_IMAGE=pg:16\ndocker pull -q "$PG_IMAGE" > /dev/null'), []);
+    assert.deepEqual(check("# docker run prints the container id\necho 'docker run x'"), []);
   });
 });
 

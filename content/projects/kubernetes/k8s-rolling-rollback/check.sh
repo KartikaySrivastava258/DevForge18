@@ -65,6 +65,10 @@ if out="$(kubectl apply -f "$dir/deployment.yaml" 2>&1)"; then :; else fail "kub
 kubectl get deployment web > /dev/null 2>&1 && kubectl get service web > /dev/null 2>&1 || { fail "deployment.yaml must define the Deployment web and the Service web"; finish; }
 complete 150s
 kubectl wait --for=condition=Ready pod/client --timeout=60s > /dev/null 2>&1
+# On a brand-new cluster, cluster DNS and the Service's routing rules can lag a few seconds behind the Pods
+# becoming ready (seen in CI run 46161813498: "ERR x3" before any release). Wait until the Service answers once,
+# so the 10-of-10 criterion below measures the learner's Deployment, not the cluster warming up.
+for _ in $(seq 1 30); do [ "$(sample 1 0)" != ERR ] && break; sleep 2; done
 replicas="$(jp deployment/web '{.spec.replicas}')"; ready="$(jp deployment/web '{.status.readyReplicas}')"
 if [ "${replicas:-0}" -ge 3 ] && [ "${ready:-0}" = "$replicas" ]; then pass "Deployment web is Available with $ready/$replicas Pods ready"
 else fail "Deployment web should run at least 3 replicas, all ready (ready ${ready:-0} of ${replicas:-0})"; fi

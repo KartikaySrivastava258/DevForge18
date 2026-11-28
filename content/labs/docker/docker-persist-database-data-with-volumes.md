@@ -69,6 +69,7 @@ start() {
 sql() { docker exec "$1" psql -X -q -U postgres -c "$2"; }
 EOF
 . ./helpers.sh
+docker pull -q "$PG_IMAGE" > /dev/null
 echo "helpers ready"
 ```
 

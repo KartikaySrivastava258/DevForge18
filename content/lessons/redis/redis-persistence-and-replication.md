@@ -56,8 +56,8 @@ verification:
   method: executed
   details: Every command is run by the test suite with redis:7 containers on a disposable Docker engine, and its output is compared with this lesson. The data-loss windows were checked against the Redis documentation on 2026-11-26.
 owner: content-team
-last_reviewed: 2026-11-26
-content_version: 1
+last_reviewed: 2026-11-28
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -90,6 +90,7 @@ A cache can start empty after a restart; a session store, a rate limiter or a jo
 
 ```bash run
 docker network create devforge-redis-net > /dev/null
+docker pull -q redis:7 > /dev/null  # pull first, so docker run prints no download progress
 docker run -d --name devforge-redis-volatile --network devforge-redis-net redis:7 redis-server --save "" --appendonly no > /dev/null
 docker run -d --name devforge-redis-durable --network devforge-redis-net redis:7 redis-server --appendonly yes > /dev/null
 for c in volatile durable; do for i in $(seq 1 30); do docker exec "devforge-redis-$c" redis-cli PING > /dev/null 2>&1 && break; sleep 0.5; done; done
