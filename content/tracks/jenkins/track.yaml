@@ -50,9 +50,9 @@ topics:
   - { level: advanced, title: "Docker and Kubernetes agents" }
   - { level: advanced, title: "Backup, upgrades, access control and maintenance" }
 labs:
-  - { title: "Create a basic pipeline", level: beginner, mode: local, status: planned }
+  - { title: "Create a basic pipeline", level: beginner, mode: local, status: available, lab: jenkins-create-a-basic-pipeline }
   - { title: "Build and test an application", level: beginner, status: covered, project: jenkins-backend-ci }
-  - { title: "Trigger a job from a repository event", level: intermediate, mode: local, status: planned }
+  - { title: "Trigger a job from a repository event", level: intermediate, mode: local, status: available, lab: jenkins-trigger-a-job-from-a-push }
   - { title: "Store credentials safely", level: advanced, mode: local, status: available, lab: jenkins-store-credentials-safely }
   - { title: "Size agents and executors for a build queue", level: intermediate, mode: simulation, status: available, lab: jenkins-labels-and-executors }
 projects:

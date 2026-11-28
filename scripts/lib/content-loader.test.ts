@@ -292,6 +292,10 @@ describe("labs covered by a lesson or a project", () => {
       assert.equal((lesson ?? project)?.level, l.level, `${l.track}: ${l.title}`);
     }
   });
+  it("leave no lab planned in the real content (v1.0 decision, 2026-11-28)", () => {
+    const planned = loadContent(contentRoot).bundle.tracks.flatMap((t) => t.labs.filter((l) => l.status === "planned").map((l) => `${t.slug}: ${l.title}`));
+    assert.deepEqual(planned, []);
+  });
   it("reject an unknown lesson or project", () => {
     assert.ok(errorsWith(COVERED.replace("git-first-commits", "git-no-such-lesson")).some((e) => e.includes(`"${title}" is covered by unknown lesson "git-no-such-lesson"`)));
     assert.ok(errorsWith(COVERED.replace("lesson: git-first-commits", "project: git-no-such-project")).some((e) => e.includes('is covered by unknown project "git-no-such-project"')));
