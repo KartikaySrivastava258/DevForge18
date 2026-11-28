@@ -65,8 +65,8 @@ verification:
   method: executed
   details: Every command is run by the test suite with Prometheus 3.16.0, Alertmanager and amtool 0.34.2 and a small Node.js webhook receiver, after the earlier Prometheus lessons, and its output is compared with this lesson. Start times vary and are not printed. Behaviour was checked against the Prometheus alerting documentation on 2026-11-26.
 owner: content-team
-last_reviewed: 2026-11-26
-content_version: 1
+last_reviewed: 2026-11-28
+content_version: 2
 ---
 
 ## The idea in one sentence
@@ -144,8 +144,8 @@ amtool check-config alertmanager.yml | head -n 1
 alertmanager --config.file=alertmanager.yml --storage.path=am-data \
   --web.listen-address=127.0.0.1:9093 --cluster.listen-address= > alertmanager.log 2>&1 &
 echo $! > alertmanager.pid
-for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:9093/-/ready && break; sleep 1; done
-curl -s http://127.0.0.1:9093/-/ready; echo
+for i in $(seq 1 60); do curl -sf -o /dev/null http://127.0.0.1:9093/-/ready && break; sleep 1; done
+curl -sf http://127.0.0.1:9093/-/ready || { echo "Alertmanager is not ready; its log:"; tail -n 20 alertmanager.log; }; echo
 ```
 
 ```text output
@@ -153,7 +153,7 @@ Checking 'alertmanager.yml'  SUCCESS
 OK
 ```
 
-`--cluster.listen-address=` (empty) turns off high-availability clustering, which a single local Alertmanager does not need.
+`--cluster.listen-address=` (empty) turns off high-availability clustering, which a single local Alertmanager does not need. If it does not answer within a minute, the last command prints Alertmanager's own log instead of `OK`: the usual causes are another program on port 9093 or a mistake in `alertmanager.yml`.
 
 ### 2. Rules in Prometheus, sent to Alertmanager
 
