@@ -22,7 +22,7 @@ resources:
     level: beginner
     official: true
     why: What a pipeline is, declarative syntax, and defining a pipeline in a Jenkinsfile kept in source control.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-28 }
   - title: Pipeline syntax
     url: https://www.jenkins.io/doc/book/pipeline/syntax/
     publisher: Jenkins project

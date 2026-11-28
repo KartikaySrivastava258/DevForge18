@@ -37,8 +37,8 @@ resources:
     type: documentation
     level: intermediate
     official: true
-    why: How page.extract_text() works, and why scanned pages (images) return no text.
-    verification: { status: unverified }
+    why: How page.extract_text() works, and that pypdf never extracts text from images, so a scanned page without an OCR text layer needs OCR (for example Tesseract).
+    verification: { status: verified, checked_on: 2026-11-28 }
 verification:
   method: executed
   details: Every step and the check script are run by DevForge's test suite on a disposable Docker engine with python:3.12-slim (pinned by digest), llama-index-core 0.14.26, pypdf 7.0.1 and fpdf2 2.9.0 (used only to generate the sample PDFs), and their output is compared with this page. The check script is also run in an empty folder, where it must fail. The embedding is a hand-made keyword model, labelled as a teaching stand-in, and no language model is called.

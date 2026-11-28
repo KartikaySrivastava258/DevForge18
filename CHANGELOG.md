@@ -9,14 +9,14 @@ The first release: all 18 tracks complete, with college features. Evidence for e
 ### Learning content
 
 - **18 tracks** (Git and GitHub, Docker, Kubernetes, PostgreSQL, Terraform, GitHub Actions, Prometheus and Grafana, LangChain and LlamaIndex, Redis, Apache Kafka, Jenkins, Jira, Postman, Nginx, OpenTelemetry, Apache Airflow, n8n, MLflow), each with a plain-language explanation, its place in a system architecture, a curriculum by level and official resources.
-- **133 lessons** (54 beginner, 42 intermediate, 37 advanced) with objectives, figures, expected output and a server-graded self-check. The commands in 131 lessons are run against the real tools by the test suite and in CI, and their output is compared; the 2 lessons about the hosted Jira service are checked against Atlassian's documentation and say so.
-- **134 figures**, 22 lessons with step-through diagrams.
-- **18 simulations**, one per track, with challenges verified by replaying the learner's actions on the server; each is labelled as a simulation and states what it simplifies.
-- **37 labs**: local labs with check scripts, simulation labs and a read-through lab graded on the server.
+- **134 lessons** (54 beginner, 43 intermediate, 37 advanced) with objectives, figures, expected output and a server-graded self-check. The commands in 132 lessons are run against the real tools by the test suite and in CI, and their output is compared; the 2 lessons about the hosted Jira service are checked against Atlassian's documentation and say so.
+- **135 figures**, 22 lessons with step-through diagrams. Track pages group lessons by level with completion ticks.
+- **19 simulations**, at least one per track, with challenges verified by replaying the learner's actions on the server; each is labelled as a simulation and states what it simplifies. The Nginx location matcher, the PostgreSQL isolation timeline and the Redis eviction policies are compared with the real servers in CI. A Postman **request playground** sends real requests to the learner's own DevForge API, with an allowlist and explanations of errors.
+- **48 labs** (29 local with check scripts, 17 simulation, 2 read-through graded on the server); every other practice item on a track page links to the executed lesson or CI-checked project that does it.
 - **18 quizzes** (230 questions, six question types) graded on the server.
 - **54 mini-projects** with stories, acceptance criteria, rubrics, starter files, hints and a faculty-only solution; every acceptance check fails on the starter and passes on the solution in CI.
 - **7 capstones** (A–G), **17 integrations** between tracks, **10 reference architectures** with learner decision records.
-- **36 case studies** (every claim with a verbatim quote, its source and the date checked) and **89 alternatives** with licences.
+- **36 case studies** (every claim with a verbatim quote, its source and the date checked) and **88 alternatives** with licences, plus the vector stores used with LangChain (pgvector, Qdrant, Weaviate, Chroma) listed separately.
 - **8 learning paths**, search with typo tolerance, an interactive system map and a relationship graph.
 
 ### Platform

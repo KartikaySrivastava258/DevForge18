@@ -29,8 +29,8 @@ resources:
     type: reference
     level: intermediate
     official: true
-    why: Installs exactly what package-lock.json records, and fails if package.json and the lockfile disagree.
-    verification: { status: unverified }
+    why: Needs an existing package-lock.json, never writes to package.json or the lockfile, and exits with an error instead of updating the lockfile when the two disagree.
+    verification: { status: verified, checked_on: 2026-11-28 }
 verification:
   method: executed
   details: Every step and the check script are run by DevForge's test suite with Node.js 22 and its bundled npm, installing two small packages (ms 2.1.3 and picocolors 1.1.1/1.1.0) from the npm registry, and their output is compared with this page; the workflow is validated by DevForge's workflow checker. The check script is also run in an empty folder, where it must fail. Restoring the cache on GitHub itself is not run, because it needs github.com.

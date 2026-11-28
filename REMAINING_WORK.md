@@ -24,10 +24,10 @@ Snapshot for v1.0 (2026-11-28). The original 2026-11-25 snapshot is in the git h
 |---|---|
 | Platform: accounts, roles, sessions, progress, bookmarks, search, system map, lesson reader, dark/light themes, mobile layout | ✅ Complete and tested |
 | Security: scrypt passwords, hashed session tokens, CSRF protection, strict CSP (unchanged since the first commit), per-account and per-user limits, audit log, endpoint authorization review | ✅ Complete and tested |
-| 18 tracks, 8 learning paths, 133 lessons (131 executed in CI, 2 Jira lessons docs-checked), 18 simulations, 37 labs, 18 quizzes, 54 mini-projects, 7 capstones, 17 integrations, 10 architectures, 36 case studies, 89 alternatives | ✅ Complete and tested |
+| 18 tracks, 8 learning paths, 134 lessons (132 executed in CI, 2 Jira lessons docs-checked), 19 simulations, 48 labs, 18 quizzes, 54 mini-projects, 7 capstones, 17 integrations, 10 architectures, 36 case studies, 88 alternatives and 4 complementary vector stores | ✅ Complete and tested |
 | Cohorts, assignments, rubric reviews, portfolios, certificates, data export and deletion, admin screens, content editor | ✅ Complete and tested (the editor also against the real GitHub API, 2026-11-28) |
 | Deployment, tracing, shared rate limits, Compose/Nginx smoke test, accessibility audit, load test, upgrade and backup tests | ✅ Complete and tested |
-| Items still being built for v1.0, and items moved to after v1.0 with the owner's approval | See section 10 |
+| Items built for v1.0 on 2026-11-28, and items moved to after v1.0 with the owner's approval | See section 10 |
 
 ## 2. Non-negotiable quality rules
 
@@ -46,13 +46,13 @@ These rules are why the existing work can be trusted. Every new feature must fol
 
 | Blueprint feature | Current state | Priority |
 |---|---|---|
-| Comprehensive beginner → advanced lessons for all 18 tracks | ✅ 133 lessons, every track beginner to advanced | P1 |
+| Comprehensive beginner → advanced lessons for all 18 tracks | ✅ 134 lessons, every track beginner to advanced | P1 |
 | Pictures, diagrams and animations that explain each concept | ✅ SVG figures in every lesson, step-throughs in 22 lessons. Moving-element animations: **after v1.0** (owner, 2026-11-28) | P1 |
-| Interactive simulations for every track | ✅ 18 simulations with server-verified challenges | P1 |
-| Hands-on labs with verification | ✅ 37 labs; the 47 planned entries on track pages are being linked to the lessons or projects that already cover them, or built (section 10) | P1 |
+| Interactive simulations for every track | ✅ 19 simulations with server-verified challenges | P1 |
+| Hands-on labs with verification | ✅ 48 labs; of the 47 entries track pages listed as planned, 35 link to the executed lesson or CI-checked project that does the task, 11 were built and 1 duplicate was removed (section 10) | P1 |
 | Quizzes (more question types, per-track assessments) | ✅ 18 track quizzes, six question types | P2 |
 | Real-world usage and case studies with sources | ✅ 36 sourced case studies on track pages. Notes inside lessons and per-track origin facts: **after v1.0** (owner, 2026-11-28) | P1 |
-| Alternatives and trade-offs for each tool | ✅ 89 alternatives with licences on track pages | P1 |
+| Alternatives and trade-offs for each tool | ✅ 88 alternatives with licences on track pages, plus 4 complementary vector stores for LangChain | P1 |
 | Mini-projects per track and capstones A–G | ✅ 54 projects with acceptance checks; capstones A–G | P2 |
 | Integration lessons between tools, full relationship graph | ✅ 17 integrations and the graph page | P2 |
 | Architecture studio, reference architectures | ✅ 10 architectures with decision records | P3 |
@@ -179,7 +179,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.2 Docker
 
-*v1.0 check (2026-11-28): written — `docker-networks-and-compose`, `docker-health-logs-and-limits`, `docker-image-and-container-security`, `docker-build-cache-and-supply-chain`; the multi-stage lesson is being written for v1.0 (section 10).*
+*v1.0 check (2026-11-28): written — `docker-networks-and-compose`, `docker-health-logs-and-limits`, `docker-image-and-container-security`, `docker-build-cache-and-supply-chain`; the multi-stage lesson was written for v1.0 (`docker-multi-stage-builds`, section 10).*
 
 - **Lessons:** ✅ Images vs containers · ✅ Volumes and bind mounts · ✅ Writing a Dockerfile (layers, cache, `.dockerignore`) · Multi-stage builds and small images · Networks and Docker Compose · Health checks, logs and resource limits · Image security: non-root users, scanning, pinning digests (advanced) · Build cache and supply-chain (SBOM, provenance) basics (advanced).
 - ✅ **Simulation — layer cake and cache:** model a Dockerfile as ordered instructions; editing a line invalidates the cache from that point; show which layers rebuild and the final image size. **Challenge:** reorder instructions so a source change does not reinstall dependencies.
@@ -201,7 +201,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.4 PostgreSQL
 
-*v1.0 check (2026-11-28): every lesson is written — `postgresql-transactions-and-acid`, `postgresql-isolation-and-anomalies`, `postgresql-roles-privileges-injection`, `postgresql-backups-restores-migrations`, `postgresql-replication-and-pooling`; the second (isolation) simulation is being built for v1.0 (section 10).*
+*v1.0 check (2026-11-28): every lesson is written — `postgresql-transactions-and-acid`, `postgresql-isolation-and-anomalies`, `postgresql-roles-privileges-injection`, `postgresql-backups-restores-migrations`, `postgresql-replication-and-pooling`; the second (isolation) simulation was built for v1.0 (section 10).*
 
 - **Lessons:** ✅ Tables, rows and constraints · ✅ Relationships, joins and grouping · ✅ Indexes and `EXPLAIN ANALYZE` · Transactions and ACID · Isolation levels and concurrency anomalies (advanced) · Roles, privileges and SQL injection prevention · Backups, restores and migrations · Replication and connection pooling (advanced).
 - ✅ **Simulation — query planner and index:** a table of N rows; toggle an index; the model shows sequential scan versus index scan with rows touched and estimated cost; animate the B-tree descent. Second simulation: two concurrent transactions on a timeline at different isolation levels, showing which anomalies appear. **Challenge:** choose an index that makes a given query touch fewer than 1% of rows.
@@ -248,7 +248,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.9 Redis
 
-*v1.0 check (2026-11-28): every lesson is written — `redis-pubsub-and-streams`, `redis-transactions-and-lua`, `redis-persistence-and-replication`, `redis-cache-stampede-and-failures`; the eviction-policy toggle is being built for v1.0 (section 10).*
+*v1.0 check (2026-11-28): every lesson is written — `redis-pubsub-and-streams`, `redis-transactions-and-lua`, `redis-persistence-and-replication`, `redis-cache-stampede-and-failures`; the eviction-policy toggle was built for v1.0 (section 10).*
 
 - **Lessons:** ✅ Keys, values and data structures · ✅ Caching and rate limiting · ✅ Eviction policies and memory · Pub/Sub versus Streams · Transactions and Lua scripts · Persistence (RDB/AOF) and replication (advanced) · Cache stampede and other failure modes (advanced).
 - ✅ **Simulation — cache under load:** requests arrive over time; toggle cache-aside, TTL length and eviction policy; show hit ratio, database load and what happens when a hot key expires (stampede). **Challenge:** keep database load under a limit during a traffic spike.
@@ -286,7 +286,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.13 Postman
 
-*v1.0 check (2026-11-28): every lesson is written — `postman-authentication-flows`, `postman-mock-servers-and-docs`, `postman-collections-in-ci`, `postman-contract-testing`; the live playground is being built for v1.0 (section 10).*
+*v1.0 check (2026-11-28): every lesson is written — `postman-authentication-flows`, `postman-mock-servers-and-docs`, `postman-collections-in-ci`, `postman-contract-testing`; the live playground was built for v1.0 (section 10).*
 
 - **Lessons:** ✅ HTTP requests and responses · ✅ Sessions, chained requests and API tests · ✅ Environments and variables in depth (collections and Newman) · Authentication flows (API keys, bearer tokens, OAuth concepts) · Mock servers and API documentation · Running collections in CI with the Postman CLI or Newman (advanced) · Contract testing concepts (advanced).
 - ✅ **Simulation — request builder against DevForge:** this one can be *real*: a built-in request playground that sends requests to the learner's own DevForge API (same origin, CSRF header handled) and shows status, headers and body, plus a "what went wrong" explainer for 4xx codes. Label it as a playground, rate-limit it, and allow only DevForge's own endpoints.
@@ -297,7 +297,7 @@ Each track below lists the lessons still to write (existing ones are marked ✅)
 
 ### 5.14 Nginx
 
-*v1.0 check (2026-11-28): every lesson is written — `nginx-caching-and-compression`, `nginx-tls-termination`, `nginx-access-control` (`limit_req` in lab `nginx-safe-headers-and-rate-limiting`), `nginx-upstream-failures`; the generated-configuration test against real Nginx is being built for v1.0 (section 10).*
+*v1.0 check (2026-11-28): every lesson is written — `nginx-caching-and-compression`, `nginx-tls-termination`, `nginx-access-control` (`limit_req` in lab `nginx-safe-headers-and-rate-limiting`), `nginx-upstream-failures`; the generated-configuration test against real Nginx was built for v1.0 (section 10).*
 
 - **Lessons:** ✅ Configuration and static files · ✅ Reverse proxy, 502 errors and load balancing · ✅ Location matching rules in depth · Caching and compression · TLS termination with a local certificate · Rate limiting and access control · Upstream health and failure handling (advanced).
 - ✅ **Simulation — location matcher:** type a request path; the model applies Nginx's location-matching order (exact `=`, longest prefix, `^~`, regular expressions in order) and highlights the winning block with the reason. **Challenge:** write locations so `/api/v1/` goes to the API but `/api/docs` is served statically. Unit-test the model against real Nginx in CI by generating configurations and comparing which block answers.
@@ -434,21 +434,21 @@ For facts: every new external claim has a source URL and a `checked_on` date; ru
 | ~~CI duration grows with real Jenkins and Kubernetes runs~~ | ✅ Lessons in three shards, project checks in four; pushes run only affected tests; a nightly run covers everything |
 | Docker Hub anonymous pull limits | Add a Docker Hub login step with a read-only token if pulls fail (no failures so far; conditional, nothing to do for v1.0) |
 | Tool versions change monthly | A recurring process, not a v1.0 deliverable: review pinned versions monthly from official release pages; update lessons with `lessons:record`; bump `content_version` and `last_reviewed` |
-| Content ages | Add a CI warning for lessons whose `last_reviewed` is older than 12 months |
+| ~~Content ages~~ | ✅ The content build warns (and annotates in CI) when `last_reviewed` is more than 12 months old |
 
 ## 10. v1.0 scope decisions (project owner, 2026-11-28)
 
-### Built for v1.0 (in progress on 2026-11-28; ticked here when done and green in CI)
+### Built for v1.0 (2026-11-28)
 
-- The 47 labs that track pages list as "Planned": link each to the existing executed lesson or CI-checked project that already does its job (shown as what it is), and build real labs for the rest.
-- PostgreSQL's second simulation (two transactions on a timeline at different isolation levels, §5.4).
-- The Redis simulation's eviction-policy toggle (§5.9).
-- The Postman live playground sending real requests to DevForge's own API (§5.13).
-- The Nginx location model tested against generated configurations on real Nginx in CI (§5.14).
-- A Docker lesson on multi-stage builds and small images (§5.2).
-- Qdrant, Weaviate and Chroma as LangChain vector-store alternatives (§5.8).
-- Track pages: lessons grouped by level with completion ticks; tracks marked complete (§6.1).
-- A CI warning for content whose `last_reviewed` is older than 12 months (§9).
+- ✅ The 47 labs that track pages listed as "Planned": 35 link to the executed lesson or CI-checked project that already does the task (shown as what it is; the loader requires the lesson to be executed, the project to have a check script and the level to match), 11 new labs were built and executed (Docker ×3, GitHub Actions, Jenkins ×2, Jira ×3, LlamaIndex PDFs, n8n with PostgreSQL), and 1 was a duplicate of an existing Kafka lab's challenge and was removed. Two Jira labs planned as simulations became local Python labs (the sprint-board model has no backlog or workflow), and a read-through lab reads a sprint report. Mapping table in IMPLEMENTATION_STATUS.md.
+- ✅ PostgreSQL's second simulation, `postgresql-isolation-timeline` (§5.4): three scenarios at four isolation levels; every order of every scenario compared with two real psql sessions on PostgreSQL 16 (258 orders) in CI.
+- ✅ The Redis simulation's memory limit and eviction policies (§5.9): noeviction, allkeys-lru, volatile-lru, allkeys-lfu; compared with a real Redis 7.4 in CI.
+- ✅ The Postman request playground (§5.13) at `/tracks/postman/playground`: real requests to this DevForge server as the learner, an allowlist checked against the real route table, explanations for error statuses, 20 requests a minute in the page plus the server's limits.
+- ✅ The Nginx location model compared with real Nginx on 200 generated configurations and about 4,800 paths (§5.14); it found and fixed a model bug (path normalisation).
+- ✅ The Docker lesson `docker-multi-stage-builds` (§5.2), executed.
+- ✅ Qdrant, Weaviate and Chroma, with pgvector, as LangChain's vector-store choices, listed separately from the alternatives (§5.8).
+- ✅ Track pages: lessons grouped by level with completion ticks; all 18 tracks marked complete; PostgreSQL and Kubernetes lesson order ascends by level (§6.1).
+- ✅ A build warning (and a GitHub Actions annotation in CI) for content whose `last_reviewed` is more than 12 months old, also in `npm run content:audit` (§9).
 
 ### After v1.0 (approved by the owner on 2026-11-28)
 

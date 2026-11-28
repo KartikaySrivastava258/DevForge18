@@ -22,7 +22,7 @@ resources:
     level: intermediate
     official: true
     why: The notifyCommit endpoint, why matching jobs need polling enabled, and its access-control settings.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-28 }
   - title: githooks — post-receive
     url: https://git-scm.com/docs/githooks
     publisher: git-scm.com

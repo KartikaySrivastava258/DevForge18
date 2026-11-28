@@ -38,7 +38,7 @@ resources:
     level: intermediate
     official: true
     why: The node's operations, including Execute Query with query parameters.
-    verification: { status: unverified }
+    verification: { status: verified, checked_on: 2026-11-28 }
 verification:
   method: executed
   details: Every step and the check script are run by DevForge's test suite on a disposable Docker engine with n8nio/n8n 2.49.6 and postgres:16.15-alpine3.23, both pinned by digest, and their output is compared with this page. The check script is also run in an empty folder, where it must fail.
