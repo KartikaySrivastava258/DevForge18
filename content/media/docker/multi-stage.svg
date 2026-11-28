@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300">
+  <!-- The three stages of the Dockerfile in Multi-stage builds and small images, and what reaches the final image. -->
+  <rect class="f-box-accent" x="10" y="20" width="240" height="130" rx="8"/>
+  <text class="f-small f-strong" x="130" y="46" text-anchor="middle">build stage</text>
+  <text class="f-small f-mono" x="130" y="70" text-anchor="middle">FROM golang:… AS build</text>
+  <text class="f-small" x="130" y="94" text-anchor="middle">Go toolchain + your source</text>
+  <text class="f-small f-mono" x="130" y="118" text-anchor="middle">RUN go build</text>
+  <text class="f-small f-mono" x="130" y="138" text-anchor="middle">→ /out/hello</text>
+  <rect class="f-box-faint" x="10" y="190" width="240" height="95" rx="8"/>
+  <text class="f-small f-strong" x="130" y="216" text-anchor="middle">test stage</text>
+  <text class="f-small f-mono" x="130" y="240" text-anchor="middle">FROM build AS test</text>
+  <text class="f-small f-mono" x="130" y="262" text-anchor="middle">RUN go test ./...</text>
+  <text class="f-small f-muted" x="130" y="279" text-anchor="middle">only with --target test</text>
+  <rect class="f-box-ok" x="470" y="20" width="240" height="130" rx="8"/>
+  <text class="f-small f-strong" x="590" y="46" text-anchor="middle">final stage (shipped)</text>
+  <text class="f-small f-mono" x="590" y="70" text-anchor="middle">FROM distroless/static</text>
+  <text class="f-small f-mono" x="590" y="94" text-anchor="middle">COPY --from=build</text>
+  <text class="f-small" x="590" y="118" text-anchor="middle">program only: no compiler,</text>
+  <text class="f-small" x="590" y="138" text-anchor="middle">no source, no shell</text>
+  <rect class="f-box-warn" x="470" y="190" width="240" height="95" rx="8"/>
+  <text class="f-small f-strong" x="590" y="216" text-anchor="middle">single-stage image</text>
+  <text class="f-small" x="590" y="240" text-anchor="middle">toolchain + source + program</text>
+  <text class="f-small" x="590" y="262" text-anchor="middle">all shipped together</text>
+  <text class="f-small f-muted" x="590" y="279" text-anchor="middle">(for comparison)</text>
+  <g>
+    <path class="f-arrow-accent" d="M252 85 L460 85"/>
+    <polygon class="f-head-accent" points="468,85 460,80.5 460,89.5"/>
+  </g>
+  <text class="f-small f-accent" x="360" y="74" text-anchor="middle">one file crosses</text>
+  <text class="f-small f-muted" x="360" y="106" text-anchor="middle">the rest stays behind</text>
+  <g>
+    <path class="f-arrow" d="M130 152 L130 180"/>
+    <polygon class="f-head" points="130,188 125.5,180 134.5,180"/>
+  </g>
+</svg>

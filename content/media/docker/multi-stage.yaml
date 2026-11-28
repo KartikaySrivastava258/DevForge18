@@ -1,0 +1,4 @@
+alt: 'Three stages of one Dockerfile. Top left, the build stage, FROM golang AS build: the Go toolchain and the source code, RUN go build, which writes /out/hello. Below it, a dashed test stage, FROM build AS test, which runs go test and is built only when you ask for it with --target test. An arrow labelled "one file crosses" goes from the build stage to the final stage on the right, FROM distroless/static with COPY --from=build: the program only, with no compiler, no source and no shell — the image you ship. Below the final stage, for comparison, a single-stage image that ships the toolchain, the source and the program together.'
+caption: 'Each FROM starts a stage. Only the last stage (or the one you pick with --target) becomes the image, and COPY --from carries just the files you name into it.'
+credit: DevForge 18 content team
+licence: project-content
